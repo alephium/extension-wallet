@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/svelte/tsconfig.json",
+  "include": ["src/**/*"],
+  "exclude": ["**/node_modules/**/*", "**/dist/**/*"],
+
+  "compilerOptions": {
+    "target": "ES2015",
+    "outDir": "./dist/",
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true
+  }
+}
