@@ -3,7 +3,7 @@ import { convertAlphToSet } from "@alephium/sdk"
 import { TransactionPayload } from "../../shared/transactions"
 import { executeAlephiumTransaction } from "./backgroundTransactions"
 
-export const sendAlephiumTransferTransaction = (
+export const sendAlephiumTransferTransaction = async (
   fromAddr: string,
   toAddr: string,
   amountInAlph: string,
@@ -22,5 +22,5 @@ export const sendAlephiumTransferTransaction = (
     },
   }
 
-  executeAlephiumTransaction(payload)
+  return await executeAlephiumTransaction(payload)
 }

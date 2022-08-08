@@ -17,6 +17,22 @@ import {
   sortBy,
 } from "./utils"
 
+import {
+  type Account,
+  type SignDeployContractTxParams,
+  type SignDeployContractTxResult,
+  type SignExecuteScriptTxParams,
+  type SignExecuteScriptTxResult,
+  type SignHexStringParams,
+  type SignHexStringResult,
+  type SignMessageParams,
+  type SignMessageResult,
+  type SignTransferTxParams,
+  type SignTransferTxResult,
+  type SignUnsignedTxParams,
+  type SignUnsignedTxResult
+} from "@alephium/web3"
+
 class GetAlephiumWallet implements IGetAlephiumWallet {
   #walletObjRef: { current?: IAlephiumWindowObject } = {}
 
@@ -147,17 +163,56 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           return []
         }
 
+        #call = async<T>(
+          methodName: string,
+          method: (obj: IAlephiumWindowObject) => Promise<T>
+        ): Promise<T> => {
+          const currentWallet = self.#walletObjRef.current
+          if (!currentWallet) {
+            throw new Error(`can't ${methodName} with a disconnected wallet`);
+          }
+          return await method(currentWallet)
+        }
+
+        getAccounts = async (): Promise<Account[]> => {
+          return await this.#call("getAccounts", (wallet) => wallet.getAccounts())
+        }
+
+        signTransferTx = async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
+          return await this.#call("signTransferTx", (wallet) => wallet.signTransferTx(params))
+        }
+
+        signDeployContractTx = async (params: SignDeployContractTxParams): Promise<SignDeployContractTxResult> => {
+          return await this.#call("signDeployContractTx", (wallet) => wallet.signDeployContractTx(params))
+        }
+
+        signExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
+          return await this.#call("signExecuteScriptTx", (wallet) => wallet.signExecuteScriptTx(params))
+        }
+
+        signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
+          return await this.#call("signUnsignedTx", (wallet) => wallet.signUnsignedTx(params))
+        }
+
+        signHexString = async (params: SignHexStringParams): Promise<SignHexStringResult> => {
+          return await this.#call("signHexString", (wallet) => wallet.signHexString(params))
+        }
+
+        signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
+          return await this.#call("signMessage", (wallet) => wallet.signMessage(params))
+        }
+
         /**
          * @return true when there is at least 1 pre-authorized wallet
          */
         isPreauthorized = () =>
           self.#isConnected()
             ? (
-                self.#walletObjRef.current as IAlephiumWindowObject
-              ).isPreauthorized()
+              self.#walletObjRef.current as IAlephiumWindowObject
+            ).isPreauthorized()
             : self
-                .#getInstalledWallets()
-                .then((result) => !!result.preAuthorized.length)
+              .#getInstalledWallets()
+              .then((result) => !!result.preAuthorized.length)
 
         off = (event: EventType, handleEvent: EventHandler) => {
           if (self.#isConnected()) {

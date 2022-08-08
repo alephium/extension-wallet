@@ -44,7 +44,7 @@ export const AccountSubHeader: FC<AccountSubheaderProps> = ({
     getBalance(address).then((balance) => {
       setBalance(balance)
     })
-  })
+  }, [address])
 
   return (
     <>

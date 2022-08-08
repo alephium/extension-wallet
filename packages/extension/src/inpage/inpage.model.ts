@@ -1,3 +1,20 @@
+import {
+  Account,
+  SignDeployContractTxParams,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
+  SignHexStringParams,
+  SignHexStringResult,
+  SignMessageParams,
+  SignMessageResult,
+  SignTransferTxParams,
+  SignTransferTxResult,
+  SignUnsignedTxParams,
+  SignUnsignedTxResult,
+  SignerProvider,
+} from "@alephium/web3"
+
 export type AccountChangeEventHandler = (accounts: string[]) => void
 
 export type NetworkChangeEventHandler = (network?: string) => void
@@ -16,7 +33,7 @@ export type WalletEvents =
       handler: NetworkChangeEventHandler
     }
 
-interface IAlephiumWindowObject {
+declare class IAlephiumWindowObject implements SignerProvider {
   id: "alephium"
   enable: (options?: { showModal?: boolean }) => Promise<string[]>
   isPreauthorized: () => Promise<boolean>
@@ -29,7 +46,17 @@ interface IAlephiumWindowObject {
     handleEvent: WalletEvents["handler"],
   ) => void
   selectedAddress?: string
-  chainId?: string
+  getAccounts(): Promise<Account[]>
+  signTransferTx(params: SignTransferTxParams): Promise<SignTransferTxResult>
+  signDeployContractTx(
+    params: SignDeployContractTxParams,
+  ): Promise<SignDeployContractTxResult>
+  signExecuteScriptTx(
+    params: SignExecuteScriptTxParams,
+  ): Promise<SignExecuteScriptTxResult>
+  signUnsignedTx(params: SignUnsignedTxParams): Promise<SignUnsignedTxResult>
+  signHexString(params: SignHexStringParams): Promise<SignHexStringResult>
+  signMessage(params: SignMessageParams): Promise<SignMessageResult>
 }
 
 interface ConnectedAlephiumWindowObject extends IAlephiumWindowObject {

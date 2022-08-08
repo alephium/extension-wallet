@@ -26,8 +26,18 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
         throw new Error("Action not found")
       }
       const resultMessage = await handleActionApproval(action, background)
+
       if (resultMessage) {
-        sendToTabAndUi(resultMessage)
+        if (resultMessage.type === "TRANSACTION_SUBMITTED") {
+          // Send an extra message so that we can capture the result of the transaction
+          sendToTabAndUi({
+            type: "TRANSACTION_RES",
+            data: resultMessage.data,
+          })
+          sendToTabAndUi(resultMessage)
+        } else {
+          sendToTabAndUi(resultMessage)
+        }
       }
       return
     }

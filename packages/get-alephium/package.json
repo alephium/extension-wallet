@@ -1,6 +1,6 @@
 {
   "name": "@alephium/get-alephium",
-  "version": "4.4.2",
+  "version": "0.0.1",
   "private": false,
   "main": "dist/",
   "browser": {

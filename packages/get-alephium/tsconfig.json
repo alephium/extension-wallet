@@ -8,6 +8,7 @@
     "outDir": "./dist/",
     "declaration": true,
     "declarationMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "importsNotUsedAsValues": "preserve"
   }
 }

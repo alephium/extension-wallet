@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@alephium/get-alephium": "4.4.2",
+    "@alephium/get-alephium": "0.0.1",
     "@alephium/web3": "0.2.0-test.0",
     "@alephium/sdk": "0.0.12",
     "ethers": "^5.5.1",

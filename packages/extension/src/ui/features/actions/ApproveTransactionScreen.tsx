@@ -10,6 +10,7 @@ import {
   FieldValue,
 } from "../../components/Fields"
 import { routes } from "../../routes"
+import { assertNever } from "../../services/assertNever"
 import {
   getAddressName,
   useAddressMetadata,
@@ -31,7 +32,18 @@ const LeftPaddedField = styled.div`
 export const titleForTransactions = (payload: TransactionPayload) => {
   switch (payload.type) {
     case "ALPH_SIGN_TRANSFER_TX":
-      return "Review send"
+      return "Review Send"
+
+    case "ALPH_SIGN_CONTRACT_CREATION_TX": {
+      return "Review Contract"
+    }
+
+    case "ALPH_SIGN_SCRIPT_TX": {
+      return "Review Script"
+    }
+
+    default:
+      assertNever(payload)
   }
 }
 

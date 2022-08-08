@@ -1,5 +1,22 @@
+import {
+  Account,
+  SignDeployContractTxParams,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
+  SignHexStringParams,
+  SignHexStringResult,
+  SignMessageParams,
+  SignMessageResult,
+  SignTransferTxParams,
+  SignTransferTxResult,
+  SignUnsignedTxParams,
+  SignUnsignedTxResult,
+} from "@alephium/web3"
+
 import { assertNever } from "./../ui/services/assertNever"
 import { WindowMessageType } from "../shared/messages"
+import { executeAlephiumTransaction } from "../ui/services/backgroundTransactions"
 import {
   AccountChangeEventHandler,
   AlephiumWindowObject,
@@ -13,7 +30,6 @@ export const userEventHandlers: WalletEvents[] = []
 export const alephiumWindowObject: AlephiumWindowObject = {
   id: "alephium",
   selectedAddress: undefined,
-  chainId: undefined,
   isConnected: false,
   enable: () =>
     new Promise((resolve) => {
@@ -48,6 +64,7 @@ export const alephiumWindowObject: AlephiumWindowObject = {
     })
     return waitForMessage("IS_PREAUTHORIZED_RES", 1000)
   },
+  // sign different kinda messages
   on: (event, handleEvent) => {
     if (event === "accountsChanged") {
       userEventHandlers.push({
@@ -78,5 +95,51 @@ export const alephiumWindowObject: AlephiumWindowObject = {
     if (eventIndex >= 0) {
       userEventHandlers.splice(eventIndex, 1)
     }
+  },
+
+  getAccounts: async (): Promise<Account[]> => {
+    return Promise.resolve([])
+  },
+  signTransferTx: async (
+    params: SignTransferTxParams,
+  ): Promise<SignTransferTxResult> => {
+    return (
+      await executeAlephiumTransaction({
+        type: "ALPH_SIGN_TRANSFER_TX",
+        params,
+      })
+    ).result
+  },
+  signDeployContractTx: async (
+    params: SignDeployContractTxParams,
+  ): Promise<SignDeployContractTxResult> => {
+    return (
+      await executeAlephiumTransaction({
+        type: "ALPH_SIGN_CONTRACT_CREATION_TX",
+        params,
+      })
+    ).result as SignDeployContractTxResult
+  },
+  signExecuteScriptTx: async (
+    params: SignExecuteScriptTxParams,
+  ): Promise<SignExecuteScriptTxResult> => {
+    return (
+      await executeAlephiumTransaction({ type: "ALPH_SIGN_SCRIPT_TX", params })
+    ).result
+  },
+  signUnsignedTx: async (
+    params: SignUnsignedTxParams,
+  ): Promise<SignUnsignedTxResult> => {
+    throw Error(`signUnsignedTx unsupported ${params}`)
+  },
+  signHexString: async (
+    params: SignHexStringParams,
+  ): Promise<SignHexStringResult> => {
+    throw Error(`signHexString unsupported ${params}`)
+  },
+  signMessage: async (
+    params: SignMessageParams,
+  ): Promise<SignMessageResult> => {
+    throw Error(`signMessage unsupported ${params}`)
   },
 }

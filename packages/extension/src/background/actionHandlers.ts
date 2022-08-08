@@ -37,7 +37,7 @@ export const handleActionApproval = async (
         )
         return {
           type: "TRANSACTION_SUBMITTED",
-          data: { txHash: response.txId, actionHash },
+          data: { txResult: response, actionHash },
         }
       } catch (error: any) {
         return {

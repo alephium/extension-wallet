@@ -1,3 +1,19 @@
+import {
+  type Account,
+  type SignDeployContractTxParams,
+  type SignDeployContractTxResult,
+  type SignExecuteScriptTxParams,
+  type SignExecuteScriptTxResult,
+  type SignHexStringParams,
+  type SignHexStringResult,
+  type SignMessageParams,
+  type SignMessageResult,
+  type SignTransferTxParams,
+  type SignTransferTxResult,
+  type SignUnsignedTxParams,
+  type SignUnsignedTxResult
+} from "@alephium/web3"
+
 export interface IStorageWrapper {
   set(value: string | null | undefined): boolean
   get(): string | null | undefined
@@ -126,12 +142,16 @@ export interface IAlephiumWindowObject {
 
   id: string
   name: string
-  //  version: string
   icon: string
-  //  provider: Provider
   isConnected: boolean
-  //  account: AccountInterface
   selectedAddress?: string
+  getAccounts(): Promise<Account[]>
+  signTransferTx(params: SignTransferTxParams): Promise<SignTransferTxResult>
+  signDeployContractTx(params: SignDeployContractTxParams): Promise<SignDeployContractTxResult>
+  signExecuteScriptTx(params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult>
+  signUnsignedTx(params: SignUnsignedTxParams): Promise<SignUnsignedTxResult>
+  signHexString(params: SignHexStringParams): Promise<SignHexStringResult>
+  signMessage(params: SignMessageParams): Promise<SignMessageResult>
 }
 
 export type WalletProvider = {
@@ -139,8 +159,8 @@ export type WalletProvider = {
   name: string
   icon: string
   downloads:
-    | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
-    | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
+  | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
+  | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
 }
 
 declare global {
