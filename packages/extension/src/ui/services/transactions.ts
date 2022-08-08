@@ -1,6 +1,6 @@
 import { convertAlphToSet } from "@alephium/sdk"
 
-import { AlephiumTransactionPayload } from "../../shared/actionQueue"
+import { TransactionPayload } from "../../shared/transactions"
 import { executeAlephiumTransaction } from "./backgroundTransactions"
 
 export const sendAlephiumTransferTransaction = (
@@ -9,7 +9,7 @@ export const sendAlephiumTransferTransaction = (
   amountInAlph: string,
 ) => {
   const amount = convertAlphToSet(amountInAlph)
-  const payload: AlephiumTransactionPayload = {
+  const payload: TransactionPayload = {
     type: "ALPH_SIGN_TRANSFER_TX",
     params: {
       signerAddress: fromAddr,

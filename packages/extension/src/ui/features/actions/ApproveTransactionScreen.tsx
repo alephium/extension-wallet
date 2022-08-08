@@ -2,7 +2,7 @@ import { FC, useMemo } from "react"
 import { Navigate } from "react-router-dom"
 import styled from "styled-components"
 
-import { AlephiumTransactionPayload } from "../../../shared/actionQueue"
+import { TransactionPayload } from "../../../shared/transactions"
 import {
   Field,
   FieldGroup,
@@ -20,15 +20,15 @@ import { TransactionsList } from "./transaction/TransactionsList"
 interface ApproveTransactionScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
   actionHash: string
-  payload: AlephiumTransactionPayload
-  onSubmit: (payload: AlephiumTransactionPayload) => void
+  payload: TransactionPayload
+  onSubmit: (payload: TransactionPayload) => void
 }
 
 const LeftPaddedField = styled.div`
   margin-left: 8px;
 `
 
-export const titleForTransactions = (payload: AlephiumTransactionPayload) => {
+export const titleForTransactions = (payload: TransactionPayload) => {
   switch (payload.type) {
     case "ALPH_SIGN_TRANSFER_TX":
       return "Review send"

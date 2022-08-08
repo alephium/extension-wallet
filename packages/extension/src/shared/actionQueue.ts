@@ -1,11 +1,5 @@
-import { SignTransferTxParams } from "@alephium/web3"
-
 import type { ExtQueueItem as ExtensionQueueItem } from "../background/actionQueue"
-
-export type AlephiumTransactionPayload = {
-  type: "ALPH_SIGN_TRANSFER_TX"
-  params: SignTransferTxParams
-}
+import { TransactionPayload } from "../shared/transactions"
 
 export type ActionItem =
   | {
@@ -16,7 +10,7 @@ export type ActionItem =
     }
   | {
       type: "TRANSACTION"
-      payload: AlephiumTransactionPayload
+      payload: TransactionPayload
     }
   | {
       type: "REQUEST_ADD_CUSTOM_NETWORK"

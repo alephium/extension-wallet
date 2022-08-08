@@ -1,8 +1,8 @@
-import { AlephiumTransactionPayload } from "../../shared/actionQueue"
+import { TransactionPayload } from "../../shared/transactions"
 import { BackgroundService } from "../background"
 
 export const executeAlephiumTransaction = async (
-  payload: AlephiumTransactionPayload,
+  payload: TransactionPayload,
   { wallet }: BackgroundService,
 ) => {
   switch (payload.type) {
