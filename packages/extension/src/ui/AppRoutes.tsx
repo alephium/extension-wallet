@@ -17,6 +17,8 @@ import { LockScreen } from "./features/onboarding/LockScreen"
 import { NewWalletScreen } from "./features/onboarding/NewWalletScreen"
 import { ResetScreen } from "./features/onboarding/ResetScreen"
 import { WelcomeScreen } from "./features/onboarding/WelcomeScreen"
+import { SeedRecoveryPasswordScreen } from "./features/recovery/SeedRecoveryPasswordScreen"
+import { SeedRecoveryScreen } from "./features/recovery/SeedRecoveryScreen"
 import { DappConnectionsSettingsScreen } from "./features/settings/DappConnectionsSettingsScreen"
 import { NetworkSettingsEditScreen } from "./features/settings/NetworkSettingsEditScreen"
 import { NetworkSettingsFormScreen } from "./features/settings/NetworkSettingsFormScreen"
@@ -57,6 +59,11 @@ const nonWalletRoutes = (
   <>
     <Route path={routes.welcome.path} element={<WelcomeScreen />} />
     <Route path={routes.newWallet.path} element={<NewWalletScreen />} />
+    <Route path={routes.seedRecovery.path} element={<SeedRecoveryScreen />} />
+    <Route
+      path={routes.seedRecoveryPassword.path}
+      element={<SeedRecoveryPasswordScreen />}
+    />
     <Route path={routes.lockScreen.path} element={<LockScreen />} />
     <Route path={routes.reset.path} element={<ResetScreen />} />
     <Route path={routes.error.path} element={<ErrorScreen />} />

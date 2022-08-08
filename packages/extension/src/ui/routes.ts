@@ -38,6 +38,8 @@ export const routes = {
   welcome: route("/index.html"),
   newWallet: route("/wallets/new"),
   backupRecovery: route("/recover/backup"),
+  seedRecovery: route("/recover/seed"),
+  seedRecoveryPassword: route("/recover/seed/password"),
   setupRecovery: routeWithReturnTo("/recovery"),
   setupSeedRecovery: routeWithReturnTo("/recovery/seed"),
   confirmSeedRecovery: routeWithReturnTo("/recovery/seed/confirm"),

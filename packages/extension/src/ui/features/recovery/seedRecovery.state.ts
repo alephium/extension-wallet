@@ -1,28 +1,25 @@
-import { ethers, wordlists } from "ethers"
+import { wordlists } from "ethers"
 import create from "zustand"
+
+import { bip39Words } from "./bip39"
 
 interface State {
   seedPhrase?: string
   password?: string
 }
 
+const allowedWords = bip39Words.split(" ")
+
 export const useSeedRecovery = create<State>(() => ({}))
 
 export const validateSeedPhrase = (seedPhrase: string): boolean => {
   const words = wordlists.en.split(seedPhrase.trim())
   // check seed phrase has correct number of words
-  if (words.length !== 12) {
+  if (words.length !== 24) {
     return false
   }
   // check every word is in the wordlist
-  if (!words.every((word) => wordlists.en.getWordIndex(word) >= 0)) {
-    return false
-  }
-
-  // check if seedphrase is valid with HDNode
-  try {
-    ethers.utils.HDNode.fromMnemonic(seedPhrase)
-  } catch {
+  if (!words.every((word) => allowedWords.indexOf(word) >= 0)) {
     return false
   }
 

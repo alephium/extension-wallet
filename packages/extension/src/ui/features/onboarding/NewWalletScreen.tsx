@@ -63,17 +63,18 @@ export const NewWalletScreen: FC<NewWalletScreenProps> = ({
 
     if (overrideSubmit) {
       await overrideSubmit({ password })
-    } else {
-      try {
-        const newAddress = await deployAddress(password)
-        addAddress(newAddress)
-        connectAccount(newAddress.hash)
-        navigate(await recover())
-      } catch (error: any) {
-        useAppState.setState({ error })
-        navigate(routes.error())
-      }
     }
+
+    try {
+      const newAddress = await deployAddress(password)
+      addAddress(newAddress)
+      connectAccount(newAddress.hash)
+      navigate(await recover())
+    } catch (error: any) {
+      useAppState.setState({ error })
+      navigate(routes.error())
+    }
+
     useAppState.setState({ isLoading: false })
   }
 

@@ -3,6 +3,7 @@ import {
   deriveNewAddressData,
   getStorage,
   walletGenerate,
+  walletImport,
   walletOpen,
 } from "@alephium/sdk"
 import { Balance } from "@alephium/sdk/api/alephium"
@@ -95,6 +96,20 @@ export class Wallet {
       throw new Error("Session is not open")
     }
     return this.session.mnemonic
+  }
+
+  public async restoreSeedPhrase(seedPhrase: string, password: string) {
+    if (this.isInitialized() || this.session) {
+      throw new Error("Wallet is already initialized")
+    }
+
+    try {
+      const wallet = walletImport(seedPhrase)
+      AlephiumStorage.save("alephium-wallet-name", wallet.encrypt(password))
+      this.setSession(wallet.privateKey, password, wallet.seed, wallet.mnemonic)
+    } catch {
+      throw Error("Restore seedphrase failed")
+    }
   }
 
   public async startAlephiumSession(

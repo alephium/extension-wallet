@@ -5,6 +5,7 @@ import { ActionMessage } from "./ActionMessage"
 import { MiscenalleousMessage } from "./MiscellaneousMessage"
 import { NetworkMessage } from "./NetworkMessage"
 import { PreAuthorisationMessage } from "./PreAuthorisationMessage"
+import { RecoveryMessage } from "./RecoveryMessage"
 import { SessionMessage } from "./SessionMessage"
 import { TransactionMessage } from "./TransactionMessage"
 
@@ -16,6 +17,7 @@ export type MessageType =
   | PreAuthorisationMessage
   | SessionMessage
   | TransactionMessage
+  | RecoveryMessage
 
 export type WindowMessageType = MessageType & {
   forwarded?: boolean

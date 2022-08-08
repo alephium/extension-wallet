@@ -18,6 +18,7 @@ import { getMessagingKeys } from "./keys/messagingKeys"
 import { handleMiscellaneousMessage } from "./miscellaneousMessaging"
 import { handleNetworkMessage } from "./networkMessaging"
 import { handlePreAuthorizationMessage } from "./preAuthorizationMessaging"
+import { handleRecoveryMessage } from "./recoveryMessaging"
 import { handleSessionMessage } from "./sessionMessaging"
 import { Storage } from "./storage"
 import { handleTransactionMessage } from "./transactions/transactionMessaging"
@@ -50,6 +51,7 @@ import { Wallet, WalletStorageProps } from "./wallet"
     handleMiscellaneousMessage,
     handleNetworkMessage,
     handlePreAuthorizationMessage,
+    handleRecoveryMessage,
     handleSessionMessage,
     handleTransactionMessage,
   ] as Array<HandleMessage<MessageType>>

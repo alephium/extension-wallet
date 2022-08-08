@@ -57,10 +57,7 @@ export const WelcomeScreen: FC = () => {
       <P>Accessible, Scalable and Secure DeFi</P>
       <ButtonGroup>
         <Button onClick={() => navigate(routes.newWallet())}>New wallet</Button>
-        <Button
-          onClick={() => console.log("restore wallet not supported yet")}
-          disabled={true}
-        >
+        <Button onClick={() => navigate(routes.seedRecovery())}>
           Restore wallet
         </Button>
       </ButtonGroup>
