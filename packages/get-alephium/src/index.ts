@@ -3,6 +3,7 @@ import type {
   IAlephiumWindowObject,
 } from "./getAlephium"
 import { gaw } from "./getAlephium"
+import type { DisconnectOptions } from "./types"
 
 export type {
   EventHandler,
@@ -47,4 +48,14 @@ export const connect = (
     order: ["alephium"],
     ...options,
   })
+}
+
+/**
+ * Disconnect to a Alephium wallet.
+ *
+ * @param {DisconnectOptions} [options]
+ * @returns {boolean}
+ */
+export const disconnect = (options?: DisconnectOptions): boolean => {
+  return gaw.disconnect(options)
 }

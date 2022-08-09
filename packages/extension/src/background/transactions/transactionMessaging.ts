@@ -1,5 +1,6 @@
 import { TransactionMessage } from "../../shared/messages/TransactionMessage"
 import { HandleMessage, UnhandledMessage } from "../background"
+import { openUi } from "../openUi"
 
 export const handleTransactionMessage: HandleMessage<
   TransactionMessage
@@ -19,10 +20,12 @@ export const handleTransactionMessage: HandleMessage<
         type: "TRANSACTION",
         payload: msg.data,
       })
-      return sendToTabAndUi({
+      sendToTabAndUi({
         type: "EXECUTE_TRANSACTION_RES",
         data: { actionHash: meta.hash },
       })
+
+      return openUi()
     }
 
     case "TRANSACTION_FAILED": {

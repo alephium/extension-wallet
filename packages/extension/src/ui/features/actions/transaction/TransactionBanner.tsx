@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC } from "react"
 import styled from "styled-components"
 import { DefaultTheme } from "styled-components"
 
@@ -27,6 +27,8 @@ const Container = styled.div<{ variant: IContainer["variant"] }>`
   font-weight: 600;
   line-height: 18px;
   padding: 12px 16px;
+  overflow-wrap: break-word;
+  word-break: break-all;
   border-radius: 8px;
   margin-bottom: 12px;
   display: flex;
