@@ -16,7 +16,6 @@ import {
 
 import { assertNever } from "./../ui/services/assertNever"
 import { WindowMessageType } from "../shared/messages"
-import { executeAlephiumTransaction } from "../ui/services/backgroundTransactions"
 import {
   AccountChangeEventHandler,
   AlephiumWindowObject,
@@ -24,8 +23,23 @@ import {
   WalletEvents,
 } from "./inpage.model"
 import { sendMessage, waitForMessage } from "./messageActions"
+import { groupOfAddress } from "@alephium/sdk"
+import { TransactionPayload, TransactionResult } from "../shared/transactions"
 
 export const userEventHandlers: WalletEvents[] = []
+
+export const executeAlephiumTransaction = async (
+  data: TransactionPayload,
+): Promise<TransactionResult> => {
+  sendMessage({ type: "EXECUTE_TRANSACTION", data })
+  const { actionHash } = await waitForMessage("EXECUTE_TRANSACTION_RES", 1000)
+  const { txResult } = await waitForMessage(
+    "TRANSACTION_RES",
+    10000, // 2 minute, probably long enough to approve or reject the transaction
+    ({ data }) => data.actionHash === actionHash,
+  )
+  return txResult
+}
 
 export const alephiumWindowObject: AlephiumWindowObject = {
   id: "alephium",
@@ -98,7 +112,16 @@ export const alephiumWindowObject: AlephiumWindowObject = {
   },
 
   getAccounts: async (): Promise<Account[]> => {
-    return Promise.resolve([])
+    sendMessage({ type: "GET_ACCOUNTS" })
+    const addresses = await waitForMessage("GET_ACCOUNTS_RES", 100)
+    return addresses.map((addr) => {
+      const group = groupOfAddress(addr.address)
+      return {
+        address: addr.address,
+        group,
+        publicKey: addr.publicKey,
+      }
+    })
   },
   signTransferTx: async (
     params: SignTransferTxParams,
