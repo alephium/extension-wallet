@@ -125,6 +125,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
       this.#walletObjRef.current ??
       // create a wrapper
       new (class implements IAlephiumWindowObject {
+        discriminator = '___IAlephiumWindowObject___'
         // default values
         id = "disconnected"
         name = "Disconnected"

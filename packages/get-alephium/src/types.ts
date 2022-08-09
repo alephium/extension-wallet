@@ -136,6 +136,7 @@ export type EventType = "accountsChanged" | "networkChanged"
 export type EventHandler = (data: any) => void
 
 export declare class IAlephiumWindowObject implements SignerProvider {
+  discriminator: string
   enable: (options?: { showModal?: boolean }) => Promise<string[]>
   isPreauthorized: () => Promise<boolean>
   on: (event: EventType, handleEvent: EventHandler) => void
