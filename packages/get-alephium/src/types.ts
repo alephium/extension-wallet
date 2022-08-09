@@ -2,6 +2,7 @@ import {
   type Account,
   type SignDeployContractTxParams,
   type SignDeployContractTxResult,
+  type SignerProvider,
   type SignExecuteScriptTxParams,
   type SignExecuteScriptTxResult,
   type SignHexStringParams,
@@ -134,7 +135,7 @@ export type EventType = "accountsChanged" | "networkChanged"
 
 export type EventHandler = (data: any) => void
 
-export interface IAlephiumWindowObject {
+export declare class IAlephiumWindowObject implements SignerProvider {
   enable: (options?: { showModal?: boolean }) => Promise<string[]>
   isPreauthorized: () => Promise<boolean>
   on: (event: EventType, handleEvent: EventHandler) => void
