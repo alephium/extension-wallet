@@ -1,7 +1,5 @@
 import { Schema, boolean, object, string } from "yup"
 
-import { WalletAccount } from "./wallet.model"
-
 export interface Network {
   id: string
   name: string
@@ -72,8 +70,3 @@ export const getNetworkById = (
 ): Network | undefined => {
   return allNetworks.find((network) => network.id === id)
 }
-
-export const accountsOnNetwork = (
-  accounts: WalletAccount[],
-  networkId: string,
-) => accounts.filter(({ network }) => network.id === networkId)

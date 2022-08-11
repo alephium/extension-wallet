@@ -53,7 +53,7 @@ export const handleSessionMessage: HandleMessage<SessionMessage> = async ({
 
     case "STOP_SESSION": {
       wallet.lock()
-      return sendToTabAndUi({ type: "DISCONNECT_ACCOUNT" })
+      return sendToTabAndUi({ type: "DISCONNECT_ADDRESS" })
     }
 
     case "IS_INITIALIZED": {

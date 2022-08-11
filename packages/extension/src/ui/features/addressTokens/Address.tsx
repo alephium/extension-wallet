@@ -1,12 +1,12 @@
 import styled from "styled-components"
 
-export const AccountAddressWrapper = styled.span`
+export const AddressWrapper = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
 `
 
-export const AccountAddressIconsWrapper = styled.span`
+export const AddressIconsWrapper = styled.span`
   display: flex;
   gap: 6px;
   align-items: center;

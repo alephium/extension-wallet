@@ -3,7 +3,7 @@ import {
   AddressAndPublicKey,
   AddressSettings,
 } from "../../../shared/Address"
-import { createNewAddress } from "../../services/backgroundAddresses"
+import { createAddress } from "../../services/backgroundAddresses"
 import { startSession } from "../../services/backgroundSessions"
 
 export const deployAddress = async (password?: string) => {
@@ -11,7 +11,7 @@ export const deployAddress = async (password?: string) => {
     await startSession(password)
   }
 
-  const result = await createNewAddress()
+  const result = await createAddress()
   if ("error" in result) {
     throw new Error(result.error)
   }

@@ -10,7 +10,7 @@ import {
   getAddressName,
   useAddressMetadata,
 } from "../addresses/addressMetadata.state"
-import { AccountSubHeader } from "./AccountSubheader"
+import { AddressSubHeader } from "./AddressSubHeader"
 
 const Container = styled.div`
   display: flex;
@@ -25,20 +25,20 @@ const ActionContainer = styled(ColumnCenter)`
   gap: 84px;
 `
 
-interface AccountTokensProps {
+interface AddressTokensProps {
   address: Address
 }
 
-export const AccountTokens: FC<AccountTokensProps> = ({ address }) => {
+export const AddressTokens: FC<AddressTokensProps> = ({ address }) => {
   const navigate = useNavigate()
   const { addressNames, setAddressName } = useAddressMetadata()
   const addressName = getAddressName(address.hash, addressNames)
 
   return (
-    <Container data-testid="account-tokens">
-      <AccountSubHeader
+    <Container data-testid="address-tokens">
+      <AddressSubHeader
         address={address.hash}
-        accountName={addressName}
+        addressName={addressName}
         onChangeName={(name) => setAddressName(address.hash, name)}
       />
       <ActionContainer>

@@ -25,13 +25,13 @@ export type WalletEventHandlers =
 
 export type WalletEvents =
   | {
-      type: "accountsChanged"
-      handler: AccountChangeEventHandler
-    }
+    type: "addressesChanged"
+    handler: AccountChangeEventHandler
+  }
   | {
-      type: "networkChanged"
-      handler: NetworkChangeEventHandler
-    }
+    type: "networkChanged"
+    handler: NetworkChangeEventHandler
+  }
 
 declare class IAlephiumWindowObject implements SignerProvider {
   id: "alephium"

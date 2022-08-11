@@ -131,7 +131,7 @@ export interface IGetAlephiumWallet {
   getAlephium(): IAlephiumWindowObject
 }
 
-export type EventType = "accountsChanged" | "networkChanged"
+export type EventType = "addressesChanged" | "networkChanged"
 
 export type EventHandler = (data: any) => void
 

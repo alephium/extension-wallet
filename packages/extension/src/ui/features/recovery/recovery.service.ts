@@ -17,7 +17,7 @@ export const recover = async () => {
 
     setDefaultAddressNames(addresses.map((addr) => addr.hash))
     useAddresses.setState({ addresses, selectedAddress })
-    return routes.accountTokens()
+    return routes.addressTokens()
   } catch (e: any) {
     console.error("Recovery error:", e)
     useAppState.setState({ error: `${e}` })

@@ -35,11 +35,11 @@ const Paragraph = styled(P)`
   text-align: center;
 `
 
-interface AccountActivityProps {
+interface AddressActivityProps {
   address: Address
 }
 
-const Activity: FC<AccountActivityProps> = ({ address }) => {
+const Activity: FC<AddressActivityProps> = ({ address }) => {
   const [dailyActivity, setDailyActivity] = useState<DailyActivity | undefined>(
     undefined,
   )
@@ -77,7 +77,7 @@ const Activity: FC<AccountActivityProps> = ({ address }) => {
   }
 }
 
-export const AccountActivity: FC<AccountActivityProps> = ({ address }) => (
+export const AddressActivity: FC<AddressActivityProps> = ({ address }) => (
   <Container>
     <Header>Activity</Header>
     <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>

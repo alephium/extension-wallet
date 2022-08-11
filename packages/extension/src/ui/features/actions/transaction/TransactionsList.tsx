@@ -38,7 +38,6 @@ export const TransactionsList: FC<ITransactionsList> = ({ payload }) => {
     <>
       {
         <TransactionBanner
-          variant={"warn"}
           icon={WarningIcon}
           message={messageForTransactions(payload)}
         />

@@ -1,6 +1,6 @@
 import { getMessage } from "@extend-chrome/messages"
 
-import { AccountMessage } from "./AccountMessage"
+import { AddressMessage } from "./AddressMessage"
 import { ActionMessage } from "./ActionMessage"
 import { MiscenalleousMessage } from "./MiscellaneousMessage"
 import { NetworkMessage } from "./NetworkMessage"
@@ -10,7 +10,7 @@ import { SessionMessage } from "./SessionMessage"
 import { TransactionMessage } from "./TransactionMessage"
 
 export type MessageType =
-  | AccountMessage
+  | AddressMessage
   | ActionMessage
   | MiscenalleousMessage
   | NetworkMessage
@@ -30,9 +30,9 @@ export const [sendMessage, messageStream, _waitForMessage] =
 export async function waitForMessage<
   K extends MessageType["type"],
   T extends { type: K } & MessageType,
->(
-  type: K,
-  predicate: (x: T) => boolean = () => true,
+  >(
+    type: K,
+    predicate: (x: T) => boolean = () => true,
 ): Promise<T extends { data: infer S } ? S : undefined> {
   return _waitForMessage(
     ([msg]: any) => msg.type === type && predicate(msg),

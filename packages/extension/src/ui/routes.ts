@@ -44,19 +44,15 @@ export const routes = {
   setupSeedRecovery: routeWithReturnTo("/recovery/seed"),
   confirmSeedRecovery: routeWithReturnTo("/recovery/seed/confirm"),
   lockScreen: route("/lock-screen"),
-  accountTokens: route("/account/tokens"),
-  accountActivity: route("/account/activity"),
-  accountHideConfirm: route(
-    (accountAddress: string) => `/account/hide-confirm/${accountAddress}`,
-    `/account/hide-confirm/:accountAddress`,
-  ),
-  accountDeleteConfirm: route(
-    (accountAddress: string) => `/account/delete-confirm/${accountAddress}`,
-    `/account/delete-confirm/:accountAddress`,
+  addressTokens: route("/address/tokens"),
+  addressActivity: route("/address/activity"),
+  addressDeleteConfirm: route(
+    (address: string) => `/address/delete-confirm/${address}`,
+    `/address/delete-confirm/:address`,
   ),
   sendScreen: route("/send"),
   sendToken: route("/send-token"),
-  accounts: route("/accounts"),
+  addresses: route("/addresses"),
   exportPrivateKey: route("/export-private-key"),
   token: route(
     (tokenAddress: string) => `/tokens/${tokenAddress}`,

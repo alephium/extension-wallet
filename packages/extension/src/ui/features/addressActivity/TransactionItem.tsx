@@ -9,7 +9,7 @@ import {
 } from "../../components/StatusIndicator"
 import { makeClickable } from "../../services/a11y"
 import { formatTruncatedAddress } from "../../services/addresses"
-import { TokenIcon } from "../accountTokens/TokenIcon"
+import { TokenIcon } from "../addressTokens/TokenIcon"
 
 export const TokenWrapper = styled.div`
   display: flex;
@@ -55,7 +55,7 @@ export const TransactionsWrapper = styled.div`
   flex-direction: column;
 `
 
-const TransactionWrapper = styled(TokenWrapper)<{ highlighted?: boolean }>`
+const TransactionWrapper = styled(TokenWrapper) <{ highlighted?: boolean }>`
   cursor: pointer;
 
   ${({ highlighted }) =>

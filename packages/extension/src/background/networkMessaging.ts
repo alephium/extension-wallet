@@ -11,7 +11,7 @@ import {
 
 export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
   msg,
-  background: { wallet, actionQueue },
+  background: { actionQueue },
   sendToTabAndUi,
 }) => {
   switch (msg.type) {
@@ -26,11 +26,6 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
     case "ADD_CUSTOM_NETWORKS": {
       const networks = msg.data
       const newNetworks = await addNetworks(networks)
-      //await Promise.all(
-      //  newNetworks.map(
-      //    (network) => wallet.discoverAccountsForNetwork(network, 2), // just close gaps up to 1 blank space, as these networks are new and should be linked lists
-      //  ),
-      //)
       return sendToTabAndUi({
         type: "ADD_CUSTOM_NETWORKS_RES",
         data: newNetworks,

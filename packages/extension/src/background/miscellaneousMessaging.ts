@@ -13,24 +13,24 @@ export const handleMiscellaneousMessage: HandleMessage<
   messagingKeys: { publicKeyJwk },
   sendToTabAndUi,
 }) => {
-  switch (msg.type) {
-    case "OPEN_UI": {
-      return openUi()
+    switch (msg.type) {
+      case "OPEN_UI": {
+        return openUi()
+      }
+
+      case "RESET_ALL": {
+        clearStorage()
+        wallet.reset()
+        return sendToTabAndUi({ type: "DISCONNECT_ADDRESS" })
+      }
+
+      case "GET_MESSAGING_PUBLIC_KEY": {
+        return sendMessageToUi({
+          type: "GET_MESSAGING_PUBLIC_KEY_RES",
+          data: publicKeyJwk,
+        })
+      }
     }
 
-    case "RESET_ALL": {
-      clearStorage()
-      wallet.reset()
-      return sendToTabAndUi({ type: "DISCONNECT_ACCOUNT" })
-    }
-
-    case "GET_MESSAGING_PUBLIC_KEY": {
-      return sendMessageToUi({
-        type: "GET_MESSAGING_PUBLIC_KEY_RES",
-        data: publicKeyJwk,
-      })
-    }
+    throw new UnhandledMessage()
   }
-
-  throw new UnhandledMessage()
-}

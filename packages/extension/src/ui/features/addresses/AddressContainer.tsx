@@ -11,8 +11,8 @@ import {
 import { routes } from "../../routes"
 import { useSelectedAddress } from "../addresses/addresses.state"
 import { NetworkSwitcher } from "../networks/NetworkSwitcher"
-import { AccountFooter, FooterTab } from "./AccountFooter"
-import { AccountHeader } from "./AccountHeader"
+import { AddressFooter, FooterTab } from "./AddressFooter"
+import { AddressHeader } from "./AddressHeader"
 
 export const Container = styled.div<{
   header?: boolean
@@ -35,11 +35,11 @@ export const Container = styled.div<{
   }
 `
 
-interface AccountScreenContentProps {
+interface AddressScreenContentProps {
   children?: ReactNode
 }
 
-export const AccountContainer: FC<AccountScreenContentProps> = ({
+export const AddressContainer: FC<AddressScreenContentProps> = ({
   children,
 }) => {
   const address = useSelectedAddress()
@@ -50,31 +50,31 @@ export const AccountContainer: FC<AccountScreenContentProps> = ({
 
   return (
     <Container header footer>
-      <AccountHeader>
+      <AddressHeader>
         <Header>
           <Link
             role="button"
-            aria-label="Show account list"
-            to={routes.accounts()}
+            aria-label="Show addresses"
+            to={routes.addresses()}
           >
             <ViewListIcon />
           </Link>
           <NetworkSwitcher />
         </Header>
-      </AccountHeader>
+      </AddressHeader>
 
       {children}
 
-      <AccountFooter>
-        <FooterTab to={routes.accountTokens()}>
+      <AddressFooter>
+        <FooterTab to={routes.addressTokens()}>
           <AccountBalanceWalletIcon />
           <span>Assets</span>
         </FooterTab>
-        <FooterTab to={routes.accountActivity()}>
+        <FooterTab to={routes.addressActivity()}>
           <FormatListBulletedIcon />
           <span>Activity</span>
         </FooterTab>
-      </AccountFooter>
+      </AddressFooter>
     </Container>
   )
 }

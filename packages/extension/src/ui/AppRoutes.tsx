@@ -3,9 +3,9 @@ import { Outlet, Route, Routes } from "react-router-dom"
 import styled from "styled-components"
 
 import { useAppState } from "./app.state"
-import { AccountListScreen } from "./features/accounts/AccountListScreen"
-import { AccountScreen } from "./features/accounts/AccountScreen"
-import { SendTokenScreen } from "./features/accountTokens/SendTokenScreen"
+import { AddressListScreen } from "./features/addresses/AddressListScreen"
+import { AddressScreen } from "./features/addresses/AddressScreen"
+import { SendTokenScreen } from "./features/addressTokens/SendTokenScreen"
 import {
   useActions,
   useActionsSubscription,
@@ -74,15 +74,15 @@ const nonWalletRoutes = (
 const walletRoutes = (
   <>
     <Route
-      path={routes.accountTokens.path}
-      element={<AccountScreen tab="assets" />}
+      path={routes.addressTokens.path}
+      element={<AddressScreen tab="assets" />}
     />
     <Route
-      path={routes.accountActivity.path}
-      element={<AccountScreen tab="activity" />}
+      path={routes.addressActivity.path}
+      element={<AddressScreen tab="activity" />}
     />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
-    <Route path={routes.accounts.path} element={<AccountListScreen />} />
+    <Route path={routes.addresses.path} element={<AddressListScreen />} />
     <Route path={routes.settings.path} element={<SettingsScreen />} />
     <Route path={routes.settingsSeed.path} element={<SeedSettingsScreen />} />
     <Route

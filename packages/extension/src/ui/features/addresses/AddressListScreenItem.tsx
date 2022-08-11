@@ -4,20 +4,20 @@ import { useNavigate } from "react-router-dom"
 import { Address } from "../../../shared/Address"
 import { routes } from "../../routes"
 import { makeClickable } from "../../services/a11y"
-import { connectAccount } from "../../services/backgroundAccounts"
+import { connectAddress } from "../../services/backgroundAddresses"
 import { useAddresses } from "../addresses/addresses.state"
 import {
   getAddressName,
   useAddressMetadata,
 } from "../addresses/addressMetadata.state"
-import { AccountListItem } from "./AccountListItem"
+import { AddressListItem } from "./AddressListItem"
 
-interface IAccountListScreenItem {
+interface IAddressListScreenItem {
   address: Address
   selectedAddress?: Address
 }
 
-export const AccountListScreenItem: FC<IAccountListScreenItem> = ({
+export const AddressListScreenItem: FC<IAddressListScreenItem> = ({
   address,
   selectedAddress,
 }) => {
@@ -27,16 +27,16 @@ export const AccountListScreenItem: FC<IAccountListScreenItem> = ({
   const addressName = getAddressName(address.hash, addressNames)
 
   return (
-    <AccountListItem
+    <AddressListItem
       {...makeClickable(() => {
         useAddresses.setState({
           selectedAddress: address,
         })
-        connectAccount(address.hash)
-        navigate(routes.accountTokens())
+        connectAddress(address.hash)
+        navigate(routes.addressTokens())
       })}
-      accountName={addressName}
-      accountAddress={address.hash}
+      addressName={addressName}
+      address={address.hash}
       focus={selectedAddress?.hash === address.hash}
     />
   )

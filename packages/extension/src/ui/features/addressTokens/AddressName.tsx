@@ -36,11 +36,11 @@ const InputHeader = styled(InputText)`
   }
 `
 
-interface AccountNameProps extends InputHTMLAttributes<HTMLInputElement> {
+interface AddressNameProps extends InputHTMLAttributes<HTMLInputElement> {
   inputRef: RefObject<HTMLInputElement>
 }
 
-export const AccountName: FC<AccountNameProps> = ({
+export const AddressName: FC<AddressNameProps> = ({
   value,
   inputRef,
   ...props
@@ -51,7 +51,7 @@ export const AccountName: FC<AccountNameProps> = ({
   }
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    ;(document.activeElement as any)?.blur()
+      ; (document.activeElement as any)?.blur()
   }
   return (
     <Form onSubmit={handleSubmit} autoComplete="off">

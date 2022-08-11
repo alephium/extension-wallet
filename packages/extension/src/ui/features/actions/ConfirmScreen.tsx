@@ -12,14 +12,14 @@ import {
 import { H2 } from "../../theme/Typography"
 
 const ConfirmScreenWrapper = styled.form<{
-  accountShown: boolean
+  addressShown: boolean
   smallTopPadding: boolean
 }>`
   display: flex;
   flex-direction: column;
   padding: ${({ smallTopPadding }) => (smallTopPadding ? "16px" : "48px")} 32px
     0;
-  ${({ accountShown }) => (accountShown ? `padding-top: 0;` : ``)}
+  ${({ addressShown }) => (addressShown ? `padding-top: 0;` : ``)}
 
   > ${H2} {
     margin: 0 0 40px;
@@ -104,7 +104,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   return (
     <ConfirmScreenWrapper
       smallTopPadding={smallTopPadding}
-      accountShown={Boolean(showHeader && selectedAddress)}
+      addressShown={Boolean(showHeader && selectedAddress)}
       onSubmit={(e) => {
         e.preventDefault()
         return onSubmit?.(e)

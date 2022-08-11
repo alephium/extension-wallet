@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 
-export const AccountFooter = styled.div`
+export const AddressFooter = styled.div`
   position: fixed;
   display: flex;
   bottom: 0;

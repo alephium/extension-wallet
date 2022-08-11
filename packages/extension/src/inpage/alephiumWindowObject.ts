@@ -80,7 +80,7 @@ export const alephiumWindowObject: AlephiumWindowObject = {
   },
   // sign different kinda messages
   on: (event, handleEvent) => {
-    if (event === "accountsChanged") {
+    if (event === "addressesChanged") {
       userEventHandlers.push({
         type: event,
         handler: handleEvent as AccountChangeEventHandler,
@@ -96,7 +96,7 @@ export const alephiumWindowObject: AlephiumWindowObject = {
     }
   },
   off: (event, handleEvent) => {
-    if (event !== "accountsChanged" && event !== "networkChanged") {
+    if (event !== "addressesChanged" && event !== "networkChanged") {
       assertNever(event)
       throw new Error(`Unknwown event: ${event}`)
     }
@@ -112,8 +112,8 @@ export const alephiumWindowObject: AlephiumWindowObject = {
   },
 
   getAccounts: async (): Promise<Account[]> => {
-    sendMessage({ type: "GET_ACCOUNTS" })
-    const addresses = await waitForMessage("GET_ACCOUNTS_RES", 100)
+    sendMessage({ type: "GET_ADDRESSES" })
+    const addresses = await waitForMessage("GET_ADDRESSES_RES", 100)
     return addresses.map((addr) => {
       const group = groupOfAddress(addr.address)
       return {

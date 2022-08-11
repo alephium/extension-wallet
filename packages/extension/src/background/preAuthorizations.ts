@@ -20,6 +20,7 @@ export async function removePreAuthorization(host: string) {
 
 export async function isPreAuthorized(host: string) {
   const approved = await getFromStorage<string[]>(`PREAUTHORIZATION:APPROVED`)
+  console.log("is preauthorized...", approved)
   return (approved || []).includes(host)
 }
 

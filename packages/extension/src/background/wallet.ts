@@ -13,7 +13,6 @@ import { PrivateKeyWallet } from "@alephium/web3/test"
 import { find } from "lodash-es"
 
 import { Network } from "../shared/networks"
-import { BaseWalletAccount, WalletAccount } from "../shared/wallet.model"
 import type { IStorage } from "./storage"
 
 const AlephiumStorage = getStorage()
@@ -29,8 +28,6 @@ interface WalletSession {
 
 export interface WalletStorageProps {
   backup?: string
-  selected?: BaseWalletAccount
-  accounts?: WalletAccount[]
   selectedAddress?: AddressAndKeys
   addresses?: AddressAndKeys[]
   discoveredOnce?: boolean
@@ -45,7 +42,7 @@ export class Wallet {
     private readonly store: IStorage<WalletStorageProps>,
     private readonly getCurrentNetwork: GetCurrentNetwork,
     private readonly onAutoLock?: () => Promise<void>,
-  ) {}
+  ) { }
 
   async getNodeProvider(): Promise<NodeProvider> {
     const currentNetwork = await this.getCurrentNetwork()
@@ -87,8 +84,8 @@ export class Wallet {
     }
   }
 
-  private resetAccounts() {
-    return this.store.setItem("accounts", [])
+  private resetAddresses() {
+    return this.store.setItem("addresses", [])
   }
 
   public async getSeedPhrase(): Promise<string> {
@@ -200,14 +197,24 @@ export class Wallet {
     }
   }
 
-  // get accounts for Alephium, but lets just have one account
   public async getAlephiumSelectedAddresses(): Promise<
     AddressAndKeys | undefined
   > {
     if (!this.session?.seed) {
       return undefined
     } else {
-      return await this.store.getItem("selectedAddress")
+      const selectedAddress = await this.store.getItem("selectedAddress")
+      if (!selectedAddress) {
+        const addresses = await this.store.getItem("addresses")
+        if (addresses && addresses?.length > 0) {
+          await this.store.setItem("selectedAddress", addresses[0])
+          return addresses[0]
+        } else {
+          return undefined
+        }
+      } else {
+        return selectedAddress
+      }
     }
   }
 
@@ -216,7 +223,7 @@ export class Wallet {
   }
 
   public async reset() {
-    await this.resetAccounts()
+    await this.resetAddresses()
     this.session = undefined
   }
 

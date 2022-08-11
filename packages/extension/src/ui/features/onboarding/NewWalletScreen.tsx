@@ -8,7 +8,7 @@ import { Button } from "../../components/Button"
 import { IconBar } from "../../components/IconBar"
 import { InputText } from "../../components/InputText"
 import { routes } from "../../routes"
-import { connectAccount } from "../../services/backgroundAccounts"
+import { connectAddress, getAddresses } from "../../services/backgroundAddresses"
 import { FormError, H2, P } from "../../theme/Typography"
 import { StickyGroup } from "../actions/ConfirmScreen"
 import { deployAddress } from "../addresses/addresses.service"
@@ -46,7 +46,6 @@ export const NewWalletScreen: FC<NewWalletScreenProps> = ({
   overrideSubmitText,
 }) => {
   const navigate = useNavigate()
-  //const { addAccount } = useAccounts()
   const { addAddress } = useAddresses()
   const { control, handleSubmit, formState, watch } = useForm<FieldValues>({
     criteriaMode: "firstError",
@@ -66,9 +65,12 @@ export const NewWalletScreen: FC<NewWalletScreenProps> = ({
     }
 
     try {
-      const newAddress = await deployAddress(password)
-      addAddress(newAddress)
-      connectAccount(newAddress.hash)
+      const addresses = await getAddresses()
+      if (addresses.length === 0) {
+        const newAddress = await deployAddress(password)
+        addAddress(newAddress)
+        connectAddress(newAddress.hash)
+      }
       navigate(await recover())
     } catch (error: any) {
       useAppState.setState({ error })

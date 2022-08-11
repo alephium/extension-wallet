@@ -1,27 +1,27 @@
-import { AccountMessage } from "../shared/messages/AccountMessage"
+import { AddressMessage } from "../shared/messages/AddressMessage"
 import { sendMessageToUi } from "./activeTabs"
 import { HandleMessage, UnhandledMessage } from "./background"
 import { encryptForUi } from "./crypto"
 
-export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
+export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
   msg,
   background: { wallet },
   messagingKeys: { privateKey },
   sendToTabAndUi,
 }) => {
   switch (msg.type) {
-    case "GET_ACCOUNTS": {
+    case "GET_ADDRESSES": {
       return sendToTabAndUi({
-        type: "GET_ACCOUNTS_RES",
+        type: "GET_ADDRESSES_RES",
         data: await wallet.getAlephiumAddresses(),
       })
     }
 
-    case "CONNECT_ACCOUNT": {
+    case "CONNECT_ADDRESS": {
       return await wallet.selectAlephiumAddress(msg.data.address)
     }
 
-    case "NEW_ACCOUNT": {
+    case "NEW_ADDRESS": {
       if (!wallet.isSessionOpen()) {
         throw Error("you need an open session")
       }
@@ -31,7 +31,7 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         const address = await wallet.addAlephiumAddress()
         if (address) {
           return sendToTabAndUi({
-            type: "NEW_ACCOUNT_RES",
+            type: "NEW_ADDRESS_RES",
             data: address,
           })
         } else {
@@ -39,7 +39,7 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         }
       } catch (exception: unknown) {
         return sendToTabAndUi({
-          type: "NEW_ACCOUNT_REJ",
+          type: "NEW_ADDRESS_REJ",
           data: {
             error: "create new address failed",
           },
@@ -47,18 +47,18 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
       }
     }
 
-    case "GET_SELECTED_ACCOUNT": {
+    case "GET_SELECTED_ADDRESS": {
       const selectedAddress = await wallet.getAlephiumSelectedAddresses()
       return sendToTabAndUi({
-        type: "GET_SELECTED_ACCOUNT_RES",
+        type: "GET_SELECTED_ADDRESS_RES",
         data: selectedAddress,
       })
     }
 
-    case "GET_ACCOUNT_BALANCE": {
+    case "GET_ADDRESS_BALANCE": {
       const balance = await wallet.getBalance(msg.data.address)
       return sendToTabAndUi({
-        type: "GET_ACCOUNT_BALANCE_RES",
+        type: "GET_ADDRESS_BALANCE_RES",
         data: balance,
       })
     }

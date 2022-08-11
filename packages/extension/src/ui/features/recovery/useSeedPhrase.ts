@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 
-import { getSeedPhrase } from "../../services/backgroundAccounts"
+import { getSeedPhrase } from "../../services/backgroundAddresses"
 
 export const useSeedPhrase = () => {
   const [seedPhrase, setSeedPhrase] = useState<string>()
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const seedPhrase = await getSeedPhrase()
       setSeedPhrase(seedPhrase)
     })()

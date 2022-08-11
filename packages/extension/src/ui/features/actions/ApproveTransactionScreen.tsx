@@ -60,7 +60,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   }, [payload])
 
   if (!selectedAddress) {
-    return <Navigate to={routes.accounts()} />
+    return <Navigate to={routes.addresses()} />
   }
 
   const addressName = getAddressName(selectedAddress.hash, addressNames)

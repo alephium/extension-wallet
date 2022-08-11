@@ -54,7 +54,7 @@ export const IconBar: FC<IconBarProps> = ({
       <>{childAfter}</>
     ) : close ? (
       <Link
-        to={isString(close) ? close : routes.accountTokens()}
+        to={isString(close) ? close : routes.addressTokens()}
         aria-label="Close"
         style={{ textAlign: "right" }}
       >

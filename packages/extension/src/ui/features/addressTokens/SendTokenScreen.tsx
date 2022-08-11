@@ -136,7 +136,7 @@ export const SendTokenScreen: FC = () => {
     isInputAmountGtBalance
 
   if (!address) {
-    return <Navigate to={routes.accounts()} />
+    return <Navigate to={routes.addresses()} />
   }
 
   return (
@@ -152,7 +152,7 @@ export const SendTokenScreen: FC = () => {
         <StyledForm
           onSubmit={handleSubmit(({ amount, recipient }) => {
             sendAlephiumTransferTransaction(address, recipient, amount)
-            navigate(routes.accountTokens())
+            navigate(routes.addressTokens())
           })}
         >
           <Column gap="12px">

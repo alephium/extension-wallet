@@ -76,7 +76,7 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
                     setSwitcherNetworkId(requestedNetwork.id)
                     navigate(await recover())
                   } else {
-                    navigate(routes.accountTokens())
+                    navigate(routes.addressTokens())
                   }
                 }
               } catch {
