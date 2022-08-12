@@ -50,10 +50,10 @@ export const routes = {
     (address: string) => `/address/delete-confirm/${address}`,
     `/address/delete-confirm/:address`,
   ),
-  sendScreen: route("/send"),
   sendToken: route("/send-token"),
   addresses: route("/addresses"),
   exportPrivateKey: route("/export-private-key"),
+  fundingQrCode: route("/funding/qr-code"),
   token: route(
     (tokenAddress: string) => `/tokens/${tokenAddress}`,
     "/tokens/:tokenAddress",

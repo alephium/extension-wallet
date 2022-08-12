@@ -27,6 +27,7 @@ import { SeedSettingsScreen } from "./features/settings/SeedSettingsScreen"
 import { SettingsScreen } from "./features/settings/SettingsScreen"
 import { routes } from "./routes"
 import { useEntryRoute } from "./useEntryRoute"
+import { FundingQrCodeScreen } from "./features/addressTokens/FundingQrCodeScreen"
 
 export const ScrollBehaviour = styled.div`
   height: 100vh;
@@ -83,6 +84,7 @@ const walletRoutes = (
     />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
     <Route path={routes.addresses.path} element={<AddressListScreen />} />
+    <Route path={routes.fundingQrCode.path} element={<FundingQrCodeScreen />} />
     <Route path={routes.settings.path} element={<SettingsScreen />} />
     <Route path={routes.settingsSeed.path} element={<SeedSettingsScreen />} />
     <Route

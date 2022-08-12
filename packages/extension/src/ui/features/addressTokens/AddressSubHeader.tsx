@@ -4,10 +4,7 @@ import styled from "styled-components"
 
 import { CopyTooltip } from "../../components/CopyTooltip"
 import { ContentCopyIcon } from "../../components/Icons/MuiIcons"
-import {
-    formatTruncatedAddress,
-    normalizeAddress,
-} from "../../services/addresses"
+import { formatTruncatedAddress } from "../../services/addresses"
 import { getBalance } from "../../services/backgroundAddresses"
 import { AddressName } from "./AddressName"
 import { AddressWrapper, Address } from "./Address"
@@ -68,7 +65,7 @@ export const AddressSubHeader: FC<AddressSubHeaderProps> = ({
             </div>
             <Balance>{balance?.balanceHint}</Balance>
             <AddressWrapper style={{ marginBottom: 18 }}>
-                <CopyTooltip copyValue={normalizeAddress(address)} message="Copied!">
+                <CopyTooltip copyValue={address} message="Copied!">
                     <Address>
                         {formatTruncatedAddress(address)}
                         <ContentCopyIcon style={{ fontSize: 12 }} />

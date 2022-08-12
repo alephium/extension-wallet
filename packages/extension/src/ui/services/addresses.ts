@@ -1,20 +1,9 @@
 import * as yup from "yup"
 
-export const normalizeAddress = (address: string) => address
-
 export const formatTruncatedAddress = (address: string) => {
-  const normalized = normalizeAddress(address)
-  const start = normalized.slice(0, 6)
-  const end = normalized.slice(-6)
+  const start = address.slice(0, 6)
+  const end = address.slice(-6)
   return `${start} ... ${end}`
-}
-
-export const formatFullAddress = (address: string) => {
-  const normalized = normalizeAddress(address)
-  const hex = normalized.slice(0, 2)
-  const rest = normalized.slice(2)
-  const parts = rest.match(/.{1,4}/g) || []
-  return `${hex} ${parts.join(" ")}`
 }
 
 export const addressSchema = yup
