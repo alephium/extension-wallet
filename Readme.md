@@ -29,3 +29,8 @@ To setup the repo on your machine just run:
 yarn      # setup dependencies
 yarn dev  # run build process for all packages in watch mode
 ```
+
+## Credits
+
+We have built this project on top of [Argent X](https://github.com/argentlabs/argent-x)'s codebase. We would like to take this
+oppurtunity to thank all the [contributors](https://github.com/argentlabs/argent-x/graphs/contributors) of the Argent X project ❤️
