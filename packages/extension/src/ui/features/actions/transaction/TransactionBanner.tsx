@@ -11,8 +11,9 @@ const Container = styled.div`
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 12px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   display: flex;
-  flex-direction: row;
 `
 
 const IconContainer = styled.div`

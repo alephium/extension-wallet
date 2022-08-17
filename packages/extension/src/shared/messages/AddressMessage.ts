@@ -10,7 +10,7 @@ export type AddressMessage =
   }
   | { type: "NEW_ADDRESS_REJ"; data: { error: string } }
   | { type: "DISCONNECT_ADDRESS" }
-  | { type: "CONNECT_ADDRESS"; data: { address: string } }
+  | { type: "CONNECT_ADDRESS"; data: AddressAndPublicKey }
   | { type: "GET_ADDRESSES"; data?: { showHidden: boolean } }
   | { type: "GET_ADDRESSES_RES"; data: AddressAndPublicKey[] }
   | { type: "GET_SELECTED_ADDRESS" }

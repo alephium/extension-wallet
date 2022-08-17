@@ -45,7 +45,7 @@ declare class IAlephiumWindowObject implements SignerProvider {
     event: WalletEvents["type"],
     handleEvent: WalletEvents["handler"],
   ) => void
-  selectedAddress?: string
+  selectedAccount?: Account
   getAccounts(): Promise<Account[]>
   signTransferTx(params: SignTransferTxParams): Promise<SignTransferTxResult>
   signDeployContractTx(
@@ -61,7 +61,7 @@ declare class IAlephiumWindowObject implements SignerProvider {
 
 interface ConnectedAlephiumWindowObject extends IAlephiumWindowObject {
   isConnected: true
-  selectedAddress: string
+  selectedAccount: Account
   chainId: string
 }
 

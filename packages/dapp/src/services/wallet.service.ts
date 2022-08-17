@@ -19,5 +19,5 @@ export const walletAddress = async (): Promise<string | undefined> => {
   if (!alephium?.isConnected) {
     return
   }
-  return alephium.selectedAddress
+  return alephium.selectedAccount?.address
 }

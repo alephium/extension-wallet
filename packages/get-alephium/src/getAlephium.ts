@@ -130,7 +130,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         id = "disconnected"
         name = "Disconnected"
         icon = ""
-        selectedAddress?: string = undefined
+        selectedAccount?: Account = undefined
         isConnected = false
         /**
          * stores pre-enabled wallet `on` calls' listeners
@@ -269,7 +269,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           wallet: IAlephiumWindowObject | undefined,
         ) => {
           if (!wallet) return
-          this.selectedAddress = wallet.selectedAddress
+          this.selectedAccount = wallet.selectedAccount
           this.isConnected = wallet.isConnected
         }
       })()

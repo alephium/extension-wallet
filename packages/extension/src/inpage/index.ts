@@ -33,15 +33,20 @@ document.addEventListener("readystatechange", () => attachHandler())
 
 window.addEventListener(
   "message",
-  ({ data }: MessageEvent<WindowMessageType>) => {
+  async ({ data }: MessageEvent<WindowMessageType>) => {
     const { alephium } = window
     if (!alephium) {
       return
     }
     if (data.type === "CONNECT_ADDRESS") {
-      const { address } = data.data
-      if (address !== alephium.selectedAddress) {
-        alephium.selectedAddress = address
+      const { address, publicKey, addressIndex } = data.data
+      if (address !== alephium.selectedAccount?.address) {
+        alephium.selectedAccount = {
+          address,
+          publicKey: publicKey,
+          group: addressIndex
+        }
+
         for (const userEvent of userEventHandlers) {
           if (userEvent.type === "addressesChanged") {
             userEvent.handler([address])
@@ -53,7 +58,7 @@ window.addEventListener(
         }
       }
     } else if (data.type === "DISCONNECT_ADDRESS") {
-      alephium.selectedAddress = undefined
+      alephium.selectedAccount = undefined
       alephium.isConnected = false
       for (const userEvent of userEventHandlers) {
         if (userEvent.type === "addressesChanged") {
