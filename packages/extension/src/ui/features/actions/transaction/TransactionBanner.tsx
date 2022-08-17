@@ -7,12 +7,10 @@ const Container = styled.div`
   color: ${({ theme }) => theme.text1};
   font-size: 13px;
   font-weight: 600;
-  line-height: 18px;
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 12px;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+  word-break: break-all;
   display: flex;
 `
 
