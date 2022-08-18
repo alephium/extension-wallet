@@ -43,7 +43,7 @@ export const executeAlephiumTransaction = async (
 
 export const alephiumWindowObject: AlephiumWindowObject = {
   id: "alephium",
-  selectedAddress: undefined,
+  selectedAccount: undefined,
   isConnected: false,
   enable: () =>
     new Promise((resolve) => {
@@ -58,8 +58,12 @@ export const alephiumWindowObject: AlephiumWindowObject = {
           (data.type === "START_SESSION_RES" && data.data)
         ) {
           window.removeEventListener("message", handleMessage)
-          const { address } = data.data
-          alephium.selectedAddress = address
+          const { address, publicKey, addressIndex } = data.data
+          alephium.selectedAccount = {
+            address,
+            publicKey,
+            group: addressIndex
+          }
           alephium.isConnected = true
           resolve([address])
         }

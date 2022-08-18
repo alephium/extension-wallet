@@ -1,10 +1,11 @@
+import { AddressAndPublicKey } from "../../shared/Address"
 import { sendMessage, waitForMessage } from "../../shared/messages"
 import { decryptFromBackground, generateEncryptedSecret } from "./crypto"
 
-export const connectAddress = (address: string) => {
+export const connectAddress = (address: AddressAndPublicKey) => {
   sendMessage({
     type: "CONNECT_ADDRESS",
-    data: { address },
+    data: address,
   })
 }
 

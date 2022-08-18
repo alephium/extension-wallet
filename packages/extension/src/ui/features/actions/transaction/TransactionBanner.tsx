@@ -7,12 +7,11 @@ const Container = styled.div`
   color: ${({ theme }) => theme.text1};
   font-size: 13px;
   font-weight: 600;
-  line-height: 18px;
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 12px;
+  word-break: break-all;
   display: flex;
-  flex-direction: row;
 `
 
 const IconContainer = styled.div`

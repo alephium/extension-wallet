@@ -69,7 +69,11 @@ export const NewWalletScreen: FC<NewWalletScreenProps> = ({
       if (addresses.length === 0) {
         const newAddress = await deployAddress(password)
         addAddress(newAddress)
-        connectAddress(newAddress.hash)
+        connectAddress({
+          address: newAddress.hash,
+          publicKey: newAddress.publicKey,
+          addressIndex: newAddress.group
+        })
       }
       navigate(await recover())
     } catch (error: any) {

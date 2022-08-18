@@ -32,7 +32,11 @@ export const AddressListScreenItem: FC<IAddressListScreenItem> = ({
         useAddresses.setState({
           selectedAddress: address,
         })
-        connectAddress(address.hash)
+        connectAddress({
+          address: address.hash,
+          publicKey: address.publicKey,
+          addressIndex: address.group
+        })
         navigate(routes.addressTokens())
       })}
       addressName={addressName}

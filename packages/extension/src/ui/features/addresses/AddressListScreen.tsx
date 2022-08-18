@@ -57,7 +57,11 @@ export const AddressListScreen: FC = () => {
         try {
             const newAddress = await deployAddress()
             addAddress(newAddress)
-            connectAddress(newAddress.hash)
+            connectAddress({
+                address: newAddress.hash,
+                publicKey: newAddress.publicKey,
+                addressIndex: newAddress.group
+            })
             navigate(await recover())
         } catch (error: any) {
             useAppState.setState({ error: `${error}` })

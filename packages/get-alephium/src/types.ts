@@ -146,7 +146,7 @@ export declare class IAlephiumWindowObject implements SignerProvider {
   name: string
   icon: string
   isConnected: boolean
-  selectedAddress?: string
+  selectedAccount?: Account
   getAccounts(): Promise<Account[]>
   signTransferTx(params: SignTransferTxParams): Promise<SignTransferTxResult>
   signDeployContractTx(params: SignDeployContractTxParams): Promise<SignDeployContractTxResult>
