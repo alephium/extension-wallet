@@ -6,12 +6,12 @@ import {
 import { createAddress } from "../../services/backgroundAddresses"
 import { startSession } from "../../services/backgroundSessions"
 
-export const deployAddress = async (password?: string) => {
+export const deployAddress = async (group?: number, password?: string) => {
   if (password) {
     await startSession(password)
   }
 
-  const result = await createAddress()
+  const result = await createAddress(group)
   if ("error" in result) {
     throw new Error(result.error)
   }

@@ -67,7 +67,7 @@ export const NewWalletScreen: FC<NewWalletScreenProps> = ({
     try {
       const addresses = await getAddresses()
       if (addresses.length === 0) {
-        const newAddress = await deployAddress(password)
+        const newAddress = await deployAddress(undefined, password)
         addAddress(newAddress)
         connectAddress({
           address: newAddress.hash,

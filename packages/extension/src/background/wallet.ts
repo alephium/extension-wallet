@@ -169,7 +169,7 @@ export class Wallet {
     }
   }
 
-  public async addAlephiumAddress(): Promise<AddressAndKeys | undefined> {
+  public async addAlephiumAddress(group?: number): Promise<AddressAndKeys | undefined> {
     if (!this.session?.seed) {
       return undefined
     } else {
@@ -178,12 +178,13 @@ export class Wallet {
       const addresses = await this.store.getItem("addresses")
       let newAddress
       if (addresses) {
+        group = (group || group === 0) ? ~~group : undefined
         const skipIndexes = addresses.map((address) => address.addressIndex)
         newAddress = deriveNewAddressData(
           this.session.seed,
+          group,
           undefined,
-          undefined,
-          skipIndexes,
+          skipIndexes
         )
         await this.store.setItem("addresses", [...addresses, newAddress])
       } else {

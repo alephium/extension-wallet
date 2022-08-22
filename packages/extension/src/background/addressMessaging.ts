@@ -28,7 +28,7 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
 
       //const group = msg.data
       try {
-        const address = await wallet.addAlephiumAddress()
+        const address = await wallet.addAlephiumAddress(msg.data)
         if (address) {
           return sendToTabAndUi({
             type: "NEW_ADDRESS_RES",
@@ -41,7 +41,7 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
         return sendToTabAndUi({
           type: "NEW_ADDRESS_REJ",
           data: {
-            error: "create new address failed",
+            error: `create new address failed, ${exception}`,
           },
         })
       }

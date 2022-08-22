@@ -116,6 +116,8 @@ export const InputText = styled(
     className,
     style,
     inputRef,
+    min,
+    max,
     ...props
   }) => {
     const idRef = useRef(randomString())
@@ -124,6 +126,8 @@ export const InputText = styled(
         <Input
           placeholder={placeholder}
           id={idRef.current}
+          min={min}
+          max={max}
           type={type}
           onChange={onChange}
           value={value}
