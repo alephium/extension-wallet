@@ -2,6 +2,7 @@ import {
   AddressAndKeys,
   deriveNewAddressData,
   getStorage,
+  TOTAL_NUMBER_OF_GROUPS,
   walletGenerate,
   walletImport,
   walletOpen,
@@ -10,7 +11,7 @@ import { Balance } from "@alephium/sdk/api/alephium"
 import { Transaction } from "@alephium/sdk/api/explorer"
 import { ExplorerProvider, NodeProvider } from "@alephium/web3"
 import { PrivateKeyWallet } from "@alephium/web3/test"
-import { find } from "lodash-es"
+import { find, range } from "lodash-es"
 
 import { Network } from "../shared/networks"
 import type { IStorage } from "./storage"
@@ -176,25 +177,39 @@ export class Wallet {
       // do not store at the moment, but use public key and private key to sign
       // store later
       const addresses = await this.store.getItem("addresses")
-      let newAddress
+      group = (group || group === 0) ? ~~group : undefined
+
+      let newAndSelectedAddress
       if (addresses) {
         group = (group || group === 0) ? ~~group : undefined
         const skipIndexes = addresses.map((address) => address.addressIndex)
-        newAddress = deriveNewAddressData(
+        newAndSelectedAddress = deriveNewAddressData(
           this.session.seed,
           group,
           undefined,
           skipIndexes
         )
-        await this.store.setItem("addresses", [...addresses, newAddress])
+        await this.store.setItem("addresses", [...addresses, newAndSelectedAddress])
       } else {
-        newAddress = deriveNewAddressData(this.session.seed, undefined, 0)
-        await this.store.setItem("addresses", [newAddress])
+        if (group === undefined) {
+          const seed = this.session.seed
+          const skipIndexes: number[] = []
+          const newAddresses = range(TOTAL_NUMBER_OF_GROUPS).map(group => {
+            const address = deriveNewAddressData(seed, group, undefined, skipIndexes)
+            skipIndexes.push(address.addressIndex)
+            return address
+          })
+          newAndSelectedAddress = newAddresses[0]
+          await this.store.setItem("addresses", newAddresses)
+        } else {
+          newAndSelectedAddress = deriveNewAddressData(this.session.seed, group, 0)
+          await this.store.setItem("addresses", [newAndSelectedAddress])
+        }
       }
 
-      await this.store.setItem("selectedAddress", newAddress)
+      await this.store.setItem("selectedAddress", newAndSelectedAddress)
 
-      return newAddress
+      return newAndSelectedAddress
     }
   }
 
