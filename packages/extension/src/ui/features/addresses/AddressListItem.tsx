@@ -6,6 +6,7 @@ import { formatTruncatedAddress } from "../../services/addresses"
 export interface IAddressListItem {
     addressName: string
     address: string
+    group: number
     focus?: boolean
     children?: ReactNode
     // ...rest
@@ -59,9 +60,16 @@ const Address = styled.div`
   font-size: 13px;
 `
 
+const Group = styled.span`
+  font-weight: 300;
+  font-size: 10px;
+  margin-top: 5px;
+`
+
 export const AddressListItem: FC<IAddressListItem> = ({
     addressName,
     address,
+    group,
     focus,
     children,
     ...rest
@@ -70,7 +78,7 @@ export const AddressListItem: FC<IAddressListItem> = ({
         <AddressListItemWrapper focus={focus} {...rest}>
             <AddressRow>
                 <AddressColumn>
-                    <AddressName>{addressName}</AddressName>
+                    <AddressName>{addressName} <Group>Group {group}</Group></AddressName>
                     <Address>
                         {formatTruncatedAddress(address)}
                     </Address>

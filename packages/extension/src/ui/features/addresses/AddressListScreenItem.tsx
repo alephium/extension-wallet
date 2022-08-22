@@ -41,6 +41,7 @@ export const AddressListScreenItem: FC<IAddressListScreenItem> = ({
       })}
       addressName={addressName}
       address={address.hash}
+      group={address.group}
       focus={selectedAddress?.hash === address.hash}
     />
   )

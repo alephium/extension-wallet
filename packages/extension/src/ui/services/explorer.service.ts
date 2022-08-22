@@ -1,5 +1,5 @@
 export const getExplorerTransactionLink = (hash: string): string => {
-  const explorerUrl = "http://localhost:3001"
+  const explorerUrl = "https://alephium.softfork.se/"
   return `${explorerUrl}/#/transactions/${hash}`
 }
 

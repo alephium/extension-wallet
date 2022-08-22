@@ -23,14 +23,21 @@ const Balance = styled.div`
   margin-bottom: 8px;
 `
 
+const Group = styled.div`
+  text-align: center;
+  font-weight: 800;
+`
+
 interface AddressSubHeaderProps {
     address: string
+    group: number
     addressName?: string
     onChangeName: (name: string) => void
 }
 
 export const AddressSubHeader: FC<AddressSubHeaderProps> = ({
     address,
+    group,
     onChangeName,
     addressName,
 }) => {
@@ -71,6 +78,7 @@ export const AddressSubHeader: FC<AddressSubHeaderProps> = ({
                         <ContentCopyIcon style={{ fontSize: 12 }} />
                     </Address>
                 </CopyTooltip>
+                <Group>Group {group}</Group>
             </AddressWrapper>
         </>
     )

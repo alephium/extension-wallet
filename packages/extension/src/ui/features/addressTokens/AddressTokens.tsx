@@ -1,5 +1,4 @@
 import { FC } from "react"
-import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
 import { Address } from "../../../shared/Address"
@@ -21,7 +20,6 @@ interface AddressTokensProps {
 }
 
 export const AddressTokens: FC<AddressTokensProps> = ({ address }) => {
-  const navigate = useNavigate()
   const { addressNames, setAddressName } = useAddressMetadata()
   const addressName = getAddressName(address.hash, addressNames)
 
@@ -29,6 +27,7 @@ export const AddressTokens: FC<AddressTokensProps> = ({ address }) => {
     <Container data-testid="address-tokens">
       <AddressSubHeader
         address={address.hash}
+        group={address.group}
         addressName={addressName}
         onChangeName={(name) => setAddressName(address.hash, name)}
       />

@@ -1,6 +1,6 @@
 {
   "name": "@h0ngcha0/get-alephium",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "dist/",
   "browser": {
     "crypto": false

@@ -13,6 +13,13 @@ export type NetworkStatus = "ok" | "degraded" | "error" | "unknown"
 
 export const defaultNetworks: Network[] = [
   {
+    id: "softfork",
+    nodeUrl: "https://alephium-dev.softfork.se",
+    explorerApiUrl: "https://alephium-dev-explorer-api.softfork.se",
+    explorerUrl: "https://alephium-dev-explorer.softfork.se",
+    name: "Softfork",
+  },
+  {
     id: "localhost",
     nodeUrl: "http://127.0.0.1:22973",
     explorerApiUrl: "http://localhost:9090",
