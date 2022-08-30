@@ -28,6 +28,11 @@ export const setCurrentNetwork = async (networkId: string) => {
   return waitForMessage("SET_CURRENT_NETWORK_RES")
 }
 
+export const getNetworkStatuses = async () => {
+  sendMessage({ type: "GET_NETWORK_STATUSES" })
+  return waitForMessage("GET_NETWORK_STATUSES_RES")
+}
+
 export const getCurrentNetwork = async () => {
   sendMessage({ type: "GET_CURRENT_NETWORK" })
   return waitForMessage("GET_CURRENT_NETWORK_RES")

@@ -60,7 +60,7 @@ window.addEventListener(
           userEvent.handler([])
         }
       }
-    } else if (data.type === "SET_CURRENT_NETWORK") {
+    } else if (data.type === "SET_CURRENT_NETWORK_RES") {
       const { networkId } = data.data
 
       if (networkId !== alephium.currentNetwork) {

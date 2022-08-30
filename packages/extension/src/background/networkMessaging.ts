@@ -1,7 +1,7 @@
 import { NetworkMessage } from "../shared/messages/NetworkMessage"
 import { UnhandledMessage } from "./background"
 import { HandleMessage } from "./background"
-import { getCurrentNetwork, getNetworkById, hasNetwork } from "./customNetworks"
+import { getCurrentNetwork, getNetworkById, getNetworkStatuses, hasNetwork } from "./customNetworks"
 import {
   addNetworks,
   getNetworks,
@@ -49,9 +49,18 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
     }
 
     case "SET_CURRENT_NETWORK": {
-      await setCurrentNetwork(msg.data.networkId)
+      const result = await setCurrentNetwork(msg.data.networkId)
       return sendToTabAndUi({
         type: "SET_CURRENT_NETWORK_RES",
+        data: result
+      })
+    }
+
+    case "GET_NETWORK_STATUSES": {
+      const result = await getNetworkStatuses()
+      return sendToTabAndUi({
+        type: "GET_NETWORK_STATUSES_RES",
+        data: result
       })
     }
 

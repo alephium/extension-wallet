@@ -9,7 +9,10 @@ export interface Network {
   readonly?: boolean
 }
 
-export type NetworkStatus = "ok" | "degraded" | "error" | "unknown"
+export interface NetworkStatus {
+  id: Network["id"]
+  healthy: boolean
+}
 
 export const defaultNetworks: Network[] = [
   {

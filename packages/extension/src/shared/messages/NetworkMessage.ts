@@ -8,12 +8,13 @@ export type NetworkMessage =
   | { type: "ADD_CUSTOM_NETWORKS_RES"; data: Network[] }
   | { type: "REMOVE_CUSTOM_NETWORKS"; data: Network["id"][] }
   | { type: "REMOVE_CUSTOM_NETWORKS_RES"; data: Network[] }
+  | { type: "GET_NETWORK_STATUSES" }
   | {
-      type: "GET_NETWORK_STATUSES_RES"
-      data: Partial<Record<Network["id"], NetworkStatus>>
-    }
+    type: "GET_NETWORK_STATUSES_RES"
+    data: NetworkStatus[]
+  }
   | { type: "SET_CURRENT_NETWORK"; data: { networkId: string } }
-  | { type: "SET_CURRENT_NETWORK_RES" }
+  | { type: "SET_CURRENT_NETWORK_RES"; data: { networkId: string } }
   | { type: "GET_CURRENT_NETWORK" }
   | { type: "GET_CURRENT_NETWORK_RES"; data: { networkId: string } }
   | { type: "GET_CUSTOM_NETWORKS_RES"; data: Network[] }
@@ -25,15 +26,15 @@ export type NetworkMessage =
 
   // - used by dapps to request switching of already added custom network
   | {
-      type: "REQUEST_SWITCH_CUSTOM_NETWORK"
-      data: { id: Network["id"] }
-    }
+    type: "REQUEST_SWITCH_CUSTOM_NETWORK"
+    data: { id: Network["id"] }
+  }
   | { type: "REQUEST_SWITCH_CUSTOM_NETWORK_RES"; data: { actionHash?: string } }
   | {
-      type: "REJECT_REQUEST_SWITCH_CUSTOM_NETWORK"
-      data: { actionHash: string }
-    }
+    type: "REJECT_REQUEST_SWITCH_CUSTOM_NETWORK"
+    data: { actionHash: string }
+  }
   | {
-      type: "APPROVE_REQUEST_SWITCH_CUSTOM_NETWORK"
-      data: { actionHash: string }
-    }
+    type: "APPROVE_REQUEST_SWITCH_CUSTOM_NETWORK"
+    data: { actionHash: string }
+  }

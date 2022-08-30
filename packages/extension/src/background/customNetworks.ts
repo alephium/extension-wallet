@@ -1,8 +1,10 @@
+import { ExplorerProvider, NodeProvider } from "@alephium/web3"
 import {
   Network,
   NetworkSchema,
   defaultNetwork,
   defaultNetworks,
+  NetworkStatus,
 } from "../shared/networks"
 import { Storage } from "./storage"
 
@@ -44,11 +46,36 @@ export const getNetwork = async (): Promise<Network> => {
   return allNetworks.find(({ id }) => id === currentNetworkId) || defaultNetwork
 }
 
-export const setCurrentNetwork = async (networkId: string): Promise<void> => {
+export const setCurrentNetwork = async (networkId: string): Promise<{ networkId: string }> => {
   const allNetworks = await getNetworks()
-  const network =
-    allNetworks.find(({ id }) => id === networkId) || defaultNetwork
+  const network = allNetworks.find(({ id }) => id === networkId) || defaultNetwork
+
   networksStore.setItem("currentNetwork", network)
+  return { networkId: network.id }
+}
+
+export const getNetworkStatuses = async (): Promise<NetworkStatus[]> => {
+  const allNetworks = await getNetworks()
+  return await Promise.all(allNetworks.map((network) => {
+    return isNetworkHealthy(network).then((healthy) => {
+      return { id: network.id, healthy }
+    })
+  }))
+}
+
+export const isNetworkHealthy = async (network: Network): Promise<boolean> => {
+  const nodeProvider = new NodeProvider(network.nodeUrl)
+  const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+
+  try {
+    const nodeReleaseVersion = (await nodeProvider.infos.getInfosVersion()).version
+    const explorerReleaseVersion = (await explorerProvider.infos.getInfos()).releaseVersion
+
+    return !!nodeReleaseVersion && !!explorerReleaseVersion
+  } catch (exception) {
+    console.debug("Exception when checking network healthy", exception)
+    return false
+  }
 }
 
 export const getCurrentNetwork = async (): Promise<string> => {

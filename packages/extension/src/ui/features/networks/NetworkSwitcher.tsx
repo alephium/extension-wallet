@@ -1,9 +1,10 @@
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styled, { css } from "styled-components"
 
-import { getNetwork } from "../../../shared/networks"
-import { NetworkStatusIndicator } from "../../components/StatusIndicator"
+import { getNetwork, NetworkStatus } from "../../../shared/networks"
+import { NetworkStatusIndicator, StatusIndicatorColor } from "../../components/StatusIndicator"
+import { getNetworkStatuses } from "../../services/backgroundNetworks"
 import { recover } from "../recovery/recovery.service"
 import { useNetworkState } from "./networks.state"
 import { useNetworks } from "./useNetworks"
@@ -104,12 +105,34 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
   const otherNetworks = allNetworks.filter(
     (network) => network !== currentNetwork,
   )
+  const [networkStatuses, setNetworkStatuses] = useState<NetworkStatus[]>([])
+
+  const showHealthIndicator = (networkId: string, statuses: NetworkStatus[]) => {
+    const result = statuses.find((status) => status.id === networkId)?.healthy
+    let color: StatusIndicatorColor = "green"
+    if (result === true) {
+      color = "green"
+    } else if (result === false) {
+      color = "red"
+    }
+
+    return (<NetworkStatusIndicator color={color} />)
+  }
+
+  useEffect(() => {
+    getNetworkStatuses().then((data) => {
+      setNetworkStatuses(data)
+    })
+  }, [])
 
   return (
     <NetworkSwitcherWrapper disabled={disabled}>
       <Network selected role="button" aria-label="Selected network">
         <NetworkName>{currentNetwork.name}</NetworkName>
-        <NetworkStatusIndicator color={"green"} />
+        {
+          showHealthIndicator(currentNetwork.id, networkStatuses)
+        }
+
       </Network>
       <NetworkList>
         {otherNetworks.map(({ id, name }) => (
@@ -121,7 +144,9 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
             }}
           >
             <NetworkName>{name}</NetworkName>
-            <NetworkStatusIndicator color={"green"} />
+            {
+              showHealthIndicator(id, networkStatuses)
+            }
           </Network>
         ))}
       </NetworkList>
