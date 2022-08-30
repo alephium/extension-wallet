@@ -3,7 +3,7 @@ import browser from "webextension-polyfill"
 const NOTIFICATION_WIDTH = 360
 const NOTIFICATION_HEIGHT = 600 + 28 // +28 for the title bar
 
-let openUiPending: Promise<browser.windows.Window> | undefined
+let openUiPending: Promise<browser.windows.Window | undefined> | undefined
 
 export async function openUi() {
   if (!openUiPending) {
@@ -15,13 +15,18 @@ export async function openUi() {
   return openUiPending
 }
 
-async function openPopup() {
+async function openPopup(): Promise<browser.windows.Window | undefined> {
+  const [openedExtension] = browser.extension.getViews({ type: "popup" })
+  if (openedExtension) {
+    return
+  }
+
   const [existingPopup] = await browser.tabs.query({
     url: [browser.runtime.getURL("/*")],
   })
 
   if (existingPopup && existingPopup.windowId) {
-    return browser.windows.update(existingPopup.windowId, { focused: true })
+    return await browser.windows.update(existingPopup.windowId, { focused: true })
   }
 
   let left = 0
