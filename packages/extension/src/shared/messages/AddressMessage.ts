@@ -16,7 +16,7 @@ export type AddressMessage =
   | { type: "GET_SELECTED_ADDRESS" }
   | {
     type: "GET_SELECTED_ADDRESS_RES"
-    data: AddressAndPublicKey | undefined
+    data?: AddressAndPublicKey
   }
   | { type: "GET_ADDRESS_BALANCE"; data: { address: string } }
   | {

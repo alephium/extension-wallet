@@ -1,4 +1,3 @@
-import { assertNever } from "./../ui/services/assertNever"
 import { WindowMessageType } from "../shared/messages"
 import { alephiumWindowObject, userEventHandlers } from "./alephiumWindowObject"
 
@@ -50,10 +49,6 @@ window.addEventListener(
         for (const userEvent of userEventHandlers) {
           if (userEvent.type === "addressesChanged") {
             userEvent.handler([address])
-          } else if (userEvent.type === "networkChanged") {
-            console.log("network changed")
-          } else {
-            assertNever(userEvent)
           }
         }
       }
@@ -63,10 +58,18 @@ window.addEventListener(
       for (const userEvent of userEventHandlers) {
         if (userEvent.type === "addressesChanged") {
           userEvent.handler([])
-        } else if (userEvent.type === "networkChanged") {
-          userEvent.handler(undefined)
-        } else {
-          assertNever(userEvent)
+        }
+      }
+    } else if (data.type === "SET_CURRENT_NETWORK") {
+      const { networkId } = data.data
+
+      if (networkId !== alephium.currentNetwork) {
+        alephium.currentNetwork = networkId
+
+        for (const userEvent of userEventHandlers) {
+          if (userEvent.type === "networkChanged") {
+            userEvent.handler(networkId)
+          }
         }
       }
     }

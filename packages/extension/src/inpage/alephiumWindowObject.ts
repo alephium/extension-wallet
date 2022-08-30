@@ -25,6 +25,7 @@ import {
 import { sendMessage, waitForMessage } from "./messageActions"
 import { groupOfAddress } from "@alephium/sdk"
 import { TransactionPayload, TransactionResult } from "../shared/transactions"
+import { defaultNetworks } from "../shared/networks"
 
 export const userEventHandlers: WalletEvents[] = []
 
@@ -44,6 +45,7 @@ export const executeAlephiumTransaction = async (
 export const alephiumWindowObject: AlephiumWindowObject = {
   id: "alephium",
   selectedAccount: undefined,
+  currentNetwork: defaultNetworks[0].id,
   isConnected: false,
   enable: () =>
     new Promise((resolve) => {

@@ -8,6 +8,7 @@ import { formatTruncatedAddress } from "../../services/addresses"
 import { getBalance } from "../../services/backgroundAddresses"
 import { AddressName } from "./AddressName"
 import { AddressWrapper, Address } from "./Address"
+import { useNetworkState } from "../networks/networks.state"
 
 const Header = styled.div`
   display: flex;
@@ -29,57 +30,58 @@ const Group = styled.div`
 `
 
 interface AddressSubHeaderProps {
-    address: string
-    group: number
-    addressName?: string
-    onChangeName: (name: string) => void
+  address: string
+  group: number
+  addressName?: string
+  onChangeName: (name: string) => void
 }
 
 export const AddressSubHeader: FC<AddressSubHeaderProps> = ({
-    address,
-    group,
-    onChangeName,
-    addressName,
+  address,
+  group,
+  onChangeName,
+  addressName,
 }) => {
-    const inputRef = useRef<HTMLInputElement>(null)
-    const [balance, setBalance] = useState<Balance | undefined>(undefined)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [balance, setBalance] = useState<Balance | undefined>(undefined)
+  const { switcherNetworkId } = useNetworkState()
 
-    useEffect(() => {
-        getBalance(address).then((balance) => {
-            setBalance(balance)
-        })
-    }, [address])
+  useEffect(() => {
+    getBalance(address).then((balance) => {
+      setBalance(balance)
+    })
+  }, [address, switcherNetworkId])
 
-    return (
-        <>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-                <div
-                    style={{
-                        alignSelf: "center",
-                        width: 250,
-                    }}
-                >
-                    <Header>
-                        <AddressName
-                            value={addressName}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                onChangeName(e.target.value)
-                            }
-                            inputRef={inputRef}
-                        />
-                    </Header>
-                </div>
-            </div>
-            <Balance>{balance?.balanceHint}</Balance>
-            <AddressWrapper style={{ marginBottom: 18 }}>
-                <CopyTooltip copyValue={address} message="Copied!">
-                    <Address>
-                        {formatTruncatedAddress(address)}
-                        <ContentCopyIcon style={{ fontSize: 12 }} />
-                    </Address>
-                </CopyTooltip>
-                <Group>Group {group}</Group>
-            </AddressWrapper>
-        </>
-    )
+  return (
+    <>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            alignSelf: "center",
+            width: 250,
+          }}
+        >
+          <Header>
+            <AddressName
+              value={addressName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChangeName(e.target.value)
+              }
+              inputRef={inputRef}
+            />
+          </Header>
+        </div>
+      </div>
+      <Balance>{balance?.balanceHint}</Balance>
+      <AddressWrapper style={{ marginBottom: 18 }}>
+        <CopyTooltip copyValue={address} message="Copied!">
+          <Address>
+            {formatTruncatedAddress(address)}
+            <ContentCopyIcon style={{ fontSize: 12 }} />
+          </Address>
+        </CopyTooltip>
+        <Group>Group {group}</Group>
+      </AddressWrapper>
+    </>
+  )
 }
