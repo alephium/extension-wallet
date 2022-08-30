@@ -57,11 +57,15 @@ const AddContainer = styled.div`
 export const AddressListScreen: FC = () => {
   const navigate = useNavigate()
   const { addresses, selectedAddress, addAddress } = useAddresses()
-  const [group, setGroup] = useState<any>(0)
+  const [group, setGroup] = useState<any>(undefined)
 
   const addressesList = Object.values(addresses)
 
   const isValidGroup = (group: any) => {
+    if (!group) {
+      return true
+    }
+
     const groupInt = parseInt(group)
     return !isNaN(groupInt) && (group >= 0 || group <= 3)
   }
