@@ -8,29 +8,12 @@ import { ViewListIcon } from "../../components/Icons/MuiIcons"
 import { routes } from "../../routes"
 import { useSelectedAddress } from "../addresses/addresses.state"
 import { NetworkSwitcher } from "../networks/NetworkSwitcher"
-import { AddressFooter, FooterTab } from "./AddressFooter"
+import {
+  AddressFooter,
+  AddressFooterContainer,
+  FooterTab,
+} from "./AddressFooter"
 import { AddressHeader } from "./AddressHeader"
-
-export const Container = styled.div<{
-  header?: boolean
-  footer?: boolean
-}>`
-  ${({ header = false }) =>
-    header &&
-    css`
-      padding-top: 68px;
-    `}
-  ${({ footer = false }) =>
-    footer &&
-    css`
-      padding-bottom: 64px;
-    `}
-
-  ${Header} > a {
-    width: 36px;
-    height: 36px;
-  }
-`
 
 interface AddressScreenContentProps {
   children?: ReactNode
@@ -62,16 +45,39 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({
 
       {children}
 
-      <AddressFooter>
-        <FooterTab to={routes.addressTokens()}>
-          <LayoutTemplate />
-          <span>Overview</span>
-        </FooterTab>
-        <FooterTab to={routes.addressActivity()}>
-          <ArrowUpDown />
-          <span>Transfers</span>
-        </FooterTab>
-      </AddressFooter>
+      <AddressFooterContainer>
+        <AddressFooter>
+          <FooterTab to={routes.addressTokens()}>
+            <LayoutTemplate />
+            <span>Overview</span>
+          </FooterTab>
+          <FooterTab to={routes.addressActivity()}>
+            <ArrowUpDown />
+            <span>Transfers</span>
+          </FooterTab>
+        </AddressFooter>
+      </AddressFooterContainer>
     </Container>
   )
 }
+
+export const Container = styled.div<{
+  header?: boolean
+  footer?: boolean
+}>`
+  ${({ header = false }) =>
+    header &&
+    css`
+      padding-top: 68px;
+    `}
+  ${({ footer = false }) =>
+    footer &&
+    css`
+      padding-bottom: 64px;
+    `}
+
+  ${Header} > a {
+    width: 36px;
+    height: 36px;
+  }
+`

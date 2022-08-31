@@ -15,9 +15,9 @@ export const colors = {
   white,
   black,
 
-  bg1: "#161616",
-  bg2: "#333332",
-  bg3: "#474747",
+  bg1: "#141417",
+  bg2: "#1B1B1f",
+  bg3: "#27272C",
   bg4: "#5f5e5c",
   bg5: "#fafafa",
 
