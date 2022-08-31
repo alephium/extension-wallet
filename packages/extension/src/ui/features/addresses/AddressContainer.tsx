@@ -1,13 +1,10 @@
+import { ArrowUpDown, LayoutTemplate } from "lucide-react"
 import { FC, ReactNode } from "react"
 import { Link } from "react-router-dom"
 import styled, { css } from "styled-components"
 
 import { Header } from "../../components/Header"
-import {
-  AccountBalanceWalletIcon,
-  FormatListBulletedIcon,
-  ViewListIcon,
-} from "../../components/Icons/MuiIcons"
+import { ViewListIcon } from "../../components/Icons/MuiIcons"
 import { routes } from "../../routes"
 import { useSelectedAddress } from "../addresses/addresses.state"
 import { NetworkSwitcher } from "../networks/NetworkSwitcher"
@@ -67,12 +64,12 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({
 
       <AddressFooter>
         <FooterTab to={routes.addressTokens()}>
-          <AccountBalanceWalletIcon />
-          <span>Assets</span>
+          <LayoutTemplate />
+          <span>Overview</span>
         </FooterTab>
         <FooterTab to={routes.addressActivity()}>
-          <FormatListBulletedIcon />
-          <span>Activity</span>
+          <ArrowUpDown />
+          <span>Transfers</span>
         </FooterTab>
       </AddressFooter>
     </Container>
