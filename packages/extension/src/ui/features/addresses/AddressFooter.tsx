@@ -1,3 +1,4 @@
+import { colord } from "colord"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 
@@ -16,7 +17,7 @@ export const AddressFooter = styled.div`
   border-radius: 9px;
   padding: 5px;
   gap: 5px;
-  background: ${({ theme }) => theme.bg3};
+  background: ${({ theme }) => colord(theme.bg4).alpha(0.4).toRgbString()};
   box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
 

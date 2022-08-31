@@ -6,8 +6,8 @@ import styled, { css } from "styled-components"
 import { Header } from "../../components/Header"
 import { ViewListIcon } from "../../components/Icons/MuiIcons"
 import { routes } from "../../routes"
-import { useSelectedAddress } from "../addresses/addresses.state"
 import { NetworkSwitcher } from "../networks/NetworkSwitcher"
+import { useSelectedAddress } from "./addresses.state"
 import {
   AddressFooter,
   AddressFooterContainer,
