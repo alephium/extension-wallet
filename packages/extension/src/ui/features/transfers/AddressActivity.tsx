@@ -7,6 +7,7 @@ import { formatDateTime } from "../../services/dates"
 import { openExplorerTransaction } from "../../services/explorer.service"
 import { P } from "../../theme/Typography"
 import { TransactionItem, TransactionsWrapper } from "./TransactionItem"
+import { TransferButtons } from "./TransferButtons"
 import { DailyActivity, getAlephiumActivity } from "./useActivity"
 
 interface AddressActivityProps {
@@ -53,8 +54,9 @@ const Activity: FC<AddressActivityProps> = ({ address }) => {
 
 export const AddressActivity: FC<AddressActivityProps> = ({ address }) => (
   <Container>
-    <Header>Activity</Header>
+    <Header>Transfers</Header>
     <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>
+      <TransferButtons />
       <Activity address={address} />
     </Suspense>
   </Container>

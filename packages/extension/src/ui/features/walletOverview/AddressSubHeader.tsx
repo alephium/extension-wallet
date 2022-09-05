@@ -1,14 +1,14 @@
-import { Balance } from "@alephium/sdk/api/alephium"
-import { FC, useEffect, useRef, useState } from "react"
-import styled from "styled-components"
+import { Balance } from '@alephium/sdk/api/alephium'
+import { FC, useEffect, useRef, useState } from 'react'
+import styled from 'styled-components'
 
-import { CopyTooltip } from "../../components/CopyTooltip"
-import { ContentCopyIcon } from "../../components/Icons/MuiIcons"
-import { formatTruncatedAddress } from "../../services/addresses"
-import { getBalance } from "../../services/backgroundAddresses"
-import { AddressName } from "./AddressName"
-import { AddressWrapper, Address } from "./Address"
-import { useNetworkState } from "../networks/networks.state"
+import { CopyTooltip } from '../../components/CopyTooltip'
+import { ContentCopyIcon } from '../../components/Icons/MuiIcons'
+import { formatTruncatedAddress } from '../../services/addresses'
+import { getBalance } from '../../services/backgroundAddresses'
+import { useNetworkState } from '../networks/networks.state'
+import { Address, AddressWrapper } from './Address'
+import { AddressName } from './AddressName'
 
 const Header = styled.div`
   display: flex;
@@ -36,12 +36,7 @@ interface AddressSubHeaderProps {
   onChangeName: (name: string) => void
 }
 
-export const AddressSubHeader: FC<AddressSubHeaderProps> = ({
-  address,
-  group,
-  onChangeName,
-  addressName,
-}) => {
+export const AddressSubHeader: FC<AddressSubHeaderProps> = ({ address, group, onChangeName, addressName }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [balance, setBalance] = useState<Balance | undefined>(undefined)
   const { switcherNetworkId } = useNetworkState()
@@ -54,19 +49,17 @@ export const AddressSubHeader: FC<AddressSubHeaderProps> = ({
 
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div
           style={{
-            alignSelf: "center",
-            width: 250,
+            alignSelf: 'center',
+            width: 250
           }}
         >
           <Header>
             <AddressName
               value={addressName}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                onChangeName(e.target.value)
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeName(e.target.value)}
               inputRef={inputRef}
             />
           </Header>

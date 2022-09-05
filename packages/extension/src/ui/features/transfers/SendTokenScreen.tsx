@@ -1,24 +1,24 @@
-import { convertAlphToSet } from "@alephium/sdk"
-import { Balance } from "@alephium/sdk/api/alephium"
-import { FC, useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { Navigate, useNavigate } from "react-router-dom"
-import styled from "styled-components"
-import { Schema, object } from "yup"
+import { convertAlphToSet } from '@alephium/sdk'
+import { Balance } from '@alephium/sdk/api/alephium'
+import { FC, useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { Navigate, useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
+import { Schema, object } from 'yup'
 
-import { inputAmountSchema } from "../../../shared/token/amount"
-import { Button } from "../../components/Button"
-import Column, { ColumnCenter } from "../../components/Column"
-import { IconBar } from "../../components/IconBar"
-import { StyledControlledInput } from "../../components/InputText"
-import { routes } from "../../routes"
-import { addressSchema } from "../../services/addresses"
-import { getBalance } from "../../services/backgroundAddresses"
-import { sendAlephiumTransferTransaction } from "../../services/transactions"
-import { H3 } from "../../theme/Typography"
-import { useSelectedAddress } from "../addresses/addresses.state"
-import { useYupValidationResolver } from "../settings/useYupValidationResolver"
-import { TokenIcon } from "./TokenIcon"
+import { inputAmountSchema } from '../../../shared/token/amount'
+import { Button } from '../../components/Button'
+import Column, { ColumnCenter } from '../../components/Column'
+import { IconBar } from '../../components/IconBar'
+import { StyledControlledInput } from '../../components/InputText'
+import { routes } from '../../routes'
+import { addressSchema } from '../../services/addresses'
+import { getBalance } from '../../services/backgroundAddresses'
+import { sendAlephiumTransferTransaction } from '../../services/transactions'
+import { H3 } from '../../theme/Typography'
+import { useSelectedAddress } from '../addresses/addresses.state'
+import { useYupValidationResolver } from '../settings/useYupValidationResolver'
+import { TokenIcon } from '../walletOverview/TokenIcon'
 
 export const BalanceText = styled.div`
   font-weight: 600;
@@ -83,7 +83,7 @@ export interface SendInput {
 
 const SendSchema: Schema<SendInput> = object().required().shape({
   recipient: addressSchema,
-  amount: inputAmountSchema,
+  amount: inputAmountSchema
 })
 
 export const SendTokenScreen: FC = () => {
@@ -91,22 +91,21 @@ export const SendTokenScreen: FC = () => {
   const resolver = useYupValidationResolver(SendSchema)
 
   const address = useSelectedAddress()?.hash
-  const name = "Alephium"
-  const symbol = "ALPH"
-  const image =
-    "https://raw.githubusercontent.com/alephium/alephium-brand-guide/master/logos/light/Logo-Icon.png"
+  const name = 'Alephium'
+  const symbol = 'ALPH'
+  const image = 'https://raw.githubusercontent.com/alephium/alephium-brand-guide/master/logos/light/Logo-Icon.png'
 
   const {
     handleSubmit,
     formState: { errors, isDirty, isSubmitting, submitCount },
     control,
-    watch,
+    watch
   } = useForm<SendInput>({
     defaultValues: {
-      recipient: "",
-      amount: "",
+      recipient: '',
+      amount: ''
     },
-    resolver,
+    resolver
   })
 
   const [balance, setBalance] = useState<Balance | undefined>(undefined)
@@ -126,21 +125,16 @@ export const SendTokenScreen: FC = () => {
 
   // TODO: Take fee into consideration
   const isInputAmountGtBalance =
-    (inputAmount ? convertAlphToSet(inputAmount) : 0) >=
-    (balance ? BigInt(balance.balance) : 0)
+    (inputAmount ? convertAlphToSet(inputAmount) : 0) >= (balance ? BigInt(balance.balance) : 0)
 
-  const disableSubmit =
-    !isDirty ||
-    isSubmitting ||
-    (submitCount > 0 && !isDirty) ||
-    isInputAmountGtBalance
+  const disableSubmit = !isDirty || isSubmitting || (submitCount > 0 && !isDirty) || isInputAmountGtBalance
 
   if (!address) {
-    return <Navigate to={routes.addresses()} />
+    return <Navigate to={routes.walletAddresses()} />
   }
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: 'relative' }}>
       <StyledIconBar back>
         <ColumnCenter>
           <H3>Send {symbol}</H3>
@@ -165,7 +159,7 @@ export const SendTokenScreen: FC = () => {
                 name="amount"
                 type="text"
                 onlyNumeric
-                style={{ padding: "17px 16px 17px 57px" }}
+                style={{ padding: '17px 16px 17px 57px' }}
               >
                 <InputGroupBefore>
                   <TokenIcon name={name} url={image} size={32} />
@@ -174,9 +168,7 @@ export const SendTokenScreen: FC = () => {
                   <InputTokenSymbol>{symbol}</InputTokenSymbol>
                 </InputGroupAfter>
               </StyledControlledInput>
-              {inputAmount && isInputAmountGtBalance && (
-                <FormError>Insufficient balance</FormError>
-              )}
+              {inputAmount && isInputAmountGtBalance && <FormError>Insufficient balance</FormError>}
               {errors.amount && <FormError>{errors.amount.message}</FormError>}
             </div>
 
@@ -188,13 +180,11 @@ export const SendTokenScreen: FC = () => {
                 name="recipient"
                 type="text"
                 style={{
-                  paddingRight: "50px",
-                  borderRadius: "8px",
+                  paddingRight: '50px',
+                  borderRadius: '8px'
                 }}
               ></StyledControlledInput>
-              {errors.recipient && (
-                <FormError>{errors.recipient.message}</FormError>
-              )}
+              {errors.recipient && <FormError>{errors.recipient.message}</FormError>}
             </div>
           </Column>
 

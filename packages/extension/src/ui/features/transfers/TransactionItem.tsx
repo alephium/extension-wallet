@@ -1,15 +1,12 @@
-import { FC } from "react"
-import styled, { css } from "styled-components"
+import { FC } from 'react'
+import styled, { css } from 'styled-components'
 
-import { TransactionMeta } from "../../../shared/transactions"
-import { OpenInNewIcon } from "../../components/Icons/MuiIcons"
-import {
-  StatusIndicatorColor,
-  TransactionStatusIndicator,
-} from "../../components/StatusIndicator"
-import { makeClickable } from "../../services/a11y"
-import { formatTruncatedAddress } from "../../services/addresses"
-import { TokenIcon } from "../addressTokens/TokenIcon"
+import { TransactionMeta } from '../../../shared/transactions'
+import { OpenInNewIcon } from '../../components/Icons/MuiIcons'
+import { StatusIndicatorColor, TransactionStatusIndicator } from '../../components/StatusIndicator'
+import { makeClickable } from '../../services/a11y'
+import { formatTruncatedAddress } from '../../services/addresses'
+import { TokenIcon } from '../walletOverview/TokenIcon'
 
 export const TokenWrapper = styled.div`
   display: flex;
@@ -55,7 +52,7 @@ export const TransactionsWrapper = styled.div`
   flex-direction: column;
 `
 
-const TransactionWrapper = styled(TokenWrapper) <{ highlighted?: boolean }>`
+const TransactionWrapper = styled(TokenWrapper)<{ highlighted?: boolean }>`
   cursor: pointer;
 
   ${({ highlighted }) =>
@@ -87,30 +84,22 @@ interface TransactionItemProps {
 
 export const TransactionItem: FC<TransactionItemProps> = ({
   hash,
-  status = "transparent",
+  status = 'transparent',
   highlighted,
   meta,
   showExternalOpenIcon = false,
   onClick,
   ...props
 }) => (
-  <TransactionWrapper
-    {...makeClickable(onClick)}
-    highlighted={highlighted}
-    {...props}
-  >
+  <TransactionWrapper {...makeClickable(onClick)} highlighted={highlighted} {...props}>
     <TokenIcon name={meta?.title || hash.substring(2)} />
     <TokenDetailsWrapper>
       <TokenTextGroup>
         <TokenTitle>
           {meta?.title || formatTruncatedAddress(hash)}
-          {showExternalOpenIcon && (
-            <OpenInNewIcon style={{ fontSize: "0.8rem", marginLeft: 5 }} />
-          )}
+          {showExternalOpenIcon && <OpenInNewIcon style={{ fontSize: '0.8rem', marginLeft: 5 }} />}
         </TokenTitle>
-        <TransactionSubtitle>
-          {meta?.subTitle || formatTruncatedAddress(hash)}
-        </TransactionSubtitle>
+        <TransactionSubtitle>{meta?.subTitle || formatTruncatedAddress(hash)}</TransactionSubtitle>
       </TokenTextGroup>
       <TransactionStatusIndicator color={status} />
     </TokenDetailsWrapper>

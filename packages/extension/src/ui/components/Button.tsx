@@ -46,8 +46,11 @@ export const Button = styled.button<IButton>`
   padding: 13.5px;
   font-weight: 600;
   font-size: 16px;
-  line-height: 21px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 
   background-color: ${({ theme }) => getVariantColor({ theme, hover: false })};
   border-radius: 100px;

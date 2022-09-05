@@ -163,7 +163,7 @@ export const FixedGlobalStyle = createGlobalStyle<GlobalStyleProps>`
   ${normalize}
 
   body {
-    font-family: 'Barlow', sans-serif;
+    font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
