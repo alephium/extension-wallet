@@ -3,9 +3,6 @@ import { Outlet, Route, Routes } from "react-router-dom"
 import styled from "styled-components"
 
 import { useAppState } from "./app.state"
-import { AddressListScreen } from "./features/addresses/AddressListScreen"
-import { AddressScreen } from "./features/addresses/AddressScreen"
-import { SendTokenScreen } from "./features/addressTokens/SendTokenScreen"
 import {
   useActions,
   useActionsSubscription,
@@ -13,6 +10,10 @@ import {
 import { ActionScreen } from "./features/actions/ActionScreen"
 import { ErrorScreen } from "./features/actions/ErrorScreen"
 import { LoadingScreen } from "./features/actions/LoadingScreen"
+import { AddressListScreen } from "./features/addresses/AddressListScreen"
+import { AddressScreen } from "./features/addresses/AddressScreen"
+import { FundingQrCodeScreen } from "./features/addressTokens/FundingQrCodeScreen"
+import { SendTokenScreen } from "./features/addressTokens/SendTokenScreen"
 import { LockScreen } from "./features/onboarding/LockScreen"
 import { NewWalletScreen } from "./features/onboarding/NewWalletScreen"
 import { ResetScreen } from "./features/onboarding/ResetScreen"
@@ -27,7 +28,6 @@ import { SeedSettingsScreen } from "./features/settings/SeedSettingsScreen"
 import { SettingsScreen } from "./features/settings/SettingsScreen"
 import { routes } from "./routes"
 import { useEntryRoute } from "./useEntryRoute"
-import { FundingQrCodeScreen } from "./features/addressTokens/FundingQrCodeScreen"
 
 export const ScrollBehaviour = styled.div`
   height: 100vh;
@@ -82,8 +82,11 @@ const walletRoutes = (
       path={routes.addressActivity.path}
       element={<AddressScreen tab="activity" />}
     />
+    <Route
+      path={routes.walletAddresses.path}
+      element={<AddressScreen tab="addresses" />}
+    />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
-    <Route path={routes.addresses.path} element={<AddressListScreen />} />
     <Route path={routes.fundingQrCode.path} element={<FundingQrCodeScreen />} />
     <Route path={routes.settings.path} element={<SettingsScreen />} />
     <Route path={routes.settingsSeed.path} element={<SeedSettingsScreen />} />

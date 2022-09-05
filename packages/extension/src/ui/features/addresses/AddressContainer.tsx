@@ -1,11 +1,17 @@
-import { ArrowUpDown, LayoutTemplate } from "lucide-react"
+import {
+  ArrowUpDown,
+  LayoutTemplate,
+  List,
+  Settings as SettingsIcon,
+} from "lucide-react"
 import { FC, ReactNode } from "react"
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import styled, { css } from "styled-components"
 
 import { Header } from "../../components/Header"
-import { ViewListIcon } from "../../components/Icons/MuiIcons"
+import { IconButton } from "../../components/IconButton"
 import { routes } from "../../routes"
+import { makeClickable } from "../../services/a11y"
 import { NetworkSwitcher } from "../networks/NetworkSwitcher"
 import { useSelectedAddress } from "./addresses.state"
 import {
@@ -23,6 +29,7 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({
   children,
 }) => {
   const address = useSelectedAddress()
+  const navigate = useNavigate()
 
   if (!address) {
     return <></>
@@ -32,13 +39,15 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({
     <Container header footer>
       <AddressHeader>
         <Header>
-          <Link
-            role="button"
-            aria-label="Show addresses"
-            to={routes.addresses()}
-          >
-            <ViewListIcon />
-          </Link>
+          <IconButton size={36}>
+            <SettingsIcon
+              size={21}
+              {...makeClickable(() => navigate(routes.settings()), {
+                label: "Settings",
+                tabIndex: 99,
+              })}
+            />
+          </IconButton>
           <NetworkSwitcher />
         </Header>
       </AddressHeader>
@@ -50,6 +59,10 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({
           <FooterTab to={routes.addressTokens()}>
             <LayoutTemplate />
             <span>Overview</span>
+          </FooterTab>
+          <FooterTab to={routes.walletAddresses()}>
+            <List />
+            <span>Addresses</span>
           </FooterTab>
           <FooterTab to={routes.addressActivity()}>
             <ArrowUpDown />

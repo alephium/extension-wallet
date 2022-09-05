@@ -45,13 +45,13 @@ export const routes = {
   confirmSeedRecovery: routeWithReturnTo("/recovery/seed/confirm"),
   lockScreen: route("/lock-screen"),
   addressTokens: route("/address/tokens"),
+  walletAddresses: route("/address/addresses"),
   addressActivity: route("/address/activity"),
   addressDeleteConfirm: route(
     (address: string) => `/address/delete-confirm/${address}`,
     `/address/delete-confirm/:address`,
   ),
   sendToken: route("/send-token"),
-  addresses: route("/addresses"),
   exportPrivateKey: route("/export-private-key"),
   fundingQrCode: route("/funding/qr-code"),
   token: route(

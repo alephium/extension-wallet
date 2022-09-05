@@ -2,59 +2,25 @@ import { FC, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
+import { Address } from "../../../shared/Address"
 import { useAppState } from "../../app.state"
-import { Header } from "../../components/Header"
 import { IconButton } from "../../components/IconButton"
-import { AddIcon, SettingsIcon } from "../../components/Icons/MuiIcons"
+import { AddIcon } from "../../components/Icons/MuiIcons"
+import { InputText } from "../../components/InputText"
 import { routes } from "../../routes"
 import { makeClickable } from "../../services/a11y"
 import { connectAddress } from "../../services/backgroundAddresses"
 import { H1, P } from "../../theme/Typography"
 import { deployAddress } from "../addresses/addresses.service"
 import { useAddresses } from "../addresses/addresses.state"
-import { NetworkSwitcher } from "../networks/NetworkSwitcher"
 import { recover } from "../recovery/recovery.service"
-import { Container } from "./AddressContainer"
-import { AddressHeader } from "./AddressHeader"
 import { AddressListScreenItem } from "./AddressListScreenItem"
-import { InputText } from "../../components/InputText"
 
-const AddressList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 48px 32px;
-`
+interface AddressListScreenProps {
+  address: Address
+}
 
-const AddressListWrapper = styled(Container)`
-  display: flex;
-  flex-direction: column;
-
-  ${H1} {
-    text-align: center;
-  }
-
-  > ${AddressList} {
-    width: 100%;
-  }
-`
-
-const IconButtonCenter = styled(IconButton)`
-  margin: auto;
-`
-
-const Paragraph = styled(P)`
-  text-align: center;
-`
-
-const AddContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 40%;
-  margin: auto;
-`
-
-export const AddressListScreen: FC = () => {
+export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
   const navigate = useNavigate()
   const { addresses, selectedAddress, addAddress } = useAddresses()
   const [group, setGroup] = useState<any>(undefined)
@@ -79,7 +45,7 @@ export const AddressListScreen: FC = () => {
         connectAddress({
           address: newAddress.hash,
           publicKey: newAddress.publicKey,
-          addressIndex: newAddress.group
+          addressIndex: newAddress.group,
         })
         navigate(await recover())
       }
@@ -92,27 +58,11 @@ export const AddressListScreen: FC = () => {
   }
 
   return (
-    <AddressListWrapper header>
-      <AddressHeader>
-        <Header>
-          <IconButton
-            size={36}
-            {...makeClickable(() => navigate(routes.settings()), {
-              label: "Settings",
-              tabIndex: 99,
-            })}
-          >
-            <SettingsIcon />
-          </IconButton>
-          <NetworkSwitcher />
-        </Header>
-      </AddressHeader>
+    <Container>
       <H1>Addresses</H1>
       <AddressList>
         {addressesList.length === 0 && (
-          <Paragraph>
-            No address, click below to add one.
-          </Paragraph>
+          <Paragraph>No address, click below to add one.</Paragraph>
         )}
         {addressesList.map((address) => (
           <AddressListScreenItem
@@ -133,20 +83,46 @@ export const AddressListScreen: FC = () => {
               setGroup(e.target.value)
             }
           />
-          {
-            isValidGroup(group) ?
-              (
-                <IconButtonCenter
-                  size={48}
-                  {...makeClickable(handleAddAddress, { label: "Create new wallet" })}
-                >
-                  <AddIcon fontSize="large" />
-                </IconButtonCenter>
-
-              ) : null
-          }
+          {isValidGroup(group) ? (
+            <IconButtonCenter
+              size={48}
+              {...makeClickable(handleAddAddress, {
+                label: "Create new wallet",
+              })}
+            >
+              <AddIcon fontSize="large" />
+            </IconButtonCenter>
+          ) : null}
         </AddContainer>
       </AddressList>
-    </AddressListWrapper>
+    </Container>
   )
 }
+
+const AddressList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 48px 32px;
+`
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+`
+
+const IconButtonCenter = styled(IconButton)`
+  margin: auto;
+`
+
+const Paragraph = styled(P)`
+  text-align: center;
+`
+
+const AddContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 40%;
+  margin: auto;
+`

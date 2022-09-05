@@ -9,32 +9,6 @@ import { P } from "../../theme/Typography"
 import { TransactionItem, TransactionsWrapper } from "./TransactionItem"
 import { DailyActivity, getAlephiumActivity } from "./useActivity"
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding-top: 16px;
-  margin-bottom: 68px;
-`
-
-const Header = styled.h2`
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 38.4px;
-  margin-bottom: 25px;
-  text-align: center;
-`
-
-export const SectionHeader = styled.h3`
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 20px;
-  margin: 10px 16px;
-`
-
-const Paragraph = styled(P)`
-  text-align: center;
-`
-
 interface AddressActivityProps {
   address: Address
 }
@@ -85,3 +59,29 @@ export const AddressActivity: FC<AddressActivityProps> = ({ address }) => (
     </Suspense>
   </Container>
 )
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+  margin-bottom: 68px;
+`
+
+const Header = styled.h2`
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 38.4px;
+  margin-bottom: 25px;
+  text-align: center;
+`
+
+export const SectionHeader = styled.h3`
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 20px;
+  margin: 10px 16px;
+`
+
+const Paragraph = styled(P)`
+  text-align: center;
+`

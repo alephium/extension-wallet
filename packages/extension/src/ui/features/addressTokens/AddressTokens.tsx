@@ -9,12 +9,6 @@ import {
 import { AddressSubHeader } from "./AddressSubHeader"
 import { TransferButtons } from "./TransferButtons"
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding-top: 16px;
-`
-
 interface AddressTokensProps {
   address: Address
 }
@@ -35,3 +29,9 @@ export const AddressTokens: FC<AddressTokensProps> = ({ address }) => {
     </Container>
   )
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+`

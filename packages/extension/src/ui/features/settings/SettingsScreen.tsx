@@ -10,71 +10,6 @@ import { stopSession } from "../../services/backgroundSessions"
 import { H2 } from "../../theme/Typography"
 import { useExtensionIsInTab, useOpenExtensionInTab } from "../browser/tabs"
 
-export const Title = styled.h3`
-  font-weight: 600;
-  font-size: 17px;
-  line-height: 22px;
-  color: ${({ theme }) => theme.text1};
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  svg {
-    color: ${({ theme }) => theme.text2};
-    font-size: 12px;
-  }
-`
-
-export const P = styled.p`
-  font-size: 15px;
-  color: ${({ theme }) => theme.text2};
-  margin-top: 16px;
-`
-
-export const SettingsScreenWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 0 24px 0;
-
-  ${H2} {
-    margin: 0 32px 32px 32px;
-  }
-
-  ${Button} {
-    margin-top: 10px;
-  }
-
-  hr {
-    border: none;
-    height: 1px;
-    background-color: ${({ theme }) => theme.bg2};
-  }
-`
-
-export const SettingsItem = styled.div`
-  padding: 24px 32px;
-`
-
-export const SettingsLinkItem = styled(Link)`
-  cursor: pointer;
-  padding: 24px 32px;
-
-  &:hover svg {
-    color: ${({ theme }) => theme.text1};
-  }
-`
-
-export const Footer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  p {
-    padding-bottom: 16px;
-  }
-`
-
 export const SettingsScreen: FC = () => {
   const openExtensionInTab = useOpenExtensionInTab()
   const extensionIsInTab = useExtensionIsInTab()
@@ -139,3 +74,68 @@ export const SettingsScreen: FC = () => {
     </>
   )
 }
+
+export const Title = styled.h3`
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 22px;
+  color: ${({ theme }) => theme.text1};
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  svg {
+    color: ${({ theme }) => theme.text2};
+    font-size: 12px;
+  }
+`
+
+export const P = styled.p`
+  font-size: 15px;
+  color: ${({ theme }) => theme.text2};
+  margin-top: 16px;
+`
+
+export const SettingsScreenWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 24px 0;
+
+  ${H2} {
+    margin: 0 32px 32px 32px;
+  }
+
+  ${Button} {
+    margin-top: 10px;
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    background-color: ${({ theme }) => theme.bg2};
+  }
+`
+
+export const SettingsItem = styled.div`
+  padding: 24px 32px;
+`
+
+export const SettingsLinkItem = styled(Link)`
+  cursor: pointer;
+  padding: 24px 32px;
+
+  &:hover svg {
+    color: ${({ theme }) => theme.text1};
+  }
+`
+
+export const Footer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  p {
+    padding-bottom: 16px;
+  }
+`

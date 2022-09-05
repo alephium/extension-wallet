@@ -2,12 +2,13 @@ import { FC, ReactNode } from "react"
 
 import { assertNever } from "../../services/assertNever"
 import { AddressActivity } from "../addressActivity/AddressActivity"
-import { AddressTokens } from "../addressTokens/AddressTokens"
 import { useSelectedAddress } from "../addresses/addresses.state"
+import { AddressTokens } from "../addressTokens/AddressTokens"
 import { AddressContainer } from "./AddressContainer"
+import { AddressListScreen } from "./AddressListScreen"
 
 interface AddressScreenProps {
-  tab: "assets" | "activity"
+  tab: "assets" | "activity" | "addresses"
 }
 
 export const AddressScreen: FC<AddressScreenProps> = ({ tab }) => {
@@ -18,6 +19,8 @@ export const AddressScreen: FC<AddressScreenProps> = ({ tab }) => {
     body = <></>
   } else if (tab === "assets") {
     body = <AddressTokens address={address} />
+  } else if (tab === "addresses") {
+    body = <AddressListScreen address={address} />
   } else if (tab === "activity") {
     body = <AddressActivity address={address} />
   } else {
