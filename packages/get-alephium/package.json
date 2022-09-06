@@ -1,11 +1,10 @@
 {
-  "name": "@h0ngcha0/get-alephium",
-  "version": "0.0.9",
+  "name": "@alephium/get-alephium",
+  "version": "0.1.0",
   "main": "dist/",
   "browser": {
     "crypto": false
   },
-  "homepage": "https://github.com/h0ngcha0/alephium-cli",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/h0ngcha0/alephium-extension-wallet.git"
