@@ -17,28 +17,53 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatAmountForDisplay } from '@alephium/sdk'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
+import { formatFiatAmountForDisplay } from '../../shared/utils/amount'
 import AlefSymbol from './AlefSymbol'
 
+export type Currency = 'CHF' | 'GBP' | 'EUR' | 'USD'
+
 interface AmountProps {
-  value: bigint | undefined
+  value?: bigint
   fadeDecimals?: boolean
   fullPrecision?: boolean
-  nbOfDecimalsToShow?: number
-  color?: string
+  prefix?: string
+  suffix?: string
+  fiat?: number
+  fiatCurrency?: Currency
   className?: string
 }
 
-const Amount = ({ value, className, fadeDecimals, fullPrecision = false, color, nbOfDecimalsToShow }: AmountProps) => {
+const Amount = ({
+  value,
+  className,
+  fadeDecimals,
+  fullPrecision = false,
+  prefix,
+  suffix,
+  fiatCurrency,
+  fiat
+}: AmountProps) => {
+  const theme = useTheme()
+
   let integralPart = ''
   let fractionalPart = ''
-  let suffix = ''
+  let moneySymbol = ''
 
-  if (value !== undefined) {
-    let amount = formatAmountForDisplay(value, fullPrecision, nbOfDecimalsToShow)
+  let amount = ''
+
+  if (fiat) {
+    amount = formatFiatAmountForDisplay(fiat)
+  } else if (value !== undefined) {
+    amount = formatAmountForDisplay(value, fullPrecision)
+  }
+
+  console.log(amount)
+
+  if (amount) {
     if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
-      suffix = amount.slice(-1)
+      moneySymbol = amount.slice(-1)
       amount = amount.slice(0, -1)
     }
     const amountParts = amount.split('.')
@@ -46,27 +71,38 @@ const Amount = ({ value, className, fadeDecimals, fullPrecision = false, color, 
     fractionalPart = amountParts[1]
   }
 
+  const displaySuffix = moneySymbol && suffix ? ` ${suffix}` : fiatCurrency ? ` ${fiatCurrency}` : ''
+
   return (
     <span className={className}>
-      {value !== undefined ? (
-        fadeDecimals ? (
-          <>
-            <span>{integralPart}</span>
-            <Decimals>.{fractionalPart}</Decimals>
-            {suffix && <span>{suffix}</span>}
-          </>
+      <>
+        {amount !== undefined ? (
+          fadeDecimals ? (
+            <>
+              {prefix && <span>{prefix}</span>}
+              <span>{integralPart}</span>
+              <FadedPart>
+                .{fractionalPart}
+                {displaySuffix && <span>{displaySuffix}</span>}
+              </FadedPart>
+            </>
+          ) : (
+            `${integralPart}.${fractionalPart}`
+          )
         ) : (
-          `${integralPart}.${fractionalPart}`
-        )
-      ) : (
-        '-'
-      )}
-      <AlefSymbol color={color} />
+          '-'
+        )}
+        {value && (
+          <FadedPart>
+            <AlefSymbol color={theme.text1} />
+          </FadedPart>
+        )}
+      </>
     </span>
   )
 }
 
-const Decimals = styled.span`
+const FadedPart = styled.span`
   opacity: 0.7;
 `
 
