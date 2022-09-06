@@ -31,8 +31,11 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
         if (resultMessage.type === "TRANSACTION_SUBMITTED") {
           // Send an extra message so that we can capture the result of the transaction
           sendToTabAndUi({
-            type: "TRANSACTION_RES",
-            data: resultMessage.data,
+            type: "TRANSACTION_SUCCESS",
+            data: {
+              tag: "Success",
+              ...resultMessage.data
+            },
           })
           sendToTabAndUi(resultMessage)
         } else {

@@ -14,7 +14,7 @@ import {
   SignUnsignedTxResult,
 } from "@alephium/web3"
 
-import { assertNever } from "./../ui/services/assertNever"
+import { assertNever } from "../ui/services/assertNever"
 import { WindowMessageType } from "../shared/messages"
 import {
   AccountChangeEventHandler,
@@ -22,7 +22,7 @@ import {
   NetworkChangeEventHandler,
   WalletEvents,
 } from "./inpage.model"
-import { sendMessage, waitForMessage } from "./messageActions"
+import { sendMessage, waitForMessage, waitForMessages } from "./messageActions"
 import { groupOfAddress } from "@alephium/sdk"
 import { TransactionPayload, TransactionResult } from "../shared/transactions"
 import { defaultNetworks } from "../shared/networks"
@@ -35,12 +35,25 @@ export const executeAlephiumTransaction = async (
 ): Promise<TransactionResult> => {
   sendMessage({ type: "EXECUTE_TRANSACTION", data })
   const { actionHash } = await waitForMessage("EXECUTE_TRANSACTION_RES", 1000)
-  const { txResult } = await waitForMessage(
-    "TRANSACTION_RES",
-    120000, // 2 minute, probably long enough to approve or reject the transaction
+  const result = await waitForMessages(
+    ["TRANSACTION_SUCCESS", "TRANSACTION_FAILED", "TRANSACTION_REJECTED"],
+    300000, // TODO: Fix timeout
     ({ data }) => data.actionHash === actionHash,
   )
-  return txResult
+
+  switch (result.tag) {
+    case "Rejected": {
+      throw new Error(`Transaction rejected by user`)
+    }
+
+    case "Failure": {
+      throw new Error(`Transaction failed: ${result.error}`)
+    }
+
+    case "Success": {
+      return result.txResult
+    }
+  }
 }
 
 export const alephiumWindowObject: AlephiumWindowObject = {

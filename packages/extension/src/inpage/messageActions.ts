@@ -11,15 +11,26 @@ export function sendMessage(msg: MessageType): void {
 export function waitForMessage<
   K extends MessageType["type"],
   T extends { type: K } & MessageType,
->(
-  type: K,
-  timeout: number,
-  predicate: (x: T) => boolean = () => true,
+  >(
+    type: K,
+    timeout: number,
+    predicate: (x: T) => boolean = () => true,
+): Promise<T extends { data: infer S } ? S : undefined> {
+  return waitForMessages<K, T>([type], timeout, predicate)
+}
+
+export function waitForMessages<
+  K extends MessageType["type"],
+  T extends { type: K } & MessageType,
+  >(
+    types: K[],
+    timeout: number,
+    predicate: (x: T) => boolean = () => true,
 ): Promise<T extends { data: infer S } ? S : undefined> {
   return new Promise((resolve, reject) => {
     const pid = setTimeout(() => reject(new Error("Timeout")), timeout)
     const handler = (event: MessageEvent<WindowMessageType>) => {
-      if (event.data.type === type && predicate(event.data as any)) {
+      if (types.find(e => e === event.data.type) && predicate(event.data as any)) {
         clearTimeout(pid)
         window.removeEventListener("message", handler)
         return resolve(

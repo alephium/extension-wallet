@@ -42,7 +42,7 @@ export const handleActionApproval = async (
       } catch (error: any) {
         return {
           type: "TRANSACTION_FAILED",
-          data: { actionHash, error: `${error.error.detail}` },
+          data: { tag: "Failure", actionHash, error: `${error.error.detail}` },
         }
       }
     }
@@ -85,8 +85,8 @@ export const handleActionRejection = async (
 
     case "TRANSACTION": {
       return {
-        type: "TRANSACTION_FAILED",
-        data: { actionHash },
+        type: "TRANSACTION_REJECTED",
+        data: { tag: "Rejected", actionHash },
       }
     }
 

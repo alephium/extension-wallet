@@ -15,7 +15,7 @@ export const executeAlephiumTransaction = async (
   sendMessage({ type: "EXECUTE_TRANSACTION", data })
   const { actionHash } = await waitForMessage("EXECUTE_TRANSACTION_RES")
   const { txResult } = await waitForMessage(
-    "TRANSACTION_RES",
+    "TRANSACTION_SUCCESS",
     ({ data }) => data.actionHash === actionHash,
   )
   return txResult
