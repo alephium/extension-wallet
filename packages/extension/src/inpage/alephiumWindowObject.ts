@@ -26,6 +26,7 @@ import { sendMessage, waitForMessage } from "./messageActions"
 import { groupOfAddress } from "@alephium/sdk"
 import { TransactionPayload, TransactionResult } from "../shared/transactions"
 import { defaultNetworks } from "../shared/networks"
+import { alephiumIcon } from "./icon"
 
 export const userEventHandlers: WalletEvents[] = []
 
@@ -36,7 +37,7 @@ export const executeAlephiumTransaction = async (
   const { actionHash } = await waitForMessage("EXECUTE_TRANSACTION_RES", 1000)
   const { txResult } = await waitForMessage(
     "TRANSACTION_RES",
-    10000, // 2 minute, probably long enough to approve or reject the transaction
+    120000, // 2 minute, probably long enough to approve or reject the transaction
     ({ data }) => data.actionHash === actionHash,
   )
   return txResult
@@ -44,6 +45,8 @@ export const executeAlephiumTransaction = async (
 
 export const alephiumWindowObject: AlephiumWindowObject = {
   id: "alephium",
+  name: "Alephium",
+  icon: alephiumIcon,
   selectedAccount: undefined,
   currentNetwork: defaultNetworks[0].id,
   isConnected: false,
@@ -172,3 +175,4 @@ export const alephiumWindowObject: AlephiumWindowObject = {
     throw Error(`signMessage unsupported ${params}`)
   },
 }
+

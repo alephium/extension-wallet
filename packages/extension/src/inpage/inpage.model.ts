@@ -35,6 +35,8 @@ export type WalletEvents =
 
 declare class IAlephiumWindowObject implements SignerProvider {
   id: "alephium"
+  name: "Alephium"
+  icon: string
   enable: (options?: { showModal?: boolean }) => Promise<string[]>
   isPreauthorized: () => Promise<boolean>
   on: (
