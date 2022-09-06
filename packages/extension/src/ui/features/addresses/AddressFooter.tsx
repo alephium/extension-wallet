@@ -1,6 +1,6 @@
-import { colord } from "colord"
-import { Link } from "react-router-dom"
-import styled from "styled-components"
+import { colord } from 'colord'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 
 export const AddressFooterContainer = styled.div`
   position: fixed;
@@ -14,7 +14,7 @@ export const AddressFooterContainer = styled.div`
 
 export const AddressFooter = styled.div`
   display: flex;
-  border-radius: 9px;
+  border-radius: 12px;
   padding: 5px;
   gap: 5px;
   background: ${({ theme }) => colord(theme.bg4).alpha(0.4).toRgbString()};

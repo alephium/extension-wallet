@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, RefObject, createContext, useContext, useRef } from 'react'
 import { Outlet, Route, Routes } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -26,31 +26,37 @@ import { FundingQrCodeScreen } from './features/walletOverview/FundingQrCodeScre
 import { routes } from './routes'
 import { useEntryRoute } from './useEntryRoute'
 
-export const ScrollBehaviour = styled.div`
-  height: 100vh;
-  overflow-y: auto;
-
-  overscroll-behavior: none;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-  &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
-`
-
 export const ResponsiveBehaviour = styled.div`
   ${({ theme }) => theme.mediaMinWidth.sm`
     margin: 0 ${theme.margin.extensionInTab};
   `}
 `
 
-const Viewport: FC = () => (
-  <ScrollBehaviour>
-    <ResponsiveBehaviour>
-      <Outlet />
-    </ResponsiveBehaviour>
-  </ScrollBehaviour>
-)
+interface ScrollContextType {
+  scrollBehaviourElementRef: RefObject<HTMLDivElement> | undefined
+}
+
+const ScrollContext = createContext<ScrollContextType>({
+  scrollBehaviourElementRef: undefined
+})
+
+export const ScrollContextProvider = ScrollContext.Provider
+
+export const useScrollContext = () => useContext(ScrollContext)
+
+const Viewport = () => {
+  const scrollBehaviourElementRef = useRef(null)
+
+  return (
+    <ScrollContextProvider value={{ scrollBehaviourElementRef }}>
+      <ScrollBehaviour ref={scrollBehaviourElementRef}>
+        <ResponsiveBehaviour>
+          <Outlet />
+        </ResponsiveBehaviour>
+      </ScrollBehaviour>
+    </ScrollContextProvider>
+  )
+}
 
 // Routes which don't need an unlocked wallet
 const nonWalletRoutes = (
@@ -102,3 +108,15 @@ export const AppRoutes: FC = () => {
     </Routes>
   )
 }
+
+export const ScrollBehaviour = styled.div`
+  height: 100vh;
+  overflow-y: auto;
+
+  overscroll-behavior: none;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+`

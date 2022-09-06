@@ -1,33 +1,22 @@
-import {
-  ArrowUpDown,
-  LayoutTemplate,
-  List,
-  Settings as SettingsIcon,
-} from "lucide-react"
-import { FC, ReactNode } from "react"
-import { useNavigate } from "react-router-dom"
-import styled, { css } from "styled-components"
+import { ArrowUpDown, LayoutTemplate, List, Settings as SettingsIcon } from 'lucide-react'
+import { FC, ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
+import styled, { css } from 'styled-components'
 
-import { Header } from "../../components/Header"
-import { IconButton } from "../../components/IconButton"
-import { routes } from "../../routes"
-import { makeClickable } from "../../services/a11y"
-import { NetworkSwitcher } from "../networks/NetworkSwitcher"
-import { useSelectedAddress } from "./addresses.state"
-import {
-  AddressFooter,
-  AddressFooterContainer,
-  FooterTab,
-} from "./AddressFooter"
-import { AddressHeader } from "./AddressHeader"
+import { Header } from '../../components/Header'
+import { IconButton } from '../../components/IconButton'
+import { routes } from '../../routes'
+import { makeClickable } from '../../services/a11y'
+import { NetworkSwitcher } from '../networks/NetworkSwitcher'
+import { useSelectedAddress } from './addresses.state'
+import { AddressFooter, AddressFooterContainer, FooterTab } from './AddressFooter'
+import AddressHeader from './AddressHeader'
 
 interface AddressScreenContentProps {
   children?: ReactNode
 }
 
-export const AddressContainer: FC<AddressScreenContentProps> = ({
-  children,
-}) => {
+export const AddressContainer: FC<AddressScreenContentProps> = ({ children }) => {
   const address = useSelectedAddress()
   const navigate = useNavigate()
 
@@ -43,8 +32,8 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({
             <SettingsIcon
               size={21}
               {...makeClickable(() => navigate(routes.settings()), {
-                label: "Settings",
-                tabIndex: 99,
+                label: 'Settings',
+                tabIndex: 99
               })}
             />
           </IconButton>
