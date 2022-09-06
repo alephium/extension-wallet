@@ -1,6 +1,6 @@
 {
   "name": "@h0ngcha0/get-alephium",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "dist/",
   "browser": {
     "crypto": false
@@ -55,6 +55,6 @@
   },
   "dependencies": {
     "bowser": "^2.11.0",
-    "@alephium/web3": "0.2.0-test.0"
+    "@alephium/web3": "^0.2.0-rc.7"
   }
 }
