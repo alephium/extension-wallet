@@ -1,29 +1,29 @@
-import { AddressMessage } from "../shared/messages/AddressMessage"
-import { sendMessageToUi } from "./activeTabs"
-import { HandleMessage, UnhandledMessage } from "./background"
-import { encryptForUi } from "./crypto"
+import { AddressMessage } from '../shared/messages/AddressMessage'
+import { sendMessageToUi } from './activeTabs'
+import { HandleMessage, UnhandledMessage } from './background'
+import { encryptForUi } from './crypto'
 
 export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
   msg,
   background: { wallet },
   messagingKeys: { privateKey },
-  sendToTabAndUi,
+  sendToTabAndUi
 }) => {
   switch (msg.type) {
-    case "GET_ADDRESSES": {
+    case 'GET_ADDRESSES': {
       return sendToTabAndUi({
-        type: "GET_ADDRESSES_RES",
-        data: await wallet.getAlephiumAddresses(),
+        type: 'GET_ADDRESSES_RES',
+        data: await wallet.getAlephiumAddresses()
       })
     }
 
-    case "CONNECT_ADDRESS": {
+    case 'CONNECT_ADDRESS': {
       return await wallet.selectAlephiumAddress(msg.data.address)
     }
 
-    case "NEW_ADDRESS": {
+    case 'NEW_ADDRESS': {
       if (!wallet.isSessionOpen()) {
-        throw Error("you need an open session")
+        throw Error('you need an open session')
       }
 
       //const group = msg.data
@@ -31,52 +31,64 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
         const address = await wallet.addAlephiumAddress(msg.data)
         if (address) {
           return sendToTabAndUi({
-            type: "NEW_ADDRESS_RES",
-            data: address,
+            type: 'NEW_ADDRESS_RES',
+            data: address
           })
         } else {
-          throw Error("Fail to generate address")
+          throw Error('Fail to generate address')
         }
       } catch (exception: unknown) {
         return sendToTabAndUi({
-          type: "NEW_ADDRESS_REJ",
+          type: 'NEW_ADDRESS_REJ',
           data: {
-            error: `create new address failed, ${exception}`,
-          },
+            error: `create new address failed, ${exception}`
+          }
         })
       }
     }
 
-    case "GET_SELECTED_ADDRESS": {
+    case 'GET_SELECTED_ADDRESS': {
       const selectedAddress = await wallet.getAlephiumSelectedAddresses()
       return sendToTabAndUi({
-        type: "GET_SELECTED_ADDRESS_RES",
-        data: selectedAddress,
+        type: 'GET_SELECTED_ADDRESS_RES',
+        data: selectedAddress
       })
     }
 
-    case "GET_ADDRESS_BALANCE": {
+    case 'GET_ADDRESS_BALANCE': {
       const balance = await wallet.getBalance(msg.data.address)
       return sendToTabAndUi({
-        type: "GET_ADDRESS_BALANCE_RES",
-        data: balance,
+        type: 'GET_ADDRESS_BALANCE_RES',
+        data: balance
       })
     }
 
-    case "GET_ENCRYPTED_SEED_PHRASE": {
-      if (!wallet.isSessionOpen()) {
-        throw Error("you need an open session")
-      }
-
-      const encryptedSeedPhrase = await encryptForUi(
-        await wallet.getSeedPhrase(),
-        msg.data.encryptedSecret,
-        privateKey,
+    case 'GET_ADDRESSES_BALANCE': {
+      console.log('GET_ADDRESSES_BALANCE')
+      const balances = await Promise.all(
+        msg.data.addresses.map(async (address) => {
+          return await wallet.getBalance(address)
+        })
       )
 
+      console.log(balances)
+
+      return sendToTabAndUi({
+        type: 'GET_ADDRESSES_BALANCE_RES',
+        data: balances
+      })
+    }
+
+    case 'GET_ENCRYPTED_SEED_PHRASE': {
+      if (!wallet.isSessionOpen()) {
+        throw Error('you need an open session')
+      }
+
+      const encryptedSeedPhrase = await encryptForUi(await wallet.getSeedPhrase(), msg.data.encryptedSecret, privateKey)
+
       return sendMessageToUi({
-        type: "GET_ENCRYPTED_SEED_PHRASE_RES",
-        data: { encryptedSeedPhrase },
+        type: 'GET_ENCRYPTED_SEED_PHRASE_RES',
+        data: { encryptedSeedPhrase }
       })
     }
   }

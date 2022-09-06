@@ -47,16 +47,9 @@ export const getBalance = async (address: string) => {
   return waitForMessage('GET_ADDRESS_BALANCE_RES')
 }
 
-export const getBalances = async (addressList: string[]) => {
-  console.log(addressList)
-  const promises = await addressList.map((address) => {
-    console.log('Fetching addess balance for ', address)
-    console.log(address)
-    sendMessage({ type: 'GET_ADDRESS_BALANCE', data: { address } })
-    return waitForMessage('GET_ADDRESS_BALANCE_RES')
-  })
-
-  return Promise.all(promises)
+export const getBalances = async (addresses: string[]) => {
+  sendMessage({ type: 'GET_ADDRESSES_BALANCE', data: { addresses } })
+  return waitForMessage('GET_ADDRESSES_BALANCE_RES')
 }
 
 export const getSeedPhrase = async (): Promise<string> => {
