@@ -74,9 +74,9 @@ const nonWalletRoutes = (
 // Routes which need an unlocked wallet and therefore can also sign actions
 const walletRoutes = (
   <>
-    <Route path={routes.addressTokens.path} element={<AddressScreen tab="assets" />} />
-    <Route path={routes.addressActivity.path} element={<AddressScreen tab="activity" />} />
+    <Route path={routes.addressTokens.path} element={<AddressScreen tab="overview" />} />
     <Route path={routes.walletAddresses.path} element={<AddressScreen tab="addresses" />} />
+    <Route path={routes.addressActivity.path} element={<AddressScreen tab="transfers" />} />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
     <Route path={routes.fundingQrCode.path} element={<FundingQrCodeScreen />} />
     <Route path={routes.settings.path} element={<SettingsScreen />} />

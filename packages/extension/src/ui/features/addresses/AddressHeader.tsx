@@ -4,19 +4,20 @@ import { ReactNode } from 'react'
 import styled, { useTheme } from 'styled-components'
 
 import { useScrollContext } from '../../AppRoutes'
+import { Header } from '../../components/Header'
 
 interface AddressHeaderProps {
-  children?: ReactNode
+  title?: string
+  buttons?: ReactNode
   className?: string
 }
 
-const AddressHeader = ({ className, children }: AddressHeaderProps) => {
+const AddressHeader = ({ title, buttons, className }: AddressHeaderProps) => {
   const theme = useTheme()
   const { scrollBehaviourElementRef } = useScrollContext()
 
   const { scrollY } = useScroll({ container: scrollBehaviourElementRef })
 
-  console.log(scrollBehaviourElementRef)
   scrollY.onChange((v) => console.log(v))
 
   const headerBGColor = useTransform(
@@ -25,9 +26,14 @@ const AddressHeader = ({ className, children }: AddressHeaderProps) => {
     [colord(theme.bg1).alpha(0.0).toHex(), colord(theme.bg2).alpha(0.9).toHex()]
   )
 
+  const titleY = useTransform(scrollY, [0, 100], [-100, 0])
+
   return (
     <motion.div className={className} style={{ backgroundColor: headerBGColor }}>
-      {children}
+      <Header>
+        {title && <motion.h2 style={{ y: titleY }}>{title}</motion.h2>}
+        {buttons}
+      </Header>
     </motion.div>
   )
 }
@@ -37,7 +43,7 @@ export default styled(AddressHeader)`
   top: 0;
   left: 0;
   right: 0;
-  height: 68px;
+  height: 70px;
   z-index: 100;
   backdrop-filter: blur(10px);
   ${({ theme }) => theme.mediaMinWidth.sm`

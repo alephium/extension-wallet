@@ -7,8 +7,9 @@ import { AddressTokens } from '../walletOverview/WalletOverview'
 import { AddressContainer } from './AddressContainer'
 import { AddressListScreen } from './AddressListScreen'
 
+export type AddressScreenTab = 'overview' | 'addresses' | 'transfers'
 interface AddressScreenProps {
-  tab: 'assets' | 'activity' | 'addresses'
+  tab: AddressScreenTab
 }
 
 export const AddressScreen: FC<AddressScreenProps> = ({ tab }) => {
@@ -17,15 +18,15 @@ export const AddressScreen: FC<AddressScreenProps> = ({ tab }) => {
   let body: ReactNode
   if (!address) {
     body = <></>
-  } else if (tab === 'assets') {
+  } else if (tab === 'overview') {
     body = <AddressTokens address={address} />
   } else if (tab === 'addresses') {
     body = <AddressListScreen address={address} />
-  } else if (tab === 'activity') {
+  } else if (tab === 'transfers') {
     body = <AddressActivity address={address} />
   } else {
     assertNever(tab)
   }
 
-  return <AddressContainer>{body}</AddressContainer>
+  return <AddressContainer addressScreenTab={tab}>{body}</AddressContainer>
 }

@@ -11,12 +11,14 @@ import { NetworkSwitcher } from '../networks/NetworkSwitcher'
 import { useSelectedAddress } from './addresses.state'
 import { AddressFooter, AddressFooterContainer, FooterTab } from './AddressFooter'
 import AddressHeader from './AddressHeader'
+import { AddressScreenTab } from './AddressScreen'
 
 interface AddressScreenContentProps {
+  addressScreenTab: AddressScreenTab
   children?: ReactNode
 }
 
-export const AddressContainer: FC<AddressScreenContentProps> = ({ children }) => {
+export const AddressContainer: FC<AddressScreenContentProps> = ({ addressScreenTab, children }) => {
   const address = useSelectedAddress()
   const navigate = useNavigate()
 
@@ -26,20 +28,29 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({ children }) =>
 
   return (
     <Container header footer>
-      <AddressHeader>
-        <Header>
-          <IconButton size={36}>
-            <SettingsIcon
-              size={21}
-              {...makeClickable(() => navigate(routes.settings()), {
-                label: 'Settings',
-                tabIndex: 99
-              })}
-            />
-          </IconButton>
-          <NetworkSwitcher />
-        </Header>
-      </AddressHeader>
+      <AddressHeader
+        buttons={
+          <>
+            {addressScreenTab === 'overview' && (
+              <IconButton size={36}>
+                <SettingsIcon
+                  size={21}
+                  {...makeClickable(() => navigate(routes.settings()), {
+                    label: 'Settings',
+                    tabIndex: 99
+                  })}
+                />
+              </IconButton>
+            )}
+            <NetworkSwitcher />
+          </>
+        }
+        title={
+          addressScreenTab !== 'overview'
+            ? addressScreenTab.charAt(0).toUpperCase() + addressScreenTab.slice(1)
+            : undefined
+        }
+      />
 
       {children}
 
