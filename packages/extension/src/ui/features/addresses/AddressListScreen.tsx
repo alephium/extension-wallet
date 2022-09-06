@@ -1,20 +1,20 @@
-import { FC, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import styled from "styled-components"
+import { FC, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { Address } from "../../../shared/Address"
-import { useAppState } from "../../app.state"
-import { IconButton } from "../../components/IconButton"
-import { AddIcon } from "../../components/Icons/MuiIcons"
-import { InputText } from "../../components/InputText"
-import { routes } from "../../routes"
-import { makeClickable } from "../../services/a11y"
-import { connectAddress } from "../../services/backgroundAddresses"
-import { H1, P } from "../../theme/Typography"
-import { deployAddress } from "../addresses/addresses.service"
-import { useAddresses } from "../addresses/addresses.state"
-import { recover } from "../recovery/recovery.service"
-import { AddressListScreenItem } from "./AddressListScreenItem"
+import { Address } from '../../../shared/Address'
+import { useAppState } from '../../app.state'
+import { IconButton } from '../../components/IconButton'
+import { AddIcon } from '../../components/Icons/MuiIcons'
+import { InputText } from '../../components/InputText'
+import { routes } from '../../routes'
+import { makeClickable } from '../../services/a11y'
+import { connectAddress } from '../../services/backgroundAddresses'
+import { H1, P } from '../../theme/Typography'
+import { deployAddress } from '../addresses/addresses.service'
+import { useAddresses } from '../addresses/addresses.state'
+import { recover } from '../recovery/recovery.service'
+import { AddressListScreenItem } from './AddressListScreenItem'
 
 interface AddressListScreenProps {
   address: Address
@@ -45,7 +45,7 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
         connectAddress({
           address: newAddress.hash,
           publicKey: newAddress.publicKey,
-          addressIndex: newAddress.group,
+          addressIndex: newAddress.group
         })
         navigate(await recover())
       }
@@ -61,33 +61,25 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
     <Container>
       <H1>Addresses</H1>
       <AddressList>
-        {addressesList.length === 0 && (
-          <Paragraph>No address, click below to add one.</Paragraph>
-        )}
+        {addressesList.length === 0 && <Paragraph>No address, click below to add one.</Paragraph>}
         {addressesList.map((address) => (
-          <AddressListScreenItem
-            key={address.hash}
-            address={address}
-            selectedAddress={selectedAddress}
-          />
+          <AddressListScreenItem key={address.hash} address={address} selectedAddress={selectedAddress} />
         ))}
         <AddContainer>
           <InputText
             type="number"
             placeholder="group"
-            style={{ width: "3em", marginBottom: "0.5em" }}
+            style={{ width: '3em', marginBottom: '0.5em' }}
             defaultValue={group}
             min={0}
             max={3}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setGroup(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGroup(e.target.value)}
           />
           {isValidGroup(group) ? (
             <IconButtonCenter
               size={48}
               {...makeClickable(handleAddAddress, {
-                label: "Create new wallet",
+                label: 'Create new wallet'
               })}
             >
               <AddIcon fontSize="large" />

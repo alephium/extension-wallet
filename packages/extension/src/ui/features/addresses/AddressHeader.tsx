@@ -18,8 +18,6 @@ const AddressHeader = ({ title, buttons, className }: AddressHeaderProps) => {
 
   const { scrollY } = useScroll({ container: scrollBehaviourElementRef })
 
-  scrollY.onChange((v) => console.log(v))
-
   const headerBGColor = useTransform(
     scrollY,
     [0, 100],

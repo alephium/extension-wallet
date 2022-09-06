@@ -1,23 +1,21 @@
-import { FC, Fragment, Suspense, useEffect, useState } from "react"
-import styled from "styled-components"
+import { FC, Fragment, Suspense, useEffect, useState } from 'react'
+import styled from 'styled-components'
 
-import { Address } from "../../../shared/Address"
-import { Spinner } from "../../components/Spinner"
-import { formatDateTime } from "../../services/dates"
-import { openExplorerTransaction } from "../../services/explorer.service"
-import { P } from "../../theme/Typography"
-import { TransactionItem, TransactionsWrapper } from "./TransactionItem"
-import { TransferButtons } from "./TransferButtons"
-import { DailyActivity, getAlephiumActivity } from "./useActivity"
+import { Address } from '../../../shared/Address'
+import { Spinner } from '../../components/Spinner'
+import { formatDateTime } from '../../services/dates'
+import { openExplorerTransaction } from '../../services/explorer.service'
+import { H1, P } from '../../theme/Typography'
+import { TransactionItem, TransactionsWrapper } from './TransactionItem'
+import { TransferButtons } from './TransferButtons'
+import { DailyActivity, getAlephiumActivity } from './useActivity'
 
 interface AddressActivityProps {
   address: Address
 }
 
 const Activity: FC<AddressActivityProps> = ({ address }) => {
-  const [dailyActivity, setDailyActivity] = useState<DailyActivity | undefined>(
-    undefined,
-  )
+  const [dailyActivity, setDailyActivity] = useState<DailyActivity | undefined>(undefined)
 
   useEffect(() => {
     getAlephiumActivity(address).then((activity) => {
@@ -69,12 +67,8 @@ const Container = styled.div`
   margin-bottom: 68px;
 `
 
-const Header = styled.h2`
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 38.4px;
-  margin-bottom: 25px;
-  text-align: center;
+const Header = styled(H1)`
+  margin-bottom: 40px;
 `
 
 export const SectionHeader = styled.h3`

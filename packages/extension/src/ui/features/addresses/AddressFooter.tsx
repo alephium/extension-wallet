@@ -1,8 +1,46 @@
 import { colord } from 'colord'
+import { motion, useMotionValue, useScroll, useTransform } from 'framer-motion'
+import { clamp } from 'lodash'
+import { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-export const AddressFooterContainer = styled.div`
+import { useScrollContext } from '../../AppRoutes'
+
+interface AddressFooterProps {
+  children?: ReactNode
+  className?: string
+}
+
+const AddressFooter = ({ children, className }: AddressFooterProps) => {
+  const { scrollBehaviourElementRef } = useScrollContext()
+
+  const { scrollY } = useScroll({ container: scrollBehaviourElementRef })
+
+  const lastScrollY = useMotionValue(0)
+  const lastTranslateY = useMotionValue(0)
+
+  const translateYValue = useTransform(scrollY, (scrollY) => {
+    if (lastScrollY === undefined) {
+      return 0
+    }
+
+    const value = clamp(lastTranslateY.get() + (scrollY - lastScrollY.get()), 0, 80)
+
+    lastTranslateY.set(value)
+    lastScrollY.set(scrollY)
+
+    return value
+  })
+
+  return (
+    <motion.div className={className} style={{ y: translateYValue }}>
+      <Content>{children}</Content>
+    </motion.div>
+  )
+}
+
+export default styled(AddressFooter)`
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -12,7 +50,7 @@ export const AddressFooterContainer = styled.div`
   height: 90px;
 `
 
-export const AddressFooter = styled.div`
+const Content = styled.div`
   display: flex;
   border-radius: 12px;
   padding: 5px;

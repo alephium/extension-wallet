@@ -9,7 +9,7 @@ import { routes } from '../../routes'
 import { makeClickable } from '../../services/a11y'
 import { NetworkSwitcher } from '../networks/NetworkSwitcher'
 import { useSelectedAddress } from './addresses.state'
-import { AddressFooter, AddressFooterContainer, FooterTab } from './AddressFooter'
+import AddressFooterContainer, { FooterTab } from './AddressFooter'
 import AddressHeader from './AddressHeader'
 import { AddressScreenTab } from './AddressScreen'
 
@@ -55,20 +55,18 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({ addressScreenT
       {children}
 
       <AddressFooterContainer>
-        <AddressFooter>
-          <FooterTab to={routes.addressTokens()}>
-            <LayoutTemplate />
-            <span>Overview</span>
-          </FooterTab>
-          <FooterTab to={routes.walletAddresses()}>
-            <List />
-            <span>Addresses</span>
-          </FooterTab>
-          <FooterTab to={routes.addressActivity()}>
-            <ArrowUpDown />
-            <span>Transfers</span>
-          </FooterTab>
-        </AddressFooter>
+        <FooterTab to={routes.addressTokens()}>
+          <LayoutTemplate />
+          <span>Overview</span>
+        </FooterTab>
+        <FooterTab to={routes.walletAddresses()}>
+          <List />
+          <span>Addresses</span>
+        </FooterTab>
+        <FooterTab to={routes.addressActivity()}>
+          <ArrowUpDown />
+          <span>Transfers</span>
+        </FooterTab>
       </AddressFooterContainer>
     </Container>
   )
