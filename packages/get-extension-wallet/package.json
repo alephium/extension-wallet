@@ -1,13 +1,13 @@
 {
   "name": "@alephium/get-extension-wallet",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "main": "dist/",
   "browser": {
     "crypto": false
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/h0ngcha0/alephium-extension-wallet.git"
+    "url": "git+https://github.com/alephium/extension-wallet.git"
   },
   "files": [
     "dist/"
