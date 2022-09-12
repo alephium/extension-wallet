@@ -2,12 +2,12 @@ import { FC, ReactNode } from 'react'
 
 import { assertNever } from '../../services/assertNever'
 import { useSelectedAddress } from '../addresses/addresses.state'
+import WalletOverview from '../assets/WalletAssets'
 import { AddressActivity } from '../transfers/AddressActivity'
-import WalletOverview from '../walletOverview/WalletOverview'
 import { AddressContainer } from './AddressContainer'
 import { AddressListScreen } from './AddressListScreen'
 
-export type AddressScreenTab = 'overview' | 'addresses' | 'transfers'
+export type AddressScreenTab = 'assets' | 'addresses' | 'transfers'
 interface AddressScreenProps {
   tab: AddressScreenTab
 }
@@ -18,7 +18,7 @@ export const AddressScreen: FC<AddressScreenProps> = ({ tab }) => {
   let body: ReactNode
   if (!address) {
     body = <></>
-  } else if (tab === 'overview') {
+  } else if (tab === 'assets') {
     body = <WalletOverview address={address} />
   } else if (tab === 'addresses') {
     body = <AddressListScreen address={address} />

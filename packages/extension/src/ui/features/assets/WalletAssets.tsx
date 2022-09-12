@@ -14,7 +14,7 @@ interface WalletOverviewProps {
   className?: string
 }
 
-const WalletOverview: FC<WalletOverviewProps> = ({ address, className }) => {
+const WalletAssets: FC<WalletOverviewProps> = ({ address, className }) => {
   const { addresses } = useAddresses()
   const [totalBalance, setTotalBalance] = useState<bigint | undefined>(undefined)
   const [fiatBalance, setFiatBalance] = useState<number>()
@@ -49,7 +49,7 @@ const WalletOverview: FC<WalletOverviewProps> = ({ address, className }) => {
   )
 }
 
-export default styled(WalletOverview)`
+export default styled(WalletAssets)`
   display: flex;
   flex-direction: column;
   padding-top: 16px;

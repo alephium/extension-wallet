@@ -47,8 +47,8 @@ const Amount = ({
 }: AmountProps) => {
   const theme = useTheme()
 
-  let integralPart = ''
-  let fractionalPart = ''
+  let integralPart = '0'
+  let fractionalPart = '00'
   let moneySymbol = ''
 
   let amount = ''
@@ -58,8 +58,6 @@ const Amount = ({
   } else if (value !== undefined) {
     amount = formatAmountForDisplay(value, fullPrecision)
   }
-
-  console.log(amount)
 
   if (amount) {
     if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {

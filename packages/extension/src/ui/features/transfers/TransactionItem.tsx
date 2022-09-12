@@ -6,7 +6,7 @@ import { OpenInNewIcon } from '../../components/Icons/MuiIcons'
 import { StatusIndicatorColor, TransactionStatusIndicator } from '../../components/StatusIndicator'
 import { makeClickable } from '../../services/a11y'
 import { formatTruncatedAddress } from '../../services/addresses'
-import { TokenIcon } from '../walletOverview/TokenIcon'
+import { TokenIcon } from '../assets/TokenIcon'
 
 export const TokenWrapper = styled.div`
   display: flex;

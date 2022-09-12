@@ -21,8 +21,8 @@ import { NetworkSettingsFormScreen } from './features/settings/NetworkSettingsFo
 import { NetworkSettingsScreen } from './features/settings/NetworkSettingsScreen'
 import { SeedSettingsScreen } from './features/settings/SeedSettingsScreen'
 import { SettingsScreen } from './features/settings/SettingsScreen'
+import { FundingQrCodeScreen } from './features/transfers/FundingQrCodeScreen'
 import { SendTokenScreen } from './features/transfers/SendTokenScreen'
-import { FundingQrCodeScreen } from './features/walletOverview/FundingQrCodeScreen'
 import { routes } from './routes'
 import { useEntryRoute } from './useEntryRoute'
 
@@ -74,7 +74,7 @@ const nonWalletRoutes = (
 // Routes which need an unlocked wallet and therefore can also sign actions
 const walletRoutes = (
   <>
-    <Route path={routes.addressTokens.path} element={<AddressScreen tab="overview" />} />
+    <Route path={routes.addressTokens.path} element={<AddressScreen tab="assets" />} />
     <Route path={routes.walletAddresses.path} element={<AddressScreen tab="addresses" />} />
     <Route path={routes.addressActivity.path} element={<AddressScreen tab="transfers" />} />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />

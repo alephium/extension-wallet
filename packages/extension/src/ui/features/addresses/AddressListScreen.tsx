@@ -1,6 +1,7 @@
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { Swiper, SwiperSlide } from 'swiper/react'
 
 import { Address } from '../../../shared/Address'
 import { useAppState } from '../../app.state'
@@ -62,9 +63,15 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
       <H1>Addresses</H1>
       <AddressList>
         {addressesList.length === 0 && <Paragraph>No address, click below to add one.</Paragraph>}
-        {addressesList.map((address) => (
-          <AddressListScreenItem key={address.hash} address={address} selectedAddress={selectedAddress} />
-        ))}
+        <CarouselContainer>
+          <Swiper spaceBetween={50} slidesPerView={3}>
+            {addressesList.map((address) => (
+              <SwiperSlide key={address.hash}>
+                <AddressListScreenItem address={address} selectedAddress={selectedAddress} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </CarouselContainer>
         <AddContainer>
           <InputText
             type="number"
@@ -103,6 +110,8 @@ const Container = styled.div`
   flex-direction: column;
   padding-top: 16px;
 `
+
+const CarouselContainer = styled.div``
 
 const IconButtonCenter = styled(IconButton)`
   margin: auto;

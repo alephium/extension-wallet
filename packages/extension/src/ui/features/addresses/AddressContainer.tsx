@@ -31,7 +31,7 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({ addressScreenT
       <AddressHeader
         buttons={
           <>
-            {addressScreenTab === 'overview' && (
+            {addressScreenTab === 'assets' && (
               <IconButton size={36}>
                 <SettingsIcon
                   size={21}
@@ -42,11 +42,11 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({ addressScreenT
                 />
               </IconButton>
             )}
-            <NetworkSwitcher />
+            {addressScreenTab !== 'addresses' && <NetworkSwitcher />}
           </>
         }
         title={
-          addressScreenTab !== 'overview'
+          addressScreenTab !== 'assets'
             ? addressScreenTab.charAt(0).toUpperCase() + addressScreenTab.slice(1)
             : undefined
         }
@@ -57,15 +57,15 @@ export const AddressContainer: FC<AddressScreenContentProps> = ({ addressScreenT
       <AddressFooterContainer>
         <FooterTab to={routes.addressTokens()}>
           <LayoutTemplate />
-          <span>Overview</span>
-        </FooterTab>
-        <FooterTab to={routes.walletAddresses()}>
-          <List />
-          <span>Addresses</span>
+          <span>Assets</span>
         </FooterTab>
         <FooterTab to={routes.addressActivity()}>
           <ArrowUpDown />
           <span>Transfers</span>
+        </FooterTab>
+        <FooterTab to={routes.walletAddresses()}>
+          <List />
+          <span>Addresses</span>
         </FooterTab>
       </AddressFooterContainer>
     </Container>

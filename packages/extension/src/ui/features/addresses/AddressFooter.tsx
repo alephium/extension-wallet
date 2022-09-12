@@ -72,8 +72,8 @@ export const FooterTab = styled(Link)`
   justify-content: center;
   padding: 5px 10px;
   cursor: pointer;
-  width: 50%;
   border-radius: 9px;
+  width: 75px;
 
   svg {
     font-size: 1.8rem;

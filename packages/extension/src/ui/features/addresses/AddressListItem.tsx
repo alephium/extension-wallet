@@ -1,28 +1,42 @@
-import { FC, ReactNode } from "react"
-import styled from "styled-components"
+import { FC, ReactNode } from 'react'
+import styled from 'styled-components'
 
-import { formatTruncatedAddress } from "../../services/addresses"
+import { formatTruncatedAddress } from '../../services/addresses'
 
 export interface IAddressListItem {
-    addressName: string
-    address: string
-    group: number
-    focus?: boolean
-    children?: ReactNode
-    // ...rest
-    [x: string]: any
+  addressName: string
+  address: string
+  group: number
+  focus?: boolean
+  children?: ReactNode
+  // ...rest
+  [x: string]: any
 }
 
-type AddressListItemWrapperProps = Pick<IAddressListItem, "focus">
+type AddressListItemWrapperProps = Pick<IAddressListItem, 'focus'>
+
+export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, group, focus, children, ...rest }) => {
+  return (
+    <AddressListItemWrapper focus={focus} {...rest}>
+      <AddressRow>
+        <AddressColumn>
+          <AddressName>
+            {addressName} <Group>Group {group}</Group>
+          </AddressName>
+          <Address>{formatTruncatedAddress(address)}</Address>
+        </AddressColumn>
+        <AddressColumn>{children}</AddressColumn>
+      </AddressRow>
+    </AddressListItemWrapper>
+  )
+}
 
 export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps>`
   cursor: pointer;
-  background-color: ${({ focus }) =>
-        focus ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.1)"};
+  background-color: ${({ focus }) => (focus ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)')};
   border-radius: 4px;
   padding: 20px 16px;
-  border: 1px solid
-    ${({ focus }) => (focus ? "rgba(255, 255, 255, 0.3)" : "transparent")};
+  border: 1px solid ${({ focus }) => (focus ? 'rgba(255, 255, 255, 0.3)' : 'transparent')};
 
   display: flex;
   gap: 12px;
@@ -65,26 +79,3 @@ const Group = styled.span`
   font-size: 10px;
   margin-top: 5px;
 `
-
-export const AddressListItem: FC<IAddressListItem> = ({
-    addressName,
-    address,
-    group,
-    focus,
-    children,
-    ...rest
-}) => {
-    return (
-        <AddressListItemWrapper focus={focus} {...rest}>
-            <AddressRow>
-                <AddressColumn>
-                    <AddressName>{addressName} <Group>Group {group}</Group></AddressName>
-                    <Address>
-                        {formatTruncatedAddress(address)}
-                    </Address>
-                </AddressColumn>
-                <AddressColumn>{children}</AddressColumn>
-            </AddressRow>
-        </AddressListItemWrapper>
-    )
-}
