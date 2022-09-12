@@ -22,7 +22,7 @@ jobs:
       - name: Publish to npm
         run: |
           yarn
-          pushd packages/get-alephium
+          pushd packages/get-extension-wallet
           npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

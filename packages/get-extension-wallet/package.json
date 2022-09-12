@@ -1,5 +1,5 @@
 {
-  "name": "@alephium/get-alephium",
+  "name": "@alephium/get-extension-wallet",
   "version": "0.1.1",
   "main": "dist/",
   "browser": {

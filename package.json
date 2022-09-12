@@ -22,13 +22,13 @@
     "format": "prettier --loglevel warn --write \"**/*.{js,jsx,ts,tsx,css,md,yml,json}\"",
     "dev": "lerna run dev --parallel",
     "dev:ui": "lerna run dev:ui --parallel",
-    "clean": "rm -rf packages/extension/dist packages/get-alephium/dist",
+    "clean": "rm -rf packages/extension/dist packages/get-extension-wallet/dist",
     "build": "lerna run build --stream",
     "build:sourcemaps": "GEN_SOURCE_MAPS=true lerna run build",
     "lint": "lerna run lint --stream",
     "test": "lerna run test --stream",
     "test:watch": "lerna run test:watch --stream",
-    "prepare": "yarn --cwd packages/get-alephium build && husky install"
+    "prepare": "yarn --cwd packages/get-extension-wallet build && husky install"
   },
   "importSort": {
     ".js, .jsx, .ts, .tsx": {
