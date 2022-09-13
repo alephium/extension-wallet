@@ -1,5 +1,3 @@
-import 'swiper/css'
-
 import { ThemeProvider as MuiThemeProvider } from '@mui/material'
 import { FC, Suspense } from 'react'
 import { SWRConfig } from 'swr'

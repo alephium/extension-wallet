@@ -1,3 +1,6 @@
+import 'swiper/css'
+import 'swiper/css/pagination'
+
 import { createTheme } from '@mui/material/styles'
 import React, { FC } from 'react'
 import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'

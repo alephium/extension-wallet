@@ -33,7 +33,7 @@ export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, gr
 
 export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps>`
   cursor: pointer;
-  background-color: ${({ focus }) => (focus ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)')};
+  background-color: ${({ focus, theme }) => (focus ? theme.bg4 : theme.bg3)};
   border-radius: 4px;
   padding: 20px 16px;
   border: 1px solid ${({ focus }) => (focus ? 'rgba(255, 255, 255, 0.3)' : 'transparent')};
@@ -43,12 +43,7 @@ export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps>`
   align-items: center;
 
   transition: all 200ms ease-in-out;
-
-  &:hover,
-  &:focus {
-    background: rgba(255, 255, 255, 0.15);
-    outline: 0;
-  }
+  width: 80%;
 `
 
 const AddressColumn = styled.div`

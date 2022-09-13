@@ -1,6 +1,7 @@
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { EffectCreative, Keyboard, Mousewheel, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 import { Address } from '../../../shared/Address'
@@ -64,7 +65,28 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
       <AddressList>
         {addressesList.length === 0 && <Paragraph>No address, click below to add one.</Paragraph>}
         <CarouselContainer>
-          <Swiper spaceBetween={50} slidesPerView={3}>
+          <Swiper
+            spaceBetween={50}
+            slidesPerView={1}
+            modules={[Pagination, Mousewheel, EffectCreative, Keyboard]}
+            mousewheel={true}
+            pagination={{ clickable: true }}
+            keyboard={{
+              enabled: true
+            }}
+            grabCursor={true}
+            effect={'creative'}
+            creativeEffect={{
+              prev: {
+                // will set `translateZ(-400px)` on previous slides
+                translate: [0, 0, -200]
+              },
+              next: {
+                // will set `translateX(100%)` on next slides
+                translate: ['80%', 0, 0]
+              }
+            }}
+          >
             {addressesList.map((address) => (
               <SwiperSlide key={address.hash}>
                 <AddressListScreenItem address={address} selectedAddress={selectedAddress} />
@@ -111,7 +133,25 @@ const Container = styled.div`
   padding-top: 16px;
 `
 
-const CarouselContainer = styled.div``
+const CarouselContainer = styled.div`
+  width: 100%;
+
+  .swiper {
+    overflow: visible;
+  }
+
+  .swiper-pagination {
+    bottom: -25px;
+  }
+
+  .swiper-pagination-bullet {
+    background-color: ${({ theme }) => theme.text2};
+  }
+
+  .swiper-pagination-bullet-active {
+    background-color: ${({ theme }) => theme.text1};
+  }
+`
 
 const IconButtonCenter = styled(IconButton)`
   margin: auto;
