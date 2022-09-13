@@ -1,17 +1,17 @@
-import { FC } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import styled from "styled-components"
+import { FC } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { IconBar } from "../../components/IconBar"
-import { IconButton } from "../../components/IconButton"
-import { AddIcon } from "../../components/Icons/MuiIcons"
-import { Spinner } from "../../components/Spinner"
-import { routes } from "../../routes"
-import { removeNetworks } from "../../services/backgroundNetworks"
-import { H2, P } from "../../theme/Typography"
-import { useNetworks } from "../networks/useNetworks"
-import { DappConnection } from "./DappConnection"
-import { useSelectedNetwork } from "./selectedNetwork.state"
+import { IconButton } from '../../components/buttons/IconButton'
+import { IconBar } from '../../components/IconBar'
+import { AddIcon } from '../../components/Icons/MuiIcons'
+import { Spinner } from '../../components/Spinner'
+import { routes } from '../../routes'
+import { removeNetworks } from '../../services/backgroundNetworks'
+import { H2, P } from '../../theme/Typography'
+import { useNetworks } from '../networks/useNetworks'
+import { DappConnection } from './DappConnection'
+import { useSelectedNetwork } from './selectedNetwork.state'
 
 const Wrapper = styled.div`
   display: flex;
@@ -72,9 +72,7 @@ export const NetworkSettingsScreen: FC = () => {
                   await removeNetworks([network.id])
 
                   // optimistic update
-                  await mutate((prevData) =>
-                    prevData?.filter((n) => n.id !== network.id),
-                  )
+                  await mutate((prevData) => prevData?.filter((n) => n.id !== network.id))
                 }}
               />
             ))
@@ -82,7 +80,7 @@ export const NetworkSettingsScreen: FC = () => {
         </List>
 
         <Link to={routes.settingsAddCustomNetwork()}>
-          <IconButtonCenter size={48} style={{ marginTop: "32px" }}>
+          <IconButtonCenter size={48} style={{ marginTop: '32px' }}>
             <AddIcon fontSize="large" />
           </IconButtonCenter>
         </Link>

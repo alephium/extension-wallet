@@ -1,15 +1,11 @@
-import { FC, FormEvent, ReactNode, useState } from "react"
-import Measure from "react-measure"
-import { useNavigate } from "react-router-dom"
-import styled from "styled-components"
+import { FC, FormEvent, ReactNode, useState } from 'react'
+import Measure from 'react-measure'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { Address } from "../../../shared/Address"
-import {
-  Button,
-  ButtonGroupVertical,
-  ButtonVariant,
-} from "../../components/Button"
-import { H2 } from "../../theme/Typography"
+import { Address } from '../../../shared/Address'
+import { Button, ButtonGroupVertical, ButtonVariant } from '../../components/buttons/Button'
+import { H2 } from '../../theme/Typography'
 
 const ConfirmScreenWrapper = styled.form<{
   addressShown: boolean
@@ -17,8 +13,7 @@ const ConfirmScreenWrapper = styled.form<{
 }>`
   display: flex;
   flex-direction: column;
-  padding: ${({ smallTopPadding }) => (smallTopPadding ? "16px" : "48px")} 32px
-    0;
+  padding: ${({ smallTopPadding }) => (smallTopPadding ? '16px' : '48px')} 32px 0;
   ${({ addressShown }) => (addressShown ? `padding-top: 0;` : ``)}
 
   > ${H2} {
@@ -55,11 +50,7 @@ export const StickyGroup = styled.div`
   padding: 16px 32px 24px;
 
   background-color: ${({ theme }) => theme.bg1};
-  background: linear-gradient(
-    180deg,
-    rgba(16, 16, 16, 0.4) 0%,
-    ${({ theme }) => theme.bg1} 73.72%
-  );
+  background: linear-gradient(180deg, rgba(16, 16, 16, 0.4) 0%, ${({ theme }) => theme.bg1} 73.72%);
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(10px);
   z-index: 100;
@@ -81,11 +72,11 @@ const Placeholder = styled.div`
 
 export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   title,
-  confirmButtonText = "Confirm",
+  confirmButtonText = 'Confirm',
   confirmButtonDisabled,
   confirmButtonBackgroundColor,
   confirmButtonVariant,
-  rejectButtonText = "Reject",
+  rejectButtonText = 'Reject',
   onSubmit,
   onReject,
   selectedAddress,
@@ -117,7 +108,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
 
       <Placeholder
         style={{
-          height: placeholderHeight,
+          height: placeholderHeight
         }}
       />
       <Measure
@@ -139,9 +130,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
               <Button
                 disabled={confirmButtonDisabled}
                 style={{
-                  backgroundColor: confirmButtonDisabled
-                    ? undefined
-                    : confirmButtonBackgroundColor,
+                  backgroundColor: confirmButtonDisabled ? undefined : confirmButtonBackgroundColor
                 }}
                 variant={confirmButtonVariant}
                 type="submit"

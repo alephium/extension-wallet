@@ -1,16 +1,16 @@
-import { FC, ReactNode, useState } from "react"
-import styled from "styled-components"
+import { FC, ReactNode, useState } from 'react'
+import styled from 'styled-components'
 
-import { Button } from "../../components/Button"
-import { IconBar } from "../../components/IconBar"
-import { Paragraph } from "../../components/Page"
-import { useReturnTo } from "../../routes"
-import { checkPassword } from "../../services/backgroundSessions"
-import { H2 } from "../../theme/Typography"
-import { StickyGroup } from "../actions/ConfirmScreen"
-import { PasswordForm } from "../onboarding/PasswordForm"
-import { SeedPhrase } from "../recovery/SeedPhrase"
-import { useSeedPhrase } from "../recovery/useSeedPhrase"
+import { Button } from '../../components/buttons/Button'
+import { IconBar } from '../../components/IconBar'
+import { Paragraph } from '../../components/Page'
+import { useReturnTo } from '../../routes'
+import { checkPassword } from '../../services/backgroundSessions'
+import { H2 } from '../../theme/Typography'
+import { StickyGroup } from '../actions/ConfirmScreen'
+import { PasswordForm } from '../onboarding/PasswordForm'
+import { SeedPhrase } from '../recovery/SeedPhrase'
+import { useSeedPhrase } from '../recovery/useSeedPhrase'
 
 const Container = styled.div`
   display: flex;
@@ -69,10 +69,7 @@ export const SeedSettingsScreen: FC = () => {
 
   return (
     <Wrapper>
-      <Paragraph>
-        Write these words down on paper. It is unsafe to save them on your
-        computer.
-      </Paragraph>
+      <Paragraph>Write these words down on paper. It is unsafe to save them on your computer.</Paragraph>
 
       <SeedPhrase seedPhrase={seedPhrase} />
     </Wrapper>

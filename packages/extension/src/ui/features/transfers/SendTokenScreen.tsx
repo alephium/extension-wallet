@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { Schema, object } from 'yup'
 
 import { inputAmountSchema } from '../../../shared/token/amount'
-import { Button } from '../../components/Button'
+import { Button } from '../../components/buttons/Button'
 import Column, { ColumnCenter } from '../../components/Column'
 import { IconBar } from '../../components/IconBar'
 import { StyledControlledInput } from '../../components/InputText'

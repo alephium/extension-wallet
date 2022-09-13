@@ -1,3 +1,4 @@
+import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react'
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -6,7 +7,8 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 
 import { Address } from '../../../shared/Address'
 import { useAppState } from '../../app.state'
-import { IconButton } from '../../components/IconButton'
+import { IconButton } from '../../components/buttons/IconButton'
+import IconWithLabelButton from '../../components/buttons/IconWithLabelButton'
 import { AddIcon } from '../../components/Icons/MuiIcons'
 import { InputText } from '../../components/InputText'
 import { routes } from '../../routes'
@@ -25,6 +27,7 @@ interface AddressListScreenProps {
 export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
   const navigate = useNavigate()
   const { addresses, selectedAddress, addAddress } = useAddresses()
+  const [focusedAddress, setFocusedAddress] = useState('')
   const [group, setGroup] = useState<any>(undefined)
 
   const addressesList = Object.values(addresses)
@@ -79,21 +82,33 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
             creativeEffect={{
               prev: {
                 translate: ['-100%', 0, 0],
-                scale: 0.9
+                scale: 0.9,
+                shadow: true
               },
               next: {
                 translate: ['100%', 0, 0],
-                scale: 0.9
+                scale: 0.9,
+                shadow: true
               }
             }}
           >
             {addressesList.map((address) => (
               <SwiperSlide key={address.hash}>
-                <AddressListSlideItem address={address} selectedAddress={selectedAddress} />
+                {({ isActive }) => {
+                  setFocusedAddress(address.hash)
+                  return (
+                    <AddressListSlideItem isFocused={isActive} address={address} selectedAddress={selectedAddress} />
+                  )
+                }}
               </SwiperSlide>
             ))}
           </Swiper>
         </CarouselContainer>
+        <ActionsContainer>
+          <IconWithLabelButton Icon={<ArrowUp size={20} />} label={'Send'} to={''} />
+          <IconWithLabelButton Icon={<ArrowDown size={20} />} label={'Receive'} to={''} />
+          <IconWithLabelButton Icon={<Settings2 size={20} />} label={'Settings'} to={''} />
+        </ActionsContainer>
         <AddContainer>
           <InputText
             type="number"
@@ -140,10 +155,6 @@ const CarouselContainer = styled.div`
     overflow: visible;
   }
 
-  .swiper-slide {
-    margin: 0;
-  }
-
   .swiper-pagination {
     bottom: -25px;
   }
@@ -157,17 +168,24 @@ const CarouselContainer = styled.div`
   }
 `
 
+const AddContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 40%;
+  margin: auto;
+`
+
+const ActionsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 80%;
+  margin: 20px auto 0 auto;
+`
+
 const IconButtonCenter = styled(IconButton)`
   margin: auto;
 `
 
 const Paragraph = styled(P)`
   text-align: center;
-`
-
-const AddContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 40%;
-  margin: auto;
 `

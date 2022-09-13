@@ -37,6 +37,8 @@ export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps>`
   border-radius: 4px;
   padding: 20px 16px;
   border: 1px solid ${({ focus }) => (focus ? 'rgba(255, 255, 255, 0.3)' : 'transparent')};
+  box-shadow: ${({ focus }) => (focus ? '0 20px 20px rgba(0, 0, 0, 0.25)' : 'none')};
+  transition: all 0.15s ease-out;
 
   height: 120px;
   display: flex;

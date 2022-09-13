@@ -1,10 +1,10 @@
-import { ArrowDown, ArrowUp } from "lucide-react"
-import { FC } from "react"
-import { Link } from "react-router-dom"
-import styled from "styled-components"
+import { ArrowDown, ArrowUp } from 'lucide-react'
+import { FC } from 'react'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { Button } from "../../components/Button"
-import { routes } from "../../routes"
+import { Button } from '../../components/buttons/Button'
+import { routes } from '../../routes'
 
 export const TransferButtons: FC = () => {
   return (

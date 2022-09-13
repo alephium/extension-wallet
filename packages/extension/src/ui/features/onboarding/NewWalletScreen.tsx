@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useAppState } from '../../app.state'
-import { Button } from '../../components/Button'
+import { Button } from '../../components/buttons/Button'
 import { IconBar } from '../../components/IconBar'
 import { InputText } from '../../components/InputText'
 import { routes } from '../../routes'

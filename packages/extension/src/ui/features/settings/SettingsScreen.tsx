@@ -1,14 +1,14 @@
-import { FC } from "react"
-import { Link, useLocation } from "react-router-dom"
-import styled from "styled-components"
+import { FC } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { Button } from "../../components/Button"
-import { IconBar } from "../../components/IconBar"
-import { ArrowForwardIosIcon } from "../../components/Icons/MuiIcons"
-import { routes } from "../../routes"
-import { stopSession } from "../../services/backgroundSessions"
-import { H2 } from "../../theme/Typography"
-import { useExtensionIsInTab, useOpenExtensionInTab } from "../browser/tabs"
+import { Button } from '../../components/buttons/Button'
+import { IconBar } from '../../components/IconBar'
+import { ArrowForwardIosIcon } from '../../components/Icons/MuiIcons'
+import { routes } from '../../routes'
+import { stopSession } from '../../services/backgroundSessions'
+import { H2 } from '../../theme/Typography'
+import { useExtensionIsInTab, useOpenExtensionInTab } from '../browser/tabs'
 
 export const SettingsScreen: FC = () => {
   const openExtensionInTab = useOpenExtensionInTab()
@@ -28,10 +28,7 @@ export const SettingsScreen: FC = () => {
         <hr />
         {!extensionIsInTab && (
           <>
-            <SettingsLinkItem
-              to={routes.settings()}
-              onClick={openExtensionInTab}
-            >
+            <SettingsLinkItem to={routes.settings()} onClick={openExtensionInTab}>
               <Title>
                 <span>Extended view</span>
                 <ArrowForwardIosIcon fontSize="inherit" />
@@ -45,10 +42,7 @@ export const SettingsScreen: FC = () => {
             <span>Reset dapp connections</span>
             <ArrowForwardIosIcon fontSize="inherit" />
           </Title>
-          <P>
-            Dapps you have previously connected to can auto-connect in the
-            future.
-          </P>
+          <P>Dapps you have previously connected to can auto-connect in the future.</P>
         </SettingsLinkItem>
         <hr />
         <SettingsLinkItem to={routes.settingsSeed(returnTo)}>
@@ -56,10 +50,7 @@ export const SettingsScreen: FC = () => {
             <span>Show recovery phrase</span>
             <ArrowForwardIosIcon fontSize="inherit" />
           </Title>
-          <P>
-            Your recovery phrase allows anyone to use your account. Keep it
-            secure.
-          </P>
+          <P>Your recovery phrase allows anyone to use your account. Keep it secure.</P>
         </SettingsLinkItem>
         <hr />
         <SettingsLinkItem to={routes.settingsNetworks()}>

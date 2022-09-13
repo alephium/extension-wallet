@@ -10,12 +10,13 @@ import { useAddresses } from './addresses.state'
 import { AddressListItem } from './AddressListItem'
 import { getAddressName, useAddressMetadata } from './addressMetadata.state'
 
-interface IAddressListScreenItem {
+interface AddressListSlideItemProps {
   address: Address
+  isFocused: boolean
   selectedAddress?: Address
 }
 
-export const AddressListSlideItem: FC<IAddressListScreenItem> = ({ address, selectedAddress }) => {
+export const AddressListSlideItem: FC<AddressListSlideItemProps> = ({ address, isFocused, selectedAddress }) => {
   const swiper = useSwiper()
   const swiperSlide = useSwiperSlide()
 
@@ -30,7 +31,7 @@ export const AddressListSlideItem: FC<IAddressListScreenItem> = ({ address, sele
       addressName={addressName}
       address={address.hash}
       group={address.group}
-      focus={selectedAddress?.hash === address.hash}
+      focus={isFocused}
     />
   )
 }
