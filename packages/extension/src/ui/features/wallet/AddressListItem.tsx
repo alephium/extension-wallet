@@ -38,12 +38,10 @@ export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps>`
   padding: 20px 16px;
   border: 1px solid ${({ focus }) => (focus ? 'rgba(255, 255, 255, 0.3)' : 'transparent')};
 
+  height: 120px;
   display: flex;
   gap: 12px;
   align-items: center;
-
-  transition: all 200ms ease-in-out;
-  width: 80%;
 `
 
 const AddressColumn = styled.div`

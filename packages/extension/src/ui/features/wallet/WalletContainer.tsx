@@ -76,6 +76,7 @@ export const Container = styled.div<{
   header?: boolean
   footer?: boolean
 }>`
+  overflow-x: hidden;
   ${({ header = false }) =>
     header &&
     css`

@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSwiper, useSwiperSlide } from 'swiper/react'
 
 import { Address } from '../../../shared/Address'
 import { routes } from '../../routes'
@@ -14,8 +15,9 @@ interface IAddressListScreenItem {
   selectedAddress?: Address
 }
 
-export const AddressListScreenItem: FC<IAddressListScreenItem> = ({ address, selectedAddress }) => {
-  const navigate = useNavigate()
+export const AddressListSlideItem: FC<IAddressListScreenItem> = ({ address, selectedAddress }) => {
+  const swiper = useSwiper()
+  const swiperSlide = useSwiperSlide()
 
   const { addressNames } = useAddressMetadata()
   const addressName = getAddressName(address.hash, addressNames)
@@ -23,15 +25,7 @@ export const AddressListScreenItem: FC<IAddressListScreenItem> = ({ address, sel
   return (
     <AddressListItem
       {...makeClickable(() => {
-        useAddresses.setState({
-          selectedAddress: address
-        })
-        connectAddress({
-          address: address.hash,
-          publicKey: address.publicKey,
-          addressIndex: address.group
-        })
-        navigate(routes.addressTokens())
+        swiper.slideTo(swiperSlide.isPrev ? swiper.activeIndex - 1 : swiper.activeIndex + 1)
       })}
       addressName={addressName}
       address={address.hash}

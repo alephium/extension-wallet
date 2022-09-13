@@ -16,7 +16,7 @@ import { H1, P } from '../../theme/Typography'
 import { recover } from '../recovery/recovery.service'
 import { deployAddress } from './addresses.service'
 import { useAddresses } from './addresses.state'
-import { AddressListScreenItem } from './AddressListScreenItem'
+import { AddressListSlideItem } from './AddressListSlideItem'
 
 interface AddressListScreenProps {
   address: Address
@@ -78,18 +78,18 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
             effect={'creative'}
             creativeEffect={{
               prev: {
-                // will set `translateZ(-400px)` on previous slides
-                translate: [0, 0, -200]
+                translate: ['-100%', 0, 0],
+                scale: 0.9
               },
               next: {
-                // will set `translateX(100%)` on next slides
-                translate: ['80%', 0, 0]
+                translate: ['100%', 0, 0],
+                scale: 0.9
               }
             }}
           >
             {addressesList.map((address) => (
               <SwiperSlide key={address.hash}>
-                <AddressListScreenItem address={address} selectedAddress={selectedAddress} />
+                <AddressListSlideItem address={address} selectedAddress={selectedAddress} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -138,6 +138,10 @@ const CarouselContainer = styled.div`
 
   .swiper {
     overflow: visible;
+  }
+
+  .swiper-slide {
+    margin: 0;
   }
 
   .swiper-pagination {
