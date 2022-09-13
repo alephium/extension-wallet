@@ -6,7 +6,7 @@ import { TransactionPayload } from '../../../shared/transactions'
 import { Field, FieldGroup, FieldKey, FieldValue } from '../../components/Fields'
 import { routes } from '../../routes'
 import { assertNever } from '../../services/assertNever'
-import { getAddressName, useAddressMetadata } from '../wallet/addressMetadata.state'
+import { getAddressName, useAddressMetadata } from '../addresses/addressMetadata.state'
 import { ConfirmPageProps, ConfirmScreen } from './ConfirmScreen'
 import { TransactionsList } from './transaction/TransactionsList'
 

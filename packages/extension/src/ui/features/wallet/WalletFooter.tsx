@@ -7,12 +7,12 @@ import styled from 'styled-components'
 
 import { useScrollContext } from '../../AppRoutes'
 
-interface AddressFooterProps {
+interface WalletFooterProps {
   children?: ReactNode
   className?: string
 }
 
-const AddressFooter = ({ children, className }: AddressFooterProps) => {
+const WalletFooter = ({ children, className }: WalletFooterProps) => {
   const { scrollBehaviourElementRef } = useScrollContext()
 
   const { scrollY } = useScroll({ container: scrollBehaviourElementRef })
@@ -40,7 +40,7 @@ const AddressFooter = ({ children, className }: AddressFooterProps) => {
   )
 }
 
-export default styled(AddressFooter)`
+export default styled(WalletFooter)`
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -65,7 +65,7 @@ const Content = styled.div`
   `}
 `
 
-export const FooterTab = styled(Link)`
+export const FooterTab = styled(Link)<{ isActive: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -88,6 +88,10 @@ export const FooterTab = styled(Link)`
   &:hover,
   &:focus {
     outline: 0;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
   }
+
+  color: ${({ isActive, theme }) => (isActive ? theme.text1 : theme.text2)};
+
+  background-color: ${({ isActive }) => (isActive ? 'rgba(255, 255, 255, 0.1)' : 'initial')};
 `

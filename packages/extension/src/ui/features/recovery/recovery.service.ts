@@ -1,9 +1,9 @@
 import { useAppState } from '../../app.state'
 import { routes } from '../../routes'
 import { getAddresses, getLastSelectedAddress } from '../../services/backgroundAddresses'
-import { toAddress } from '../wallet/addresses.service'
-import { useAddresses } from '../wallet/addresses.state'
-import { setDefaultAddressNames } from '../wallet/addressMetadata.state'
+import { toAddress } from '../addresses/addresses.service'
+import { useAddresses } from '../addresses/addresses.state'
+import { setDefaultAddressNames } from '../addresses/addressMetadata.state'
 
 export const recover = async () => {
   try {

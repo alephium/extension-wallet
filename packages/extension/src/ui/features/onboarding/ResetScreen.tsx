@@ -6,7 +6,7 @@ import { routes } from '../../routes'
 import { resetAll } from '../../services/background'
 import { P } from '../../theme/Typography'
 import { ConfirmScreen } from '../actions/ConfirmScreen'
-import { initialState, useAddresses } from '../wallet/addresses.state'
+import { initialState, useAddresses } from '../addresses/addresses.state'
 
 export const ResetScreen: FC = () => {
   const navigate = useNavigate()

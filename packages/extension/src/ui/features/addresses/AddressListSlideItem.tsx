@@ -1,12 +1,9 @@
-import { FC } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { FC, useEffect } from 'react'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 
 import { Address } from '../../../shared/Address'
-import { routes } from '../../routes'
 import { makeClickable } from '../../services/a11y'
-import { connectAddress } from '../../services/backgroundAddresses'
-import { useAddresses } from './addresses.state'
+import { useWalletState } from '../wallet/wallet.state'
 import { AddressListItem } from './AddressListItem'
 import { getAddressName, useAddressMetadata } from './addressMetadata.state'
 
@@ -22,6 +19,10 @@ export const AddressListSlideItem: FC<AddressListSlideItemProps> = ({ address, i
 
   const { addressNames } = useAddressMetadata()
   const addressName = getAddressName(address.hash, addressNames)
+
+  useEffect(() => {
+    isFocused && useWalletState.setState({ headerTitle: addressName })
+  }, [addressName, isFocused])
 
   return (
     <AddressListItem

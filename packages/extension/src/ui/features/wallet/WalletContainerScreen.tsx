@@ -1,10 +1,10 @@
 import { FC, ReactNode } from 'react'
 
 import { assertNever } from '../../services/assertNever'
-import WalletOverview from '../assets/WalletAssets'
-import { AddressActivity } from '../transfers/AddressActivity'
-import { useSelectedAddress } from './addresses.state'
-import { AddressListScreen } from './AddressListScreen'
+import { useSelectedAddress } from '../addresses/addresses.state'
+import { AddressListScreen } from '../addresses/AddressListScreen'
+import WalletAssetsScreen from '../assets/WalletAssetsScreen'
+import WalletTransfersScreen from '../transactions/WalletTransfersScreen'
 import { WalletContainer } from './WalletContainer'
 
 export type WalletContainerScreenTab = 'assets' | 'addresses' | 'transfers'
@@ -19,14 +19,14 @@ export const WalletContainerScreen: FC<WalletContainerScreenProps> = ({ tab }) =
   if (!address) {
     body = <></>
   } else if (tab === 'assets') {
-    body = <WalletOverview address={address} />
+    body = <WalletAssetsScreen address={address} />
   } else if (tab === 'addresses') {
     body = <AddressListScreen address={address} />
   } else if (tab === 'transfers') {
-    body = <AddressActivity address={address} />
+    body = <WalletTransfersScreen address={address} />
   } else {
     assertNever(tab)
   }
 
-  return <WalletContainer addressScreenTab={tab}>{body}</WalletContainer>
+  return <WalletContainer currentTab={tab}>{body}</WalletContainer>
 }

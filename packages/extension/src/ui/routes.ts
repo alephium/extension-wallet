@@ -44,7 +44,8 @@ export const routes = {
   confirmSeedRecovery: routeWithReturnTo('/recovery/seed/confirm'),
   lockScreen: route('/lock-screen'),
   addressTokens: route('/address/tokens'),
-  walletAddresses: route('/address/addresses'),
+  walletAddresses: route('/wallet/addresses'),
+  newAddress: route('wallet/new-address'),
   addressActivity: route('/address/activity'),
   addressSettings: route('/address/settings'),
   addressDeleteConfirm: route(

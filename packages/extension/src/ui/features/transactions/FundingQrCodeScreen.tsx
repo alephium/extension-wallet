@@ -7,9 +7,9 @@ import { ContentCopyIcon } from '../../components/Icons/MuiIcons'
 import { PageWrapper } from '../../components/Page'
 import { QrCode } from '../../components/QrCode'
 import { formatTruncatedAddress } from '../../services/addresses'
+import { useSelectedAddress } from '../addresses/addresses.state'
+import { getAddressName, useAddressMetadata } from '../addresses/addressMetadata.state'
 import { Address, AddressWrapper } from '../assets/Address'
-import { useSelectedAddress } from '../wallet/addresses.state'
-import { getAddressName, useAddressMetadata } from '../wallet/addressMetadata.state'
 
 const Container = styled.div`
   padding: 0 20px;

@@ -7,6 +7,7 @@ import { useActions, useActionsSubscription } from './features/actions/actions.s
 import { ActionScreen } from './features/actions/ActionScreen'
 import { ErrorScreen } from './features/actions/ErrorScreen'
 import { LoadingScreen } from './features/actions/LoadingScreen'
+import NewAddressScreen from './features/addresses/NewAddressScreen'
 import { LockScreen } from './features/onboarding/LockScreen'
 import { NewWalletScreen } from './features/onboarding/NewWalletScreen'
 import { ResetScreen } from './features/onboarding/ResetScreen'
@@ -19,8 +20,8 @@ import { NetworkSettingsFormScreen } from './features/settings/NetworkSettingsFo
 import { NetworkSettingsScreen } from './features/settings/NetworkSettingsScreen'
 import { SeedSettingsScreen } from './features/settings/SeedSettingsScreen'
 import { SettingsScreen } from './features/settings/SettingsScreen'
-import { FundingQrCodeScreen } from './features/transfers/FundingQrCodeScreen'
-import { SendTokenScreen } from './features/transfers/SendTokenScreen'
+import { FundingQrCodeScreen } from './features/transactions/FundingQrCodeScreen'
+import { SendTokenScreen } from './features/transactions/SendTokenScreen'
 import { WalletContainerScreen } from './features/wallet/WalletContainerScreen'
 import { routes } from './routes'
 import { useEntryRoute } from './useEntryRoute'
@@ -75,6 +76,7 @@ const walletRoutes = (
   <>
     <Route path={routes.addressTokens.path} element={<WalletContainerScreen tab="assets" />} />
     <Route path={routes.walletAddresses.path} element={<WalletContainerScreen tab="addresses" />} />
+    <Route path={routes.newAddress.path} element={<NewAddressScreen />} />
     <Route path={routes.addressActivity.path} element={<WalletContainerScreen tab="transfers" />} />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
     <Route path={routes.fundingQrCode.path} element={<FundingQrCodeScreen />} />

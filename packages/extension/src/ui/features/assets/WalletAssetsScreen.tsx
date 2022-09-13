@@ -6,15 +6,16 @@ import { attoAlphToFiat } from '../../../shared/utils/amount'
 import Amount from '../../components/Amount'
 import { getBalances } from '../../services/backgroundAddresses'
 import { H1, H3 } from '../../theme/Typography'
+import { useAddresses } from '../addresses/addresses.state'
 import { useNetworkState } from '../networks/networks.state'
-import { useAddresses } from '../wallet/addresses.state'
+import { useWalletState } from '../wallet/wallet.state'
 
-interface WalletOverviewProps {
+interface WalletAssetsScreenProps {
   address: Address
   className?: string
 }
 
-const WalletAssets: FC<WalletOverviewProps> = ({ address, className }) => {
+const WalletAssetsScreen: FC<WalletAssetsScreenProps> = ({ address, className }) => {
   const { addresses } = useAddresses()
   const [totalBalance, setTotalBalance] = useState<bigint | undefined>(undefined)
   const [fiatBalance, setFiatBalance] = useState<number>()
@@ -25,6 +26,10 @@ const WalletAssets: FC<WalletOverviewProps> = ({ address, className }) => {
       setTotalBalance(balances.reduce((acc, b) => acc + BigInt(b.balance), BigInt(0)))
     })
   }, [address, addresses, switcherNetworkId])
+
+  useEffect(() => {
+    useWalletState.setState({ headerTitle: undefined })
+  }, [])
 
   useEffect(() => {
     const fetchFiatPrice = async () => {
@@ -49,7 +54,7 @@ const WalletAssets: FC<WalletOverviewProps> = ({ address, className }) => {
   )
 }
 
-export default styled(WalletAssets)`
+export default styled(WalletAssetsScreen)`
   display: flex;
   flex-direction: column;
   padding-top: 16px;

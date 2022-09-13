@@ -11,10 +11,10 @@ import { routes } from '../../routes'
 import { connectAddress, getAddresses } from '../../services/backgroundAddresses'
 import { FormError, H2, P } from '../../theme/Typography'
 import { StickyGroup } from '../actions/ConfirmScreen'
+import { deployAddress } from '../addresses/addresses.service'
+import { useAddresses } from '../addresses/addresses.state'
 import { recover } from '../recovery/recovery.service'
 import { validatePassword } from '../recovery/seedRecovery.state'
-import { deployAddress } from '../wallet/addresses.service'
-import { useAddresses } from '../wallet/addresses.state'
 
 const Container = styled.div`
   padding: 48px 40px 24px;

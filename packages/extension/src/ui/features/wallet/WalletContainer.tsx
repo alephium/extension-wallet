@@ -1,4 +1,4 @@
-import { ArrowUpDown, LayoutTemplate, List, Settings as SettingsIcon } from 'lucide-react'
+import { ArrowUpDown, LayoutTemplate, List, Plus, Settings as SettingsIcon } from 'lucide-react'
 import { FC, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -7,19 +7,21 @@ import { IconButton } from '../../components/buttons/IconButton'
 import { Header } from '../../components/Header'
 import { routes } from '../../routes'
 import { makeClickable } from '../../services/a11y'
+import { useSelectedAddress } from '../addresses/addresses.state'
 import { NetworkSwitcher } from '../networks/NetworkSwitcher'
-import { useSelectedAddress } from './addresses.state'
+import { useWalletState } from './wallet.state'
 import { WalletContainerScreenTab } from './WalletContainerScreen'
 import AddressFooterContainer, { FooterTab } from './WalletFooter'
 import AddressHeader from './WalletHeader'
 
 interface AddressScreenContentProps {
-  addressScreenTab: WalletContainerScreenTab
+  currentTab: WalletContainerScreenTab
   children?: ReactNode
 }
 
-export const WalletContainer: FC<AddressScreenContentProps> = ({ addressScreenTab, children }) => {
+export const WalletContainer: FC<AddressScreenContentProps> = ({ currentTab, children }) => {
   const address = useSelectedAddress()
+  const { headerTitle } = useWalletState()
   const navigate = useNavigate()
 
   if (!address) {
@@ -31,8 +33,8 @@ export const WalletContainer: FC<AddressScreenContentProps> = ({ addressScreenTa
       <AddressHeader
         buttons={
           <>
-            {addressScreenTab === 'assets' && (
-              <IconButton size={36}>
+            {currentTab === 'assets' && (
+              <IconButton size={40}>
                 <SettingsIcon
                   size={21}
                   {...makeClickable(() => navigate(routes.settings()), {
@@ -42,28 +44,29 @@ export const WalletContainer: FC<AddressScreenContentProps> = ({ addressScreenTa
                 />
               </IconButton>
             )}
-            {addressScreenTab !== 'addresses' && <NetworkSwitcher />}
+            {currentTab !== 'addresses' && <NetworkSwitcher />}
+            {currentTab === 'addresses' && (
+              <IconButton size={40}>
+                <Plus />
+              </IconButton>
+            )}
           </>
         }
-        title={
-          addressScreenTab !== 'assets'
-            ? addressScreenTab.charAt(0).toUpperCase() + addressScreenTab.slice(1)
-            : undefined
-        }
+        title={headerTitle}
       />
 
       {children}
 
       <AddressFooterContainer>
-        <FooterTab to={routes.addressTokens()}>
+        <FooterTab to={routes.addressTokens()} isActive={currentTab === 'assets'}>
           <LayoutTemplate />
           <span>Assets</span>
         </FooterTab>
-        <FooterTab to={routes.addressActivity()}>
+        <FooterTab to={routes.addressActivity()} isActive={currentTab === 'transfers'}>
           <ArrowUpDown />
           <span>Transfers</span>
         </FooterTab>
-        <FooterTab to={routes.walletAddresses()}>
+        <FooterTab to={routes.walletAddresses()} isActive={currentTab === 'addresses'}>
           <List />
           <span>Addresses</span>
         </FooterTab>

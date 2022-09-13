@@ -1,7 +1,7 @@
-import create from "zustand"
-import { persist } from "zustand/middleware"
+import create from 'zustand'
+import { persist } from 'zustand/middleware'
 
-export const defaultAddressName = "Unnamed Address"
+export const defaultAddressName = 'Unnamed Address'
 
 interface State {
   addressNames: Record<string, string>
@@ -16,18 +16,16 @@ export const useAddressMetadata = create<State>(
         set((state) => ({
           addressNames: {
             ...state.addressNames,
-            [address]: name,
-          },
-        })),
+            [address]: name
+          }
+        }))
     }),
-    { name: "addressMetadata" },
-  ),
+    { name: 'addressMetadata' }
+  )
 )
 
-export const getAddressName = (
-  address: string,
-  addressNames: Record<string, string>,
-): string => addressNames[address] || defaultAddressName
+export const getAddressName = (address: string, addressNames: Record<string, string>): string =>
+  addressNames[address] || defaultAddressName
 
 export const setDefaultAddressNames = (addresses: string[]) => {
   const { addressNames } = useAddressMetadata.getState()
@@ -37,7 +35,7 @@ export const setDefaultAddressNames = (addresses: string[]) => {
       const name = `Address ${addresses.indexOf(address) + 1}`
       names = {
         ...names,
-        [address]: name,
+        [address]: name
       }
     }
   }
