@@ -1,18 +1,18 @@
 import { FC, ReactNode } from 'react'
 
 import { assertNever } from '../../services/assertNever'
-import { useSelectedAddress } from '../addresses/addresses.state'
 import WalletOverview from '../assets/WalletAssets'
 import { AddressActivity } from '../transfers/AddressActivity'
-import { AddressContainer } from './AddressContainer'
+import { useSelectedAddress } from './addresses.state'
 import { AddressListScreen } from './AddressListScreen'
+import { WalletContainer } from './WalletContainer'
 
-export type AddressScreenTab = 'assets' | 'addresses' | 'transfers'
-interface AddressScreenProps {
-  tab: AddressScreenTab
+export type WalletContainerScreenTab = 'assets' | 'addresses' | 'transfers'
+interface WalletContainerScreenProps {
+  tab: WalletContainerScreenTab
 }
 
-export const AddressScreen: FC<AddressScreenProps> = ({ tab }) => {
+export const WalletContainerScreen: FC<WalletContainerScreenProps> = ({ tab }) => {
   const address = useSelectedAddress()
 
   let body: ReactNode
@@ -28,5 +28,5 @@ export const AddressScreen: FC<AddressScreenProps> = ({ tab }) => {
     assertNever(tab)
   }
 
-  return <AddressContainer addressScreenTab={tab}>{body}</AddressContainer>
+  return <WalletContainer addressScreenTab={tab}>{body}</WalletContainer>
 }

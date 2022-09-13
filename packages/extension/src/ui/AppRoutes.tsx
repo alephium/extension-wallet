@@ -7,8 +7,6 @@ import { useActions, useActionsSubscription } from './features/actions/actions.s
 import { ActionScreen } from './features/actions/ActionScreen'
 import { ErrorScreen } from './features/actions/ErrorScreen'
 import { LoadingScreen } from './features/actions/LoadingScreen'
-import { AddressListScreen } from './features/addresses/AddressListScreen'
-import { AddressScreen } from './features/addresses/AddressScreen'
 import { LockScreen } from './features/onboarding/LockScreen'
 import { NewWalletScreen } from './features/onboarding/NewWalletScreen'
 import { ResetScreen } from './features/onboarding/ResetScreen'
@@ -23,6 +21,7 @@ import { SeedSettingsScreen } from './features/settings/SeedSettingsScreen'
 import { SettingsScreen } from './features/settings/SettingsScreen'
 import { FundingQrCodeScreen } from './features/transfers/FundingQrCodeScreen'
 import { SendTokenScreen } from './features/transfers/SendTokenScreen'
+import { WalletContainerScreen } from './features/wallet/WalletContainerScreen'
 import { routes } from './routes'
 import { useEntryRoute } from './useEntryRoute'
 
@@ -74,9 +73,9 @@ const nonWalletRoutes = (
 // Routes which need an unlocked wallet and therefore can also sign actions
 const walletRoutes = (
   <>
-    <Route path={routes.addressTokens.path} element={<AddressScreen tab="assets" />} />
-    <Route path={routes.walletAddresses.path} element={<AddressScreen tab="addresses" />} />
-    <Route path={routes.addressActivity.path} element={<AddressScreen tab="transfers" />} />
+    <Route path={routes.addressTokens.path} element={<WalletContainerScreen tab="assets" />} />
+    <Route path={routes.walletAddresses.path} element={<WalletContainerScreen tab="addresses" />} />
+    <Route path={routes.addressActivity.path} element={<WalletContainerScreen tab="transfers" />} />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
     <Route path={routes.fundingQrCode.path} element={<FundingQrCodeScreen />} />
     <Route path={routes.settings.path} element={<SettingsScreen />} />

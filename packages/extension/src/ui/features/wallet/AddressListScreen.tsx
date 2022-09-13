@@ -13,9 +13,9 @@ import { routes } from '../../routes'
 import { makeClickable } from '../../services/a11y'
 import { connectAddress } from '../../services/backgroundAddresses'
 import { H1, P } from '../../theme/Typography'
-import { deployAddress } from '../addresses/addresses.service'
-import { useAddresses } from '../addresses/addresses.state'
 import { recover } from '../recovery/recovery.service'
+import { deployAddress } from './addresses.service'
+import { useAddresses } from './addresses.state'
 import { AddressListScreenItem } from './AddressListScreenItem'
 
 interface AddressListScreenProps {

@@ -16,9 +16,9 @@ import { addressSchema } from '../../services/addresses'
 import { getBalance } from '../../services/backgroundAddresses'
 import { sendAlephiumTransferTransaction } from '../../services/transactions'
 import { H3 } from '../../theme/Typography'
-import { useSelectedAddress } from '../addresses/addresses.state'
 import { TokenIcon } from '../assets/TokenIcon'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
+import { useSelectedAddress } from '../wallet/addresses.state'
 
 export const BalanceText = styled.div`
   font-weight: 600;

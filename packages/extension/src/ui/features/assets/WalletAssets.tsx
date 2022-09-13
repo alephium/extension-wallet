@@ -6,8 +6,8 @@ import { attoAlphToFiat } from '../../../shared/utils/amount'
 import Amount from '../../components/Amount'
 import { getBalances } from '../../services/backgroundAddresses'
 import { H1, H3 } from '../../theme/Typography'
-import { useAddresses } from '../addresses/addresses.state'
 import { useNetworkState } from '../networks/networks.state'
+import { useAddresses } from '../wallet/addresses.state'
 
 interface WalletOverviewProps {
   address: Address

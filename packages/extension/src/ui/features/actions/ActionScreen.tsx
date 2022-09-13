@@ -1,19 +1,19 @@
-import { FC, useCallback, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { FC, useCallback, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { waitForMessage } from "../../../shared/messages"
-import { useAppState } from "../../app.state"
-import { routes } from "../../routes"
-import { assertNever } from "../../services/assertNever"
-import { approveAction, rejectAction } from "../../services/backgroundActions"
-import { useSelectedAddress } from "../addresses/addresses.state"
-import { focusExtensionTab, useExtensionIsInTab } from "../browser/tabs"
-import { useActions } from "./actions.state"
-import { AddNetworkScreen } from "./AddNetworkScreen"
-import { ApproveTransactionScreen } from "./ApproveTransactionScreen"
-import { ConnectDappScreen } from "./ConnectDappScreen"
+import { waitForMessage } from '../../../shared/messages'
+import { useAppState } from '../../app.state'
+import { routes } from '../../routes'
+import { assertNever } from '../../services/assertNever'
+import { approveAction, rejectAction } from '../../services/backgroundActions'
+import { focusExtensionTab, useExtensionIsInTab } from '../browser/tabs'
+import { useSelectedAddress } from '../wallet/addresses.state'
+import { useActions } from './actions.state'
+import { AddNetworkScreen } from './AddNetworkScreen'
+import { ApproveTransactionScreen } from './ApproveTransactionScreen'
+import { ConnectDappScreen } from './ConnectDappScreen'
 
-const isPopup = new URLSearchParams(window.location.search).has("popup")
+const isPopup = new URLSearchParams(window.location.search).has('popup')
 
 export const ActionScreen: FC = () => {
   const navigate = useNavigate()
@@ -51,27 +51,16 @@ export const ActionScreen: FC = () => {
   }, [extensionIsInTab, action.type])
 
   switch (action.type) {
-    case "CONNECT_DAPP": {
-      return (
-        <ConnectDappScreen
-          host={action.payload.host}
-          onReject={onReject}
-          onSubmit={onSubmit}
-        />
-      )
+    case 'CONNECT_DAPP': {
+      return <ConnectDappScreen host={action.payload.host} onReject={onReject} onSubmit={onSubmit} />
     }
 
-    case "REQUEST_ADD_CUSTOM_NETWORK":
+    case 'REQUEST_ADD_CUSTOM_NETWORK':
       return (
-        <AddNetworkScreen
-          requestedNetwork={action.payload}
-          hideBackButton
-          onSubmit={onSubmit}
-          onReject={onReject}
-        />
+        <AddNetworkScreen requestedNetwork={action.payload} hideBackButton onSubmit={onSubmit} onReject={onReject} />
       )
 
-    case "REQUEST_SWITCH_CUSTOM_NETWORK":
+    case 'REQUEST_SWITCH_CUSTOM_NETWORK':
       return (
         <AddNetworkScreen
           requestedNetwork={action.payload}
@@ -82,7 +71,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "TRANSACTION": {
+    case 'TRANSACTION': {
       return (
         <ApproveTransactionScreen
           payload={action.payload}
@@ -91,19 +80,13 @@ export const ActionScreen: FC = () => {
             approveAction(action)
             useAppState.setState({ isLoading: true })
             const result = await Promise.race([
-              waitForMessage(
-                "TRANSACTION_SUBMITTED",
-                ({ data }) => data.actionHash === action.meta.hash,
-              ),
-              waitForMessage(
-                "TRANSACTION_FAILED",
-                ({ data }) => data.actionHash === action.meta.hash,
-              ),
+              waitForMessage('TRANSACTION_SUBMITTED', ({ data }) => data.actionHash === action.meta.hash),
+              waitForMessage('TRANSACTION_FAILED', ({ data }) => data.actionHash === action.meta.hash)
             ])
-            if ("error" in result) {
+            if ('error' in result) {
               useAppState.setState({
                 error: `Sending transaction failed: ${result.error}`,
-                isLoading: false,
+                isLoading: false
               })
               navigate(routes.error())
             } else {

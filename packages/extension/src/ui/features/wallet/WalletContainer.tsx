@@ -9,16 +9,16 @@ import { routes } from '../../routes'
 import { makeClickable } from '../../services/a11y'
 import { NetworkSwitcher } from '../networks/NetworkSwitcher'
 import { useSelectedAddress } from './addresses.state'
-import AddressFooterContainer, { FooterTab } from './AddressFooter'
-import AddressHeader from './AddressHeader'
-import { AddressScreenTab } from './AddressScreen'
+import { WalletContainerScreenTab } from './WalletContainerScreen'
+import AddressFooterContainer, { FooterTab } from './WalletFooter'
+import AddressHeader from './WalletHeader'
 
 interface AddressScreenContentProps {
-  addressScreenTab: AddressScreenTab
+  addressScreenTab: WalletContainerScreenTab
   children?: ReactNode
 }
 
-export const AddressContainer: FC<AddressScreenContentProps> = ({ addressScreenTab, children }) => {
+export const WalletContainer: FC<AddressScreenContentProps> = ({ addressScreenTab, children }) => {
   const address = useSelectedAddress()
   const navigate = useNavigate()
 
