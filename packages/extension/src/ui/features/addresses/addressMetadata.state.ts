@@ -1,24 +1,29 @@
+import produce from 'immer'
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export const defaultAddressName = 'Unnamed Address'
 
+type AddressMetadata = {
+  name: string
+  color: string
+}
+
 interface State {
-  addressNames: Record<string, string>
-  setAddressName: (address: string, name: string) => void
+  metadata: { [addressHash: string]: AddressMetadata }
+  setAddressMetadata: (addressHash: string, addressMetadata: Partial<AddressMetadata>) => void
 }
 
 export const useAddressMetadata = create<State>(
   persist(
-    (set, _get) => ({
-      addressNames: {},
-      setAddressName: (address: string, name: string) =>
-        set((state) => ({
-          addressNames: {
-            ...state.addressNames,
-            [address]: name
-          }
-        }))
+    (set) => ({
+      metadata: {},
+      setAddressMetadata: (addressHash: string, addressMetadata: Partial<AddressMetadata>) =>
+        set(
+          produce<State>((state) => {
+            state.metadata[addressHash] = { ...state.metadata[addressHash], ...addressMetadata }
+          })
+        )
     }),
     { name: 'addressMetadata' }
   )
@@ -28,16 +33,15 @@ export const getAddressName = (address: string, addressNames: Record<string, str
   addressNames[address] || defaultAddressName
 
 export const setDefaultAddressNames = (addresses: string[]) => {
-  const { addressNames } = useAddressMetadata.getState()
-  let names = addressNames
-  for (const address of addresses) {
-    if (!names[address]) {
-      const name = `Address ${addresses.indexOf(address) + 1}`
-      names = {
-        ...names,
-        [address]: name
-      }
+  const { metadata } = useAddressMetadata.getState()
+
+  const metadataWithWissingNames = Object.entries(metadata).reduce<{ [hash: string]: AddressMetadata }>((acc, m) => {
+    if (!m[1].name) {
+      return { ...acc, [m[0]]: { ...m[1], name: `Address ${addresses.indexOf(m[0]) + 1}` } }
+    } else {
+      return acc
     }
-  }
-  useAddressMetadata.setState({ addressNames: names })
+  }, {})
+
+  useAddressMetadata.setState({ metadata: metadataWithWissingNames })
 }

@@ -72,22 +72,6 @@
     "find-up" "^2.1.0"
     "fs-extra" "^10.0.1"
 
-"@alephium/sdk@file:../alephium-js":
-  "resolved" "file:../alephium-js"
-  "version" "0.0.14"
-  dependencies:
-    "base-x" "^4.0.0"
-    "bcfg" "~0.1.6"
-    "bip32" "^2.0.6"
-    "bip39" "^3.0.4"
-    "blakejs" "^1.1.1"
-    "chalk" "^4.1.2"
-    "cross-fetch" "^3.1.5"
-    "crypto-js" "^4.1.1"
-    "elliptic" "^6.5.4"
-    "find-up" "^2.1.0"
-    "fs-extra" "^10.0.1"
-
 "@alephium/web3@0.2.0-test.0":
   "integrity" "sha512-kP/ZVmXub2YjtTUbhJocmnVRSk1Iod2qy1RtAfEJScrLYwSn/zsN6sEfDCuGrGbVkb5ystFaJ50EKgLrql93DQ=="
   "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.2.0-test.0.tgz"
@@ -7124,6 +7108,11 @@
   "integrity" "sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ=="
   "resolved" "https://registry.npmjs.org/ignore/-/ignore-5.2.0.tgz"
   "version" "5.2.0"
+
+"immer@^9.0.15":
+  "integrity" "sha512-2eB/sswms9AEUSkOm4SbV5Y7Vmt/bKRwByd52jfLkW4OLYeaTP3EEiJ9agqU0O/tq6Dk62Zfj+TJSqfm1rLVGQ=="
+  "resolved" "https://registry.npmjs.org/immer/-/immer-9.0.15.tgz"
+  "version" "9.0.15"
 
 "immutable@^4.0.0":
   "integrity" "sha512-oNkuqVTA8jqG1Q6c+UglTOD1xhC1BtjKI7XkCXRkZHrN5m18/XsnUp8Q89GkQO/z+0WjonSvl0FLhDYftp46nQ=="
