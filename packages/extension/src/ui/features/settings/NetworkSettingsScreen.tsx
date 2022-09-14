@@ -13,35 +13,6 @@ import { useNetworks } from '../networks/useNetworks'
 import { DappConnection } from './DappConnection'
 import { useSelectedNetwork } from './selectedNetwork.state'
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 32px 24px 32px;
-  ${H2} {
-    margin: 0;
-  }
-`
-
-const IconButtonCenter = styled(IconButton)`
-  margin: 0 auto;
-`
-
-const List = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 32px 0 8px;
-  width: 100%;
-
-  > * + * {
-    margin-top: 8px;
-  }
-
-  > * {
-    width: 100%;
-  }
-`
-
 export const NetworkSettingsScreen: FC = () => {
   const { allNetworks, mutate } = useNetworks()
   const navigate = useNavigate()
@@ -88,3 +59,31 @@ export const NetworkSettingsScreen: FC = () => {
     </>
   )
 }
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0 32px 24px 32px;
+  ${H2} {
+    margin: 0;
+  }
+`
+
+const IconButtonCenter = styled(IconButton)`
+  margin: 0 auto;
+`
+
+const List = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 32px 0 8px;
+  width: 100%;
+
+  > * + * {
+    margin-top: 8px;
+  }
+  > * {
+    width: 100%;
+  }
+`

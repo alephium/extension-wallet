@@ -45,7 +45,7 @@ export const routes = {
   lockScreen: route('/lock-screen'),
   addressTokens: route('/address/tokens'),
   walletAddresses: route('/wallet/addresses'),
-  newAddress: route('wallet/new-address'),
+  newAddress: route('/wallet/new-address'),
   addressActivity: route('/address/activity'),
   addressSettings: route('/address/settings'),
   addressDeleteConfirm: route(

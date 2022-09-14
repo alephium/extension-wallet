@@ -32,7 +32,6 @@ const WalletTransfersScreen: FC<WalletTransfersScreenProps> = ({ address, classN
 export default styled(WalletTransfersScreen)`
   display: flex;
   flex-direction: column;
-  padding-top: 16px;
   margin-bottom: 68px;
 `
 

@@ -1,12 +1,13 @@
-import { isString } from "lodash-es"
-import { FC } from "react"
-import { Link } from "react-router-dom"
-import styled from "styled-components"
+import { isString } from 'lodash-es'
+import { ChevronLeft } from 'lucide-react'
+import { FC } from 'react'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { routes } from "../routes"
-import { BackLink } from "./BackLink"
-import { BackIcon } from "./Icons/BackIcon"
-import { CloseIcon } from "./Icons/CloseIcon"
+import { routes } from '../routes'
+import { BackLink } from './BackLink'
+import { IconButton } from './buttons/IconButton'
+import { CloseIcon } from './Icons/CloseIcon'
 
 const Bar = styled.div`
   display: flex;
@@ -32,17 +33,13 @@ interface IconBarProps {
   children?: React.ReactNode
 }
 
-export const IconBar: FC<IconBarProps> = ({
-  back,
-  close,
-  childAfter,
-  children,
-  ...rest
-}) => (
+export const IconBar: FC<IconBarProps> = ({ back, close, childAfter, children, ...rest }) => (
   <Bar {...rest}>
     {back ? (
       <BackLink aria-label="Back">
-        <BackIcon />
+        <IconButton size={40}>
+          <ChevronLeft />
+        </IconButton>
       </BackLink>
     ) : (
       <hr />
@@ -53,11 +50,7 @@ export const IconBar: FC<IconBarProps> = ({
     {childAfter ? (
       <>{childAfter}</>
     ) : close ? (
-      <Link
-        to={isString(close) ? close : routes.addressTokens()}
-        aria-label="Close"
-        style={{ textAlign: "right" }}
-      >
+      <Link to={isString(close) ? close : routes.addressTokens()} aria-label="Close" style={{ textAlign: 'right' }}>
         <CloseIcon />
       </Link>
     ) : (

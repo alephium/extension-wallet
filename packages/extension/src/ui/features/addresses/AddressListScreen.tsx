@@ -21,8 +21,6 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
 
   const addressesList = Object.values(addresses)
 
-  console.log(focusedAddress)
-
   return (
     <Container>
       <AddressList>
@@ -64,16 +62,16 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
             ))}
           </Swiper>
         </CarouselContainer>
-        <ActionsContainer>
+        <ActionsContainer style={{ marginTop: addressesList.length === 0 ? 0 : 'initial' }}>
           <IconWithLabelButton Icon={<ArrowUp size={20} />} label={'Send'} to={''} />
           <IconWithLabelButton Icon={<ArrowDown size={20} />} label={'Receive'} to={''} />
           <IconWithLabelButton Icon={<Settings2 size={20} />} label={'Settings'} to={''} />
         </ActionsContainer>
       </AddressList>
-      <TransactionListContainer>
+      <div>
         <SectionTitle>Last transactions</SectionTitle>
         {focusedAddress && <AddressTransactionList address={focusedAddress} />}
-      </TransactionListContainer>
+      </div>
     </Container>
   )
 }
@@ -118,10 +116,6 @@ const ActionsContainer = styled.div`
   justify-content: center;
   width: 80%;
   margin: 20px auto 0 auto;
-`
-
-const TransactionListContainer = styled.div`
-  padding: 0 20px;
 `
 
 const Paragraph = styled(P)`

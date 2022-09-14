@@ -1,6 +1,6 @@
 import { ArrowUpDown, LayoutTemplate, List, Plus, Settings as SettingsIcon } from 'lucide-react'
 import { FC, ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { IconButton } from '../../components/buttons/IconButton'
@@ -34,21 +34,21 @@ export const WalletContainer: FC<AddressScreenContentProps> = ({ currentTab, chi
         buttons={
           <>
             {currentTab === 'assets' && (
-              <IconButton size={40}>
-                <SettingsIcon
-                  size={21}
-                  {...makeClickable(() => navigate(routes.settings()), {
-                    label: 'Settings',
-                    tabIndex: 99
-                  })}
-                />
-              </IconButton>
+              <>
+                <Link to={routes.settings.path}>
+                  <IconButton size={40}>
+                    <SettingsIcon />
+                  </IconButton>
+                </Link>
+                <NetworkSwitcher />
+              </>
             )}
-            {currentTab !== 'addresses' && <NetworkSwitcher />}
             {currentTab === 'addresses' && (
-              <IconButton size={40}>
-                <Plus />
-              </IconButton>
+              <Link to={routes.newAddress.path}>
+                <IconButton size={40}>
+                  <Plus />
+                </IconButton>
+              </Link>
             )}
           </>
         }

@@ -3,10 +3,9 @@ import styled from 'styled-components'
 
 import { Button } from '../../components/buttons/Button'
 import { IconBar } from '../../components/IconBar'
-import { Paragraph } from '../../components/Page'
 import { useReturnTo } from '../../routes'
 import { checkPassword } from '../../services/backgroundSessions'
-import { H2 } from '../../theme/Typography'
+import { H2, P } from '../../theme/Typography'
 import { StickyGroup } from '../actions/ConfirmScreen'
 import { PasswordForm } from '../onboarding/PasswordForm'
 import { SeedPhrase } from '../recovery/SeedPhrase'
@@ -46,7 +45,7 @@ export const SeedSettingsScreen: FC = () => {
   if (!passwordIsValid) {
     return (
       <Wrapper>
-        <Paragraph>Enter your password to view your recovery phrase.</Paragraph>
+        <P>Enter your password to view your recovery phrase.</P>
 
         <PasswordForm
           verifyPassword={async (password) => {
@@ -69,7 +68,7 @@ export const SeedSettingsScreen: FC = () => {
 
   return (
     <Wrapper>
-      <Paragraph>Write these words down on paper. It is unsafe to save them on your computer.</Paragraph>
+      <P>Write these words down on paper. It is unsafe to save them on your computer.</P>
 
       <SeedPhrase seedPhrase={seedPhrase} />
     </Wrapper>

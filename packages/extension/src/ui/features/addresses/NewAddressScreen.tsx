@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom'
 
 import { useAppState } from '../../app.state'
 import { IconBar } from '../../components/IconBar'
-import { InputText } from '../../components/InputText'
+import { ControlledInputText, InputText } from '../../components/InputText'
 import { routes } from '../../routes'
 import { connectAddress } from '../../services/backgroundAddresses'
-import { H2 } from '../../theme/Typography'
+import { P } from '../../theme/Typography'
+import { ConfirmScreen } from '../actions/ConfirmScreen'
 import { recover } from '../recovery/recovery.service'
 import { deployAddress } from './addresses.service'
 import { useAddresses } from './addresses.state'
@@ -49,19 +50,26 @@ const NewAddressScreen = () => {
   return (
     <>
       <IconBar back />
-      <div>
-        <H2>Address</H2>
-
+      <ConfirmScreen
+        title={'New address'}
+        singleButton
+        confirmButtonText={'Save'}
+        smallTopPadding
+        confirmButtonDisabled={true}
+        onSubmit={() => null}
+      >
+        <P>Create a new address to help you manage your assets.</P>
+        <br />
+        <ControlledInputText type="text" placeholder="Name" />
         <InputText
           type="number"
-          placeholder="group"
-          style={{ width: '3em', marginBottom: '0.5em' }}
+          placeholder="Group"
           defaultValue={group}
           min={0}
           max={3}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGroup(e.target.value)}
         />
-      </div>
+      </ConfirmScreen>
     </>
   )
 }

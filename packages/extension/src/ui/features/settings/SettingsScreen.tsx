@@ -104,7 +104,7 @@ export const SettingsScreenWrapper = styled.div`
   hr {
     border: none;
     height: 1px;
-    background-color: ${({ theme }) => theme.bg2};
+    background-color: ${({ theme }) => theme.bg3};
   }
 `
 
