@@ -39,10 +39,3 @@ export default styled(WalletTransfersScreen)`
 const Header = styled(H1)`
   margin-bottom: 40px;
 `
-
-export const SectionHeader = styled.h3`
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 20px;
-  margin: 10px 16px;
-`

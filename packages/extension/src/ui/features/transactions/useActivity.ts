@@ -1,7 +1,9 @@
-import { Address } from "../../../shared/Address"
-import { TransactionMeta } from "../../../shared/transactions"
-import { getAlephiumTransactions } from "../../services/backgroundTransactions"
-import { formatDate } from "../../services/dates"
+import { Transaction } from '@alephium/sdk/api/explorer'
+
+import { Address } from '../../../shared/Address'
+import { TransactionMeta } from '../../../shared/transactions'
+import { getAlephiumTransactions } from '../../services/backgroundTransactions'
+import { formatDate } from '../../services/dates'
 
 export interface ActivityTransaction {
   hash: string
@@ -12,10 +14,16 @@ export interface ActivityTransaction {
 
 export type DailyActivity = Record<string, ActivityTransaction[]>
 
-export async function getAlephiumActivity(
-  address: Address,
-): Promise<DailyActivity> {
-  const transactions = await getAlephiumTransactions(address.hash)
+export async function getAlephiumActivity(address: Address): Promise<DailyActivity> {
+  let transactions: Transaction[] = []
+
+  try {
+    transactions = await getAlephiumTransactions(address.hash)
+    console.log(transactions)
+  } catch (e) {
+    console.error(e)
+  }
+
   const activity: DailyActivity = {}
   for (const { hash, timestamp } of transactions) {
     // RECEIVED transactions are already shown as pending

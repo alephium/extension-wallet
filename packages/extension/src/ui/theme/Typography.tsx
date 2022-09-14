@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom"
-import styled, { css } from "styled-components"
+import { Link } from 'react-router-dom'
+import styled, { css } from 'styled-components'
 
 export const H1 = styled.h1`
   font-weight: bold;
@@ -42,6 +42,22 @@ export const P = styled.p`
   font-size: 16px;
   line-height: 19px;
   color: ${({ theme }) => theme.text1};
+`
+
+export const SectionTitle = styled.h2`
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 20px;
+  margin: 10px 16px 15px 16px;
+  color: ${({ theme }) => theme.text1};
+`
+
+export const DividerTitle = styled.h3`
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 20px;
+  margin: 10px 16px;
+  color: ${({ theme }) => theme.text2};
 `
 
 export const FormError = styled.p`

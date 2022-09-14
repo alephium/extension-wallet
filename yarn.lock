@@ -72,6 +72,22 @@
     "find-up" "^2.1.0"
     "fs-extra" "^10.0.1"
 
+"@alephium/sdk@file:../alephium-js":
+  "resolved" "file:../alephium-js"
+  "version" "0.0.14"
+  dependencies:
+    "base-x" "^4.0.0"
+    "bcfg" "~0.1.6"
+    "bip32" "^2.0.6"
+    "bip39" "^3.0.4"
+    "blakejs" "^1.1.1"
+    "chalk" "^4.1.2"
+    "cross-fetch" "^3.1.5"
+    "crypto-js" "^4.1.1"
+    "elliptic" "^6.5.4"
+    "find-up" "^2.1.0"
+    "fs-extra" "^10.0.1"
+
 "@alephium/web3@0.2.0-test.0":
   "integrity" "sha512-kP/ZVmXub2YjtTUbhJocmnVRSk1Iod2qy1RtAfEJScrLYwSn/zsN6sEfDCuGrGbVkb5ystFaJ50EKgLrql93DQ=="
   "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.2.0-test.0.tgz"
@@ -4307,7 +4323,12 @@
     "rimraf" "^3.0.0"
     "write-file-atomic" "^4.0.0"
 
-"binary-extensions@^2.0.0", "binary-extensions@^2.2.0":
+"binary-extensions@^2.0.0":
+  "integrity" "sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA=="
+  "resolved" "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.2.0.tgz"
+  "version" "2.2.0"
+
+"binary-extensions@^2.2.0":
   "integrity" "sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA=="
   "resolved" "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.2.0.tgz"
   "version" "2.2.0"
@@ -5579,9 +5600,7 @@
   "version" "4.0.2"
 
 "diff@^5.0.0":
-  "integrity" "sha512-D+mk+qE8VC/PAUrlAU34N+VfXev0ghe5ywmpqrawphmVZc1bEfn56uo9qpyGp1p4xpzOHkSW4ztBd6L7Xx4ACw=="
-  "resolved" "https://registry.npmjs.org/diff/-/diff-5.1.0.tgz"
-  "version" "5.1.0"
+  "version" "5.0.0"
 
 "diffie-hellman@^5.0.0":
   "integrity" "sha512-kqag/Nl+f3GwyK25fhUMYj81BUOrZ9IuJsjIcDE5icNM9FJHAVm3VcUDxdLPoQtTuUylWm6ZIknYJwwaPxsUzg=="
@@ -8689,9 +8708,7 @@
     "which" "^2.0.2"
 
 "node-gyp@^9.0.0":
-  "integrity" "sha512-HkmN0ZpQJU7FLbJauJTHkHlSVAXlNGDAzH/VYFZGDOnFyn/Na3GlNJfkudmufOdS6/jNFhy88ObzL7ERz9es1g=="
-  "resolved" "https://registry.npmjs.org/node-gyp/-/node-gyp-9.1.0.tgz"
-  "version" "9.1.0"
+  "version" "9.0.0"
   dependencies:
     "env-paths" "^2.2.0"
     "glob" "^7.1.4"

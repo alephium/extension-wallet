@@ -4,10 +4,9 @@ import styled from 'styled-components'
 import { Address } from '../../../shared/Address'
 import { formatDateTime } from '../../services/dates'
 import { openExplorerTransaction } from '../../services/explorer.service'
-import { P } from '../../theme/Typography'
+import { DividerTitle, P } from '../../theme/Typography'
 import { TransactionItem, TransactionsWrapper } from './TransactionItem'
 import { DailyActivity, getAlephiumActivity } from './useActivity'
-import { SectionHeader } from './WalletTransfersScreen'
 
 interface AddressTransactionListProps {
   address: Address
@@ -17,6 +16,7 @@ const AddressTransactionList = ({ address }: AddressTransactionListProps) => {
   const [dailyActivity, setDailyActivity] = useState<DailyActivity | undefined>(undefined)
 
   useEffect(() => {
+    console.log('GET TXs for ' + address.shortHash)
     getAlephiumActivity(address).then((activity) => {
       setDailyActivity(activity)
     })
@@ -30,7 +30,7 @@ const AddressTransactionList = ({ address }: AddressTransactionListProps) => {
       <>
         {Object.entries(dailyActivity).map(([dateLabel, transactions]) => (
           <Fragment key={dateLabel}>
-            <SectionHeader>{dateLabel}</SectionHeader>
+            <DividerTitle>{dateLabel}</DividerTitle>
             <TransactionsWrapper>
               {transactions.map(({ hash, date }) => (
                 <TransactionItem
@@ -50,7 +50,9 @@ const AddressTransactionList = ({ address }: AddressTransactionListProps) => {
 }
 
 const Paragraph = styled(P)`
+  margin-top: 25px;
   text-align: center;
+  color: ${({ theme }) => theme.text2};
 `
 
 export default AddressTransactionList

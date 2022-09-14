@@ -5,9 +5,9 @@ import { EffectCreative, Keyboard, Mousewheel, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 import { Address } from '../../../shared/Address'
-import { IconButton } from '../../components/buttons/IconButton'
 import IconWithLabelButton from '../../components/buttons/IconWithLabelButton'
-import { P } from '../../theme/Typography'
+import { P, SectionTitle } from '../../theme/Typography'
+import AddressTransactionList from '../transactions/AddressTransactionList'
 import { useAddresses } from './addresses.state'
 import { AddressListSlideItem } from './AddressListSlideItem'
 
@@ -17,9 +17,11 @@ interface AddressListScreenProps {
 
 export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
   const { addresses, selectedAddress, addAddress } = useAddresses()
-  const [focusedAddress, setFocusedAddress] = useState('')
+  const [focusedAddress, setFocusedAddress] = useState<Address>()
 
   const addressesList = Object.values(addresses)
+
+  console.log(focusedAddress)
 
   return (
     <Container>
@@ -53,7 +55,7 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
             {addressesList.map((address) => (
               <SwiperSlide key={address.hash}>
                 {({ isActive }) => {
-                  setFocusedAddress(address.hash)
+                  isActive && setFocusedAddress(address)
                   return (
                     <AddressListSlideItem isFocused={isActive} address={address} selectedAddress={selectedAddress} />
                   )
@@ -68,6 +70,10 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
           <IconWithLabelButton Icon={<Settings2 size={20} />} label={'Settings'} to={''} />
         </ActionsContainer>
       </AddressList>
+      <TransactionListContainer>
+        <SectionTitle>Last transactions</SectionTitle>
+        {focusedAddress && <AddressTransactionList address={focusedAddress} />}
+      </TransactionListContainer>
     </Container>
   )
 }
@@ -114,8 +120,8 @@ const ActionsContainer = styled.div`
   margin: 20px auto 0 auto;
 `
 
-const IconButtonCenter = styled(IconButton)`
-  margin: auto;
+const TransactionListContainer = styled.div`
+  padding: 0 20px;
 `
 
 const Paragraph = styled(P)`
