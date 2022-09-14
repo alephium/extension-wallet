@@ -27,7 +27,7 @@ export const AddressListSlideItem: FC<AddressListSlideItemProps> = ({ address, i
   return (
     <AddressListItem
       {...makeClickable(() => {
-        swiper.slideTo(swiperSlide.isPrev ? swiper.activeIndex - 1 : swiper.activeIndex + 1)
+        !swiperSlide.isActive && swiper.slideTo(swiperSlide.isPrev ? swiper.activeIndex - 1 : swiper.activeIndex + 1)
       })}
       addressName={addressName}
       address={address.hash}
