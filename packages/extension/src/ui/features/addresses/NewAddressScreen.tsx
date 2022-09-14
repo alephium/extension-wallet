@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
 import { useAppState } from '../../app.state'
 import { IconBar } from '../../components/IconBar'
-import { ControlledInputText, InputText } from '../../components/InputText'
+import { ControlledInputText } from '../../components/InputText'
 import { routes } from '../../routes'
 import { connectAddress } from '../../services/backgroundAddresses'
 import { P } from '../../theme/Typography'
@@ -12,8 +13,19 @@ import { recover } from '../recovery/recovery.service'
 import { deployAddress } from './addresses.service'
 import { useAddresses } from './addresses.state'
 
+interface FormValues {
+  name: string
+  color: string
+  group: number
+}
+
 const NewAddressScreen = () => {
   const navigate = useNavigate()
+
+  const { control, handleSubmit, formState, watch } = useForm<FormValues>({
+    criteriaMode: 'firstError'
+  })
+
   const { addresses, selectedAddress, addAddress } = useAddresses()
   const [group, setGroup] = useState<any>(undefined)
 
@@ -51,17 +63,26 @@ const NewAddressScreen = () => {
     <>
       <IconBar back />
       <ConfirmScreen
-        title={'New address'}
+        title="New address"
         singleButton
-        confirmButtonText={'Save'}
+        confirmButtonText="Create"
         smallTopPadding
         confirmButtonDisabled={true}
         onSubmit={() => null}
       >
         <P>Create a new address to help you manage your assets.</P>
         <br />
-        <ControlledInputText type="text" placeholder="Name" />
-        <InputText
+        <ControlledInputText
+          autofocus
+          name="name"
+          control={control}
+          type="text"
+          placeholder="Label"
+          autoComplete="off"
+        />
+        <ControlledInputText
+          name="group"
+          control={control}
           type="number"
           placeholder="Group"
           defaultValue={group}

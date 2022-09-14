@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { ComponentPropsWithRef, useRef } from 'react'
 import { Controller, ControllerProps, FieldValues } from 'react-hook-form'
 import styled, { css } from 'styled-components'
 
@@ -68,7 +68,11 @@ export const InputTextAlt = styled(
   }
 )``
 
-export const ControlledInputText = styled(({ name, control, defaultValue, rules, ...props }) => (
+interface ControlledInputTextProps
+  extends ComponentPropsWithRef<typeof InputText>,
+    ComponentPropsWithRef<typeof Controller> {}
+
+export const ControlledInputText = ({ name, control, defaultValue, rules, ...props }: ControlledInputTextProps) => (
   <Controller
     name={name}
     control={control}
@@ -76,7 +80,7 @@ export const ControlledInputText = styled(({ name, control, defaultValue, rules,
     rules={rules}
     render={({ field: { ref, value, ...field } }) => <InputText {...props} value={value || ''} {...field} />}
   />
-))``
+)
 
 interface AdditionalControlledInputProps {
   onlyNumeric?: boolean
@@ -206,6 +210,17 @@ export const Container = styled.div`
   flex-direction: column;
   position: relative;
   width: 100%;
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
 `
 
 const InputCssAlt = css`
