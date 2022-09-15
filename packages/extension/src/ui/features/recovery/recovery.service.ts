@@ -3,7 +3,7 @@ import { routes } from '../../routes'
 import { getAddresses, getLastSelectedAddress } from '../../services/backgroundAddresses'
 import { toAddress } from '../addresses/addresses.service'
 import { useAddresses } from '../addresses/addresses.state'
-import { setDefaultAddressNames } from '../addresses/addressMetadata.state'
+import { setDefaultAddressesMetadata } from '../addresses/addressMetadata.state'
 
 export const recover = async () => {
   try {
@@ -11,7 +11,7 @@ export const recover = async () => {
     const selectedAddress = lastSelectedAddress && toAddress(lastSelectedAddress)
     const addresses = (await getAddresses()).map((addr) => toAddress(addr))
 
-    setDefaultAddressNames(addresses.map((addr) => addr.hash))
+    setDefaultAddressesMetadata(addresses.map((addr) => addr.hash))
     useAddresses.setState({ addresses, selectedAddress })
     return routes.addressTokens()
   } catch (e: any) {

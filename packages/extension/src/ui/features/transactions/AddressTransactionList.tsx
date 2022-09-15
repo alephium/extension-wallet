@@ -16,7 +16,6 @@ const AddressTransactionList = ({ address }: AddressTransactionListProps) => {
   const [dailyActivity, setDailyActivity] = useState<DailyActivity | undefined>(undefined)
 
   useEffect(() => {
-    console.log('GET TXs for ' + address.shortHash)
     getAlephiumActivity(address).then((activity) => {
       setDailyActivity(activity)
     })

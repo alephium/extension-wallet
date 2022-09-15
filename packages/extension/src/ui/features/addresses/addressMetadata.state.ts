@@ -2,6 +2,8 @@ import produce from 'immer'
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
+import { getRandomLabelColor } from '../../../shared/utils/colors'
+
 export const defaultAddressName = 'Unnamed Address'
 
 type AddressMetadata = {
@@ -30,18 +32,29 @@ export const useAddressMetadata = create<State>(
 )
 
 export const getAddressName = (address: string, metadata: State['metadata']): string =>
-  metadata[address].name || defaultAddressName
+  metadata[address]?.name || defaultAddressName
 
-export const setDefaultAddressNames = (addresses: string[]) => {
+export const setDefaultAddressesMetadata = (addresses: string[]) => {
   const { metadata } = useAddressMetadata.getState()
 
-  const metadataWithWissingNames = Object.entries(metadata).reduce<{ [hash: string]: AddressMetadata }>((acc, m) => {
+  let metadataWithWissingNames = Object.entries(metadata).reduce<{ [hash: string]: AddressMetadata }>((acc, m) => {
     if (!m[1].name) {
+      console.log('No name for ' + m[0])
+      console.log({ ...acc, [m[0]]: { ...m[1], name: `Address ${addresses.indexOf(m[0]) + 1}` } })
       return { ...acc, [m[0]]: { ...m[1], name: `Address ${addresses.indexOf(m[0]) + 1}` } }
     } else {
       return acc
     }
   }, {})
+
+  if (Object.keys(metadataWithWissingNames).length === 0) {
+    metadataWithWissingNames = {
+      [addresses[0]]: {
+        name: `Address 1`,
+        color: getRandomLabelColor()
+      }
+    }
+  }
 
   useAddressMetadata.setState({ metadata: metadataWithWissingNames })
 }

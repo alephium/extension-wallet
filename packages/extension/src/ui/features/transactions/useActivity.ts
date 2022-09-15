@@ -19,7 +19,6 @@ export async function getAlephiumActivity(address: Address): Promise<DailyActivi
 
   try {
     transactions = await getAlephiumTransactions(address.hash)
-    console.log(transactions)
   } catch (e) {
     console.error(e)
   }
