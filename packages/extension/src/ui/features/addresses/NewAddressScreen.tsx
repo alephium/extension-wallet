@@ -8,7 +8,7 @@ import { IconBar } from '../../components/IconBar'
 import { ControlledInputText } from '../../components/InputText'
 import { routes } from '../../routes'
 import { connectAddress } from '../../services/backgroundAddresses'
-import { P } from '../../theme/Typography'
+import { FormError, P } from '../../theme/Typography'
 import { ConfirmScreen } from '../actions/ConfirmScreen'
 import { recover } from '../recovery/recovery.service'
 import { deployAddress } from './addresses.service'
@@ -23,7 +23,14 @@ interface FormValues extends FieldValues {
 const NewAddressScreen = () => {
   const navigate = useNavigate()
 
-  const { control, handleSubmit, formState, watch, setValue, getValues } = useForm<FormValues>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+    getValues
+  } = useForm<FormValues>({
     criteriaMode: 'firstError'
   })
 
@@ -50,7 +57,7 @@ const NewAddressScreen = () => {
           publicKey: newAddress.publicKey,
           addressIndex: newAddress.group
         })
-        navigate(await recover())
+        navigate(await recover(routes.walletAddresses.path))
       }
     } catch (error: any) {
       useAppState.setState({ error: `${error}` })
@@ -59,8 +66,6 @@ const NewAddressScreen = () => {
       useAppState.setState({ isLoading: false })
     }
   }
-
-  console.log(getValues('color'))
 
   return (
     <>
@@ -94,6 +99,13 @@ const NewAddressScreen = () => {
           max={3}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGroup(e.target.value)}
         />
+        {Object.keys(errors).length > 0 && (
+          <FormError>
+            {Object.values(errors)
+              .map((x) => x?.message)
+              .join('. ')}
+          </FormError>
+        )}
       </ConfirmScreen>
     </>
   )

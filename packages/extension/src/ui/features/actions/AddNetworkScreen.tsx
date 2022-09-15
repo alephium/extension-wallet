@@ -69,12 +69,12 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
                 if (mode === 'add') {
                   addNetworks([requestedNetwork])
                   onSubmit?.()
-                  navigate(await recover())
+                  navigate(await recover(routes.settingsAddCustomNetwork.path))
                 } else if (mode === 'switch') {
                   onSubmit?.()
                   if (allNetworks?.some((n) => n.id === requestedNetwork.id)) {
                     setSwitcherNetworkId(requestedNetwork.id)
-                    navigate(await recover())
+                    navigate(await recover(routes.settingsAddCustomNetwork.path))
                   } else {
                     navigate(routes.addressTokens())
                   }

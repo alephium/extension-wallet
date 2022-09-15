@@ -53,7 +53,7 @@ export const LockScreen: FC = () => {
           useAppState.setState({ isLoading: true })
           try {
             await startSession(password)
-            const target = await recover()
+            const target = await recover(routes.addressTokens.path)
 
             // If only called by dapp (in popup) because the wallet was locked, but the dapp is already whitelisted/no transactions requested (actions=0), then close
             if (isPopup && !useActions.getState().actions.length) {

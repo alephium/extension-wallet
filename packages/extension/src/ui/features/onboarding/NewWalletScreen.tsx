@@ -71,7 +71,7 @@ export const NewWalletScreen: FC<NewWalletScreenProps> = ({ overrideSubmit, over
           addressIndex: newAddress.group
         })
       }
-      navigate(await recover())
+      navigate(await recover(routes.addressTokens.path))
     } catch (error: any) {
       useAppState.setState({ error })
       navigate(routes.error())

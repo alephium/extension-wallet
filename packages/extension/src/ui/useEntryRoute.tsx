@@ -1,10 +1,10 @@
-import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { useAppState } from "./app.state"
-import { recover } from "./features/recovery/recovery.service"
-import { routes } from "./routes"
-import { hasActiveSession, isInitialized } from "./services/backgroundSessions"
+import { useAppState } from './app.state'
+import { recover } from './features/recovery/recovery.service'
+import { routes } from './routes'
+import { hasActiveSession, isInitialized } from './services/backgroundSessions'
 
 export const useEntryRoute = () => {
   const navigate = useNavigate()
@@ -29,7 +29,7 @@ const determineEntry = async () => {
 
   const hasSession = await hasActiveSession()
   if (hasSession) {
-    return recover()
+    return recover(routes.addressTokens.path)
   }
   return routes.lockScreen()
 }

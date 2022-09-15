@@ -1,13 +1,14 @@
-import { FC, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import styled, { css } from "styled-components"
+import { FC, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import styled, { css } from 'styled-components'
 
-import { getNetwork, NetworkStatus } from "../../../shared/networks"
-import { NetworkStatusIndicator, StatusIndicatorColor } from "../../components/StatusIndicator"
-import { getNetworkStatuses } from "../../services/backgroundNetworks"
-import { recover } from "../recovery/recovery.service"
-import { useNetworkState } from "./networks.state"
-import { useNetworks } from "./useNetworks"
+import { NetworkStatus, getNetwork } from '../../../shared/networks'
+import { NetworkStatusIndicator, StatusIndicatorColor } from '../../components/StatusIndicator'
+import { routes } from '../../routes'
+import { getNetworkStatuses } from '../../services/backgroundNetworks'
+import { recover } from '../recovery/recovery.service'
+import { useNetworkState } from './networks.state'
+import { useNetworks } from './useNetworks'
 
 const NetworkName = styled.span`
   text-align: right;
@@ -29,13 +30,12 @@ const Network = styled.div<{ selected?: boolean }>`
   font-size: 12px;
   line-height: 14.4px;
 
-  color: ${({ theme, selected }) =>
-    selected ? theme.text1 : "rgba(255, 255, 255, 0.7)"};
+  color: ${({ theme, selected }) => (selected ? theme.text1 : 'rgba(255, 255, 255, 0.7)')};
   &:hover {
     color: ${({ theme }) => theme.text1};
   }
 
-  cursor: ${({ selected }) => (selected ? "default" : "pointer")};
+  cursor: ${({ selected }) => (selected ? 'default' : 'pointer')};
 
   > span {
     padding-right: 5px;
@@ -102,21 +102,19 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
   const { switcherNetworkId, setSwitcherNetworkId } = useNetworkState()
   const { allNetworks } = useNetworks({ suspense: true })
   const currentNetwork = getNetwork(switcherNetworkId, allNetworks)
-  const otherNetworks = allNetworks.filter(
-    (network) => network !== currentNetwork,
-  )
+  const otherNetworks = allNetworks.filter((network) => network !== currentNetwork)
   const [networkStatuses, setNetworkStatuses] = useState<NetworkStatus[]>([])
 
   const showHealthIndicator = (networkId: string, statuses: NetworkStatus[]) => {
     const result = statuses.find((status) => status.id === networkId)?.healthy
-    let color: StatusIndicatorColor = "green"
+    let color: StatusIndicatorColor = 'green'
     if (result === true) {
-      color = "green"
+      color = 'green'
     } else if (result === false) {
-      color = "red"
+      color = 'red'
     }
 
-    return (<NetworkStatusIndicator color={color} />)
+    return <NetworkStatusIndicator color={color} />
   }
 
   useEffect(() => {
@@ -129,10 +127,7 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
     <NetworkSwitcherWrapper disabled={disabled}>
       <Network selected role="button" aria-label="Selected network">
         <NetworkName>{currentNetwork.name}</NetworkName>
-        {
-          showHealthIndicator(currentNetwork.id, networkStatuses)
-        }
-
+        {showHealthIndicator(currentNetwork.id, networkStatuses)}
       </Network>
       <NetworkList>
         {otherNetworks.map(({ id, name }) => (
@@ -140,13 +135,11 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
             key={id}
             onClick={async () => {
               setSwitcherNetworkId(id)
-              navigate(await recover())
+              navigate(await recover(routes.addressTokens.path))
             }}
           >
             <NetworkName>{name}</NetworkName>
-            {
-              showHealthIndicator(id, networkStatuses)
-            }
+            {showHealthIndicator(id, networkStatuses)}
           </Network>
         ))}
       </NetworkList>
