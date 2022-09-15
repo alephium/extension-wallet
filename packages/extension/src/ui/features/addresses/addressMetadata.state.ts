@@ -37,18 +37,16 @@ export const getAddressName = (address: string, metadata: State['metadata']): st
 export const setDefaultAddressesMetadata = (addresses: string[]) => {
   const { metadata } = useAddressMetadata.getState()
 
-  let metadataWithWissingNames = Object.entries(metadata).reduce<{ [hash: string]: AddressMetadata }>((acc, m) => {
+  let completedMetadata = Object.entries(metadata).reduce<{ [hash: string]: AddressMetadata }>((acc, m) => {
     if (!m[1].name) {
-      console.log('No name for ' + m[0])
-      console.log({ ...acc, [m[0]]: { ...m[1], name: `Address ${addresses.indexOf(m[0]) + 1}` } })
       return { ...acc, [m[0]]: { ...m[1], name: `Address ${addresses.indexOf(m[0]) + 1}` } }
     } else {
       return acc
     }
-  }, {})
+  }, metadata)
 
-  if (Object.keys(metadataWithWissingNames).length === 0) {
-    metadataWithWissingNames = {
+  if (Object.keys(completedMetadata).length === 0) {
+    completedMetadata = {
       [addresses[0]]: {
         name: `Address 1`,
         color: getRandomLabelColor()
@@ -56,5 +54,5 @@ export const setDefaultAddressesMetadata = (addresses: string[]) => {
     }
   }
 
-  useAddressMetadata.setState({ metadata: metadataWithWissingNames })
+  useAddressMetadata.setState({ metadata: completedMetadata })
 }

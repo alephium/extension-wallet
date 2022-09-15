@@ -1,3 +1,4 @@
+import { colord } from 'colord'
 import { FC, ReactNode } from 'react'
 import styled from 'styled-components'
 
@@ -21,8 +22,10 @@ type AddressListItemWrapperProps = Pick<IAddressListItem, 'focus'>
 
 export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, group, focus, children, ...rest }) => {
   const { metadata } = useAddressMetadata()
+  const addressColor = metadata[address].color
+
   return (
-    <AddressListItemWrapper focus={focus} {...rest} style={{ backgroundColor: metadata[address].color }}>
+    <AddressListItemWrapper focus={focus} addressColor={addressColor} {...rest}>
       <AddressRow>
         <AddressColumn>
           <AddressName>
@@ -43,18 +46,23 @@ export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, gr
   )
 }
 
-export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps>`
+export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps & { addressColor: string }>`
   cursor: pointer;
   border-radius: 9px;
   padding: 20px 16px;
   border: 1px solid ${({ focus }) => (focus ? 'rgba(255, 255, 255, 0.3)' : 'transparent')};
   box-shadow: ${({ focus }) => (focus ? '0 20px 20px rgba(0, 0, 0, 0.25)' : 'none')};
+  background: ${({ addressColor }) =>
+    `linear-gradient(45deg, ${addressColor} 50%, ${colord(addressColor).rotate(40).toHex()} 100%)`};
   transition: all 0.15s ease-out;
 
   height: 150px;
   display: flex;
   gap: 12px;
   align-items: center;
+  * {
+    color: ${({ addressColor, theme }) => (colord(addressColor).isDark() ? theme.text1 : theme.bg1)} !important;
+  }
 `
 
 const AddressColumn = styled.div`
