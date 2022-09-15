@@ -60,6 +60,8 @@ const NewAddressScreen = () => {
     }
   }
 
+  console.log(getValues('color'))
+
   return (
     <>
       <IconBar back />
@@ -81,6 +83,7 @@ const NewAddressScreen = () => {
           placeholder="Label"
           autoComplete="off"
         />
+        <ColorPicker onChange={(color) => setValue('color', color)} value={watch('color')} />
         <ControlledInputText
           name="group"
           control={control}
@@ -91,7 +94,6 @@ const NewAddressScreen = () => {
           max={3}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGroup(e.target.value)}
         />
-        <ColorPicker onChange={(color) => setValue('color', color)} value={getValues('color')} />
       </ConfirmScreen>
     </>
   )

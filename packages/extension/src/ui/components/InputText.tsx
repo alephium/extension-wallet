@@ -158,13 +158,14 @@ export type ControlledInputType = typeof ControlledInputTextAlt
 export const StyledControlledInput: ControlledInputType = styled(ControlledInputTextAlt)`
   padding: 12px 16px;
   border: 1px solid ${({ theme }) => theme.bg2};
-  border-radius: 8px;
+  border-radius: 9px;
   background-color: ${({ theme }) => theme.bg1};
 `
 
 const Label = styled.label`
   color: ${({ theme }) => theme.text2};
   font-weight: normal;
+  height: 20px;
   font-size: 17px;
   order: 1;
   pointer-events: none;
