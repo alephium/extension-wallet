@@ -5,6 +5,7 @@ import { CopyTooltip } from '../../components/CopyTooltip'
 import { ContentCopyIcon } from '../../components/Icons/MuiIcons'
 import { formatTruncatedAddress } from '../../services/addresses'
 import { Address } from '../assets/Address'
+import { useAddressMetadata } from './addressMetadata.state'
 
 export interface IAddressListItem {
   addressName: string
@@ -19,8 +20,9 @@ export interface IAddressListItem {
 type AddressListItemWrapperProps = Pick<IAddressListItem, 'focus'>
 
 export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, group, focus, children, ...rest }) => {
+  const { metadata } = useAddressMetadata()
   return (
-    <AddressListItemWrapper focus={focus} {...rest}>
+    <AddressListItemWrapper focus={focus} {...rest} style={{ backgroundColor: metadata[address].color }}>
       <AddressRow>
         <AddressColumn>
           <AddressName>
@@ -43,7 +45,6 @@ export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, gr
 
 export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps>`
   cursor: pointer;
-  background-color: ${({ focus, theme }) => (focus ? theme.bg4 : theme.bg3)};
   border-radius: 9px;
   padding: 20px 16px;
   border: 1px solid ${({ focus }) => (focus ? 'rgba(255, 255, 255, 0.3)' : 'transparent')};
