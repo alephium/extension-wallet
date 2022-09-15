@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { EffectCreative, Keyboard, Mousewheel, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
-import { Address } from '../../../shared/Address'
+import { Address } from '../../../shared/addresses'
 import IconWithLabelButton from '../../components/buttons/IconWithLabelButton'
 import { P, SectionTitle } from '../../theme/Typography'
 import AddressTransactionList from '../transactions/AddressTransactionList'
@@ -16,15 +16,17 @@ interface AddressListScreenProps {
 }
 
 export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
-  const { addresses, selectedAddress, addAddress } = useAddresses()
+  const { addresses, selectedAddress } = useAddresses()
   const [focusedAddress, setFocusedAddress] = useState<Address>()
 
   const addressesList = Object.values(addresses)
 
+  const multipleAddresses = addressesList.length > 0
+
   return (
     <Container>
       <AddressList>
-        {addressesList.length === 0 && <Paragraph>No address, click below to add one.</Paragraph>}
+        {!multipleAddresses && 0 && <Paragraph>No address, click below to add one.</Paragraph>}
         <CarouselContainer>
           <Swiper
             spaceBetween={50}
@@ -62,7 +64,7 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
             ))}
           </Swiper>
         </CarouselContainer>
-        <ActionsContainer style={{ marginTop: addressesList.length === 0 ? 0 : 'initial' }}>
+        <ActionsContainer multipleAddresses={multipleAddresses}>
           <IconWithLabelButton Icon={<ArrowUp size={20} />} label={'Send'} to={''} />
           <IconWithLabelButton Icon={<ArrowDown size={20} />} label={'Receive'} to={''} />
           <IconWithLabelButton Icon={<Settings2 size={20} />} label={'Settings'} to={''} />
@@ -111,11 +113,12 @@ const CarouselContainer = styled.div`
   }
 `
 
-const ActionsContainer = styled.div`
+const ActionsContainer = styled.div<{ multipleAddresses: boolean }>`
   display: flex;
   justify-content: center;
   width: 80%;
-  margin: 20px auto 0 auto;
+  margin: 0 auto;
+  margin-top: ${({ multipleAddresses }) => (multipleAddresses ? '20px' : 0)};
 `
 
 const Paragraph = styled(P)`

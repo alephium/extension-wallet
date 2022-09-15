@@ -1,4 +1,4 @@
-import { Address, AddressAndPublicKey } from '../../shared/Address'
+import { Address, AddressAndPublicKey } from '../../shared/addresses'
 import { sendMessage, waitForMessage } from '../../shared/messages'
 import { decryptFromBackground, generateEncryptedSecret } from './crypto'
 

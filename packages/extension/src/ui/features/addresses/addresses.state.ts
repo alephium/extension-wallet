@@ -1,6 +1,6 @@
-import create from "zustand"
+import create from 'zustand'
 
-import { Address } from "../../../shared/Address"
+import { Address } from '../../../shared/addresses'
 
 interface State {
   addresses: Address[]
@@ -10,7 +10,7 @@ interface State {
 
 export const initialState = {
   addresses: [],
-  selectedAddress: undefined,
+  selectedAddress: undefined
 }
 
 export const useAddresses = create<State>((set) => ({
@@ -18,9 +18,8 @@ export const useAddresses = create<State>((set) => ({
   addAddress: (newAddress: Address) =>
     set((state) => ({
       selectedAddress: newAddress,
-      addresses: [...state.addresses, newAddress],
-    })),
+      addresses: [...state.addresses, newAddress]
+    }))
 }))
 
-export const useSelectedAddress = () =>
-  useAddresses(({ selectedAddress }) => selectedAddress)
+export const useSelectedAddress = () => useAddresses(({ selectedAddress }) => selectedAddress)

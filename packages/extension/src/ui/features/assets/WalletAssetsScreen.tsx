@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { Address } from '../../../shared/Address'
+import { Address } from '../../../shared/addresses'
 import { attoAlphToFiat } from '../../../shared/utils/amount'
 import Amount from '../../components/Amount'
 import { getBalances } from '../../services/backgroundAddresses'

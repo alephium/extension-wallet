@@ -22,7 +22,7 @@ type AddressListItemWrapperProps = Pick<IAddressListItem, 'focus'>
 
 export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, group, focus, children, ...rest }) => {
   const { metadata } = useAddressMetadata()
-  const addressColor = metadata[address].color
+  const addressColor = metadata[address]?.color
 
   return (
     <AddressListItemWrapper focus={focus} addressColor={addressColor} {...rest}>

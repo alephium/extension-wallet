@@ -1,6 +1,6 @@
 import { Transaction } from '@alephium/sdk/api/explorer'
 
-import { Address } from '../../../shared/Address'
+import { Address } from '../../../shared/addresses'
 import { TransactionMeta } from '../../../shared/transactions'
 import { getAlephiumTransactions } from '../../services/backgroundTransactions'
 import { formatDate } from '../../services/dates'

@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { Address } from '../../../shared/Address'
+import { Address } from '../../../shared/addresses'
 import { formatDateTime } from '../../services/dates'
 import { openExplorerTransaction } from '../../services/explorer.service'
 import { DividerTitle, P } from '../../theme/Typography'

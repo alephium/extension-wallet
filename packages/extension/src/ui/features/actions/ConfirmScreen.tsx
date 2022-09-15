@@ -3,7 +3,7 @@ import Measure from 'react-measure'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { Address } from '../../../shared/Address'
+import { Address } from '../../../shared/addresses'
 import { Button, ButtonGroupVertical, ButtonVariant } from '../../components/buttons/Button'
 import { H2 } from '../../theme/Typography'
 

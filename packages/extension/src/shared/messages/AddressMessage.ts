@@ -1,6 +1,6 @@
 import { Balance } from '@alephium/web3/dist/src/api/api-alephium'
 
-import { AddressAndPublicKey } from '../Address'
+import { AddressAndPublicKey } from '../addresses'
 
 export type AddressMessage =
   | { type: 'NEW_ADDRESS'; data?: number }

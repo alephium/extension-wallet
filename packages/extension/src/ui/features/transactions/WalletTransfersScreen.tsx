@@ -1,7 +1,7 @@
 import { FC, Suspense, useEffect } from 'react'
 import styled from 'styled-components'
 
-import { Address } from '../../../shared/Address'
+import { Address } from '../../../shared/addresses'
 import { Spinner } from '../../components/Spinner'
 import { H1 } from '../../theme/Typography'
 import { useWalletState } from '../wallet/wallet.state'

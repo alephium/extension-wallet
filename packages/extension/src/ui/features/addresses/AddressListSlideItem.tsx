@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 
-import { Address } from '../../../shared/Address'
+import { Address } from '../../../shared/addresses'
 import { makeClickable } from '../../services/a11y'
 import { useWalletState } from '../wallet/wallet.state'
 import { AddressListItem } from './AddressListItem'
