@@ -17,8 +17,8 @@ export const AddressListSlideItem: FC<AddressListSlideItemProps> = ({ address, i
   const swiper = useSwiper()
   const swiperSlide = useSwiperSlide()
 
-  const { addressNames } = useAddressMetadata()
-  const addressName = getAddressName(address.hash, addressNames)
+  const { metadata } = useAddressMetadata()
+  const addressName = getAddressName(address.hash, metadata)
 
   useEffect(() => {
     isFocused && useWalletState.setState({ headerTitle: addressName })

@@ -45,7 +45,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   onSubmit,
   ...props
 }) => {
-  const { addressNames } = useAddressMetadata()
+  const { metadata } = useAddressMetadata()
   const title = useMemo(() => {
     return titleForTransactions(payload)
   }, [payload])
@@ -54,7 +54,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     return <Navigate to={routes.walletAddresses()} />
   }
 
-  const addressName = getAddressName(selectedAddress.hash, addressNames)
+  const addressName = getAddressName(selectedAddress.hash, metadata)
 
   const confirmButtonVariant = 'warn'
 

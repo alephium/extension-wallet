@@ -1,6 +1,6 @@
-import { ComponentPropsWithRef, useRef } from 'react'
+import { ComponentPropsWithRef, RefObject, useRef } from 'react'
 import { Controller, ControllerProps, FieldValues } from 'react-hook-form'
-import styled, { css } from 'styled-components'
+import styled, { StyledComponentPropsWithRef, css } from 'styled-components'
 
 import { isNumeric } from '../../shared/utils/number'
 
@@ -9,7 +9,20 @@ function randomString() {
 }
 
 export const InputText = styled(
-  ({ placeholder, type, onChange, autoFocus, value, disabled, className, style, inputRef, min, max, ...props }) => {
+  ({
+    placeholder,
+    type,
+    onChange,
+    autoFocus,
+    value,
+    disabled,
+    className,
+    style,
+    inputRef,
+    min,
+    max,
+    ...props
+  }: ComponentPropsWithRef<typeof Input> & { inputRef?: RefObject<HTMLInputElement> }) => {
     const idRef = useRef(randomString())
     return (
       <Container className={className} style={style}>
@@ -68,11 +81,13 @@ export const InputTextAlt = styled(
   }
 )``
 
-interface ControlledInputTextProps
-  extends ComponentPropsWithRef<typeof InputText>,
-    ComponentPropsWithRef<typeof Controller> {}
-
-export const ControlledInputText = ({ name, control, defaultValue, rules, ...props }: ControlledInputTextProps) => (
+export const ControlledInputText = <T extends FieldValues>({
+  name,
+  control,
+  defaultValue,
+  rules,
+  ...props
+}: ControlledInputProps<T>) => (
   <Controller
     name={name}
     control={control}

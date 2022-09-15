@@ -29,8 +29,8 @@ export const useAddressMetadata = create<State>(
   )
 )
 
-export const getAddressName = (address: string, addressNames: Record<string, string>): string =>
-  addressNames[address] || defaultAddressName
+export const getAddressName = (address: string, metadata: State['metadata']): string =>
+  metadata[address].name || defaultAddressName
 
 export const setDefaultAddressNames = (addresses: string[]) => {
   const { metadata } = useAddressMetadata.getState()

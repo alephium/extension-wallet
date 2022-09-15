@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { FieldValues, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
 import { useAppState } from '../../app.state'
+import ColorPicker from '../../components/ColorPicker'
 import { IconBar } from '../../components/IconBar'
 import { ControlledInputText } from '../../components/InputText'
 import { routes } from '../../routes'
@@ -13,7 +14,7 @@ import { recover } from '../recovery/recovery.service'
 import { deployAddress } from './addresses.service'
 import { useAddresses } from './addresses.state'
 
-interface FormValues {
+interface FormValues extends FieldValues {
   name: string
   color: string
   group: number
@@ -22,7 +23,7 @@ interface FormValues {
 const NewAddressScreen = () => {
   const navigate = useNavigate()
 
-  const { control, handleSubmit, formState, watch } = useForm<FormValues>({
+  const { control, handleSubmit, formState, watch, setValue, getValues } = useForm<FormValues>({
     criteriaMode: 'firstError'
   })
 
@@ -73,7 +74,7 @@ const NewAddressScreen = () => {
         <P>Create a new address to help you manage your assets.</P>
         <br />
         <ControlledInputText
-          autofocus
+          autoFocus
           name="name"
           control={control}
           type="text"
@@ -90,6 +91,7 @@ const NewAddressScreen = () => {
           max={3}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGroup(e.target.value)}
         />
+        <ColorPicker onChange={(color) => setValue('color', color)} value={getValues('color')} />
       </ConfirmScreen>
     </>
   )

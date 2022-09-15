@@ -26,7 +26,7 @@ export const AddressName = styled.h1`
 
 export const FundingQrCodeScreen: FC = () => {
   const address = useSelectedAddress()
-  const { addressNames } = useAddressMetadata()
+  const { metadata } = useAddressMetadata()
 
   return (
     <>
@@ -35,7 +35,7 @@ export const FundingQrCodeScreen: FC = () => {
         {address && (
           <Container>
             <QrCode size={220} data={address.hash} />
-            <AddressName>{getAddressName(address.hash, addressNames)}</AddressName>
+            <AddressName>{getAddressName(address.hash, metadata)}</AddressName>
             <AddressWrapper style={{ marginBottom: 18 }}>
               <CopyTooltip copyValue={address.hash} message="Copied!">
                 <Address>
