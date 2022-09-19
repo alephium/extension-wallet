@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { TwitterPicker } from 'react-color'
 import { useDetectClickOutside } from 'react-detect-click-outside'
 import styled, { useTheme } from 'styled-components'
@@ -13,29 +13,39 @@ interface ColorPickerProps {
 }
 
 const ColorPicker = ({ value, onChange, className }: ColorPickerProps) => {
-  const color = value?.toString() || getRandomLabelColor()
   const theme = useTheme()
 
+  const hasBeenUsed = useRef(false)
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const ref = useDetectClickOutside({ onTriggered: () => setIsPopupOpen(false) })
 
+  useEffect(() => {
+    if (!hasBeenUsed.current) {
+      hasBeenUsed.current = true
+      const color = value?.toString() || getRandomLabelColor()
+      onChange(color)
+    }
+  }, [hasBeenUsed, onChange, value])
+
   const handlePopupOpen = () => setIsPopupOpen(!isPopupOpen)
   const onChangeComplete = (newColor: { hex: string }) => {
-    onChange(newColor.hex)
-    handlePopupOpen()
+    if (newColor.hex !== value) {
+      onChange(newColor.hex)
+      handlePopupOpen()
+    }
   }
 
   return (
     <div className={className} aria-label="Pick a color" ref={ref}>
       <InputContainer onClick={handlePopupOpen}>
         <Label>Color</Label>
-        <Circle color={color} />
+        <Circle color={value} />
       </InputContainer>
       <AnimatePresence exitBeforeEnter initial={true}>
         {isPopupOpen && (
           <Popup initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <TwitterPicker
-              color={color}
+              color={value}
               onChangeComplete={onChangeComplete}
               colors={labelColorPalette}
               triangle="top-right"

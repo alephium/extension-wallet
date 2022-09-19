@@ -1,18 +1,12 @@
-import { useState } from 'react'
-import { FieldValues, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { Schema } from 'yup'
 
-import {
-  AddressGroupSchema,
-  AddressMetadataSchema,
-  AddressMetadataWithGroup,
-  AddressMetadataWithGroupSchema
-} from '../../../shared/addresses'
+import { AddressMetadataWithGroup, AddressMetadataWithGroupSchema } from '../../../shared/addresses'
 import { useAppState } from '../../app.state'
 import ColorPicker from '../../components/ColorPicker'
 import { IconBar } from '../../components/IconBar'
 import { ControlledInputText } from '../../components/InputText'
+import ToggleSection from '../../components/ToggleSection'
 import { routes } from '../../routes'
 import { connectAddress } from '../../services/backgroundAddresses'
 import { FormError, P } from '../../theme/Typography'
@@ -31,7 +25,7 @@ const NewAddressScreen = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     watch,
     setValue,
     getValues
@@ -40,12 +34,8 @@ const NewAddressScreen = () => {
     resolver: yupSchemaValidator
   })
 
-  const { addresses, selectedAddress, addAddress } = useAddresses()
+  const { addAddress } = useAddresses()
   const { setAddressMetadata } = useAddressMetadata()
-
-  console.log(isValid)
-  console.log(errors)
-  console.log(getValues())
 
   const handleAddAddress = async () => {
     useAppState.setState({ isLoading: true })
@@ -88,16 +78,23 @@ const NewAddressScreen = () => {
           placeholder="Name"
           autoComplete="off"
         />
-        <ColorPicker onChange={(color) => setValue('color', color)} value={watch('color')} />
-        <ControlledInputText
-          name="group"
-          control={control}
-          type="number"
-          placeholder="Group"
-          defaultValue={'0'}
-          min={0}
-          max={3}
+        <ColorPicker
+          onChange={(color) => {
+            setValue('color', color, { shouldValidate: true })
+          }}
+          value={watch('color')}
         />
+        <ToggleSection title="Define group?" marginTop>
+          <ControlledInputText
+            name="group"
+            control={control}
+            type="number"
+            placeholder="Group"
+            defaultValue={undefined}
+            min={0}
+            max={3}
+          />
+        </ToggleSection>
         {Object.keys(errors).length > 0 && (
           <FormError>
             {Object.values(errors)
