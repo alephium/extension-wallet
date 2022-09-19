@@ -1,10 +1,12 @@
 import { colord } from 'colord'
-import { FC, ReactNode } from 'react'
-import styled from 'styled-components'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import styled, { css } from 'styled-components'
 
+import Amount from '../../components/Amount'
 import { CopyTooltip } from '../../components/CopyTooltip'
 import { ContentCopyIcon } from '../../components/Icons/MuiIcons'
 import { formatTruncatedAddress } from '../../services/addresses'
+import { getBalance } from '../../services/backgroundAddresses'
 import { Address } from '../assets/Address'
 import { useAddressMetadata } from './addressMetadata.state'
 
@@ -22,15 +24,26 @@ type AddressListItemWrapperProps = Pick<IAddressListItem, 'focus'>
 
 export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, group, focus, children, ...rest }) => {
   const { metadata } = useAddressMetadata()
+  const [balance, setBalance] = useState('')
+
+  useEffect(() => {
+    if (focus) {
+      getBalance(address).then((b) => {
+        setBalance(b.balance)
+      })
+    }
+  }, [address, focus])
+
   const addressColor = metadata[address]?.color
 
   return (
     <AddressListItemWrapper focus={focus} addressColor={addressColor} {...rest}>
       <AddressRow>
         <AddressColumn>
-          <AddressName>
-            {addressName} <Group>Group {group}</Group>
-          </AddressName>
+          <AddressName>{addressName}</AddressName>
+          <AmountContainer>
+            <Amount value={BigInt(balance)} fadeDecimals />
+          </AmountContainer>
           <AddressHash>
             <CopyTooltip copyValue={address} message="Copied!">
               <Address>
@@ -39,6 +52,7 @@ export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, gr
               </Address>
             </CopyTooltip>
           </AddressHash>
+          <Group>Group {group}</Group>
         </AddressColumn>
         <AddressColumn>{children}</AddressColumn>
       </AddressRow>
@@ -48,20 +62,25 @@ export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, gr
 
 export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps & { addressColor: string }>`
   cursor: pointer;
-  border-radius: 9px;
-  padding: 20px 16px;
-  border: 1px solid ${({ focus }) => (focus ? 'rgba(255, 255, 255, 0.3)' : 'transparent')};
+  border-radius: 12px;
+  padding: 20px;
   box-shadow: ${({ focus }) => (focus ? '0 20px 20px rgba(0, 0, 0, 0.25)' : 'none')};
   background: ${({ addressColor }) =>
     `linear-gradient(45deg, ${addressColor} 50%, ${colord(addressColor).rotate(40).toHex()} 100%)`};
   transition: all 0.15s ease-out;
 
-  height: 150px;
+  height: 170px;
   display: flex;
   gap: 12px;
   align-items: center;
   * {
-    color: ${({ addressColor, theme }) => (colord(addressColor).isDark() ? theme.text1 : theme.bg1)} !important;
+    ${({ addressColor, theme }) => {
+      const color = colord(addressColor).isDark() ? theme.text1 : theme.bg1
+      return css`
+        color: ${color} !important;
+        fill: ${color} !important;
+      `
+    }}
   }
 `
 
@@ -77,12 +96,14 @@ const AddressRow = styled.div`
   justify-content: space-between;
 `
 
-const AddressName = styled.h1`
+const AddressName = styled.h2`
   font-weight: 700;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 18px;
   margin: 0 0 5px 0;
 `
+
+const AmountContainer = styled.h1``
 
 const AddressHash = styled.div`
   margin-left: -10px;
