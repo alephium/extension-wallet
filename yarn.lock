@@ -18,8 +18,8 @@
   "resolved" "file:packages/extension"
   "version" "0.0.1"
   dependencies:
-    "@alephium/sdk" "0.0.12"
-    "@alephium/web3" "0.2.0-test.0"
+    "@alephium/sdk" "0.1.0"
+    "@alephium/web3" "0.2.0-rc.14"
     "@extend-chrome/messages" "^1.2.2"
     "@google/model-viewer" "^1.11.1"
     "@mui/icons-material" "^5.3.1"

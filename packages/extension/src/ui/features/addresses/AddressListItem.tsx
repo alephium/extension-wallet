@@ -1,4 +1,5 @@
 import { colord } from 'colord'
+import { Star, StarOff } from 'lucide-react'
 import { FC, ReactNode, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -38,6 +39,9 @@ export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, gr
 
   return (
     <AddressListItemWrapper focus={focus} addressColor={addressColor} {...rest}>
+      <MainAddressButton className="starButton">
+        <Star stroke="white" fill="white" />
+      </MainAddressButton>
       <AddressRow>
         <AddressColumn>
           <AddressName>{addressName}</AddressName>
@@ -61,6 +65,7 @@ export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, gr
 }
 
 export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps & { addressColor: string }>`
+  position: relative;
   cursor: pointer;
   border-radius: 12px;
   padding: 20px;
@@ -78,7 +83,10 @@ export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps & {
       const color = colord(addressColor).isDark() ? theme.text1 : theme.bg1
       return css`
         color: ${color} !important;
-        fill: ${color} !important;
+
+        svg:not(.lucide-star) * {
+          fill: ${color} !important;
+        }
       `
     }}
   }
@@ -113,4 +121,22 @@ const Group = styled.span`
   font-weight: 300;
   font-size: 10px;
   margin-top: 5px;
+`
+
+const MainAddressButton = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.3);
+  }
 `
