@@ -1,4 +1,4 @@
-import { Transaction as AlephiumTransaction } from "@alephium/sdk/api/explorer"
+import { Transaction as AlephiumTransaction } from "@alephium/web3/dist/src/api/api-explorer"
 import {
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,

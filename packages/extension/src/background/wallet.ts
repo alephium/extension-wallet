@@ -8,9 +8,9 @@ import {
   walletOpen,
 } from "@alephium/sdk"
 import { Balance } from "@alephium/sdk/api/alephium"
-import { Transaction } from "@alephium/sdk/api/explorer"
-import { ExplorerProvider, NodeProvider } from "@alephium/web3"
-import { PrivateKeyWallet } from "@alephium/web3/test"
+import { web3, ExplorerProvider, NodeProvider } from "@alephium/web3"
+import { PrivateKeyWallet } from '@alephium/web3-wallet'
+import { Transaction } from "@alephium/web3/dist/src/api/api-explorer"
 import { find, range } from "lodash-es"
 
 import { Network } from "../shared/networks"
@@ -47,7 +47,18 @@ export class Wallet {
 
   async getNodeProvider(): Promise<NodeProvider> {
     const currentNetwork = await this.getCurrentNetwork()
-    return new NodeProvider(currentNetwork.nodeUrl)
+    let currentNodeProvider: NodeProvider | undefined = undefined
+    try {
+      currentNodeProvider = web3.getCurrentNodeProvider()
+      if (currentNodeProvider.baseUrl === currentNetwork.nodeUrl) {
+        return currentNodeProvider
+      }
+    } catch (e) {
+      console.info("Error getting current node provider", e)
+    }
+
+    web3.setCurrentNodeProvider(currentNetwork.nodeUrl)
+    return web3.getCurrentNodeProvider()
   }
 
   async getExplorerProvider(): Promise<ExplorerProvider> {
@@ -67,10 +78,12 @@ export class Wallet {
     PrivateKeyWallet | undefined
   > {
     const addressAndKeys = await this.getAlephiumSelectedAddresses()
-    const nodeProvider = await this.getNodeProvider()
+
+    await this.getNodeProvider()
+
     let result = undefined
     if (addressAndKeys) {
-      result = new PrivateKeyWallet(nodeProvider, addressAndKeys.privateKey)
+      result = new PrivateKeyWallet(addressAndKeys.privateKey)
     }
     return result
   }
@@ -156,8 +169,12 @@ export class Wallet {
   }
 
   public async getBalance(address: string): Promise<Balance> {
+    console.log("getBalance", address)
     const nodeProvider = await this.getNodeProvider()
-    return nodeProvider.addresses.getAddressesAddressBalance(address)
+    console.log("nodeProvider", nodeProvider)
+    const value = await nodeProvider.addresses.getAddressesAddressBalance(address)
+    console.log("balance", value)
+    return value
   }
 
   public async selectAlephiumAddress(address: string) {
