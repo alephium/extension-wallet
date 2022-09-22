@@ -10,9 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@alephium/get-extension-wallet": "0.1.4",
-    "@alephium/web3": "^0.2.0-rc.7",
-    "@alephium/sdk": "0.0.12",
+    "@alephium/get-extension-wallet": "0.1.5",
+    "@alephium/web3": "0.2.0-rc.15",
     "ethers": "^5.5.1",
     "next": "^12.1.4",
     "react": "^18.0.0",
