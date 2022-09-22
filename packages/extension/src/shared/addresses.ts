@@ -1,6 +1,6 @@
 import { TOTAL_NUMBER_OF_GROUPS, addressToGroup } from '@alephium/sdk'
 import { AddressInfo } from '@alephium/sdk/api/explorer'
-import { Schema, number, object, string } from 'yup'
+import { Schema, object, string } from 'yup'
 
 export type TransactionType = 'consolidation' | 'transfer' | 'sweep'
 export type TimeInMs = number

@@ -13,9 +13,9 @@ export type AddressMessage =
   | { type: 'CONNECT_ADDRESS'; data: AddressAndPublicKey }
   | { type: 'GET_ADDRESSES'; data?: { showHidden: boolean } }
   | { type: 'GET_ADDRESSES_RES'; data: AddressAndPublicKey[] }
-  | { type: 'GET_SELECTED_ADDRESS' }
+  | { type: 'GET_DEFAULT_ADDRESS' }
   | {
-      type: 'GET_SELECTED_ADDRESS_RES'
+      type: 'GET_DEFAULT_ADDRESS_RES'
       data?: AddressAndPublicKey
     }
   | { type: 'GET_ADDRESS_BALANCE'; data: { address: string } }

@@ -1,5 +1,5 @@
 import { colord } from 'colord'
-import { Star, StarOff } from 'lucide-react'
+import { Star } from 'lucide-react'
 import { FC, ReactNode, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -15,6 +15,8 @@ export interface IAddressListItem {
   addressName: string
   address: string
   group: number
+  isDefault: boolean
+  onSetAsDefaultAddress: () => void
   focus?: boolean
   children?: ReactNode
   // ...rest
@@ -23,7 +25,16 @@ export interface IAddressListItem {
 
 type AddressListItemWrapperProps = Pick<IAddressListItem, 'focus'>
 
-export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, group, focus, children, ...rest }) => {
+export const AddressListItem: FC<IAddressListItem> = ({
+  addressName,
+  address,
+  group,
+  isDefault,
+  onSetAsDefaultAddress,
+  focus,
+  children,
+  ...rest
+}) => {
   const { metadata } = useAddressMetadata()
   const [balance, setBalance] = useState('')
 
@@ -39,8 +50,8 @@ export const AddressListItem: FC<IAddressListItem> = ({ addressName, address, gr
 
   return (
     <AddressListItemWrapper focus={focus} addressColor={addressColor} {...rest}>
-      <MainAddressButton className="starButton">
-        <Star stroke="white" fill="white" />
+      <MainAddressButton className="starButton" isDefault={isDefault} onClick={onSetAsDefaultAddress}>
+        {isDefault ? <Star stroke="white" fill="white" /> : <Star stroke="rgba(255, 255, 255, 0.5)" />}
       </MainAddressButton>
       <AddressRow>
         <AddressColumn>
@@ -123,14 +134,14 @@ const Group = styled.span`
   margin-top: 5px;
 `
 
-const MainAddressButton = styled.div`
+const MainAddressButton = styled.div<{ isDefault: boolean }>`
   position: absolute;
   top: 10px;
   right: 10px;
   height: 40px;
   width: 40px;
   border-radius: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: ${({ isDefault }) => (isDefault ? '2px solid white' : '2px solid rgba(255, 255, 255, 0.3)')};
   display: flex;
   align-items: center;
   justify-content: center;

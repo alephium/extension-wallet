@@ -11,12 +11,8 @@ import AddressTransactionList from '../transactions/AddressTransactionList'
 import { useAddresses } from './addresses.state'
 import { AddressListSlideItem } from './AddressListSlideItem'
 
-interface AddressListScreenProps {
-  address: Address
-}
-
-export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
-  const { addresses, selectedAddress } = useAddresses()
+export const AddressListScreen = () => {
+  const { addresses } = useAddresses()
   const [focusedAddress, setFocusedAddress] = useState<Address>()
 
   const addressesList = Object.values(addresses)
@@ -56,9 +52,7 @@ export const AddressListScreen: FC<AddressListScreenProps> = ({ address }) => {
               <SwiperSlide key={address.hash}>
                 {({ isActive }) => {
                   isActive && setFocusedAddress(address)
-                  return (
-                    <AddressListSlideItem isFocused={isActive} address={address} selectedAddress={selectedAddress} />
-                  )
+                  return <AddressListSlideItem isFocused={isActive} address={address} />
                 }}
               </SwiperSlide>
             ))}

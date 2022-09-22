@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { Address } from '../../../shared/addresses'
 import { attoAlphToFiat } from '../../../shared/utils/amount'
 import Amount from '../../components/Amount'
 import { getBalances } from '../../services/backgroundAddresses'
@@ -11,11 +10,10 @@ import { useNetworkState } from '../networks/networks.state'
 import { useWalletState } from '../wallet/wallet.state'
 
 interface WalletAssetsScreenProps {
-  address: Address
   className?: string
 }
 
-const WalletAssetsScreen: FC<WalletAssetsScreenProps> = ({ address, className }) => {
+const WalletAssetsScreen: FC<WalletAssetsScreenProps> = ({ className }) => {
   const { addresses } = useAddresses()
   const [totalBalance, setTotalBalance] = useState<bigint | undefined>(undefined)
   const [fiatBalance, setFiatBalance] = useState<number>()
@@ -25,7 +23,7 @@ const WalletAssetsScreen: FC<WalletAssetsScreenProps> = ({ address, className })
     getBalances(addresses.map((a) => a.hash)).then((balances) => {
       setTotalBalance(balances.reduce((acc, b) => acc + BigInt(b.balance), BigInt(0)))
     })
-  }, [address, addresses, switcherNetworkId])
+  }, [addresses, switcherNetworkId])
 
   useEffect(() => {
     useWalletState.setState({ headerTitle: undefined })

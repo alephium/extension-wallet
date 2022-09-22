@@ -1,4 +1,4 @@
-import { Address, AddressAndPublicKey } from '../../shared/addresses'
+import { AddressAndPublicKey } from '../../shared/addresses'
 import { sendMessage, waitForMessage } from '../../shared/messages'
 import { decryptFromBackground, generateEncryptedSecret } from './crypto'
 
@@ -32,9 +32,9 @@ export const deleteAddress = async (address: string) => {
   }
 }
 
-export const getLastSelectedAddress = async () => {
-  sendMessage({ type: 'GET_SELECTED_ADDRESS' })
-  return waitForMessage('GET_SELECTED_ADDRESS_RES')
+export const getLastDefaultAddress = async () => {
+  sendMessage({ type: 'GET_DEFAULT_ADDRESS' })
+  return waitForMessage('GET_DEFAULT_ADDRESS_RES')
 }
 
 export const getAddresses = async () => {

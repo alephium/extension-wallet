@@ -19,11 +19,11 @@ export const WalletContainerScreen: FC<WalletContainerScreenProps> = ({ tab }) =
   if (!address) {
     body = <></>
   } else if (tab === 'assets') {
-    body = <WalletAssetsScreen address={address} />
+    body = <WalletAssetsScreen />
   } else if (tab === 'addresses') {
-    body = <AddressListScreen address={address} />
+    body = <AddressListScreen />
   } else if (tab === 'transfers') {
-    body = <WalletTransfersScreen address={address} />
+    body = <WalletTransfersScreen />
   } else {
     assertNever(tab)
   }
