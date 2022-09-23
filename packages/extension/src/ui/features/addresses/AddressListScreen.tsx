@@ -30,6 +30,7 @@ export const AddressListScreen = () => {
             modules={[Pagination, Mousewheel, EffectCreative, Keyboard]}
             mousewheel={true}
             pagination={{ clickable: true }}
+            allowTouchMove={false}
             keyboard={{
               enabled: true
             }}
