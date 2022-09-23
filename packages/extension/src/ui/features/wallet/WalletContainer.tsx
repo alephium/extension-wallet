@@ -6,8 +6,7 @@ import styled, { css } from 'styled-components'
 import { IconButton } from '../../components/buttons/IconButton'
 import { Header } from '../../components/Header'
 import { routes } from '../../routes'
-import { makeClickable } from '../../services/a11y'
-import { useSelectedAddress } from '../addresses/addresses.state'
+import { useDefaultAddress } from '../addresses/addresses.state'
 import { NetworkSwitcher } from '../networks/NetworkSwitcher'
 import { useWalletState } from './wallet.state'
 import { WalletContainerScreenTab } from './WalletContainerScreen'
@@ -20,7 +19,7 @@ interface AddressScreenContentProps {
 }
 
 export const WalletContainer: FC<AddressScreenContentProps> = ({ currentTab, children }) => {
-  const address = useSelectedAddress()
+  const address = useDefaultAddress()
   const { headerTitle } = useWalletState()
   const navigate = useNavigate()
 

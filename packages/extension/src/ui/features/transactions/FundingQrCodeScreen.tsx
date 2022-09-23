@@ -7,7 +7,7 @@ import { ContentCopyIcon } from '../../components/Icons/MuiIcons'
 import { PageWrapper } from '../../components/Page'
 import { QrCode } from '../../components/QrCode'
 import { formatTruncatedAddress } from '../../services/addresses'
-import { useSelectedAddress } from '../addresses/addresses.state'
+import { useDefaultAddress } from '../addresses/addresses.state'
 import { getAddressName, useAddressMetadata } from '../addresses/addressMetadata.state'
 import { Address, AddressWrapper } from '../assets/Address'
 
@@ -25,7 +25,7 @@ export const AddressName = styled.h1`
 `
 
 export const FundingQrCodeScreen: FC = () => {
-  const address = useSelectedAddress()
+  const address = useDefaultAddress()
   const { metadata } = useAddressMetadata()
 
   return (

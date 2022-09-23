@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react'
 
 import { assertNever } from '../../services/assertNever'
-import { useSelectedAddress } from '../addresses/addresses.state'
+import { useDefaultAddress } from '../addresses/addresses.state'
 import { AddressListScreen } from '../addresses/AddressListScreen'
 import WalletAssetsScreen from '../assets/WalletAssetsScreen'
 import WalletTransfersScreen from '../transactions/WalletTransfersScreen'
@@ -13,7 +13,7 @@ interface WalletContainerScreenProps {
 }
 
 export const WalletContainerScreen: FC<WalletContainerScreenProps> = ({ tab }) => {
-  const address = useSelectedAddress()
+  const address = useDefaultAddress()
 
   let body: ReactNode
   if (!address) {

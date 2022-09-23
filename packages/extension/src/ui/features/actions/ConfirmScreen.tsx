@@ -10,7 +10,7 @@ import { H2 } from '../../theme/Typography'
 export interface ConfirmPageProps {
   onSubmit?: (e: FormEvent<HTMLFormElement>) => void
   onReject?: () => void
-  selectedAddress?: Address
+  defaultAddress?: Address
 }
 
 interface ConfirmScreenProps extends ConfirmPageProps {
@@ -37,7 +37,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   rejectButtonText = 'Reject',
   onSubmit,
   onReject,
-  selectedAddress,
+  defaultAddress,
   singleButton = false,
   switchButtonOrder = false,
   smallTopPadding = false,
@@ -53,7 +53,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   return (
     <ConfirmScreenWrapper
       smallTopPadding={smallTopPadding}
-      addressShown={Boolean(showHeader && selectedAddress)}
+      addressShown={Boolean(showHeader && defaultAddress)}
       onSubmit={(e) => {
         e.preventDefault()
         return onSubmit?.(e)

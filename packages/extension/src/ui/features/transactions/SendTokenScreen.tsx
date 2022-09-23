@@ -16,7 +16,7 @@ import { addressSchema } from '../../services/addresses'
 import { getBalance } from '../../services/backgroundAddresses'
 import { sendAlephiumTransferTransaction } from '../../services/transactions'
 import { H3 } from '../../theme/Typography'
-import { useSelectedAddress } from '../addresses/addresses.state'
+import { useDefaultAddress } from '../addresses/addresses.state'
 import { TokenIcon } from '../assets/TokenIcon'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
 
@@ -90,7 +90,7 @@ export const SendTokenScreen: FC = () => {
   const navigate = useNavigate()
   const resolver = useYupValidationResolver(SendSchema)
 
-  const address = useSelectedAddress()?.hash
+  const address = useDefaultAddress()?.hash
   const name = 'Alephium'
   const symbol = 'ALPH'
   const image = 'https://raw.githubusercontent.com/alephium/alephium-brand-guide/master/logos/light/Logo-Icon.png'

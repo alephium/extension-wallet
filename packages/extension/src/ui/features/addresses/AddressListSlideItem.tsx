@@ -3,6 +3,7 @@ import { useSwiper, useSwiperSlide } from 'swiper/react'
 
 import { Address } from '../../../shared/addresses'
 import { makeClickable } from '../../services/a11y'
+import { connectAddress } from '../../services/backgroundAddresses'
 import { useWalletState } from '../wallet/wallet.state'
 import { useAddresses } from './addresses.state'
 import { AddressListItem } from './AddressListItem'
@@ -29,10 +30,12 @@ export const AddressListSlideItem: FC<AddressListSlideItemProps> = ({ address, i
 
   const onSetAsDefaultAddress = () => {
     useAddresses.setState({ defaultAddress: address })
+    connectAddress({
+      address: address.hash,
+      publicKey: address.publicKey,
+      addressIndex: address.group
+    })
   }
-
-  console.log(defaultAddress)
-  console.log(isDefault)
 
   return (
     <AddressListItem

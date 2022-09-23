@@ -6,7 +6,7 @@ import { useAppState } from '../../app.state'
 import { routes } from '../../routes'
 import { assertNever } from '../../services/assertNever'
 import { approveAction, rejectAction } from '../../services/backgroundActions'
-import { useSelectedAddress } from '../addresses/addresses.state'
+import { useDefaultAddress } from '../addresses/addresses.state'
 import { focusExtensionTab, useExtensionIsInTab } from '../browser/tabs'
 import { useActions } from './actions.state'
 import { AddNetworkScreen } from './AddNetworkScreen'
@@ -17,7 +17,7 @@ const isPopup = new URLSearchParams(window.location.search).has('popup')
 
 export const ActionScreen: FC = () => {
   const navigate = useNavigate()
-  const address = useSelectedAddress()
+  const address = useDefaultAddress()
   const extensionIsInTab = useExtensionIsInTab()
   const { actions } = useActions()
 
@@ -97,7 +97,7 @@ export const ActionScreen: FC = () => {
             }
           }}
           onReject={onReject}
-          selectedAddress={address}
+          defaultAddress={address}
         />
       )
     }

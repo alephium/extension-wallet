@@ -1,3 +1,4 @@
+import { groupOfAddress } from '@alephium/sdk'
 import {
   Account,
   SignDeployContractTxParams,
@@ -11,40 +12,37 @@ import {
   SignTransferTxParams,
   SignTransferTxResult,
   SignUnsignedTxParams,
-  SignUnsignedTxResult,
-} from "@alephium/web3"
+  SignUnsignedTxResult
+} from '@alephium/web3'
 
-import { assertNever } from "./../ui/services/assertNever"
-import { WindowMessageType } from "../shared/messages"
+import { assertNever } from './../ui/services/assertNever'
+import { WindowMessageType } from '../shared/messages'
+import { defaultNetworks } from '../shared/networks'
+import { TransactionPayload, TransactionResult } from '../shared/transactions'
 import {
   AccountChangeEventHandler,
   AlephiumWindowObject,
   NetworkChangeEventHandler,
-  WalletEvents,
-} from "./inpage.model"
-import { sendMessage, waitForMessage } from "./messageActions"
-import { groupOfAddress } from "@alephium/sdk"
-import { TransactionPayload, TransactionResult } from "../shared/transactions"
-import { defaultNetworks } from "../shared/networks"
+  WalletEvents
+} from './inpage.model'
+import { sendMessage, waitForMessage } from './messageActions'
 
 export const userEventHandlers: WalletEvents[] = []
 
-export const executeAlephiumTransaction = async (
-  data: TransactionPayload,
-): Promise<TransactionResult> => {
-  sendMessage({ type: "EXECUTE_TRANSACTION", data })
-  const { actionHash } = await waitForMessage("EXECUTE_TRANSACTION_RES", 1000)
+export const executeAlephiumTransaction = async (data: TransactionPayload): Promise<TransactionResult> => {
+  sendMessage({ type: 'EXECUTE_TRANSACTION', data })
+  const { actionHash } = await waitForMessage('EXECUTE_TRANSACTION_RES', 1000)
   const { txResult } = await waitForMessage(
-    "TRANSACTION_RES",
+    'TRANSACTION_RES',
     10000, // 2 minute, probably long enough to approve or reject the transaction
-    ({ data }) => data.actionHash === actionHash,
+    ({ data }) => data.actionHash === actionHash
   )
   return txResult
 }
 
 export const alephiumWindowObject: AlephiumWindowObject = {
-  id: "alephium",
-  selectedAccount: undefined,
+  id: 'alephium',
+  defaultAddress: undefined,
   currentNetwork: defaultNetworks[0].id,
   isConnected: false,
   enable: () =>
@@ -55,13 +53,10 @@ export const alephiumWindowObject: AlephiumWindowObject = {
           return
         }
 
-        if (
-          (data.type === "CONNECT_DAPP_RES" && data.data) ||
-          (data.type === "START_SESSION_RES" && data.data)
-        ) {
-          window.removeEventListener("message", handleMessage)
+        if ((data.type === 'CONNECT_DAPP_RES' && data.data) || (data.type === 'START_SESSION_RES' && data.data)) {
+          window.removeEventListener('message', handleMessage)
           const { address, publicKey, addressIndex } = data.data
-          alephium.selectedAccount = {
+          alephium.defaultAddress = {
             address,
             publicKey,
             group: addressIndex
@@ -70,31 +65,31 @@ export const alephiumWindowObject: AlephiumWindowObject = {
           resolve([address])
         }
       }
-      window.addEventListener("message", handleMessage)
+      window.addEventListener('message', handleMessage)
 
       sendMessage({
-        type: "CONNECT_DAPP",
-        data: { host: window.location.host },
+        type: 'CONNECT_DAPP',
+        data: { host: window.location.host }
       })
     }),
   isPreauthorized: async () => {
     sendMessage({
-      type: "IS_PREAUTHORIZED",
-      data: window.location.host,
+      type: 'IS_PREAUTHORIZED',
+      data: window.location.host
     })
-    return waitForMessage("IS_PREAUTHORIZED_RES", 1000)
+    return waitForMessage('IS_PREAUTHORIZED_RES', 1000)
   },
   // sign different kinda messages
   on: (event, handleEvent) => {
-    if (event === "addressesChanged") {
+    if (event === 'addressesChanged') {
       userEventHandlers.push({
         type: event,
-        handler: handleEvent as AccountChangeEventHandler,
+        handler: handleEvent as AccountChangeEventHandler
       })
-    } else if (event === "networkChanged") {
+    } else if (event === 'networkChanged') {
       userEventHandlers.push({
         type: event,
-        handler: handleEvent as NetworkChangeEventHandler,
+        handler: handleEvent as NetworkChangeEventHandler
       })
     } else {
       assertNever(event)
@@ -102,14 +97,13 @@ export const alephiumWindowObject: AlephiumWindowObject = {
     }
   },
   off: (event, handleEvent) => {
-    if (event !== "addressesChanged" && event !== "networkChanged") {
+    if (event !== 'addressesChanged' && event !== 'networkChanged') {
       assertNever(event)
       throw new Error(`Unknwown event: ${event}`)
     }
 
     const eventIndex = userEventHandlers.findIndex(
-      (userEvent) =>
-        userEvent.type === event && userEvent.handler === handleEvent,
+      (userEvent) => userEvent.type === event && userEvent.handler === handleEvent
     )
 
     if (eventIndex >= 0) {
@@ -118,57 +112,43 @@ export const alephiumWindowObject: AlephiumWindowObject = {
   },
 
   getAccounts: async (): Promise<Account[]> => {
-    sendMessage({ type: "GET_ADDRESSES" })
-    const addresses = await waitForMessage("GET_ADDRESSES_RES", 100)
+    sendMessage({ type: 'GET_ADDRESSES' })
+    const addresses = await waitForMessage('GET_ADDRESSES_RES', 100)
     return addresses.map((addr) => {
       const group = groupOfAddress(addr.address)
       return {
         address: addr.address,
         group,
-        publicKey: addr.publicKey,
+        publicKey: addr.publicKey
       }
     })
   },
-  signTransferTx: async (
-    params: SignTransferTxParams,
-  ): Promise<SignTransferTxResult> => {
+  signTransferTx: async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
     return (
       await executeAlephiumTransaction({
-        type: "ALPH_SIGN_TRANSFER_TX",
-        params,
+        type: 'ALPH_SIGN_TRANSFER_TX',
+        params
       })
     ).result
   },
-  signDeployContractTx: async (
-    params: SignDeployContractTxParams,
-  ): Promise<SignDeployContractTxResult> => {
+  signDeployContractTx: async (params: SignDeployContractTxParams): Promise<SignDeployContractTxResult> => {
     return (
       await executeAlephiumTransaction({
-        type: "ALPH_SIGN_CONTRACT_CREATION_TX",
-        params,
+        type: 'ALPH_SIGN_CONTRACT_CREATION_TX',
+        params
       })
     ).result as SignDeployContractTxResult
   },
-  signExecuteScriptTx: async (
-    params: SignExecuteScriptTxParams,
-  ): Promise<SignExecuteScriptTxResult> => {
-    return (
-      await executeAlephiumTransaction({ type: "ALPH_SIGN_SCRIPT_TX", params })
-    ).result
+  signExecuteScriptTx: async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_SCRIPT_TX', params })).result
   },
-  signUnsignedTx: async (
-    params: SignUnsignedTxParams,
-  ): Promise<SignUnsignedTxResult> => {
+  signUnsignedTx: async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
     throw Error(`signUnsignedTx unsupported ${params}`)
   },
-  signHexString: async (
-    params: SignHexStringParams,
-  ): Promise<SignHexStringResult> => {
+  signHexString: async (params: SignHexStringParams): Promise<SignHexStringResult> => {
     throw Error(`signHexString unsupported ${params}`)
   },
-  signMessage: async (
-    params: SignMessageParams,
-  ): Promise<SignMessageResult> => {
+  signMessage: async (params: SignMessageParams): Promise<SignMessageResult> => {
     throw Error(`signMessage unsupported ${params}`)
-  },
+  }
 }

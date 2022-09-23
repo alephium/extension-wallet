@@ -40,7 +40,7 @@ export const titleForTransactions = (payload: TransactionPayload) => {
 
 export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   payload,
-  selectedAddress,
+  defaultAddress,
   actionHash,
   onSubmit,
   ...props
@@ -50,11 +50,11 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     return titleForTransactions(payload)
   }, [payload])
 
-  if (!selectedAddress) {
+  if (!defaultAddress) {
     return <Navigate to={routes.walletAddresses()} />
   }
 
-  const addressName = getAddressName(selectedAddress.hash, metadata)
+  const addressName = getAddressName(defaultAddress.hash, metadata)
 
   const confirmButtonVariant = 'warn'
 
@@ -63,7 +63,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       title={title}
       confirmButtonText="Approve"
       confirmButtonVariant={confirmButtonVariant}
-      selectedAddress={selectedAddress}
+      defaultAddress={defaultAddress}
       onSubmit={() => {
         onSubmit(payload)
       }}

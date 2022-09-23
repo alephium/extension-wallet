@@ -21,4 +21,4 @@ export const useAddresses = create<State>()((set) => ({
     }))
 }))
 
-export const useSelectedAddress = () => useAddresses(({ defaultAddress }) => defaultAddress)
+export const useDefaultAddress = () => useAddresses(({ defaultAddress }) => defaultAddress)
