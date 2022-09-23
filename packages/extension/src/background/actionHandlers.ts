@@ -17,7 +17,7 @@ export const handleActionApproval = async (
   switch (action.type) {
     case 'CONNECT_DAPP': {
       const { host } = action.payload
-      const defaultAddress = await wallet.getAlephiumDefaultAddresses()
+      const defaultAddress = await wallet.getAlephiumDefaultAddress()
 
       if (!defaultAddress) {
         openUi()
@@ -39,7 +39,7 @@ export const handleActionApproval = async (
       } catch (error: any) {
         return {
           type: 'TRANSACTION_FAILED',
-          data: { actionHash, error: `${error.error.detail}` }
+          data: { actionHash, error: `${error.error}` }
         }
       }
     }

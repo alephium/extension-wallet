@@ -64,7 +64,7 @@ export class Wallet {
   }
 
   public async getAlephiumPrivateKeySigner(): Promise<PrivateKeyWallet | undefined> {
-    const addressAndKeys = await this.getAlephiumDefaultAddresses()
+    const addressAndKeys = await this.getAlephiumDefaultAddress()
     const nodeProvider = await this.getNodeProvider()
     let result = undefined
     if (addressAndKeys) {
@@ -193,7 +193,7 @@ export class Wallet {
     }
   }
 
-  public async getAlephiumDefaultAddresses(): Promise<AddressAndKeys | undefined> {
+  public async getAlephiumDefaultAddress(): Promise<AddressAndKeys | undefined> {
     if (!this.session?.seed) {
       return undefined
     } else {

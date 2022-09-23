@@ -48,7 +48,7 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
     }
 
     case 'GET_DEFAULT_ADDRESS': {
-      const defaultAddress = await wallet.getAlephiumDefaultAddresses()
+      const defaultAddress = await wallet.getAlephiumDefaultAddress()
       return sendToTabAndUi({
         type: 'GET_DEFAULT_ADDRESS_RES',
         data: defaultAddress

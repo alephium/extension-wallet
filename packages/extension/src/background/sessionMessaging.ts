@@ -22,7 +22,7 @@ export const handleSessionMessage: HandleMessage<SessionMessage> = async ({
       const result = await wallet.startAlephiumSession('alephium-wallet-name', sessionPassword)
 
       if (result) {
-        const defaultAddress = await wallet.getAlephiumDefaultAddresses()
+        const defaultAddress = await wallet.getAlephiumDefaultAddress()
         return sendToTabAndUi({
           type: 'START_SESSION_RES',
           data: defaultAddress
