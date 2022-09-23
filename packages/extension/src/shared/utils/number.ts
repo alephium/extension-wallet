@@ -81,3 +81,8 @@ export const prettifyNumber = (
   }
   return trimmed
 }
+
+// BigInt serialisation
+;(BigInt.prototype as any).toJSON = function () {
+  return this.toString()
+}

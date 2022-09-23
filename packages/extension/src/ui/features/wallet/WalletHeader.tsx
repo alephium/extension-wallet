@@ -6,13 +6,13 @@ import styled, { useTheme } from 'styled-components'
 import { useScrollContext } from '../../AppRoutes'
 import { Header } from '../../components/Header'
 
-interface AddressHeaderProps {
+interface WalletHeaderProps {
   title?: string
   buttons?: ReactNode
   className?: string
 }
 
-const AddressHeader = ({ title, buttons, className }: AddressHeaderProps) => {
+const WalletHeader = ({ title, buttons, className }: WalletHeaderProps) => {
   const theme = useTheme()
   const { scrollBehaviourElementRef } = useScrollContext()
 
@@ -36,7 +36,7 @@ const AddressHeader = ({ title, buttons, className }: AddressHeaderProps) => {
   )
 }
 
-export default styled(AddressHeader)`
+export default styled(WalletHeader)`
   position: fixed;
   top: 0;
   left: 0;

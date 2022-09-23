@@ -13,7 +13,7 @@ export const initialState = {
   defaultAddress: undefined
 }
 
-export const useAddresses = create<State>((set) => ({
+export const useAddresses = create<State>()((set) => ({
   ...initialState,
   addAddress: (newAddress: Address) =>
     set((state) => ({

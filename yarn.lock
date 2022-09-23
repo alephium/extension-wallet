@@ -18,8 +18,8 @@
   "resolved" "file:packages/extension"
   "version" "0.0.1"
   dependencies:
-    "@alephium/sdk" "0.1.0"
-    "@alephium/web3" "0.2.0-rc.14"
+    "@alephium/sdk" "0.0.12"
+    "@alephium/web3" "0.2.0-test.0"
     "@extend-chrome/messages" "^1.2.2"
     "@google/model-viewer" "^1.11.1"
     "@mui/icons-material" "^5.3.1"
@@ -7132,7 +7132,7 @@
   "resolved" "https://registry.npmjs.org/ignore/-/ignore-5.2.0.tgz"
   "version" "5.2.0"
 
-"immer@^9.0.15":
+"immer@^9.0.15", "immer@>=9.0":
   "integrity" "sha512-2eB/sswms9AEUSkOm4SbV5Y7Vmt/bKRwByd52jfLkW4OLYeaTP3EEiJ9agqU0O/tq6Dk62Zfj+TJSqfm1rLVGQ=="
   "resolved" "https://registry.npmjs.org/immer/-/immer-9.0.15.tgz"
   "version" "9.0.15"
@@ -11543,6 +11543,11 @@
   "resolved" "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.1.0.tgz"
   "version" "1.1.0"
 
+"use-sync-external-store@1.2.0":
+  "integrity" "sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA=="
+  "resolved" "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"
+  "version" "1.2.0"
+
 "util-deprecate@^1.0.1", "util-deprecate@^1.0.2", "util-deprecate@~1.0.1":
   "integrity" "sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw=="
   "resolved" "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"
@@ -12067,7 +12072,9 @@
     "tiny-case" "^1.0.2"
     "toposort" "^2.0.2"
 
-"zustand@^3.6.5":
-  "integrity" "sha512-PIJDIZKtokhof+9+60cpockVOq05sJzHCriyvaLBmEJixseQ1a5Kdov6fWZfWOu5SK9c+FhH1jU0tntLxRJYMA=="
-  "resolved" "https://registry.npmjs.org/zustand/-/zustand-3.7.2.tgz"
-  "version" "3.7.2"
+"zustand@^4.1.1":
+  "integrity" "sha512-h4F3WMqsZgvvaE0n3lThx4MM81Ls9xebjvrABNzf5+jb3/03YjNTSgZXeyrvXDArMeV9untvWXRw1tY+ntPYbA=="
+  "resolved" "https://registry.npmjs.org/zustand/-/zustand-4.1.1.tgz"
+  "version" "4.1.1"
+  dependencies:
+    "use-sync-external-store" "1.2.0"

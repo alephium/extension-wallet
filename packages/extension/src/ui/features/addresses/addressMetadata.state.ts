@@ -12,7 +12,7 @@ interface State {
   setAddressMetadata: (addressHash: string, addressMetadata: Partial<AddressMetadata>) => void
 }
 
-export const useAddressMetadata = create<State>(
+export const useAddressMetadata = create<State>()(
   persist(
     (set) => ({
       metadata: {},

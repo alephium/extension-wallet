@@ -42,7 +42,6 @@ export declare type AddressAndPublicKey = {
 export type AddressMetadata = {
   name: string
   color: string
-  //isMain: boolean
 }
 
 type AddressGroup = {
