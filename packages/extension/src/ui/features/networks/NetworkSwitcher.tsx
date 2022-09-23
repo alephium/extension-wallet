@@ -1,3 +1,4 @@
+import { Variants, motion } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -10,100 +11,34 @@ import { recover } from '../recovery/recovery.service'
 import { useNetworkState } from './networks.state'
 import { useNetworks } from './useNetworks'
 
-const NetworkName = styled.span`
-  text-align: right;
-`
-
-const Network = styled.div<{ selected?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: right;
-
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 14.4px;
-
-  background-color: rgba(255, 255, 255, 0.15);
-  padding: 8px 12px;
-
-  font-weight: ${({ selected }) => (selected ? 600 : 400)};
-  font-size: 12px;
-  line-height: 14.4px;
-
-  color: ${({ theme, selected }) => (selected ? theme.text1 : 'rgba(255, 255, 255, 0.7)')};
-  &:hover {
-    color: ${({ theme }) => theme.text1};
-  }
-
-  cursor: ${({ selected }) => (selected ? 'default' : 'pointer')};
-
-  > span {
-    padding-right: 5px;
-  }
-`
-
-const NetworkList = styled.div`
-  display: none;
-  position: absolute;
-  width: 100%;
-  z-index: 1;
-  background: ${({ theme }) => theme.bg1};
-  border-radius: 0 0 15px 15px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-
-  & > ${Network} {
-    border-top: 1px #525252 solid;
-  }
-
-  & > ${Network}:last-child {
-    border-radius: 0 0 15px 15px;
-  }
-`
-
-const NetworkSwitcherWrapper = styled.div<{
-  disabled?: boolean
-}>`
-  position: relative;
-
-  & > ${Network} {
-    border-radius: 30px;
-  }
-
-  ${({ disabled }) =>
-    !disabled &&
-    css`
-      &:hover ${NetworkList} {
-        display: block;
-      }
-
-      &:hover > ${Network} {
-        border-radius: 15px 15px 0 0;
-      }
-
-      &:hover ${NetworkName} {
-        min-width: 110px;
-      }
-    `}
-`
-
-export const NetworkStatusWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: right;
-  gap: 4px;
-`
-
 interface NetworkSwitcherProps {
-  disabled?: boolean
+  className?: string
 }
 
-export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
+const initialNetworkHeight = 30
+const expandedNetworkHeight = 45
+
+const networkVariants: Variants = {
+  hover: {
+    height: expandedNetworkHeight,
+    width: 120
+  }
+}
+
+export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ className }) => {
   const navigate = useNavigate()
+
   const { switcherNetworkId, setSwitcherNetworkId } = useNetworkState()
+
   const { allNetworks } = useNetworks({ suspense: true })
   const currentNetwork = getNetwork(switcherNetworkId, allNetworks)
-  const otherNetworks = allNetworks.filter((network) => network !== currentNetwork)
+
   const [networkStatuses, setNetworkStatuses] = useState<NetworkStatus[]>([])
+
+  const orderedNetworks = [
+    ...allNetworks.filter(({ name }) => name === currentNetwork.name),
+    ...allNetworks.filter(({ name }) => name !== currentNetwork.name)
+  ]
 
   const showHealthIndicator = (networkId: string, statuses: NetworkStatus[]) => {
     const result = statuses.find((status) => status.id === networkId)?.healthy
@@ -124,19 +59,28 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
   }, [])
 
   return (
-    <NetworkSwitcherWrapper disabled={disabled}>
-      <Network selected role="button" aria-label="Selected network">
-        <NetworkName>{currentNetwork.name}</NetworkName>
-        {showHealthIndicator(currentNetwork.id, networkStatuses)}
-      </Network>
-      <NetworkList>
-        {otherNetworks.map(({ id, name }) => (
+    <NetworkSwitcherWrapper role="button" aria-label="Selected network" className={className} whileHover="hover">
+      <NetworkList
+        variants={{
+          hover: {
+            height: orderedNetworks.length * expandedNetworkHeight,
+            boxShadow: '0 5px 10px rgba(0, 0, 0, 0.8)',
+            transition: {
+              duration: 0.2,
+              ease: 'circOut'
+            }
+          }
+        }}
+      >
+        {orderedNetworks.map(({ id, name }) => (
           <Network
             key={id}
             onClick={async () => {
               setSwitcherNetworkId(id)
               navigate(await recover(routes.addressTokens.path))
             }}
+            layout
+            variants={networkVariants}
           >
             <NetworkName>{name}</NetworkName>
             {showHealthIndicator(id, networkStatuses)}
@@ -146,3 +90,78 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
     </NetworkSwitcherWrapper>
   )
 }
+
+const NetworkName = styled.span`
+  text-align: right;
+`
+
+const Network = styled(motion.div)`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 14.4px;
+
+  padding: 10px;
+
+  height: ${initialNetworkHeight}px;
+
+  color: rgba(255, 255, 255, 0.7);
+  z-index: 1;
+
+  cursor: pointer;
+
+  &:hover {
+    color: ${({ theme }) => theme.text1};
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      border-radius: 15px;
+      background-color: rgba(255, 255, 255, 0.05);
+      z-index: 0;
+    }
+  }
+
+  // Selected network
+  &:first-child {
+    color: ${({ theme }) => theme.text1};
+    font-weight: 600;
+    cursor: default;
+  }
+
+  > span {
+    padding-right: 5px;
+  }
+`
+
+const NetworkList = styled(motion.div)`
+  transform: translateY(-${initialNetworkHeight / 2}px);
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  height: ${initialNetworkHeight}px;
+  border-radius: 15px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  background-color: ${({ theme }) => theme.bg3};
+  overflow: hidden;
+`
+
+const NetworkSwitcherWrapper = styled(motion.div)`
+  position: relative;
+`
+
+export const NetworkStatusWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  gap: 4px;
+`
