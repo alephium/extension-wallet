@@ -7,6 +7,7 @@ import { IconButton } from '../../components/buttons/IconButton'
 import { Header } from '../../components/Header'
 import { routes } from '../../routes'
 import { useDefaultAddress } from '../addresses/addresses.state'
+import DefaultAddressSwitcher from '../addresses/DefaultAddressSwitcher'
 import { NetworkSwitcher } from '../networks/NetworkSwitcher'
 import { useWalletState } from './wallet.state'
 import { WalletContainerScreenTab } from './WalletContainerScreen'
@@ -39,6 +40,7 @@ export const WalletContainer: FC<AddressScreenContentProps> = ({ currentTab, chi
                     <SettingsIcon />
                   </IconButton>
                 </Link>
+                <DefaultAddressSwitcher />
                 <NetworkSwitcher />
               </>
             )}

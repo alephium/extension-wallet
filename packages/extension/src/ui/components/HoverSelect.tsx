@@ -7,7 +7,7 @@ interface HoverSelectProps {
   className?: string
 }
 
-interface HoverSelectItem {
+export interface HoverSelectItem {
   value: string
   label?: string
   onClick: (value: string) => void
