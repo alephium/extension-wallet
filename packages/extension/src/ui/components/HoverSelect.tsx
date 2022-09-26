@@ -1,5 +1,5 @@
 import { Variants, motion } from 'framer-motion'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 interface HoverSelectProps {
@@ -17,16 +17,40 @@ export interface HoverSelectItem {
 const initialItemHeight = 30
 const expandedItemHeight = 45
 
+const listWidth = 120
+const maxListHeight = 300
+
 const itemVariants: Variants = {
   hover: {
     height: expandedItemHeight,
-    width: 120
+    width: listWidth
   }
 }
 
 const HoverSelect = ({ items, className }: HoverSelectProps) => {
+  const [isMaxHeight, setIsMaxHeight] = useState(false)
+
+  const listRef = useRef<HTMLDivElement>(null)
+
+  console.log(listRef.current?.clientHeight)
+
+  useEffect(() => {
+    setIsMaxHeight(items.length * expandedItemHeight >= maxListHeight)
+  }, [items.length])
+
+  const handleHoverStart = () => {
+    // Scroll to top
+    listRef.current?.scroll(0, 0)
+  }
+
   return (
-    <HoverSelectWrapper role="button" aria-label="Selected network" className={className} whileHover="hover">
+    <HoverSelectWrapper
+      role="button"
+      aria-label="Selected network"
+      className={className}
+      whileHover="hover"
+      onHoverStart={handleHoverStart}
+    >
       <ItemList
         variants={{
           hover: {
@@ -38,12 +62,14 @@ const HoverSelect = ({ items, className }: HoverSelectProps) => {
             }
           }
         }}
+        ref={listRef}
       >
         {items.map(({ value, label, Component, onClick }) => (
           <ItemContainer key={value} onClick={() => onClick(value)} layout variants={itemVariants}>
             {label ? label : Component ? Component : null}
           </ItemContainer>
         ))}
+        {isMaxHeight && <ItemListBottomShadow />}
       </ItemList>
     </HoverSelectWrapper>
   )
@@ -65,7 +91,25 @@ const ItemList = styled(motion.div)`
   border-radius: 15px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   background-color: ${({ theme }) => theme.bg3};
-  overflow: hidden;
+  overflow: auto;
+  max-height: ${maxListHeight}px;
+
+  overscroll-behavior: none;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+`
+
+const ItemListBottomShadow = styled.div`
+  position: sticky;
+  top: ${maxListHeight - 50 - initialItemHeight / 2}px;
+  right: 0;
+  width: ${listWidth}px;
+  height: 50px;
+  background: linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+  z-index: 3000;
 `
 
 const ItemContainer = styled(motion.div)`
@@ -108,6 +152,10 @@ const ItemContainer = styled(motion.div)`
     color: ${({ theme }) => theme.text1};
     font-weight: 600;
     cursor: default;
+    position: sticky;
+    top: 0;
+    background-color: ${({ theme }) => theme.bg3};
+    z-index: 2;
   }
 
   > span {
