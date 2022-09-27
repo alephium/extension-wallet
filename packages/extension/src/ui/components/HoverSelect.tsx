@@ -1,9 +1,11 @@
-import { Transition, Variants, motion } from 'framer-motion'
+import { colord } from 'colord'
+import { AnimatePresence, Transition, Variants, motion } from 'framer-motion'
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 interface HoverSelectProps {
   items: HoverSelectItem[]
+  title?: string
   className?: string
 }
 
@@ -23,28 +25,14 @@ const maxListHeight = 300
 
 const transition: Transition = { type: 'tween', duration: 0.15 }
 
-const itemVariants: Variants = {
-  hover: {
-    height: expandedItemHeight,
-    width: expandedListWidth,
-    transition
-  }
-}
-
-const HoverSelect = ({ items, className }: HoverSelectProps) => {
-  const [isMaxHeight, setIsMaxHeight] = useState(false)
+const HoverSelect = ({ items, title, className }: HoverSelectProps) => {
+  const theme = useTheme()
 
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => setIsMounted(true), [setIsMounted])
 
   const listRef = useRef<HTMLDivElement>(null)
-
-  console.log(listRef.current?.clientHeight)
-
-  useEffect(() => {
-    setIsMaxHeight(items.length * expandedItemHeight >= maxListHeight)
-  }, [items.length])
 
   const handleHoverStart = () => {
     // Scroll to top
@@ -69,9 +57,45 @@ const HoverSelect = ({ items, className }: HoverSelectProps) => {
         transition={transition}
         ref={listRef}
       >
-        {items.map(({ value, label, Component, onClick }) => (
-          <ItemContainer key={value} onClick={() => onClick(value)} layout={isMounted} variants={itemVariants}>
-            {label ? label : Component ? Component : null}
+        {items.map(({ value, label, Component, onClick }, i) => (
+          <ItemContainer
+            key={value}
+            onClick={() => onClick(value)}
+            layout={isMounted}
+            variants={{
+              hover: {
+                height: expandedItemHeight,
+                width: expandedListWidth,
+                backgroundColor: i === 0 ? colord(theme.bg3).lighten(0.05).toHex() : 'initial',
+                transition
+              }
+            }}
+          >
+            <AnimatePresence>
+              {i === 0 && (
+                <Title
+                  variants={{
+                    hover: {
+                      opacity: 1
+                    }
+                  }}
+                  transition={{
+                    duration: 0.1
+                  }}
+                >
+                  {title}
+                </Title>
+              )}
+            </AnimatePresence>
+            <ItemContent
+              variants={{
+                hover: {
+                  marginTop: i === 0 ? expandedItemHeight / 3 : 'initial'
+                }
+              }}
+            >
+              {label ? label : Component ? Component : null}
+            </ItemContent>
           </ItemContainer>
         ))}
       </ItemList>
@@ -123,6 +147,7 @@ const ItemContainer = styled(motion.div)`
 
   height: ${initialItemHeight}px;
 
+  background-color: ${({ theme }) => theme.bg3};
   color: rgba(255, 255, 255, 0.7);
   z-index: 1;
 
@@ -151,11 +176,21 @@ const ItemContainer = styled(motion.div)`
     cursor: default;
     position: sticky;
     top: 0;
-    background-color: ${({ theme }) => theme.bg3};
+    border-radius: 15px;
     z-index: 2;
   }
 
   > span {
     padding-right: 5px;
   }
+`
+
+const ItemContent = styled(motion.div)``
+
+const Title = styled(motion.span)`
+  position: absolute;
+  top: 2px;
+  opacity: 0;
+  color: ${({ theme }) => theme.text2};
+  font-size: 10px;
 `

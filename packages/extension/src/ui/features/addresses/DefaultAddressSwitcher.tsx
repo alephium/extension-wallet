@@ -15,7 +15,7 @@ const DefaultAddressSwitcher = () => {
     onClick: () => handleDefaultAddressSelect(k)
   }))
 
-  return <HoverSelect items={addresses} />
+  return <HoverSelect items={addresses} title="Default address" />
 }
 
 export default DefaultAddressSwitcher
