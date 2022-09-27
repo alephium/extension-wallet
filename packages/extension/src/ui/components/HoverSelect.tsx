@@ -1,4 +1,4 @@
-import { Variants, motion } from 'framer-motion'
+import { Transition, Variants, motion } from 'framer-motion'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
@@ -17,18 +17,26 @@ export interface HoverSelectItem {
 const initialItemHeight = 30
 const expandedItemHeight = 45
 
-const listWidth = 120
+const initialListWidth = 110
+const expandedListWidth = 140
 const maxListHeight = 300
+
+const transition: Transition = { type: 'tween', duration: 0.15 }
 
 const itemVariants: Variants = {
   hover: {
     height: expandedItemHeight,
-    width: listWidth
+    width: expandedListWidth,
+    transition
   }
 }
 
 const HoverSelect = ({ items, className }: HoverSelectProps) => {
   const [isMaxHeight, setIsMaxHeight] = useState(false)
+
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => setIsMounted(true), [setIsMounted])
 
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -55,21 +63,17 @@ const HoverSelect = ({ items, className }: HoverSelectProps) => {
         variants={{
           hover: {
             height: items.length * expandedItemHeight,
-            boxShadow: '0 5px 10px rgba(0, 0, 0, 0.8)',
-            transition: {
-              duration: 0.2,
-              ease: 'circOut'
-            }
+            boxShadow: '0 5px 10px rgba(0, 0, 0, 0.8)'
           }
         }}
+        transition={transition}
         ref={listRef}
       >
         {items.map(({ value, label, Component, onClick }) => (
-          <ItemContainer key={value} onClick={() => onClick(value)} layout variants={itemVariants}>
+          <ItemContainer key={value} onClick={() => onClick(value)} layout={isMounted} variants={itemVariants}>
             {label ? label : Component ? Component : null}
           </ItemContainer>
         ))}
-        {isMaxHeight && <ItemListBottomShadow />}
       </ItemList>
     </HoverSelectWrapper>
   )
@@ -102,25 +106,18 @@ const ItemList = styled(motion.div)`
   }
 `
 
-const ItemListBottomShadow = styled.div`
-  position: sticky;
-  top: ${maxListHeight - 50 - initialItemHeight / 2}px;
-  right: 0;
-  width: ${listWidth}px;
-  height: 50px;
-  background: linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
-  z-index: 3000;
-`
-
 const ItemContainer = styled(motion.div)`
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: right;
+  justify-content: center;
+  text-align: center;
 
   font-weight: 600;
   font-size: 12px;
   line-height: 14.4px;
+  height: ${initialItemHeight}px;
+  width: ${initialListWidth}px;
 
   padding: 10px;
 
