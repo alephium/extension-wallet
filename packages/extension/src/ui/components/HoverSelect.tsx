@@ -26,12 +26,21 @@ const maxListHeight = 300
 
 const transition: Transition = { type: 'tween', duration: 0.15 }
 
+const itemContainerVariants: Variants = {
+  initial: {
+    height: initialItemHeight,
+    width: initialListWidth
+  },
+  hover: {
+    height: expandedItemHeight,
+    width: expandedListWidth,
+    transition
+  }
+}
+
 const HoverSelect = ({ items, onItemClick, selectedItemValue, title, className }: HoverSelectProps) => {
   const theme = useTheme()
-
-  const [isMounted, setIsMounted] = useState(false)
-
-  useEffect(() => setIsMounted(true), [setIsMounted])
+  const [isHovering, setIsHovering] = useState(false)
 
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -41,21 +50,38 @@ const HoverSelect = ({ items, onItemClick, selectedItemValue, title, className }
   ]
 
   const handleHoverStart = () => {
+    setIsHovering(true)
+
     // Scroll to top
     listRef.current?.scroll(0, 0)
+  }
+
+  const handleHoverEnd = () => {
+    setIsHovering(false)
+  }
+
+  const handleAnimationComplete = () => {
+    console.log('COMPLETE')
   }
 
   const handleItemClick = (value: string) => {
     onItemClick(value)
   }
 
+  const isSelected = (value: string) => selectedItemValue === value
+
+  const shouldAnimateItem = (value: string) => isSelected(value) && isHovering
+
   return (
     <HoverSelectWrapper
       role="button"
       aria-label="Selected network"
       className={className}
+      initial="initial"
       whileHover="hover"
       onHoverStart={handleHoverStart}
+      onHoverEnd={handleHoverEnd}
+      onAnimationComplete={handleAnimationComplete}
     >
       <ItemList
         variants={{
@@ -67,41 +93,28 @@ const HoverSelect = ({ items, onItemClick, selectedItemValue, title, className }
         transition={transition}
         ref={listRef}
       >
-        {orderedItems.map(({ value, label, Component }, i) => (
+        {orderedItems.map(({ value, label, Component }) => (
           <ItemContainer
             key={value}
             onClick={() => handleItemClick(value)}
-            layout={isMounted}
-            variants={{
-              hover: {
-                height: expandedItemHeight,
-                width: expandedListWidth,
-                backgroundColor: i === 0 ? colord(theme.bg3).lighten(0.05).toHex() : 'initial',
-                transition
-              }
+            animate={{
+              backgroundColor: shouldAnimateItem(value) ? colord(theme.bg3).lighten(0.05).toHex() : theme.bg3
             }}
+            variants={itemContainerVariants}
           >
-            <AnimatePresence>
-              {i === 0 && (
-                <Title
-                  variants={{
-                    hover: {
-                      opacity: 1
-                    }
-                  }}
-                  transition={{
-                    duration: 0.1
-                  }}
-                >
-                  {title}
-                </Title>
-              )}
-            </AnimatePresence>
+            <Title
+              transition={{
+                duration: 0.1
+              }}
+              animate={{
+                opacity: shouldAnimateItem(value) ? 1 : 0
+              }}
+            >
+              {title}
+            </Title>
             <ItemContent
-              variants={{
-                hover: {
-                  marginTop: i === 0 ? expandedItemHeight / 3 : 'initial'
-                }
+              animate={{
+                marginTop: shouldAnimateItem(value) ? expandedItemHeight / 3 : 0
               }}
             >
               {label ? label : Component ? Component : null}
