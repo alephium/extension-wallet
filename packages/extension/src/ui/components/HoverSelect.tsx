@@ -5,6 +5,8 @@ import styled, { useTheme } from 'styled-components'
 
 interface HoverSelectProps {
   items: HoverSelectItem[]
+  onItemClick: (value: string) => void
+  selectedItemValue?: string
   title?: string
   className?: string
 }
@@ -12,7 +14,6 @@ interface HoverSelectProps {
 export interface HoverSelectItem {
   value: string
   label?: string
-  onClick: (value: string) => void
   Component?: ReactNode
 }
 
@@ -25,7 +26,7 @@ const maxListHeight = 300
 
 const transition: Transition = { type: 'tween', duration: 0.15 }
 
-const HoverSelect = ({ items, title, className }: HoverSelectProps) => {
+const HoverSelect = ({ items, onItemClick, selectedItemValue, title, className }: HoverSelectProps) => {
   const theme = useTheme()
 
   const [isMounted, setIsMounted] = useState(false)
@@ -34,9 +35,18 @@ const HoverSelect = ({ items, title, className }: HoverSelectProps) => {
 
   const listRef = useRef<HTMLDivElement>(null)
 
+  const orderedItems = [
+    ...items.filter(({ value }) => selectedItemValue === value),
+    ...items.filter(({ value }) => selectedItemValue !== value)
+  ]
+
   const handleHoverStart = () => {
     // Scroll to top
     listRef.current?.scroll(0, 0)
+  }
+
+  const handleItemClick = (value: string) => {
+    onItemClick(value)
   }
 
   return (
@@ -57,10 +67,10 @@ const HoverSelect = ({ items, title, className }: HoverSelectProps) => {
         transition={transition}
         ref={listRef}
       >
-        {items.map(({ value, label, Component, onClick }, i) => (
+        {orderedItems.map(({ value, label, Component }, i) => (
           <ItemContainer
             key={value}
-            onClick={() => onClick(value)}
+            onClick={() => handleItemClick(value)}
             layout={isMounted}
             variants={{
               hover: {

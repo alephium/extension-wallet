@@ -3,7 +3,6 @@ import { useSwiper, useSwiperSlide } from 'swiper/react'
 
 import { Address } from '../../../shared/addresses'
 import { makeClickable } from '../../services/a11y'
-import { connectAddress } from '../../services/backgroundAddresses'
 import { useWalletState } from '../wallet/wallet.state'
 import { useAddresses } from './addresses.state'
 import { AddressListItem } from './AddressListItem'
@@ -17,7 +16,7 @@ interface AddressListSlideItemProps {
 export const AddressListSlideItem: FC<AddressListSlideItemProps> = ({ address, isFocused }) => {
   const swiper = useSwiper()
   const swiperSlide = useSwiperSlide()
-  const { defaultAddress } = useAddresses()
+  const { defaultAddress, setDefaultAddress } = useAddresses()
 
   const { metadata } = useAddressMetadata()
   const addressName = getAddressName(address.hash, metadata)
@@ -29,12 +28,7 @@ export const AddressListSlideItem: FC<AddressListSlideItemProps> = ({ address, i
   }, [addressName, isFocused])
 
   const onSetAsDefaultAddress = () => {
-    useAddresses.setState({ defaultAddress: address })
-    connectAddress({
-      address: address.hash,
-      publicKey: address.publicKey,
-      addressIndex: address.group
-    })
+    setDefaultAddress(address.hash)
   }
 
   return (
