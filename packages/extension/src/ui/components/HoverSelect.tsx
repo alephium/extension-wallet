@@ -7,13 +7,13 @@ interface HoverSelectProps {
   items: HoverSelectItem[]
   onItemClick: (value: string) => void
   selectedItemValue?: string
-  title?: string
+  title: string
   dimensions?: {
-    initialItemHeight: number
-    expandedItemHeight: number
-    initialListWidth: number
-    expandedListWidth: number
-    maxListHeight: number
+    initialItemHeight?: number
+    expandedItemHeight?: number
+    initialListWidth?: number
+    expandedListWidth?: number
+    maxListHeight?: number
   }
   className?: string
 }
@@ -24,26 +24,7 @@ export interface HoverSelectItem {
   Component?: ReactNode
 }
 
-const initialItemHeight = 30
-const expandedItemHeight = 45
-
-const initialListWidth = 110
-const expandedListWidth = 140
-const maxListHeight = 300
-
 const transition: Transition = { type: 'tween', duration: 0.15 }
-
-const itemContainerVariants: Variants = {
-  initial: {
-    height: initialItemHeight,
-    width: initialListWidth
-  },
-  hover: {
-    height: expandedItemHeight,
-    width: expandedListWidth,
-    transition
-  }
-}
 
 const HoverSelect = ({
   items,
@@ -64,10 +45,23 @@ const HoverSelect = ({
 
   const listRef = useRef<HTMLDivElement>(null)
 
+  const { initialItemHeight, expandedItemHeight, initialListWidth, expandedListWidth, maxListHeight } =
+    dimensions as Required<typeof dimensions>
+
   const orderedItems = [
     ...items.filter(({ value }) => selectedItemValue === value),
     ...items.filter(({ value }) => selectedItemValue !== value)
   ]
+
+  const itemContainerVariants: Variants = {
+    initial: {
+      height: initialItemHeight
+    },
+    hover: {
+      height: expandedItemHeight,
+      transition
+    }
+  }
 
   const handleHoverStart = () => {
     setIsHovering(true)
@@ -97,17 +91,22 @@ const HoverSelect = ({
       whileHover="hover"
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
+      style={{ height: initialItemHeight }}
     >
       <ItemList
         variants={{
           hover: {
             height: items.length * expandedItemHeight,
+            width: expandedListWidth,
             boxShadow: '0 5px 10px rgba(0, 0, 0, 0.8)'
           }
         }}
-        initialItemHeight={initialItemHeight}
-        maxListHeight={maxListHeight}
-        style={{ maxHeight: dimensions.maxListHeight }}
+        style={{
+          height: initialItemHeight,
+          width: initialListWidth,
+          maxHeight: maxListHeight,
+          borderRadius: initialItemHeight / 2
+        }}
         transition={transition}
         ref={listRef}
       >
@@ -119,7 +118,9 @@ const HoverSelect = ({
               backgroundColor: shouldAnimateItem(value) ? colord(theme.bg3).lighten(0.05).toHex() : theme.bg3
             }}
             variants={itemContainerVariants}
-            initialItemHeight={initialItemHeight}
+            style={{
+              height: initialItemHeight
+            }}
           >
             <Title
               transition={{
@@ -127,6 +128,9 @@ const HoverSelect = ({
               }}
               animate={{
                 opacity: shouldAnimateItem(value) ? 1 : 0
+              }}
+              style={{
+                top: expandedItemHeight / 10
               }}
             >
               {title}
@@ -149,22 +153,21 @@ export default HoverSelect
 
 const HoverSelectWrapper = styled(motion.div)`
   position: relative;
+  flex: 1;
 `
 
-const ItemList = styled(motion.div)<
-  Pick<Required<HoverSelectProps>['dimensions'], 'initialItemHeight' | 'maxListHeight'>
->`
-  transform: translateY(-${initialItemHeight / 2}px);
+const ItemList = styled(motion.div)`
   position: absolute;
   top: 0;
+  bottom: 0;
   right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
   z-index: 1;
-  height: ${initialItemHeight}px;
-  border-radius: 15px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   background-color: ${({ theme }) => theme.bg3};
   overflow: auto;
-  max-height: ${maxListHeight}px;
 
   overscroll-behavior: none;
   -ms-overflow-style: none; /* IE and Edge */
@@ -174,22 +177,20 @@ const ItemList = styled(motion.div)<
   }
 `
 
-const ItemContainer = styled(motion.div)<Pick<Required<HoverSelectProps>['dimensions'], 'initialItemHeight'>>`
+const ItemContainer = styled(motion.div)`
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
 
+  width: 100%;
+
   font-weight: 600;
   font-size: 12px;
   line-height: 14.4px;
-  height: ${initialItemHeight}px;
-  width: ${initialListWidth}px;
 
   padding: 10px;
-
-  height: ${initialItemHeight}px;
 
   background-color: ${({ theme }) => theme.bg3};
   color: rgba(255, 255, 255, 0.7);
@@ -233,7 +234,6 @@ const ItemContent = styled(motion.div)``
 
 const Title = styled(motion.span)`
   position: absolute;
-  top: 2px;
   opacity: 0;
   color: ${({ theme }) => theme.text2};
   font-size: 10px;

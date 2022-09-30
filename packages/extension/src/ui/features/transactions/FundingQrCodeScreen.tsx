@@ -10,7 +10,7 @@ import { PageWrapper } from '../../components/Page'
 import { QrCode } from '../../components/QrCode'
 import { formatTruncatedAddress } from '../../services/addresses'
 import { useAddresses, useDefaultAddress } from '../addresses/addresses.state'
-import { getAddressName, useAddressMetadata } from '../addresses/addressMetadata.state'
+import { useAddressMetadata } from '../addresses/addressMetadata.state'
 import { Address, AddressWrapper } from '../assets/Address'
 
 export const FundingQrCodeScreen: FC = () => {
@@ -38,7 +38,19 @@ export const FundingQrCodeScreen: FC = () => {
       <PageWrapper>
         {address && (
           <Container>
-            <HoverSelect items={addressItems} onItemClick={handleDefaultAddressSelect} />
+            <HoverSelect
+              items={addressItems}
+              selectedItemValue={defaultAddress?.hash}
+              title="Default address"
+              onItemClick={handleDefaultAddressSelect}
+              dimensions={{
+                initialItemHeight: 50,
+                expandedItemHeight: 60,
+                initialListWidth: 210,
+                expandedListWidth: 210,
+                maxListHeight: 350
+              }}
+            />
             <QrCode size={220} data={address.hash} />
             <AddressWrapper style={{ marginBottom: 18 }}>
               <CopyTooltip copyValue={address.hash} message="Copied!">
@@ -63,7 +75,5 @@ const Container = styled.div`
 export const AddressNameContainer = styled.div`
   font-style: normal;
   font-weight: 700;
-  font-size: 22px;
-  line-height: 28px;
-  margin: 32px 0 16px 0;
+  font-size: 18px;
 `
