@@ -12,7 +12,7 @@ import { useAddresses } from './addresses.state'
 import { AddressListSlideItem } from './AddressListSlideItem'
 
 export const AddressListScreen = () => {
-  const { addresses } = useAddresses()
+  const { addresses, defaultAddress } = useAddresses()
   const [focusedAddress, setFocusedAddress] = useState<Address>()
 
   const addressesList = Object.values(addresses)
@@ -48,6 +48,7 @@ export const AddressListScreen = () => {
                 shadow: true
               }
             }}
+            initialSlide={addresses.findIndex((a) => a.hash === defaultAddress?.hash)}
           >
             {addressesList.map((address) => (
               <SwiperSlide key={address.hash}>
