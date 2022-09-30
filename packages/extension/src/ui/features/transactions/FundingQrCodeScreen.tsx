@@ -7,7 +7,7 @@ import HoverSelect, { HoverSelectItem } from '../../components/HoverSelect'
 import { IconBar } from '../../components/IconBar'
 import { ContentCopyIcon } from '../../components/Icons/MuiIcons'
 import { PageWrapper } from '../../components/Page'
-import { QrCode } from '../../components/QrCode'
+import QrCode from '../../components/QrCode'
 import { formatTruncatedAddress } from '../../services/addresses'
 import { useAddresses, useDefaultAddress } from '../addresses/addresses.state'
 import { useAddressMetadata } from '../addresses/addressMetadata.state'
@@ -38,7 +38,7 @@ export const FundingQrCodeScreen: FC = () => {
       <PageWrapper>
         {address && (
           <Container>
-            <HoverSelect
+            <AddressSwitcher
               items={addressItems}
               selectedItemValue={defaultAddress?.hash}
               title="Default address"
@@ -51,8 +51,12 @@ export const FundingQrCodeScreen: FC = () => {
                 maxListHeight: 350
               }}
             />
-            <QrCode size={220} data={address.hash} />
-            <AddressWrapper style={{ marginBottom: 18 }}>
+            <QrCode
+              size={200}
+              data={address.hash}
+              color={defaultAddress && addressesMetadata[defaultAddress?.hash].color}
+            />
+            <AddressWrapper style={{ marginTop: 20 }}>
               <CopyTooltip copyValue={address.hash} message="Copied!">
                 <Address>
                   {formatTruncatedAddress(address.hash)}
@@ -70,6 +74,10 @@ export const FundingQrCodeScreen: FC = () => {
 const Container = styled.div`
   padding: 0 20px;
   text-align: center;
+`
+
+const AddressSwitcher = styled(HoverSelect)`
+  margin-bottom: 30px;
 `
 
 export const AddressNameContainer = styled.div`
