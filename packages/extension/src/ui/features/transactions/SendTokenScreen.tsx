@@ -10,7 +10,7 @@ import { inputAmountSchema } from '../../../shared/token/amount'
 import { Button } from '../../components/buttons/Button'
 import Column, { ColumnCenter } from '../../components/Column'
 import { IconBar } from '../../components/IconBar'
-import { StyledControlledInput } from '../../components/InputText'
+import { ControlledInputText } from '../../components/InputText'
 import { routes } from '../../routes'
 import { addressSchema } from '../../services/addresses'
 import { getBalance } from '../../services/backgroundAddresses'
@@ -19,72 +19,6 @@ import { H3 } from '../../theme/Typography'
 import { useDefaultAddress } from '../addresses/addresses.state'
 import { TokenIcon } from '../assets/TokenIcon'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
-
-export const BalanceText = styled.div`
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 20px;
-  text-align: center;
-  color: ${({ theme }) => theme.text2};
-`
-
-export const StyledIconBar = styled(IconBar)`
-  align-items: flex-start;
-`
-
-export const StyledForm = styled.form`
-  padding: 24px;
-  height: 85vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-`
-
-export const InputGroupAfter = styled.div`
-  position: absolute;
-  top: 50%;
-  right: 16px;
-  transform: translateY(-50%);
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-`
-
-export const InputGroupBefore = styled(InputGroupAfter)`
-  right: unset;
-  left: 16px;
-`
-
-export const InputTokenSymbol = styled.span`
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 17px;
-  line-height: 22px;
-  color: ${({ theme }) => theme.text2};
-`
-
-export const FormError = styled.p`
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 18px;
-  color: ${({ theme }) => theme.red1};
-  margin-top: 8px;
-  margin-left: 8px;
-  text-align: left;
-`
-
-export interface SendInput {
-  recipient: string
-  amount: string
-}
-
-const SendSchema: Schema<SendInput> = object().required().shape({
-  recipient: addressSchema,
-  amount: inputAmountSchema
-})
 
 export const SendTokenScreen: FC = () => {
   const navigate = useNavigate()
@@ -151,39 +85,27 @@ export const SendTokenScreen: FC = () => {
         >
           <Column gap="12px">
             <div>
-              <StyledControlledInput
+              <ControlledInputText
                 autoComplete="off"
                 autoFocus
                 control={control}
                 placeholder="Amount"
                 name="amount"
-                type="text"
-                onlyNumeric
-                style={{ padding: '17px 16px 17px 57px' }}
-              >
-                <InputGroupBefore>
-                  <TokenIcon name={name} url={image} size={32} />
-                </InputGroupBefore>
-                <InputGroupAfter>
-                  <InputTokenSymbol>{symbol}</InputTokenSymbol>
-                </InputGroupAfter>
-              </StyledControlledInput>
+                type="number"
+                LeftComponent={<TokenIcon name={name} url={image} size={32} />}
+              ></ControlledInputText>
               {inputAmount && isInputAmountGtBalance && <FormError>Insufficient balance</FormError>}
               {errors.amount && <FormError>{errors.amount.message}</FormError>}
             </div>
 
             <div>
-              <StyledControlledInput
+              <ControlledInputText
                 autoComplete="off"
                 control={control}
                 placeholder="Recipient's address"
                 name="recipient"
                 type="text"
-                style={{
-                  paddingRight: '50px',
-                  borderRadius: '8px'
-                }}
-              ></StyledControlledInput>
+              ></ControlledInputText>
               {errors.recipient && <FormError>{errors.recipient.message}</FormError>}
             </div>
           </Column>
@@ -196,3 +118,69 @@ export const SendTokenScreen: FC = () => {
     </div>
   )
 }
+
+export const BalanceText = styled.div`
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 20px;
+  text-align: center;
+  color: ${({ theme }) => theme.text2};
+`
+
+export const StyledIconBar = styled(IconBar)`
+  align-items: flex-start;
+`
+
+export const StyledForm = styled.form`
+  padding: 24px;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+`
+
+export const InputGroupAfter = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+`
+
+export const InputGroupBefore = styled(InputGroupAfter)`
+  right: unset;
+  left: 16px;
+`
+
+export const InputTokenSymbol = styled.span`
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 22px;
+  color: ${({ theme }) => theme.text2};
+`
+
+export const FormError = styled.p`
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+  color: ${({ theme }) => theme.red1};
+  margin-top: 8px;
+  margin-left: 8px;
+  text-align: left;
+`
+
+export interface SendInput {
+  recipient: string
+  amount: string
+}
+
+const SendSchema: Schema<SendInput> = object().required().shape({
+  recipient: addressSchema,
+  amount: inputAmountSchema
+})

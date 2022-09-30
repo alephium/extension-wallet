@@ -1,12 +1,12 @@
-import { ComponentPropsWithRef, RefObject, useRef } from 'react'
+import { ComponentPropsWithRef, ReactNode, RefObject, useRef } from 'react'
 import { Controller, ControllerProps, FieldValues } from 'react-hook-form'
-import styled, { StyledComponentPropsWithRef, css } from 'styled-components'
-
-import { isNumeric } from '../../shared/utils/number'
+import styled, { css } from 'styled-components'
 
 function randomString() {
   return Math.floor(Math.random() * 1000).toString()
 }
+
+const inputHeight = 60
 
 export const InputText = styled(
   ({
@@ -21,6 +21,8 @@ export const InputText = styled(
     inputRef,
     min,
     max,
+    inputStyle,
+    labelStyle,
     ...props
   }: ComponentPropsWithRef<typeof Input> & { inputRef?: RefObject<HTMLInputElement> }) => {
     const idRef = useRef(randomString())
@@ -36,10 +38,11 @@ export const InputText = styled(
           value={value}
           autoFocus={autoFocus}
           disabled={disabled}
+          style={inputStyle}
           ref={inputRef}
           {...props}
         />
-        <Label>{placeholder}</Label>
+        <Label style={labelStyle}>{placeholder}</Label>
       </Container>
     )
   }
@@ -47,71 +50,12 @@ export const InputText = styled(
 
 export type InputFieldProps = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'as'>
 
-export const InputTextAlt = styled(
-  ({
-    placeholder,
-    type,
-    autoFocus,
-    onChange,
-    value,
-    disabled,
-    className,
-    style,
-    inputRef,
-    children,
-    ...props
-  }: { inputRef: any } & InputFieldProps) => {
-    const idRef = useRef(randomString())
-    return (
-      <Container className={className} style={style}>
-        <InputAlt
-          placeholder={placeholder}
-          id={idRef.current}
-          type={type}
-          onChange={onChange}
-          value={value}
-          autoFocus={autoFocus}
-          disabled={disabled}
-          ref={inputRef}
-          {...props}
-        />
-        {children}
-      </Container>
-    )
-  }
-)``
-
 export const ControlledInputText = <T extends FieldValues>({
   name,
   control,
   defaultValue,
   rules,
-  ...props
-}: ControlledInputProps<T>) => (
-  <Controller
-    name={name}
-    control={control}
-    defaultValue={defaultValue}
-    rules={rules}
-    render={({ field: { ref, value, ...field } }) => <InputText {...props} value={value || ''} {...field} />}
-  />
-)
-
-interface AdditionalControlledInputProps {
-  onlyNumeric?: boolean
-  children?: React.ReactNode
-}
-
-export type ControlledInputProps<T extends FieldValues> = InputFieldProps &
-  Omit<ControllerProps<T>, 'render'> &
-  AdditionalControlledInputProps
-
-export const ControlledInputTextAlt = <T extends FieldValues>({
-  name,
-  control,
-  defaultValue,
-  rules,
-  onlyNumeric,
+  LeftComponent,
   children,
   ...props
 }: ControlledInputProps<T>) => (
@@ -120,47 +64,29 @@ export const ControlledInputTextAlt = <T extends FieldValues>({
     control={control}
     defaultValue={defaultValue}
     rules={rules}
-    render={({ field: { ref, value, onChange: onValueChange, ...field } }) => (
-      <InputTextAlt
-        style={{ position: 'relative' }}
-        {...props}
-        value={value || ''}
-        {...field}
-        inputRef={ref}
-        inputMode="decimal"
-        type="text"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          const numericalRegex = new RegExp(/^[0-9]*.?[0-9]*$/)
-          if (onlyNumeric) {
-            if (e.target.value === '') {
-              return onValueChange(e)
-            }
-
-            return (
-              numericalRegex.test(e.target.value) &&
-              // just being double sure
-              isNumeric(e.target.value) &&
-              onValueChange(e)
-            )
-          } else {
-            return onValueChange(e)
-          }
-        }}
-      >
-        {children}
-      </InputTextAlt>
+    render={({ field: { ref, value, ...field } }) => (
+      <InputWrapper>
+        <LeftComponentContainer>{LeftComponent}</LeftComponentContainer>
+        <InputText
+          {...props}
+          value={value || ''}
+          {...field}
+          inputStyle={{ paddingLeft: LeftComponent ? inputHeight : 'intial' }}
+          labelStyle={{ marginLeft: LeftComponent ? inputHeight - 15 : 'intial' }}
+        />
+      </InputWrapper>
     )}
   />
 )
 
-export type ControlledInputType = typeof ControlledInputTextAlt
+interface AdditionalControlledInputProps {
+  LeftComponent?: ReactNode
+  children?: ReactNode
+}
 
-export const StyledControlledInput: ControlledInputType = styled(ControlledInputTextAlt)`
-  padding: 12px 16px;
-  border: 1px solid ${({ theme }) => theme.bg2};
-  border-radius: 9px;
-  background-color: ${({ theme }) => theme.bg1};
-`
+export type ControlledInputProps<T extends FieldValues> = InputFieldProps &
+  Omit<ControllerProps<T>, 'render'> &
+  AdditionalControlledInputProps
 
 const Label = styled.label`
   color: ${({ theme }) => theme.text2};
@@ -171,7 +97,7 @@ const Label = styled.label`
   pointer-events: none;
   text-shadow: none;
   transform-origin: left;
-  transform: scale(1) translate3d(15px, 38px, 0);
+  transform: scale(1) translate3d(15px, 40px, 0);
   transition: all 200ms ease-in-out;
   text-align: start;
 `
@@ -180,7 +106,7 @@ const InputCss = css`
   border-radius: 0;
   display: flex;
   font-size: 17px;
-  line-height: 30px;
+
   text-shadow: none;
 
   background-color: ${({ theme }) => theme.bg3};
@@ -191,6 +117,7 @@ const InputCss = css`
   padding: 0 15px;
   padding-top: 22px;
   padding-bottom: 5px;
+  height: ${inputHeight}px;
 
   flex: 1 1 auto;
   transition: all 200ms ease-in-out;
@@ -239,26 +166,8 @@ export const Container = styled.div`
   }
 `
 
-const InputCssAlt = css`
-  border-radius: 0;
-  display: flex;
-  font-size: 17px;
-  line-height: 25px;
-  text-shadow: none;
-
-  background-color: transparent;
-  color: ${({ theme }) => theme.text1};
-
-  border: 0;
-  flex: 1 1 auto;
-
-  &:focus {
-    outline: 0;
-  }
-
-  &:disabled {
-    color: ${({ theme }) => theme.text2};
-  }
+const InputWrapper = styled.div`
+  position: relative;
 `
 
 const Input = styled.input`
@@ -270,12 +179,13 @@ const Input = styled.input`
   }
 `
 
-const InputAlt = styled.input`
-  ${InputCssAlt}
-  order: 2;
-  text-overflow: ellipsis;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.text2};
-  }
+const LeftComponentContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  height: ${inputHeight}px;
+  width: ${inputHeight}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
 `
