@@ -1,6 +1,6 @@
 import { colord } from 'colord'
-import { AnimatePresence, Transition, Variants, motion } from 'framer-motion'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { Transition, Variants, motion } from 'framer-motion'
+import { ReactNode, useRef, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
 interface HoverSelectProps {
@@ -8,6 +8,13 @@ interface HoverSelectProps {
   onItemClick: (value: string) => void
   selectedItemValue?: string
   title?: string
+  dimensions?: {
+    initialItemHeight: number
+    expandedItemHeight: number
+    initialListWidth: number
+    expandedListWidth: number
+    maxListHeight: number
+  }
   className?: string
 }
 
@@ -38,7 +45,20 @@ const itemContainerVariants: Variants = {
   }
 }
 
-const HoverSelect = ({ items, onItemClick, selectedItemValue, title, className }: HoverSelectProps) => {
+const HoverSelect = ({
+  items,
+  onItemClick,
+  selectedItemValue,
+  title,
+  dimensions = {
+    initialItemHeight: 30,
+    expandedItemHeight: 45,
+    initialListWidth: 110,
+    expandedListWidth: 140,
+    maxListHeight: 300
+  },
+  className
+}: HoverSelectProps) => {
   const theme = useTheme()
   const [isHovering, setIsHovering] = useState(false)
 
@@ -60,10 +80,6 @@ const HoverSelect = ({ items, onItemClick, selectedItemValue, title, className }
     setIsHovering(false)
   }
 
-  const handleAnimationComplete = () => {
-    console.log('COMPLETE')
-  }
-
   const handleItemClick = (value: string) => {
     onItemClick(value)
   }
@@ -81,7 +97,6 @@ const HoverSelect = ({ items, onItemClick, selectedItemValue, title, className }
       whileHover="hover"
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
-      onAnimationComplete={handleAnimationComplete}
     >
       <ItemList
         variants={{
@@ -90,6 +105,9 @@ const HoverSelect = ({ items, onItemClick, selectedItemValue, title, className }
             boxShadow: '0 5px 10px rgba(0, 0, 0, 0.8)'
           }
         }}
+        initialItemHeight={initialItemHeight}
+        maxListHeight={maxListHeight}
+        style={{ maxHeight: dimensions.maxListHeight }}
         transition={transition}
         ref={listRef}
       >
@@ -101,6 +119,7 @@ const HoverSelect = ({ items, onItemClick, selectedItemValue, title, className }
               backgroundColor: shouldAnimateItem(value) ? colord(theme.bg3).lighten(0.05).toHex() : theme.bg3
             }}
             variants={itemContainerVariants}
+            initialItemHeight={initialItemHeight}
           >
             <Title
               transition={{
@@ -132,7 +151,9 @@ const HoverSelectWrapper = styled(motion.div)`
   position: relative;
 `
 
-const ItemList = styled(motion.div)`
+const ItemList = styled(motion.div)<
+  Pick<Required<HoverSelectProps>['dimensions'], 'initialItemHeight' | 'maxListHeight'>
+>`
   transform: translateY(-${initialItemHeight / 2}px);
   position: absolute;
   top: 0;
@@ -153,7 +174,7 @@ const ItemList = styled(motion.div)`
   }
 `
 
-const ItemContainer = styled(motion.div)`
+const ItemContainer = styled(motion.div)<Pick<Required<HoverSelectProps>['dimensions'], 'initialItemHeight'>>`
   position: relative;
   display: flex;
   align-items: center;

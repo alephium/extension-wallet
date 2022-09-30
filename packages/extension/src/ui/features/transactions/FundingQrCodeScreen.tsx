@@ -1,32 +1,36 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 
+import AddressName from '../../components/AddressName'
 import { CopyTooltip } from '../../components/CopyTooltip'
+import HoverSelect, { HoverSelectItem } from '../../components/HoverSelect'
 import { IconBar } from '../../components/IconBar'
 import { ContentCopyIcon } from '../../components/Icons/MuiIcons'
 import { PageWrapper } from '../../components/Page'
 import { QrCode } from '../../components/QrCode'
 import { formatTruncatedAddress } from '../../services/addresses'
-import { useDefaultAddress } from '../addresses/addresses.state'
+import { useAddresses, useDefaultAddress } from '../addresses/addresses.state'
 import { getAddressName, useAddressMetadata } from '../addresses/addressMetadata.state'
 import { Address, AddressWrapper } from '../assets/Address'
 
-const Container = styled.div`
-  padding: 0 20px;
-  text-align: center;
-`
-
-export const AddressName = styled.h1`
-  font-style: normal;
-  font-weight: 700;
-  font-size: 22px;
-  line-height: 28px;
-  margin: 32px 0 16px 0;
-`
-
 export const FundingQrCodeScreen: FC = () => {
   const address = useDefaultAddress()
-  const { metadata } = useAddressMetadata()
+
+  const { metadata: addressesMetadata } = useAddressMetadata()
+  const { defaultAddress, setDefaultAddress } = useAddresses()
+
+  const handleDefaultAddressSelect = (hash: string) => {
+    setDefaultAddress(hash)
+  }
+
+  const addressItems: HoverSelectItem[] = Object.entries(addressesMetadata).map(([k, v]) => ({
+    Component: (
+      <AddressNameContainer>
+        <AddressName name={v.name} color={v.color} isDefault={k === defaultAddress?.hash} />
+      </AddressNameContainer>
+    ),
+    value: k
+  }))
 
   return (
     <>
@@ -34,8 +38,8 @@ export const FundingQrCodeScreen: FC = () => {
       <PageWrapper>
         {address && (
           <Container>
+            <HoverSelect items={addressItems} onItemClick={handleDefaultAddressSelect} />
             <QrCode size={220} data={address.hash} />
-            <AddressName>{getAddressName(address.hash, metadata)}</AddressName>
             <AddressWrapper style={{ marginBottom: 18 }}>
               <CopyTooltip copyValue={address.hash} message="Copied!">
                 <Address>
@@ -50,3 +54,16 @@ export const FundingQrCodeScreen: FC = () => {
     </>
   )
 }
+
+const Container = styled.div`
+  padding: 0 20px;
+  text-align: center;
+`
+
+export const AddressNameContainer = styled.div`
+  font-style: normal;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 28px;
+  margin: 32px 0 16px 0;
+`
