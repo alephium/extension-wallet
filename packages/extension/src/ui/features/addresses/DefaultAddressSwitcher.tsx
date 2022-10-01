@@ -1,9 +1,17 @@
+import { ComponentProps } from 'react'
+
 import AddressName from '../../components/AddressName'
 import HoverSelect, { HoverSelectItem } from '../../components/HoverSelect'
 import { useAddresses } from './addresses.state'
 import { useAddressMetadata } from './addressMetadata.state'
 
-const DefaultAddressSwitcher = () => {
+interface DefaultAddressSwitcherProps {
+  dimensions: ComponentProps<typeof HoverSelect>['dimensions']
+  addressNameStyle?: ComponentProps<typeof AddressName>['style']
+  className?: string
+}
+
+const DefaultAddressSwitcher = ({ dimensions, addressNameStyle, className }: DefaultAddressSwitcherProps) => {
   const { metadata: addressesMetadata } = useAddressMetadata()
   const { defaultAddress, setDefaultAddress } = useAddresses()
 
@@ -12,7 +20,9 @@ const DefaultAddressSwitcher = () => {
   }
 
   const addressItems: HoverSelectItem[] = Object.entries(addressesMetadata).map(([k, v]) => ({
-    Component: <AddressName name={v.name} color={v.color} isDefault={k === defaultAddress?.hash} />,
+    Component: (
+      <AddressName name={v.name} color={v.color} isDefault={k === defaultAddress?.hash} style={addressNameStyle} />
+    ),
     value: k
   }))
 
@@ -22,6 +32,8 @@ const DefaultAddressSwitcher = () => {
       title="Default address"
       selectedItemValue={defaultAddress?.hash}
       onItemClick={handleDefaultAddressSelect}
+      dimensions={dimensions}
+      className={className}
     />
   )
 }

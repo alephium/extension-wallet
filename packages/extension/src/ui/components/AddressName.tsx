@@ -1,3 +1,4 @@
+import { StyleHTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 import DotSVG from '../images/dot.svg'
@@ -7,10 +8,11 @@ interface AddressNameProps {
   color: string
   isDefault: boolean
   className?: string
+  style?: StyleHTMLAttributes<'span'>
 }
 
-const AddressName = ({ name, color, isDefault, className }: AddressNameProps) => (
-  <span className={className}>
+const AddressName = ({ name, color, isDefault, className, style }: AddressNameProps) => (
+  <span className={className} style={style}>
     <Star>{isDefault && '★'}</Star>
     <Name>{name}</Name>
     <DotIcon color={color} />

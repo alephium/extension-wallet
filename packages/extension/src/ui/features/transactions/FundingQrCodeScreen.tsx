@@ -1,9 +1,7 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 
-import AddressName from '../../components/AddressName'
 import { CopyTooltip } from '../../components/CopyTooltip'
-import HoverSelect, { HoverSelectItem } from '../../components/HoverSelect'
 import { IconBar } from '../../components/IconBar'
 import { ContentCopyIcon } from '../../components/Icons/MuiIcons'
 import { PageWrapper } from '../../components/Page'
@@ -11,26 +9,14 @@ import QrCode from '../../components/QrCode'
 import { formatTruncatedAddress } from '../../services/addresses'
 import { useAddresses, useDefaultAddress } from '../addresses/addresses.state'
 import { useAddressMetadata } from '../addresses/addressMetadata.state'
+import DefaultAddressSwitcher from '../addresses/DefaultAddressSwitcher'
 import { Address, AddressWrapper } from '../assets/Address'
 
 export const FundingQrCodeScreen: FC = () => {
   const address = useDefaultAddress()
 
   const { metadata: addressesMetadata } = useAddressMetadata()
-  const { defaultAddress, setDefaultAddress } = useAddresses()
-
-  const handleDefaultAddressSelect = (hash: string) => {
-    setDefaultAddress(hash)
-  }
-
-  const addressItems: HoverSelectItem[] = Object.entries(addressesMetadata).map(([k, v]) => ({
-    Component: (
-      <AddressNameContainer>
-        <AddressName name={v.name} color={v.color} isDefault={k === defaultAddress?.hash} />
-      </AddressNameContainer>
-    ),
-    value: k
-  }))
+  const { defaultAddress } = useAddresses()
 
   return (
     <>
@@ -39,16 +25,16 @@ export const FundingQrCodeScreen: FC = () => {
         {address && (
           <Container>
             <AddressSwitcher
-              items={addressItems}
-              selectedItemValue={defaultAddress?.hash}
-              title="Default address"
-              onItemClick={handleDefaultAddressSelect}
               dimensions={{
                 initialItemHeight: 50,
                 expandedItemHeight: 60,
                 initialListWidth: 210,
                 expandedListWidth: 210,
                 maxListHeight: 350
+              }}
+              addressNameStyle={{
+                fontWeight: 700,
+                fontSize: 18
               }}
             />
             <QrCode
@@ -76,12 +62,6 @@ const Container = styled.div`
   text-align: center;
 `
 
-const AddressSwitcher = styled(HoverSelect)`
+const AddressSwitcher = styled(DefaultAddressSwitcher)`
   margin-bottom: 30px;
-`
-
-export const AddressNameContainer = styled.div`
-  font-style: normal;
-  font-weight: 700;
-  font-size: 18px;
 `

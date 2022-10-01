@@ -1,5 +1,5 @@
 import { colord } from 'colord'
-import { Transition, Variants, motion } from 'framer-motion'
+import { MotionStyle, Transition, Variants, motion } from 'framer-motion'
 import { ReactNode, useRef, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
@@ -16,6 +16,7 @@ interface HoverSelectProps {
     maxListHeight?: number
   }
   className?: string
+  style?: MotionStyle
 }
 
 export interface HoverSelectItem {
@@ -38,7 +39,8 @@ const HoverSelect = ({
     expandedListWidth: 140,
     maxListHeight: 300
   },
-  className
+  className,
+  style
 }: HoverSelectProps) => {
   const theme = useTheme()
   const [isHovering, setIsHovering] = useState(false)
@@ -91,7 +93,7 @@ const HoverSelect = ({
       whileHover="hover"
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
-      style={{ height: initialItemHeight }}
+      style={{ height: initialItemHeight, ...style }}
     >
       <ItemList
         variants={{
