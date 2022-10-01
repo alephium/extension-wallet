@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react'
-import { FC, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { EffectCreative, Keyboard, Mousewheel, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'

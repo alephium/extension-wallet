@@ -69,12 +69,11 @@ export const SendTokenScreen: FC = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <StyledIconBar back>
+      <IconBar back>
         <ColumnCenter>
           <H3>Send {symbol}</H3>
-          <BalanceText>{`${balance?.balanceHint}`}</BalanceText>
         </ColumnCenter>
-      </StyledIconBar>
+      </IconBar>
 
       <ColumnCenter>
         <StyledForm
@@ -89,7 +88,7 @@ export const SendTokenScreen: FC = () => {
                 autoComplete="off"
                 autoFocus
                 control={control}
-                placeholder="Amount"
+                placeholder={`Amount (${balance?.balanceHint} avail.)`}
                 name="amount"
                 type="number"
                 LeftComponent={<TokenIcon name={name} url={image} size={32} />}
@@ -125,10 +124,6 @@ export const BalanceText = styled.div`
   line-height: 20px;
   text-align: center;
   color: ${({ theme }) => theme.text2};
-`
-
-export const StyledIconBar = styled(IconBar)`
-  align-items: flex-start;
 `
 
 export const StyledForm = styled.form`
