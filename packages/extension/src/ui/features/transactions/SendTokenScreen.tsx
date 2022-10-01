@@ -83,21 +83,22 @@ export const SendTokenScreen: FC = () => {
           })}
         >
           <Column gap="12px">
-            <div>
+            <InputAndMessages>
               <ControlledInputText
                 autoComplete="off"
                 autoFocus
                 control={control}
-                placeholder={`Amount (${balance?.balanceHint} avail.)`}
+                placeholder="Amount"
                 name="amount"
                 type="number"
                 LeftComponent={<TokenIcon name={name} url={image} size={32} />}
               ></ControlledInputText>
               {inputAmount && isInputAmountGtBalance && <FormError>Insufficient balance</FormError>}
               {errors.amount && <FormError>{errors.amount.message}</FormError>}
-            </div>
+              <FormInfo>{balance?.balanceHint} available</FormInfo>
+            </InputAndMessages>
 
-            <div>
+            <InputAndMessages>
               <ControlledInputText
                 autoComplete="off"
                 control={control}
@@ -106,7 +107,7 @@ export const SendTokenScreen: FC = () => {
                 type="text"
               ></ControlledInputText>
               {errors.recipient && <FormError>{errors.recipient.message}</FormError>}
-            </div>
+            </InputAndMessages>
           </Column>
 
           <Button disabled={disableSubmit} type="submit">
@@ -136,20 +137,8 @@ export const StyledForm = styled.form`
   width: 100%;
 `
 
-export const InputGroupAfter = styled.div`
-  position: absolute;
-  top: 50%;
-  right: 16px;
-  transform: translateY(-50%);
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-`
-
-export const InputGroupBefore = styled(InputGroupAfter)`
-  right: unset;
-  left: 16px;
+const InputAndMessages = styled.div`
+  margin-bottom: 15px;
 `
 
 export const InputTokenSymbol = styled.span`
@@ -160,14 +149,28 @@ export const InputTokenSymbol = styled.span`
   color: ${({ theme }) => theme.text2};
 `
 
-export const FormError = styled.p`
+const FormError = styled.p`
+  position: absolute;
+  left: 0;
   font-weight: 400;
   font-size: 13px;
   line-height: 18px;
   color: ${({ theme }) => theme.red1};
   margin-top: 8px;
-  margin-left: 8px;
+  margin-left: 30px;
   text-align: left;
+`
+
+const FormInfo = styled.p`
+  position: absolute;
+  right: 0;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+  color: ${({ theme }) => theme.text2};
+  margin-top: 8px;
+  margin-right: 30px;
+  text-align: right;
 `
 
 export interface SendInput {
