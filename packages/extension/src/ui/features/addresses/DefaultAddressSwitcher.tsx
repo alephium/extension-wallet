@@ -5,13 +5,23 @@ import HoverSelect, { HoverSelectItem } from '../../components/HoverSelect'
 import { useAddresses } from './addresses.state'
 import { useAddressMetadata } from './addressMetadata.state'
 
+type HoverSelectProps = ComponentProps<typeof HoverSelect>
+
 interface DefaultAddressSwitcherProps {
-  dimensions: ComponentProps<typeof HoverSelect>['dimensions']
+  title?: string
+  dimensions?: HoverSelectProps['dimensions']
   addressNameStyle?: ComponentProps<typeof AddressName>['style']
+  borderRadius?: HoverSelectProps['borderRadius']
   className?: string
 }
 
-const DefaultAddressSwitcher = ({ dimensions, addressNameStyle, className }: DefaultAddressSwitcherProps) => {
+const DefaultAddressSwitcher = ({
+  title,
+  dimensions,
+  addressNameStyle,
+  borderRadius,
+  className
+}: DefaultAddressSwitcherProps) => {
   const { metadata: addressesMetadata } = useAddressMetadata()
   const { defaultAddress, setDefaultAddress } = useAddresses()
 
@@ -29,11 +39,12 @@ const DefaultAddressSwitcher = ({ dimensions, addressNameStyle, className }: Def
   return (
     <HoverSelect
       items={addressItems}
-      title="Default address"
+      title={title || 'Default address'}
       selectedItemValue={defaultAddress?.hash}
       onItemClick={handleDefaultAddressSelect}
       dimensions={dimensions}
       className={className}
+      borderRadius={borderRadius}
     />
   )
 }

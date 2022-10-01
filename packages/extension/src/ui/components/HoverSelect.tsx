@@ -11,10 +11,11 @@ interface HoverSelectProps {
   dimensions?: {
     initialItemHeight?: number
     expandedItemHeight?: number
-    initialListWidth?: number
-    expandedListWidth?: number
-    maxListHeight?: number
+    initialListWidth?: number | string
+    expandedListWidth?: number | string
+    maxListHeight?: number | string
   }
+  borderRadius?: number
   className?: string
   style?: MotionStyle
 }
@@ -39,6 +40,7 @@ const HoverSelect = ({
     expandedListWidth: 140,
     maxListHeight: 300
   },
+  borderRadius = 15,
   className,
   style
 }: HoverSelectProps) => {
@@ -107,7 +109,7 @@ const HoverSelect = ({
           height: initialItemHeight,
           width: initialListWidth,
           maxHeight: maxListHeight,
-          borderRadius: initialItemHeight / 2
+          borderRadius: borderRadius
         }}
         transition={transition}
         ref={listRef}
@@ -123,6 +125,7 @@ const HoverSelect = ({
             style={{
               height: initialItemHeight
             }}
+            borderRadius={borderRadius}
           >
             <Title
               transition={{
@@ -166,7 +169,7 @@ const ItemList = styled(motion.div)`
   left: 0;
   margin-right: auto;
   margin-left: auto;
-  z-index: 1;
+  z-index: 3;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   background-color: ${({ theme }) => theme.bg3};
   overflow: auto;
@@ -179,7 +182,7 @@ const ItemList = styled(motion.div)`
   }
 `
 
-const ItemContainer = styled(motion.div)`
+const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   position: relative;
   display: flex;
   align-items: center;
@@ -210,8 +213,8 @@ const ItemContainer = styled(motion.div)`
       right: 0;
       left: 0;
       bottom: 0;
-      border-radius: 15px;
-      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: ${({ borderRadius }) => borderRadius}px;
+      background-color: rgba(255, 255, 255, 0.03);
       z-index: 0;
     }
   }
@@ -223,7 +226,7 @@ const ItemContainer = styled(motion.div)`
     cursor: default;
     position: sticky;
     top: 0;
-    border-radius: 15px;
+    border-radius: ${({ borderRadius }) => borderRadius}px;
     z-index: 2;
   }
 

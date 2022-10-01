@@ -17,6 +17,7 @@ import { getBalance } from '../../services/backgroundAddresses'
 import { sendAlephiumTransferTransaction } from '../../services/transactions'
 import { H3 } from '../../theme/Typography'
 import { useDefaultAddress } from '../addresses/addresses.state'
+import DefaultAddressSwitcher from '../addresses/DefaultAddressSwitcher'
 import { TokenIcon } from '../assets/TokenIcon'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
 
@@ -83,6 +84,23 @@ export const SendTokenScreen: FC = () => {
           })}
         >
           <Column gap="12px">
+            <AddressSwitcherContainer>
+              <DefaultAddressSwitcher
+                title="From address"
+                dimensions={{
+                  initialItemHeight: 60,
+                  expandedItemHeight: 66,
+                  initialListWidth: '100%',
+                  expandedListWidth: '100%',
+                  maxListHeight: 350
+                }}
+                addressNameStyle={{
+                  fontWeight: 700,
+                  fontSize: 18
+                }}
+                borderRadius={9}
+              />
+            </AddressSwitcherContainer>
             <InputAndMessages>
               <ControlledInputText
                 autoComplete="off"
@@ -134,6 +152,12 @@ export const StyledForm = styled.form`
   flex-direction: column;
   justify-content: space-between;
   gap: 12px;
+  width: 100%;
+`
+
+const AddressSwitcherContainer = styled.div`
+  height: 50px;
+  margin-bottom: 20px;
   width: 100%;
 `
 
