@@ -96,11 +96,13 @@ export const SendTokenScreen: FC = () => {
                 }}
                 addressNameStyle={{
                   fontWeight: 700,
-                  fontSize: 18
+                  fontSize: 16
                 }}
+                alignText="start"
                 alwaysShowTitle={true}
                 borderRadius={9}
               />
+              <FormInfo>{balance?.balanceHint} available</FormInfo>
             </AddressSwitcherContainer>
             <InputAndMessages>
               <ControlledInputText
@@ -114,7 +116,6 @@ export const SendTokenScreen: FC = () => {
               ></ControlledInputText>
               {inputAmount && isInputAmountGtBalance && <FormError>Insufficient balance</FormError>}
               {errors.amount && <FormError>{errors.amount.message}</FormError>}
-              <FormInfo>{balance?.balanceHint} available</FormInfo>
             </InputAndMessages>
 
             <InputAndMessages>

@@ -90,7 +90,7 @@ export type ControlledInputProps<T extends FieldValues> = InputFieldProps &
 
 const Label = styled.label`
   color: ${({ theme }) => theme.text2};
-  font-weight: normal;
+  font-weight: 500;
   height: 20px;
   font-size: 17px;
   order: 1;
@@ -128,10 +128,12 @@ const InputCss = css`
 
   &:focus + ${Label} {
     color: ${({ theme }) => theme.text1};
+    font-weight: 600;
     transform: scale(0.7) translate3d(21px, 36px, 0);
   }
 
   &:not(:placeholder-shown) + ${Label} {
+    font-weight: 600;
     transform: scale(0.7) translate3d(21px, 36px, 0);
   }
 

@@ -17,6 +17,7 @@ interface HoverSelectProps {
   }
   alwaysShowTitle?: boolean
   borderRadius?: number
+  alignText?: 'start' | 'center' | 'end'
   className?: string
   style?: MotionStyle
 }
@@ -42,6 +43,7 @@ const HoverSelect = ({
     maxListHeight: 300
   },
   alwaysShowTitle,
+  alignText,
   borderRadius = 15,
   className,
   style
@@ -125,7 +127,8 @@ const HoverSelect = ({
             }}
             variants={itemContainerVariants}
             style={{
-              height: initialItemHeight
+              height: initialItemHeight,
+              justifyContent: alignText
             }}
             borderRadius={borderRadius}
           >
@@ -137,14 +140,15 @@ const HoverSelect = ({
                 opacity: shouldAnimateItem(value) || (alwaysShowTitle && i === 0) ? 1 : 0
               }}
               style={{
-                top: expandedItemHeight / 10
+                top: expandedItemHeight / 10,
+                fontSize: expandedItemHeight / 5 >= 12 ? 12 : expandedItemHeight / 5
               }}
             >
               {title}
             </Title>
             <ItemContent
               animate={{
-                marginTop: shouldAnimateItem(value) || (alwaysShowTitle && i === 0) ? expandedItemHeight / 3 : 0
+                marginTop: shouldAnimateItem(value) || (alwaysShowTitle && i === 0) ? expandedItemHeight / 3.5 : 0
               }}
             >
               {label ? label : Component ? Component : null}
@@ -197,7 +201,7 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   font-size: 12px;
   line-height: 14.4px;
 
-  padding: 10px;
+  padding: 15px;
 
   background-color: ${({ theme }) => theme.bg3};
   color: rgba(255, 255, 255, 0.7);
@@ -243,5 +247,5 @@ const Title = styled(motion.span)`
   position: absolute;
   opacity: 0;
   color: ${({ theme }) => theme.text2};
-  font-size: 10px;
+  font-weight: 600;
 `
