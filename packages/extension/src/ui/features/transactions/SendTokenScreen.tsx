@@ -98,6 +98,7 @@ export const SendTokenScreen: FC = () => {
                   fontWeight: 700,
                   fontSize: 18
                 }}
+                alwaysShowTitle={true}
                 borderRadius={9}
               />
             </AddressSwitcherContainer>

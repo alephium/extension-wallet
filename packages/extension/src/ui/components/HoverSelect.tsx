@@ -15,6 +15,7 @@ interface HoverSelectProps {
     expandedListWidth?: number | string
     maxListHeight?: number | string
   }
+  alwaysShowTitle?: boolean
   borderRadius?: number
   className?: string
   style?: MotionStyle
@@ -40,6 +41,7 @@ const HoverSelect = ({
     expandedListWidth: 140,
     maxListHeight: 300
   },
+  alwaysShowTitle,
   borderRadius = 15,
   className,
   style
@@ -114,7 +116,7 @@ const HoverSelect = ({
         transition={transition}
         ref={listRef}
       >
-        {orderedItems.map(({ value, label, Component }) => (
+        {orderedItems.map(({ value, label, Component }, i) => (
           <ItemContainer
             key={value}
             onClick={() => handleItemClick(value)}
@@ -132,7 +134,7 @@ const HoverSelect = ({
                 duration: 0.1
               }}
               animate={{
-                opacity: shouldAnimateItem(value) ? 1 : 0
+                opacity: shouldAnimateItem(value) || (alwaysShowTitle && i === 0) ? 1 : 0
               }}
               style={{
                 top: expandedItemHeight / 10
@@ -142,7 +144,7 @@ const HoverSelect = ({
             </Title>
             <ItemContent
               animate={{
-                marginTop: shouldAnimateItem(value) ? expandedItemHeight / 3 : 0
+                marginTop: shouldAnimateItem(value) || (alwaysShowTitle && i === 0) ? expandedItemHeight / 3 : 0
               }}
             >
               {label ? label : Component ? Component : null}

@@ -66,7 +66,7 @@ export const ControlledInputText = <T extends FieldValues>({
     rules={rules}
     render={({ field: { ref, value, ...field } }) => (
       <InputWrapper>
-        <LeftComponentContainer>{LeftComponent}</LeftComponentContainer>
+        {LeftComponent && <LeftComponentContainer>{LeftComponent}</LeftComponentContainer>}
         <InputText
           {...props}
           value={value || ''}
@@ -98,7 +98,7 @@ const Label = styled.label`
   text-shadow: none;
   transform-origin: left;
   transform: scale(1) translate3d(15px, 40px, 0);
-  transition: all 200ms ease-in-out;
+  transition: all 0.15s ease-in-out;
   text-align: start;
 `
 
@@ -183,7 +183,8 @@ const LeftComponentContainer = styled.div`
   position: absolute;
   bottom: 0;
   height: ${inputHeight}px;
-  width: ${inputHeight}px;
+  width: ${inputHeight / 1.2}px;
+  border-right: 1px solid ${({ theme }) => theme.text3};
   display: flex;
   align-items: center;
   justify-content: center;

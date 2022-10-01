@@ -12,6 +12,7 @@ interface DefaultAddressSwitcherProps {
   dimensions?: HoverSelectProps['dimensions']
   addressNameStyle?: ComponentProps<typeof AddressName>['style']
   borderRadius?: HoverSelectProps['borderRadius']
+  alwaysShowTitle?: HoverSelectProps['alwaysShowTitle']
   className?: string
 }
 
@@ -19,6 +20,7 @@ const DefaultAddressSwitcher = ({
   title,
   dimensions,
   addressNameStyle,
+  alwaysShowTitle,
   borderRadius,
   className
 }: DefaultAddressSwitcherProps) => {
@@ -43,6 +45,7 @@ const DefaultAddressSwitcher = ({
       selectedItemValue={defaultAddress?.hash}
       onItemClick={handleDefaultAddressSelect}
       dimensions={dimensions}
+      alwaysShowTitle={alwaysShowTitle}
       className={className}
       borderRadius={borderRadius}
     />
