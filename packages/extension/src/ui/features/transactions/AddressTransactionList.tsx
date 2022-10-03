@@ -1,42 +1,40 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment } from 'react'
 import styled from 'styled-components'
 
 import { Address } from '../../../shared/addresses'
 import { formatDateTime } from '../../services/dates'
 import { openExplorerTransaction } from '../../services/explorer.service'
+import { orderTransactionsPerDay } from '../../services/transactions'
 import { DividerTitle, P } from '../../theme/Typography'
 import { TransactionItem, TransactionsWrapper } from './TransactionItem'
-import { DailyActivity, getAlephiumActivity } from './useActivity'
+import { useAddressTransactions } from './useTransactions'
 
 interface AddressTransactionListProps {
   address: Address
 }
 
 const AddressTransactionList = ({ address }: AddressTransactionListProps) => {
-  const [dailyActivity, setDailyActivity] = useState<DailyActivity | undefined>(undefined)
+  const transactions = useAddressTransactions(address)
 
-  useEffect(() => {
-    getAlephiumActivity(address).then((activity) => {
-      setDailyActivity(activity)
-    })
-  }, [address])
+  const orderedTransactions = orderTransactionsPerDay(transactions)
 
-  const noActivity = !dailyActivity || Object.keys(dailyActivity).length === 0
+  const noActivity = !transactions || transactions.length === 0
+
   if (noActivity) {
     return <Paragraph>No transactions</Paragraph>
   } else {
     return (
       <>
-        {Object.entries(dailyActivity).map(([dateLabel, transactions]) => (
+        {Object.entries(orderedTransactions).map(([dateLabel, transactions]) => (
           <Fragment key={dateLabel}>
             <DividerTitle>{dateLabel}</DividerTitle>
             <TransactionsWrapper>
-              {transactions.map(({ hash, date }) => (
+              {transactions.map(({ hash, timestamp }) => (
                 <TransactionItem
                   key={hash}
                   hash={hash}
                   status={undefined}
-                  meta={{ subTitle: formatDateTime(date) }}
+                  meta={{ subTitle: formatDateTime(timestamp) }}
                   onClick={() => openExplorerTransaction(hash)}
                 />
               ))}
