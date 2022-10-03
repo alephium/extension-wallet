@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
@@ -61,7 +62,7 @@ module.exports = {
         loader: 'esbuild-loader',
         options: {
           loader: 'tsx', // Or 'ts' if you don't need tsx
-          target: 'es2015'
+          target: 'es2020'
         }
       },
       { test: /\.css$/, use: ['style-loader', 'css-loader'] }
@@ -114,7 +115,7 @@ module.exports = {
         minimize: true,
         minimizer: [
           new ESBuildMinifyPlugin({
-            target: 'es2015' // Syntax to compile to (see options below for possible values)
+            target: 'es2020' // Syntax to compile to (see options below for possible values)
           })
         ],
         splitChunks: {
