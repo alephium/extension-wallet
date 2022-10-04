@@ -1,5 +1,5 @@
 import { Transition, motion } from 'framer-motion'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 
 interface ToggleProps {

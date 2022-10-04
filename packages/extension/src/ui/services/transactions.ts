@@ -1,5 +1,5 @@
 import { convertAlphToSet } from '@alephium/sdk'
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { TransactionPayload } from '../../shared/transactions'
 import { executeAlephiumTransaction } from './backgroundTransactions'

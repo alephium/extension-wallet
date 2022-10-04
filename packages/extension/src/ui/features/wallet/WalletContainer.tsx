@@ -1,6 +1,6 @@
 import { ArrowUpDown, LayoutTemplate, List, Plus, Settings as SettingsIcon } from 'lucide-react'
 import { FC, ReactNode } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { IconButton } from '../../components/buttons/IconButton'
@@ -21,7 +21,7 @@ interface AddressScreenContentProps {
 export const WalletContainer: FC<AddressScreenContentProps> = ({ currentTab, children }) => {
   const address = useDefaultAddress()
   const { headerTitle } = useWalletState()
-  const navigate = useNavigate()
+  //const navigate = useNavigate()
 
   if (!address) {
     return <></>

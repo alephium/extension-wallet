@@ -1,4 +1,4 @@
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useEffect, useRef, useState } from 'react'
 
 import { Address } from '../../../shared/addresses'
