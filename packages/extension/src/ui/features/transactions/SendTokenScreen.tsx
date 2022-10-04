@@ -92,7 +92,7 @@ export const SendTokenScreen: FC = () => {
                   expandedItemHeight: 66,
                   initialListWidth: '100%',
                   expandedListWidth: '100%',
-                  maxListHeight: 350
+                  maxListHeight: 200
                 }}
                 addressNameStyle={{
                   fontWeight: 700,
