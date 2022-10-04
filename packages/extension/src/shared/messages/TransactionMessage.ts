@@ -1,4 +1,4 @@
-import { Transaction as AlephiumTransaction } from "@alephium/sdk/api/explorer"
+import { Transaction as AlephiumTransaction } from "@alephium/web3/dist/src/api/api-explorer"
 import {
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
@@ -35,10 +35,14 @@ export type TransactionMessage =
     data: { txResult: TransactionResult; actionHash: string }
   }
   | {
-    type: "TRANSACTION_FAILED"
-    data: { actionHash: string; error?: string }
+    type: "TRANSACTION_REJECTED"
+    data: { tag: "Rejected", actionHash: string }
   }
   | {
-    type: "TRANSACTION_RES"
-    data: { txResult: TransactionResult; actionHash: string }
+    type: "TRANSACTION_FAILED"
+    data: { tag: "Failure", actionHash: string; error?: string }
+  }
+  | {
+    type: "TRANSACTION_SUCCESS"
+    data: { tag: "Success", txResult: TransactionResult; actionHash: string }
   }

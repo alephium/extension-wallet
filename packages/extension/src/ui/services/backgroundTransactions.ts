@@ -9,6 +9,6 @@ export const getAlephiumTransactions = async (address: string) => {
 export const executeAlephiumTransaction = async (data: TransactionPayload): Promise<TransactionResult> => {
   sendMessage({ type: 'EXECUTE_TRANSACTION', data })
   const { actionHash } = await waitForMessage('EXECUTE_TRANSACTION_RES')
-  const { txResult } = await waitForMessage('TRANSACTION_RES', ({ data }) => data.actionHash === actionHash)
+  const { txResult } = await waitForMessage('TRANSACTION_SUCCESS', ({ data }) => data.actionHash === actionHash)
   return txResult
 }

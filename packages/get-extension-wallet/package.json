@@ -1,14 +1,13 @@
 {
-  "name": "@h0ngcha0/get-alephium",
-  "version": "0.0.6",
+  "name": "@alephium/get-extension-wallet",
+  "version": "0.1.5",
   "main": "dist/",
   "browser": {
     "crypto": false
   },
-  "homepage": "https://github.com/h0ngcha0/alephium-cli",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/h0ngcha0/alephium-extension-wallet.git"
+    "url": "git+https://github.com/alephium/extension-wallet.git"
   },
   "files": [
     "dist/"
@@ -55,6 +54,6 @@
   },
   "dependencies": {
     "bowser": "^2.11.0",
-    "@alephium/web3": "0.2.0-test.0"
+    "@alephium/web3": "0.2.0-rc.15"
   }
 }

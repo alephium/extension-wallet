@@ -1,4 +1,4 @@
-import { PrivateKeyWallet } from "@alephium/web3/dist/src/test"
+import { PrivateKeyWallet } from '@alephium/web3-wallet'
 
 import {
   TransactionPayload,
