@@ -102,7 +102,7 @@ export const SendTokenScreen: FC = () => {
                 alwaysShowTitle={true}
                 borderRadius={9}
               />
-              <FormInfo>{balance?.balanceHint} available</FormInfo>
+              <FormInfo>{balance?.balanceHint || 0} available</FormInfo>
             </AddressSwitcherContainer>
             <InputAndMessages>
               <ControlledInputText

@@ -100,6 +100,11 @@ const HoverSelect = ({
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
       style={{ height: initialItemHeight, ...style }}
+      variants={{
+        hover: {
+          boxShadow: '0 0 0 max(100vh, 100vw) rgba(0, 0, 0, 0.3)'
+        }
+      }}
     >
       <ItemList
         variants={{
@@ -194,6 +199,7 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   align-items: center;
   justify-content: center;
   text-align: center;
+  white-space: nowrap;
 
   width: 100%;
 
