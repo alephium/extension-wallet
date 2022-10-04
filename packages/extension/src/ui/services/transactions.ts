@@ -2,6 +2,7 @@ import { convertAlphToSet } from '@alephium/sdk'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { TransactionPayload } from '../../shared/transactions'
+import { TransactionWithAddress } from '../../shared/transactions/transactions'
 import { executeAlephiumTransaction } from './backgroundTransactions'
 import { formatDate } from './dates'
 
@@ -23,8 +24,8 @@ export const sendAlephiumTransferTransaction = async (fromAddr: string, toAddr: 
   return await executeAlephiumTransaction(payload)
 }
 
-export const orderTransactionsPerDay = (transactions: Transaction[]) => {
-  const orderedTXs: Record<string, Transaction[]> = {}
+export const orderTransactionsPerDay = <T extends Transaction | TransactionWithAddress>(transactions: T[]) => {
+  const orderedTXs: Record<string, T[]> = {}
 
   for (const tx of transactions) {
     const date = new Date(tx.timestamp)

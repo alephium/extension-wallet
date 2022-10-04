@@ -36,6 +36,8 @@ export type PendingTx = {
 
 export type AddressHash = string
 
+export type TransactionWithAddress = Transaction & { addressHash: AddressHash }
+
 export type TransactionVariant = Transaction | PendingTx
 type IsTransactionVariant<T extends TransactionVariant> = T extends Transaction
   ? Transaction

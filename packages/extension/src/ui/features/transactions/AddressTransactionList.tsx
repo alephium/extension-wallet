@@ -29,13 +29,15 @@ const AddressTransactionList = ({ address }: AddressTransactionListProps) => {
           <Fragment key={dateLabel}>
             <DividerTitle>{dateLabel}</DividerTitle>
             <TransactionsWrapper>
-              {transactions.map(({ hash, timestamp }) => (
+              {transactions.map((t) => (
                 <TransactionItem
-                  key={hash}
-                  hash={hash}
+                  transaction={t}
+                  addressHash={address.hash}
+                  key={t.hash}
+                  hash={t.hash}
                   status={undefined}
-                  meta={{ subTitle: formatDateTime(timestamp) }}
-                  onClick={() => openExplorerTransaction(hash)}
+                  meta={{ subTitle: formatDateTime(t.timestamp) }}
+                  onClick={() => openExplorerTransaction(t.hash)}
                 />
               ))}
             </TransactionsWrapper>

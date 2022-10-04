@@ -1,14 +1,68 @@
+import { Transaction } from '@alephium/sdk/api/explorer'
 import { FC } from 'react'
 import styled, { css } from 'styled-components'
 
 import { TransactionMeta } from '../../../shared/transactions'
+import { AddressHash } from '../../../shared/transactions/transactions'
 import { OpenInNewIcon } from '../../components/Icons/MuiIcons'
 import { StatusIndicatorColor, TransactionStatusIndicator } from '../../components/StatusIndicator'
 import { makeClickable } from '../../services/a11y'
 import { formatTruncatedAddress } from '../../services/addresses'
-import { TokenIcon } from '../assets/TokenIcon'
+import { useTransactionInfo } from './useTransactionInfo'
+import { useTransactionUI } from './useTransactionUI'
 
-export const TokenWrapper = styled.div`
+const TransactionSubtitle = styled.p`
+  font-size: 13px;
+  line-height: 18px;
+  color: ${({ theme }) => theme.text2};
+  margin: 0;
+`
+
+interface TransactionItemProps {
+  transaction: Transaction
+  addressHash: AddressHash
+  hash: string
+  status?: StatusIndicatorColor
+  showExternalOpenIcon?: boolean
+  highlighted?: boolean
+  meta?: TransactionMeta
+  onClick?: () => void
+}
+
+export const TransactionItem: FC<TransactionItemProps> = ({
+  transaction,
+  addressHash,
+  hash,
+  status = 'transparent',
+  highlighted,
+  meta,
+  showExternalOpenIcon = false,
+  onClick,
+  ...props
+}) => {
+  const transactionInfo = useTransactionInfo(transaction, addressHash)
+  const transactionUI = useTransactionUI(transactionInfo.infoType)
+
+  return (
+    <TransactionWrapper {...makeClickable(onClick)} highlighted={highlighted} {...props}>
+      <>
+        <transactionUI.Icon color={transactionUI.iconColor} />
+        <TXDetailsWrapper>
+          <TXTextGroup>
+            <TXTitle style={{ color: transactionUI.amountTextColor }}>
+              {transactionUI.label}
+              {showExternalOpenIcon && <OpenInNewIcon style={{ fontSize: '0.8rem', marginLeft: 5 }} />}
+            </TXTitle>
+            <TransactionSubtitle>{meta?.subTitle || formatTruncatedAddress(hash)}</TransactionSubtitle>
+          </TXTextGroup>
+          <TransactionStatusIndicator color={status} />
+        </TXDetailsWrapper>
+      </>
+    </TransactionWrapper>
+  )
+}
+
+export const TXWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
@@ -24,19 +78,19 @@ export const TokenWrapper = styled.div`
   }
 `
 
-export const TokenDetailsWrapper = styled.div`
+export const TXDetailsWrapper = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `
 
-export const TokenTextGroup = styled.div`
+export const TXTextGroup = styled.div`
   display: flex;
   flex-direction: column;
 `
 
-export const TokenTitle = styled.h3`
+export const TXTitle = styled.h3`
   font-weight: 600;
   font-size: 17px;
   line-height: 22px;
@@ -52,7 +106,7 @@ export const TransactionsWrapper = styled.div`
   flex-direction: column;
 `
 
-const TransactionWrapper = styled(TokenWrapper)<{ highlighted?: boolean }>`
+const TransactionWrapper = styled(TXWrapper)<{ highlighted?: boolean }>`
   cursor: pointer;
 
   ${({ highlighted }) =>
@@ -65,43 +119,3 @@ const TransactionWrapper = styled(TokenWrapper)<{ highlighted?: boolean }>`
     background-color: rgba(255, 255, 255, 0.15);
   }
 `
-
-const TransactionSubtitle = styled.p`
-  font-size: 13px;
-  line-height: 18px;
-  color: ${({ theme }) => theme.text2};
-  margin: 0;
-`
-
-interface TransactionItemProps {
-  hash: string
-  status?: StatusIndicatorColor
-  showExternalOpenIcon?: boolean
-  highlighted?: boolean
-  meta?: TransactionMeta
-  onClick?: () => void
-}
-
-export const TransactionItem: FC<TransactionItemProps> = ({
-  hash,
-  status = 'transparent',
-  highlighted,
-  meta,
-  showExternalOpenIcon = false,
-  onClick,
-  ...props
-}) => (
-  <TransactionWrapper {...makeClickable(onClick)} highlighted={highlighted} {...props}>
-    <TokenIcon name={meta?.title || hash.substring(2)} />
-    <TokenDetailsWrapper>
-      <TokenTextGroup>
-        <TokenTitle>
-          {meta?.title || formatTruncatedAddress(hash)}
-          {showExternalOpenIcon && <OpenInNewIcon style={{ fontSize: '0.8rem', marginLeft: 5 }} />}
-        </TokenTitle>
-        <TransactionSubtitle>{meta?.subTitle || formatTruncatedAddress(hash)}</TransactionSubtitle>
-      </TokenTextGroup>
-      <TransactionStatusIndicator color={status} />
-    </TokenDetailsWrapper>
-  </TransactionWrapper>
-)

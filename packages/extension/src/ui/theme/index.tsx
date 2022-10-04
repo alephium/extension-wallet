@@ -32,6 +32,8 @@ export const colors = {
   blue1: '#29c5ff',
   blue2: '#94e2ff',
 
+  green1: '#3ed282',
+
   yellow1: '#ffbf3d'
 }
 

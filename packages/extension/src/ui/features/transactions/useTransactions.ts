@@ -2,6 +2,7 @@ import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useEffect, useRef, useState } from 'react'
 
 import { Address } from '../../../shared/addresses'
+import { TransactionWithAddress } from '../../../shared/transactions/transactions'
 import { getAlephiumTransactions } from '../../services/backgroundTransactions'
 import { useAddresses } from '../addresses/addresses.state'
 
@@ -33,7 +34,7 @@ export const useAddressTransactions = (address: Address) => {
 
 export const useAllTransactions = () => {
   const { addresses } = useAddresses()
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [transactions, setTransactions] = useState<TransactionWithAddress[]>([])
 
   const lastFetchTime = useRef<Date | undefined>(undefined)
 
@@ -46,7 +47,10 @@ export const useAllTransactions = () => {
           setTransactions((prev) => {
             const existingTxHashes = prev.reduce<string[]>((acc, t) => [...acc, t.hash], [])
 
-            return [...prev, ...txs.filter((t) => !existingTxHashes.includes(t.hash))]
+            return [
+              ...prev,
+              ...txs.map((t) => ({ ...t, addressHash: address.hash })).filter((t) => !existingTxHashes.includes(t.hash))
+            ]
           })
       }
     }
