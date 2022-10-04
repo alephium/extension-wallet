@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@alephium/sdk@0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@alephium/sdk/-/sdk-0.0.12.tgz#a89e620b9c47b28afbb5640fb1511256164fee6e"
-  integrity sha512-NhVxKlvF8QEF2NDl+OCMaNKm2FvMvgWxteKMB9wVVtNqweCaFqSO0wxrMD5+iE8u/aRpe96kaFGgaEJt9wTMsw==
+"@alephium/sdk@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@alephium/sdk/-/sdk-0.1.0.tgz#3411a61692f37ef0812489842218ca45830341f4"
+  integrity sha512-7+BENuSaN5mZG64Uflp0tPDRbKJkQiZsE40o1vYOmLkveGzgkitLTmvn9JZ/ey+oEt8HMWosl2VWqq4z9E/sLg==
   dependencies:
     base-x "^4.0.0"
     bcfg "~0.1.6"
