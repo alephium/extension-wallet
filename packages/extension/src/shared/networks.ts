@@ -43,6 +43,20 @@ export const defaultNetworks: Network[] = [
     explorerUrl: "https://testnet.alephium.org",
     name: "Testnet",
   },
+  {
+    id: 'testnet-v18',
+    nodeUrl: 'https://wallet-v18.testnet.alephium.org',
+    explorerApiUrl: 'https://backend-v18.testnet.alephium.org',
+    explorerUrl: 'https://explorer-v18.testnet.alephium.org',
+    name: 'Testnet v18'
+  },
+  {
+    id: 'mainnet-v18',
+    nodeUrl: 'https://wallet-v18.mainnet.alephium.org',
+    explorerApiUrl: 'https://backend-v18.mainnet.alephium.org',
+    explorerUrl: 'https://explorer-v18.mainnet.alephium.org',
+    name: 'Mainnet v18'
+  }
 ]
 
 const REGEX_URL_WITH_LOCAL =
