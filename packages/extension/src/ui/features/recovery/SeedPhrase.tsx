@@ -1,6 +1,6 @@
-import { wordlists } from "ethers"
-import { FC } from "react"
-import styled, { keyframes } from "styled-components"
+import { wordlists } from 'ethers'
+import { FC } from 'react'
+import styled, { keyframes } from 'styled-components'
 
 const SeedPhraseGrid = styled.div`
   display: grid;
@@ -58,22 +58,18 @@ const LoadingSeedWordBadge = styled.div<{
 
 interface SeedPhraseProps {
   seedPhrase?: string
+  className?: string
 }
 
-export const SeedPhrase: FC<SeedPhraseProps> = ({ seedPhrase }) =>
-  seedPhrase ? (
-    <SeedPhraseGrid>
-      {wordlists.en.split(seedPhrase).map((word, index) => (
-        <SeedWordBadge key={word + index}>
-          <SeedWordBadgeNumber>{index + 1}</SeedWordBadgeNumber>
-          {word}
-        </SeedWordBadge>
-      ))}
-    </SeedPhraseGrid>
-  ) : (
-    <SeedPhraseGrid>
-      {[...Array(12)].map((_, index) => (
-        <LoadingSeedWordBadge key={index} animationDelay={(index % 3) * 200} />
-      ))}
-    </SeedPhraseGrid>
-  )
+export const SeedPhrase: FC<SeedPhraseProps> = ({ seedPhrase, className }) => (
+  <SeedPhraseGrid className={className}>
+    {seedPhrase
+      ? wordlists.en.split(seedPhrase).map((word, index) => (
+          <SeedWordBadge key={word + index}>
+            <SeedWordBadgeNumber>{index + 1}</SeedWordBadgeNumber>
+            {word}
+          </SeedWordBadge>
+        ))
+      : [...Array(12)].map((_, index) => <LoadingSeedWordBadge key={index} animationDelay={(index % 3) * 200} />)}
+  </SeedPhraseGrid>
+)

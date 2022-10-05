@@ -70,7 +70,11 @@ export const SeedSettingsScreen: FC = () => {
     <Wrapper>
       <P>Write these words down on paper. It is unsafe to save them on your computer.</P>
 
-      <SeedPhrase seedPhrase={seedPhrase} />
+      <SeedPhraseStyled seedPhrase={seedPhrase} />
     </Wrapper>
   )
 }
+
+const SeedPhraseStyled = styled(SeedPhrase)`
+  margin-top: 20px;
+`
