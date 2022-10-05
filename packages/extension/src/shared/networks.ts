@@ -30,32 +30,18 @@ export const defaultNetworks: Network[] = [
     name: "Localhost",
   },
   {
-    id: "mainnet",
-    nodeUrl: "https://mainnet-wallet.alephium.org",
-    explorerApiUrl: "https://mainnet-backend.alephium.org",
-    explorerUrl: "https://explorer.alephium.org",
-    name: "Mainnet",
-  },
-  {
-    id: "testnet",
-    nodeUrl: "https://testnet-wallet.alephium.org",
-    explorerApiUrl: "https://testnet-backend.alephium.org",
-    explorerUrl: "https://testnet.alephium.org",
-    name: "Testnet",
-  },
-  {
-    id: 'testnet-v18',
+    id: 'testnet',
     nodeUrl: 'https://wallet-v18.testnet.alephium.org',
     explorerApiUrl: 'https://backend-v18.testnet.alephium.org',
     explorerUrl: 'https://explorer-v18.testnet.alephium.org',
-    name: 'Testnet v18'
+    name: 'Testnet'
   },
   {
-    id: 'mainnet-v18',
+    id: 'mainnet',
     nodeUrl: 'https://wallet-v18.mainnet.alephium.org',
     explorerApiUrl: 'https://backend-v18.mainnet.alephium.org',
     explorerUrl: 'https://explorer-v18.mainnet.alephium.org',
-    name: 'Mainnet v18'
+    name: 'Mainnet'
   }
 ]
 
