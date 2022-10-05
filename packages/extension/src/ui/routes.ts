@@ -52,9 +52,11 @@ export const routes = {
     (address: string) => `/address/${address}/delete-confirm`,
     `/address/:address/delete-confirm`
   ),
-  sendToken: route('/send-token'),
+  // Believe it or not, there is no support for optional params in react-router-dom v6. That's why you'll see in some
+  // places the string 'undefined'. See https://github.com/remix-run/react-router/issues/7285#issuecomment-620071853
+  sendToken: route((address: string) => `/send-token/${address}`, `/send-token/:address`),
   exportPrivateKey: route('/export-private-key'),
-  fundingQrCode: route('/funding/qr-code'),
+  fundingQrCode: route((address: string) => `/funding/qr-code/${address}`, `/funding/qr-code/:address`),
   token: route((tokenAddress: string) => `/tokens/${tokenAddress}`, '/tokens/:tokenAddress'),
   reset: route('/reset'),
   settings: route('/settings'),

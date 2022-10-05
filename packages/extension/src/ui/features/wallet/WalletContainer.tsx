@@ -39,7 +39,7 @@ export const WalletContainer: FC<AddressScreenContentProps> = ({ currentTab, chi
                     <SettingsIcon />
                   </IconButton>
                 </Link>
-                <DefaultAddressSwitcher />
+                <DefaultAddressSwitcher setSelectedAsDefault />
                 <NetworkSwitcher />
               </>
             )}

@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react'
+import { ComponentProps, useState } from 'react'
 
 import AddressName from '../../components/AddressName'
 import HoverSelect, { HoverSelectItem } from '../../components/HoverSelect'
@@ -14,6 +14,9 @@ interface DefaultAddressSwitcherProps {
   borderRadius?: HoverSelectProps['borderRadius']
   alwaysShowTitle?: HoverSelectProps['alwaysShowTitle']
   alignText?: HoverSelectProps['alignText']
+  setSelectedAsDefault?: boolean
+  selectedAddressHash?: string
+  onAddressSelect?: (hash: string) => void
   className?: string
 }
 
@@ -24,13 +27,21 @@ const DefaultAddressSwitcher = ({
   alwaysShowTitle,
   borderRadius,
   alignText,
+  setSelectedAsDefault,
+  selectedAddressHash,
+  onAddressSelect,
   className
 }: DefaultAddressSwitcherProps) => {
   const { metadata: addressesMetadata } = useAddressMetadata()
   const { addresses, defaultAddress, setDefaultAddress } = useAddresses()
+  const [selectedAddress, setSelectedAddress] = useState(selectedAddressHash || defaultAddress?.hash)
 
-  const handleDefaultAddressSelect = (hash: string) => {
-    setDefaultAddress(hash)
+  const handleOnItemClick = (hash: string) => {
+    if (setSelectedAsDefault) {
+      setDefaultAddress(hash)
+    }
+    setSelectedAddress(hash)
+    onAddressSelect && onAddressSelect(hash)
   }
 
   const addressItems: HoverSelectItem[] = addresses.map((address) => {
@@ -49,12 +60,16 @@ const DefaultAddressSwitcher = ({
     }
   })
 
+  if (!selectedAddress) {
+    return null
+  }
+
   return (
     <HoverSelect
       items={addressItems}
       title={title || 'Default address'}
-      selectedItemValue={defaultAddress?.hash}
-      onItemClick={handleDefaultAddressSelect}
+      selectedItemValue={selectedAddress}
+      onItemClick={handleOnItemClick}
       dimensions={dimensions}
       alwaysShowTitle={alwaysShowTitle}
       alignText={alignText}

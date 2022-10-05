@@ -66,8 +66,12 @@ export const AddressListScreen = () => {
           </Swiper>
         </CarouselContainer>
         <ActionsContainer multipleAddresses={multipleAddresses}>
-          <IconWithLabelButton Icon={<ArrowUp size={20} />} label={'Send'} to={''} />
-          <IconWithLabelButton Icon={<ArrowDown size={20} />} label={'Receive'} to={''} />
+          <IconWithLabelButton Icon={<ArrowUp size={20} />} label={'Send'} to={routes.sendToken(focusedAddress.hash)} />
+          <IconWithLabelButton
+            Icon={<ArrowDown size={20} />}
+            label={'Receive'}
+            to={routes.fundingQrCode(focusedAddress.hash)}
+          />
           <IconWithLabelButton
             Icon={<Settings2 size={20} />}
             label={'Settings'}

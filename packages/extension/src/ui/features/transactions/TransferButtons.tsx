@@ -9,13 +9,13 @@ import { routes } from '../../routes'
 export const TransferButtons: FC = () => {
   return (
     <Container>
-      <StyledLink to={routes.fundingQrCode()}>
+      <StyledLink to={routes.fundingQrCode('undefined')}>
         <Button>
           <ArrowDown />
           Receive
         </Button>
       </StyledLink>
-      <StyledLink to={routes.sendToken()}>
+      <StyledLink to={routes.sendToken('undefined')}>
         <Button>
           <ArrowUp />
           Send

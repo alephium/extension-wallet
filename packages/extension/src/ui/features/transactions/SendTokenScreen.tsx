@@ -2,7 +2,7 @@ import { convertAlphToSet } from '@alephium/sdk'
 import { Balance } from '@alephium/sdk/api/alephium'
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Schema, object } from 'yup'
 
@@ -24,8 +24,10 @@ import { useYupValidationResolver } from '../settings/useYupValidationResolver'
 export const SendTokenScreen: FC = () => {
   const navigate = useNavigate()
   const resolver = useYupValidationResolver(SendSchema)
+  const { address: addressParam } = useParams()
+  const defaultAddress = useDefaultAddress()?.hash
+  const [address, setAddress] = useState(addressParam === 'undefined' ? defaultAddress : addressParam)
 
-  const address = useDefaultAddress()?.hash
   const name = 'Alephium'
   const symbol = 'ALPH'
   const image = 'https://raw.githubusercontent.com/alephium/alephium-brand-guide/master/logos/light/Logo-Icon.png'
@@ -87,6 +89,8 @@ export const SendTokenScreen: FC = () => {
             <AddressSwitcherContainer>
               <DefaultAddressSwitcher
                 title="From address"
+                selectedAddressHash={address}
+                onAddressSelect={setAddress}
                 dimensions={{
                   initialItemHeight: 60,
                   expandedItemHeight: 66,
