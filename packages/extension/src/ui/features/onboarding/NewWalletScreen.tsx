@@ -24,9 +24,6 @@ const Container = styled.div`
   ${InputText} {
     margin-top: 15px;
   }
-  ${Button} {
-    margin-top: 116px;
-  }
 `
 
 interface FieldValues {
