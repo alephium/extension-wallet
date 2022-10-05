@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { TransactionMeta } from '../../../shared/transactions'
 import { AddressHash } from '../../../shared/transactions/transactions'
+import Amount from '../../components/Amount'
 import { OpenInNewIcon } from '../../components/Icons/MuiIcons'
 import { StatusIndicatorColor, TransactionStatusIndicator } from '../../components/StatusIndicator'
 import { makeClickable } from '../../services/a11y'
@@ -46,7 +47,11 @@ export const TransactionItem: FC<TransactionItemProps> = ({
   return (
     <TransactionWrapper {...makeClickable(onClick)} highlighted={highlighted} {...props}>
       <>
-        <transactionUI.Icon color={transactionUI.iconColor} />
+        {status === 'transparent' ? (
+          <transactionUI.Icon color={transactionUI.iconColor} />
+        ) : (
+          <TransactionStatusIndicator color={status} />
+        )}
         <TXDetailsWrapper>
           <TXTextGroup>
             <TXTitle style={{ color: transactionUI.amountTextColor }}>
@@ -55,7 +60,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
             </TXTitle>
             <TransactionSubtitle>{meta?.subTitle || formatTruncatedAddress(hash)}</TransactionSubtitle>
           </TXTextGroup>
-          <TransactionStatusIndicator color={status} />
+          <TXAmount value={transactionInfo.amount} fadeDecimals />
         </TXDetailsWrapper>
       </>
     </TransactionWrapper>
@@ -118,4 +123,9 @@ const TransactionWrapper = styled(TXWrapper)<{ highlighted?: boolean }>`
   &:hover, &:focus {
     background-color: rgba(255, 255, 255, 0.15);
   }
+`
+
+const TXAmount = styled(Amount)`
+  font-weight: 600;
+  font-size: 17px;
 `
