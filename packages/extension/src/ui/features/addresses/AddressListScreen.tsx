@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 
 import { Address } from '../../../shared/addresses'
 import IconWithLabelButton from '../../components/buttons/IconWithLabelButton'
+import { routes } from '../../routes'
 import { P, SectionTitle } from '../../theme/Typography'
 import AddressTransactionList from '../transactions/AddressTransactionList'
 import { useAddresses } from './addresses.state'
@@ -13,11 +14,15 @@ import { AddressListSlideItem } from './AddressListSlideItem'
 
 export const AddressListScreen = () => {
   const { addresses, defaultAddress } = useAddresses()
-  const [focusedAddress, setFocusedAddress] = useState<Address>()
+  const [focusedAddress, setFocusedAddress] = useState<Address | undefined>(defaultAddress)
 
   const addressesList = Object.values(addresses)
 
   const multipleAddresses = addressesList.length > 0
+
+  if (!defaultAddress || !focusedAddress) {
+    return null
+  }
 
   return (
     <Container>
@@ -63,7 +68,11 @@ export const AddressListScreen = () => {
         <ActionsContainer multipleAddresses={multipleAddresses}>
           <IconWithLabelButton Icon={<ArrowUp size={20} />} label={'Send'} to={''} />
           <IconWithLabelButton Icon={<ArrowDown size={20} />} label={'Receive'} to={''} />
-          <IconWithLabelButton Icon={<Settings2 size={20} />} label={'Settings'} to={''} />
+          <IconWithLabelButton
+            Icon={<Settings2 size={20} />}
+            label={'Settings'}
+            to={routes.addressSettings(focusedAddress.hash)}
+          />
         </ActionsContainer>
       </AddressList>
       <div>

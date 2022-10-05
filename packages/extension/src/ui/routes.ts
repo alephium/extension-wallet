@@ -47,10 +47,10 @@ export const routes = {
   walletAddresses: route('/wallet/addresses'),
   newAddress: route('/wallet/new-address'),
   addressActivity: route('/address/activity'),
-  addressSettings: route('/address/settings'),
+  addressSettings: route((address: string) => `/address/${address}/settings`, `/address/:address/settings`),
   addressDeleteConfirm: route(
-    (address: string) => `/address/delete-confirm/${address}`,
-    `/address/delete-confirm/:address`
+    (address: string) => `/address/${address}/delete-confirm`,
+    `/address/:address/delete-confirm`
   ),
   sendToken: route('/send-token'),
   exportPrivateKey: route('/export-private-key'),
