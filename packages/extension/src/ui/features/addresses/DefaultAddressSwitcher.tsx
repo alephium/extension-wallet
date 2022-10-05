@@ -27,18 +27,27 @@ const DefaultAddressSwitcher = ({
   className
 }: DefaultAddressSwitcherProps) => {
   const { metadata: addressesMetadata } = useAddressMetadata()
-  const { defaultAddress, setDefaultAddress } = useAddresses()
+  const { addresses, defaultAddress, setDefaultAddress } = useAddresses()
 
   const handleDefaultAddressSelect = (hash: string) => {
     setDefaultAddress(hash)
   }
 
-  const addressItems: HoverSelectItem[] = Object.entries(addressesMetadata).map(([k, v]) => ({
-    Component: (
-      <AddressName name={v.name} color={v.color} isDefault={k === defaultAddress?.hash} style={addressNameStyle} />
-    ),
-    value: k
-  }))
+  const addressItems: HoverSelectItem[] = addresses.map((address) => {
+    const metadata = addressesMetadata[address.hash]
+
+    return {
+      Component: (
+        <AddressName
+          name={metadata.name}
+          color={metadata.color}
+          isDefault={address.hash === defaultAddress?.hash}
+          style={addressNameStyle}
+        />
+      ),
+      value: address.hash
+    }
+  })
 
   return (
     <HoverSelect
