@@ -26,8 +26,8 @@ export const ResetScreen: FC = () => {
       }}
     >
       <P>
-        If you reset your wallet, the only way to recover it is with your 12-word seed phrase. Make sure to back it up
-        from the Alephium settings and save it somewhere securely before resetting the extension
+        If you reset your wallet, the only way to recover it is with your 24-word secret recovery phrase. Make sure to
+        back it up from the Alephium settings and save it somewhere securely before resetting the extension.
       </P>
     </ConfirmScreen>
   )
