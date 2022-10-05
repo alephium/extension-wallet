@@ -6,6 +6,8 @@ import { formatDateTime } from '../../services/dates'
 import { openExplorerTransaction } from '../../services/explorer.service'
 import { orderTransactionsPerDay } from '../../services/transactions'
 import { DividerTitle, H1 } from '../../theme/Typography'
+import { useNetworkState } from '../networks/networks.state'
+import { useNetwork } from '../networks/useNetworks'
 import { useWalletState } from '../wallet/wallet.state'
 import { TransactionItem, TransactionsWrapper } from './TransactionItem'
 import { TransferButtons } from './TransferButtons'
@@ -17,11 +19,19 @@ interface WalletTransfersScreenProps {
 
 const WalletTransfersScreen: FC<WalletTransfersScreenProps> = ({ className }) => {
   const transactions = useAllTransactions()
+  const { switcherNetworkId } = useNetworkState()
+  const {
+    network: { explorerUrl }
+  } = useNetwork(switcherNetworkId)
   const orderedTransactions = orderTransactionsPerDay(transactions)
 
   useEffect(() => {
     useWalletState.setState({ headerTitle: 'Transfers' })
   }, [])
+
+  if (!explorerUrl) {
+    return null
+  }
 
   return (
     <div className={className}>
@@ -41,7 +51,7 @@ const WalletTransfersScreen: FC<WalletTransfersScreenProps> = ({ className }) =>
                 hash={t.hash}
                 status={undefined}
                 meta={{ subTitle: formatDateTime(t.timestamp) }}
-                onClick={() => openExplorerTransaction(t.hash)}
+                onClick={() => openExplorerTransaction(explorerUrl, t.hash)}
               />
             ))}
           </TransactionsWrapper>

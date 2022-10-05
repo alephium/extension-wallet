@@ -6,6 +6,8 @@ import { formatDateTime } from '../../services/dates'
 import { openExplorerTransaction } from '../../services/explorer.service'
 import { orderTransactionsPerDay } from '../../services/transactions'
 import { DividerTitle, P } from '../../theme/Typography'
+import { useNetworkState } from '../networks/networks.state'
+import { useNetwork } from '../networks/useNetworks'
 import { TransactionItem, TransactionsWrapper } from './TransactionItem'
 import { useAddressTransactions } from './useTransactions'
 
@@ -15,6 +17,14 @@ interface AddressTransactionListProps {
 
 const AddressTransactionList = ({ address }: AddressTransactionListProps) => {
   const transactions = useAddressTransactions(address)
+  const { switcherNetworkId } = useNetworkState()
+  const {
+    network: { explorerUrl }
+  } = useNetwork(switcherNetworkId)
+
+  if (!explorerUrl) {
+    return null
+  }
 
   const orderedTransactions = orderTransactionsPerDay(transactions)
 
@@ -37,7 +47,7 @@ const AddressTransactionList = ({ address }: AddressTransactionListProps) => {
                   hash={t.hash}
                   status={undefined}
                   meta={{ subTitle: formatDateTime(t.timestamp) }}
-                  onClick={() => openExplorerTransaction(t.hash)}
+                  onClick={() => openExplorerTransaction(explorerUrl, t.hash)}
                 />
               ))}
             </TransactionsWrapper>
