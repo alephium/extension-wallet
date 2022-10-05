@@ -55,7 +55,9 @@ export const AddressListItem: FC<IAddressListItem> = ({
       </MainAddressButton>
       <AddressRow>
         <AddressColumn>
-          <AddressName>{addressName}</AddressName>
+          <AddressName>
+            <Ellipse>{addressName}</Ellipse>
+          </AddressName>
           <AmountContainer>
             <Amount value={BigInt(balance)} fadeDecimals />
           </AmountContainer>
@@ -76,7 +78,6 @@ export const AddressListItem: FC<IAddressListItem> = ({
 }
 
 export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps & { addressColor: string }>`
-  position: relative;
   cursor: pointer;
   border-radius: 12px;
   padding: 20px;
@@ -88,7 +89,8 @@ export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps & {
   height: 170px;
   display: flex;
   gap: 12px;
-  align-items: center;
+  justify-content: space-between;
+
   * {
     ${({ addressColor, theme }) => {
       const color = colord(addressColor).isDark() ? theme.text1 : theme.bg1
@@ -106,13 +108,15 @@ export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps & {
 const AddressColumn = styled.div`
   display: flex;
   flex-direction: column;
+  max-width: 100%;
 `
 
 const AddressRow = styled.div`
   display: flex;
-  flex-grow: 1;
   align-items: center;
   justify-content: space-between;
+
+  min-width: 0;
 `
 
 const AddressName = styled.h2`
@@ -135,14 +139,13 @@ const Group = styled.span`
 `
 
 const MainAddressButton = styled.div<{ isDefault: boolean }>`
-  position: absolute;
-  top: 10px;
-  right: 10px;
   height: 40px;
   width: 40px;
   border-radius: 12px;
   border: ${({ isDefault }) => (isDefault ? '2px solid white' : '2px solid rgba(255, 255, 255, 0.3)')};
   display: flex;
+  flex-shrink: 0;
+  order: 1;
   align-items: center;
   justify-content: center;
 
@@ -150,4 +153,10 @@ const MainAddressButton = styled.div<{ isDefault: boolean }>`
     cursor: pointer;
     background-color: rgba(255, 255, 255, 0.3);
   }
+`
+
+const Ellipse = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
