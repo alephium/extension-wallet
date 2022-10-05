@@ -247,7 +247,9 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   }
 `
 
-const ItemContent = styled(motion.div)``
+const ItemContent = styled(motion.div)`
+  max-width: 100%;
+`
 
 const Title = styled(motion.span)`
   position: absolute;
