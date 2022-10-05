@@ -1,6 +1,7 @@
 import { FC, ReactNode, useState } from 'react'
 import styled from 'styled-components'
 
+import { useAppState } from '../../app.state'
 import { Button } from '../../components/buttons/Button'
 import { IconBar } from '../../components/IconBar'
 import { useReturnTo } from '../../routes'
@@ -51,6 +52,13 @@ export const SeedSettingsScreen: FC = () => {
           verifyPassword={async (password) => {
             const isValid = await checkPassword(password)
             setPasswordIsValid(isValid)
+
+            if (!isValid) {
+              useAppState.setState({
+                error: 'Incorrect password'
+              })
+            }
+
             return isValid
           }}
         >
