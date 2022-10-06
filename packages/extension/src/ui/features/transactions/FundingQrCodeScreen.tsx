@@ -28,6 +28,7 @@ export const FundingQrCodeScreen: FC = () => {
             <AddressSwitcher
               title="QR code for address"
               selectedAddressHash={address}
+              setSelectedAsDefault
               onAddressSelect={setAddress}
               dimensions={{
                 initialItemHeight: 50,

@@ -93,6 +93,7 @@ export const SendTokenScreen: FC = () => {
               <DefaultAddressSwitcher
                 title="From address"
                 selectedAddressHash={address}
+                setSelectedAsDefault
                 onAddressSelect={setAddress}
                 dimensions={{
                   initialItemHeight: 60,
