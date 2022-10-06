@@ -1,19 +1,19 @@
-import type { ExtQueueItem as ExtensionQueueItem } from "../background/actionQueue"
-import { TransactionPayload } from "../shared/transactions"
+import type { ExtQueueItem as ExtensionQueueItem } from '../background/actionQueue'
+import { TransactionPayload } from '../shared/transactions'
 
 export type ActionItem =
   | {
-      type: "CONNECT_DAPP"
+      type: 'CONNECT_DAPP'
       payload: {
         host: string
       }
     }
   | {
-      type: "TRANSACTION"
+      type: 'TRANSACTION'
       payload: TransactionPayload
     }
   | {
-      type: "REQUEST_ADD_CUSTOM_NETWORK"
+      type: 'REQUEST_ADD_CUSTOM_NETWORK'
       payload: {
         id: string
         name: string
@@ -23,7 +23,7 @@ export type ActionItem =
       }
     }
   | {
-      type: "REQUEST_SWITCH_CUSTOM_NETWORK"
+      type: 'REQUEST_SWITCH_CUSTOM_NETWORK'
       payload: {
         id: string
         name: string

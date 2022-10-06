@@ -1,45 +1,60 @@
-import create from "zustand"
-import { persist } from "zustand/middleware"
+import produce from 'immer'
+import create from 'zustand'
+import { persist } from 'zustand/middleware'
 
-export const defaultAddressName = "Unnamed Address"
+import { AddressMetadata } from '../../../shared/addresses'
+import { getRandomLabelColor } from '../../../shared/utils/colors'
+
+export const defaultAddressName = 'Unnamed Address'
 
 interface State {
-  addressNames: Record<string, string>
-  setAddressName: (address: string, name: string) => void
+  metadata: { [addressHash: string]: AddressMetadata }
+  setAddressMetadata: (addressHash: string, addressMetadata: Partial<AddressMetadata>) => void
 }
 
-export const useAddressMetadata = create<State>(
+export const useAddressMetadata = create<State>()(
   persist(
-    (set, _get) => ({
-      addressNames: {},
-      setAddressName: (address: string, name: string) =>
-        set((state) => ({
-          addressNames: {
-            ...state.addressNames,
-            [address]: name,
-          },
-        })),
+    (set) => ({
+      metadata: {},
+      setAddressMetadata: (addressHash: string, addressMetadata: Partial<AddressMetadata>) =>
+        set(
+          produce<State>((state) => {
+            state.metadata[addressHash] = { ...state.metadata[addressHash], ...addressMetadata }
+          })
+        )
     }),
-    { name: "addressMetadata" },
-  ),
+    { name: 'addressMetadata' }
+  )
 )
 
-export const getAddressName = (
-  address: string,
-  addressNames: Record<string, string>,
-): string => addressNames[address] || defaultAddressName
+export const getAddressName = (address: string, metadata: State['metadata']): string =>
+  metadata[address]?.name || defaultAddressName
 
-export const setDefaultAddressNames = (addresses: string[]) => {
-  const { addressNames } = useAddressMetadata.getState()
-  let names = addressNames
-  for (const address of addresses) {
-    if (!names[address]) {
-      const name = `Address ${addresses.indexOf(address) + 1}`
-      names = {
-        ...names,
-        [address]: name,
+export const setDefaultAddressesMetadata = (addresses: string[]) => {
+  const { metadata } = useAddressMetadata.getState()
+
+  let completedMetadata = addresses.reduce<{ [hash: string]: AddressMetadata }>((acc, a, i) => {
+    const m = acc
+
+    if (!metadata[a]?.name) {
+      m[a] = { ...metadata[a], name: `Address ${i + 1}` }
+    }
+
+    if (!metadata[a]?.color) {
+      m[a] = { ...metadata[a], color: getRandomLabelColor() }
+    }
+
+    return m
+  }, metadata)
+
+  if (Object.keys(completedMetadata).length === 0) {
+    completedMetadata = {
+      [addresses[0]]: {
+        name: `Address 1`,
+        color: getRandomLabelColor()
       }
     }
   }
-  useAddressMetadata.setState({ addressNames: names })
+
+  useAddressMetadata.setState({ metadata: completedMetadata })
 }

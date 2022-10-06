@@ -1,14 +1,11 @@
-import { FC } from "react"
-import { useNavigate } from "react-router-dom"
+import { FC } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { recoverBySeedPhrase } from "../../services/backgroundRecovery"
-import { NewWalletScreen } from "../onboarding/NewWalletScreen"
-import { recover } from "./recovery.service"
-import {
-  useSeedRecovery,
-  validateAndSetPassword,
-  validateSeedRecoveryCompletion,
-} from "./seedRecovery.state"
+import { routes } from '../../routes'
+import { recoverBySeedPhrase } from '../../services/backgroundRecovery'
+import { NewWalletScreen } from '../onboarding/NewWalletScreen'
+import { recover } from './recovery.service'
+import { useSeedRecovery, validateAndSetPassword, validateSeedRecoveryCompletion } from './seedRecovery.state'
 
 export const SeedRecoveryPasswordScreen: FC = () => {
   const navigate = useNavigate()
@@ -23,10 +20,10 @@ export const SeedRecoveryPasswordScreen: FC = () => {
           const state = useSeedRecovery.getState()
           if (validateSeedRecoveryCompletion(state)) {
             await recoverBySeedPhrase(state.seedPhrase, state.password)
-            navigate(await recover())
+            navigate(await recover(routes.addressTokens.path))
           }
         } catch {
-          console.error("seed phrase is invalid")
+          console.error('seed phrase is invalid')
         }
       }}
     />

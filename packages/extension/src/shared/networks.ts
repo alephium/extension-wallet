@@ -1,4 +1,4 @@
-import { Schema, boolean, object, string } from "yup"
+import { Schema, boolean, object, string } from 'yup'
 
 export interface Network {
   id: string
@@ -10,39 +10,39 @@ export interface Network {
 }
 
 export interface NetworkStatus {
-  id: Network["id"]
+  id: Network['id']
   healthy: boolean
 }
 
 export const defaultNetworks: Network[] = [
   {
-    id: "softfork",
-    nodeUrl: "https://alephium-dev.softfork.se",
-    explorerApiUrl: "https://alephium-dev-explorer-api.softfork.se",
-    explorerUrl: "https://alephium-dev-explorer.softfork.se",
-    name: "Softfork",
+    id: 'softfork',
+    nodeUrl: 'https://alephium-dev.softfork.se',
+    explorerApiUrl: 'https://alephium-dev-explorer-api.softfork.se',
+    explorerUrl: 'https://alephium-dev-explorer.softfork.se',
+    name: 'Softfork'
   },
   {
-    id: "localhost",
-    nodeUrl: "http://127.0.0.1:22973",
-    explorerApiUrl: "http://localhost:9090",
-    explorerUrl: "http://localhost:3000",
-    name: "Localhost",
+    id: 'localhost',
+    nodeUrl: 'http://127.0.0.1:22973',
+    explorerApiUrl: 'http://localhost:9090',
+    explorerUrl: 'http://localhost:3000',
+    name: 'Localhost'
   },
   {
-    id: "mainnet",
-    nodeUrl: "https://mainnet-wallet.alephium.org",
-    explorerApiUrl: "https://mainnet-backend.alephium.org",
-    explorerUrl: "https://explorer.alephium.org",
-    name: "Mainnet",
+    id: 'testnet',
+    nodeUrl: 'https://wallet-v18.testnet.alephium.org',
+    explorerApiUrl: 'https://backend-v18.testnet.alephium.org',
+    explorerUrl: 'https://explorer-v18.testnet.alephium.org',
+    name: 'Testnet'
   },
   {
-    id: "testnet",
-    nodeUrl: "https://testnet-wallet.alephium.org",
-    explorerApiUrl: "https://testnet-backend.alephium.org",
-    explorerUrl: "https://testnet.alephium.org",
-    name: "Testnet",
-  },
+    id: 'mainnet',
+    nodeUrl: 'https://wallet-v18.mainnet.alephium.org',
+    explorerApiUrl: 'https://backend-v18.mainnet.alephium.org',
+    explorerUrl: 'https://explorer-v18.mainnet.alephium.org',
+    name: 'Mainnet'
+  }
 ]
 
 const REGEX_URL_WITH_LOCAL =
@@ -53,30 +53,18 @@ export const NetworkSchema: Schema<Network> = object()
   .shape({
     id: string().required().min(2).max(31),
     name: string().required().min(2).max(128),
-    nodeUrl: string()
-      .required()
-      .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
-    explorerUrl: string()
-      .optional()
-      .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
-    explorerApiUrl: string()
-      .required()
-      .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
-    readonly: boolean().optional(),
+    nodeUrl: string().required().matches(REGEX_URL_WITH_LOCAL, '${path} must be a valid URL'),
+    explorerUrl: string().optional().matches(REGEX_URL_WITH_LOCAL, '${path} must be a valid URL'),
+    explorerApiUrl: string().required().matches(REGEX_URL_WITH_LOCAL, '${path} must be a valid URL'),
+    readonly: boolean().optional()
   })
 
 export const defaultNetwork = defaultNetworks[0]
 
-export const getNetwork = (
-  networkId: string,
-  allNetworks: Network[],
-): Network => {
+export const getNetwork = (networkId: string, allNetworks: Network[]): Network => {
   return allNetworks.find(({ id }) => id === networkId) || defaultNetwork
 }
 
-export const getNetworkById = (
-  id: string,
-  allNetworks: Network[],
-): Network | undefined => {
+export const getNetworkById = (id: string, allNetworks: Network[]): Network | undefined => {
   return allNetworks.find((network) => network.id === id)
 }

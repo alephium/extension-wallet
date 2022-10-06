@@ -1,3 +1,3 @@
-export { KeyValueStorage } from "./keyvalue"
-export { ObjectStorage } from "./object"
-export { ArrayStorage } from "./array"
+export { KeyValueStorage } from './keyvalue'
+export { ObjectStorage } from './object'
+export { ArrayStorage } from './array'

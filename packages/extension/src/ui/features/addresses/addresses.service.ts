@@ -1,10 +1,6 @@
-import {
-  Address,
-  AddressAndPublicKey,
-  AddressSettings,
-} from "../../../shared/Address"
-import { createAddress } from "../../services/backgroundAddresses"
-import { startSession } from "../../services/backgroundSessions"
+import { Address, AddressAndPublicKey } from '../../../shared/addresses'
+import { createAddress } from '../../services/backgroundAddresses'
+import { startSession } from '../../services/backgroundSessions'
 
 export const deployAddress = async (group?: number, password?: string) => {
   if (password) {
@@ -12,7 +8,7 @@ export const deployAddress = async (group?: number, password?: string) => {
   }
 
   const result = await createAddress(group)
-  if ("error" in result) {
+  if ('error' in result) {
     throw new Error(result.error)
   }
 
@@ -20,15 +16,5 @@ export const deployAddress = async (group?: number, password?: string) => {
 }
 
 export const toAddress = (addressAndPublicKey: AddressAndPublicKey) => {
-  // TODO: Remove hardcoded setting
-  const setting: AddressSettings = {
-    isMain: true,
-  }
-
-  return new Address(
-    addressAndPublicKey.address,
-    addressAndPublicKey.publicKey,
-    addressAndPublicKey.addressIndex,
-    setting,
-  )
+  return new Address(addressAndPublicKey.address, addressAndPublicKey.publicKey, addressAndPublicKey.addressIndex)
 }

@@ -1,6 +1,6 @@
-import { FlattenSimpleInterpolation } from "styled-components"
+import { FlattenSimpleInterpolation } from 'styled-components'
 
-import { colors } from "./index"
+import { colors } from './index'
 
 export type Color = string
 export type Colors = typeof colors
@@ -18,7 +18,7 @@ interface StyledBreakpoints {
   xl: ThemedCssFunction<DefaultTheme>
 }
 
-declare module "styled-components" {
+declare module 'styled-components' {
   export interface DefaultTheme extends Colors {
     // css snippets
     flexColumnNoWrap: FlattenSimpleInterpolation

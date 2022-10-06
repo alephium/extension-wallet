@@ -1,5 +1,5 @@
-declare module "tracking-link" {
-  import { ReactNode, FC } from "react"
+declare module 'tracking-link' {
+  import { ReactNode, FC } from 'react'
 
   interface TrackingLinkProps {
     // href - url where navigate when tracking function is resolved

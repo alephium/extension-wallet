@@ -1,15 +1,9 @@
-import type {
-  GetAlephiumWalletOptions,
-  IAlephiumWindowObject,
-  Order,
-  WalletProvider,
-} from "./types"
+import type { GetAlephiumWalletOptions, IAlephiumWindowObject, Order, WalletProvider } from './types'
 
 /**
  * @see https://github.com/GoogleChrome/web-vitals/blob/main/src/lib/generateUniqueID.ts
  */
-export const generateUID = () =>
-  `${Date.now()}-${Math.floor(Math.random() * (9e12 - 1)) + 1e12}`
+export const generateUID = () => `${Date.now()}-${Math.floor(Math.random() * (9e12 - 1)) + 1e12}`
 
 export const shuffle = <T extends any[]>(arr: T): T => {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -23,16 +17,14 @@ export const shuffle = <T extends any[]>(arr: T): T => {
  * filters given wallets array, return only preAuthorized instances
  * @param wallets
  */
-export const filterPreAuthorized = (
-  wallets: IAlephiumWindowObject[],
-): Promise<IAlephiumWindowObject[]> =>
+export const filterPreAuthorized = (wallets: IAlephiumWindowObject[]): Promise<IAlephiumWindowObject[]> =>
   Promise.all(
     wallets.map((w) =>
       w
         .isPreauthorized()
         .then((authorized) => (authorized ? w : undefined))
-        .catch(() => undefined),
-    ),
+        .catch(() => undefined)
+    )
   ).then((result) => result.filter((res) => !!res) as IAlephiumWindowObject[])
 
 export const isWalletObj = (key: string, wallet: any): boolean => {
@@ -41,24 +33,21 @@ export const isWalletObj = (key: string, wallet: any): boolean => {
       wallet &&
       [
         // wallet's must have methods/members, see IAlephiumWindowObject
-        "isConnected",
-        "enable",
-        "isPreauthorized",
-        "on",
-        "off",
+        'isConnected',
+        'enable',
+        'isPreauthorized',
+        'on',
+        'off'
       ].every((key) => key in wallet)
     ) {
       // test for new fields only after attempting
-      return ["id"].every((key) => key in wallet)
+      return ['id'].every((key) => key in wallet)
     }
   } catch (err) {}
   return false
 }
 
-export const sortBy = <T extends IAlephiumWindowObject | WalletProvider>(
-  wallets: T[],
-  order: Order,
-): T[] => {
+export const sortBy = <T extends IAlephiumWindowObject | WalletProvider>(wallets: T[], order: Order): T[] => {
   if (order && Array.isArray(order)) {
     // skip default/preAuthorized priorities,
     // sort by client-specific order
@@ -68,12 +57,12 @@ export const sortBy = <T extends IAlephiumWindowObject | WalletProvider>(
     return [
       ...wallets.slice(orderScope),
       // shuffle wallets which are outside `order` scope
-      ...shuffle(wallets.slice(0, orderScope)),
+      ...shuffle(wallets.slice(0, orderScope))
     ]
   } else {
-    if (!order || order === "random") {
+    if (!order || order === 'random') {
       return shuffle(wallets)
-    } else if (order === "community") {
+    } else if (order === 'community') {
       // "community" order is the natural order of the wallets array,
       // see discovery/index.ts
     }
@@ -83,7 +72,7 @@ export const sortBy = <T extends IAlephiumWindowObject | WalletProvider>(
 
 export function filterBy<T extends IAlephiumWindowObject | WalletProvider>(
   installed: T[],
-  options?: Omit<GetAlephiumWalletOptions, "showList">,
+  options?: Omit<GetAlephiumWalletOptions, 'showList'>
 ): T[] {
   if (options?.include?.length) {
     const included = new Set<string>(options.include)

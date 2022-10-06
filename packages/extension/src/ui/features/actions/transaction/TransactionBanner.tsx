@@ -1,9 +1,8 @@
-import { FC } from "react"
-import styled from "styled-components"
+import { FC } from 'react'
+import styled from 'styled-components'
 
 const Container = styled.div`
-  background-color: ${({ theme }) =>
-    theme.red4};
+  background-color: ${({ theme }) => theme.red4};
   color: ${({ theme }) => theme.text1};
   font-size: 13px;
   font-weight: 600;
@@ -27,10 +26,7 @@ export interface ITransactionBanner {
   message?: string
 }
 
-export const TransactionBanner: FC<ITransactionBanner> = ({
-  icon: Icon,
-  message,
-}) => {
+export const TransactionBanner: FC<ITransactionBanner> = ({ icon: Icon, message }) => {
   return (
     <Container>
       <IconContainer>

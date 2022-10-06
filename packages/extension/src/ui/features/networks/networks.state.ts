@@ -1,15 +1,15 @@
-import create from "zustand"
-import { persist } from "zustand/middleware"
+import create from 'zustand'
+import { persist } from 'zustand/middleware'
 
-import { defaultNetwork } from "../../../shared/networks"
-import { setCurrentNetwork } from "../../services/backgroundNetworks"
+import { defaultNetwork } from '../../../shared/networks'
+import { setCurrentNetwork } from '../../services/backgroundNetworks'
 
 interface State {
   switcherNetworkId: string
   setSwitcherNetworkId: (networkId: string) => void
 }
 
-export const useNetworkState = create<State>(
+export const useNetworkState = create<State>()(
   persist(
     (set, _get) => ({
       switcherNetworkId: defaultNetwork.id,
@@ -17,10 +17,10 @@ export const useNetworkState = create<State>(
         await setCurrentNetwork(networkId)
         return set((state) => ({
           ...state,
-          switcherNetworkId: networkId,
+          switcherNetworkId: networkId
         }))
-      },
+      }
     }),
-    { name: "networkState" },
-  ),
+    { name: 'networkState' }
+  )
 )

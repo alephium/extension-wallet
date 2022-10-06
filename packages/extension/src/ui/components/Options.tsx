@@ -1,5 +1,5 @@
-import { FC, ReactNode } from "react"
-import styled from "styled-components"
+import { FC, ReactNode } from 'react'
+import styled from 'styled-components'
 
 export const OptionsWrapper = styled.div`
   display: grid;
@@ -24,7 +24,7 @@ const OptionWrapper = styled.div<{
   border-radius: 8px;
   background-color: ${({ disabled, backgroundColor, theme }) =>
     disabled ? theme.text3 : backgroundColor ?? theme.bg2};
-  cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
+  cursor: ${({ disabled }) => (disabled ? 'auto' : 'pointer')};
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `
 
@@ -50,14 +50,8 @@ const OptionDescription = styled.p`
 
 const OptionIcon: FC = () => {
   return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <g style={{ mixBlendMode: "soft-light" }}>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g style={{ mixBlendMode: 'soft-light' }}>
         <circle cx="12" cy="12" r="12" fill="black" />
       </g>
       <path
@@ -85,13 +79,9 @@ export const Option: FC<OptionProps> = ({
   onClick,
   disabled,
   backgroundColor,
-  hideArrow,
+  hideArrow
 }) => (
-  <OptionWrapper
-    backgroundColor={backgroundColor}
-    onClick={onClick}
-    disabled={disabled}
-  >
+  <OptionWrapper backgroundColor={backgroundColor} onClick={onClick} disabled={disabled}>
     <Flex>
       {icon}
       <OptionTextWrapper>

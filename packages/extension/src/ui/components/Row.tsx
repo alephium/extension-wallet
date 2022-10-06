@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from 'styled-components'
 
 const Row = styled.div<{
   align?: string
@@ -10,7 +10,7 @@ const Row = styled.div<{
   width: 100%;
   display: flex;
   padding: 0;
-  align-items: ${({ align }) => (align ? align : "center")};
+  align-items: ${({ align }) => (align ? align : 'center')};
   padding: ${({ padding }) => padding};
   border: ${({ border }) => border};
   border-radius: ${({ borderRadius }) => borderRadius};

@@ -1,10 +1,10 @@
-import browser from "webextension-polyfill"
+import browser from 'webextension-polyfill'
 
-import { ActionItem } from "../shared/actionQueue"
-import { MessageType } from "../shared/messages"
-import { Queue } from "./actionQueue"
-import { MessagingKeys } from "./keys/messagingKeys"
-import { Wallet } from "./wallet"
+import { ActionItem } from '../shared/actionQueue'
+import { MessageType } from '../shared/messages'
+import { Queue } from './actionQueue'
+import { MessagingKeys } from './keys/messagingKeys'
+import { Wallet } from './wallet'
 
 export interface BackgroundService {
   wallet: Wallet

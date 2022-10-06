@@ -1,16 +1,13 @@
-import { FC, useCallback, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import styled from "styled-components"
+import { FC, useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import {
-  getPreAuthorizations,
-  resetPreAuthorizations,
-} from "../../../background/preAuthorizations"
-import { Button } from "../../components/Button"
-import { IconBar } from "../../components/IconBar"
-import { removePreAuthorization } from "../../services/background"
-import { H2, P } from "../../theme/Typography"
-import { DappConnection } from "./DappConnection"
+import { getPreAuthorizations, resetPreAuthorizations } from '../../../background/preAuthorizations'
+import { Button } from '../../components/buttons/Button'
+import { IconBar } from '../../components/IconBar'
+import { removePreAuthorization } from '../../services/background'
+import { H2, P } from '../../theme/Typography'
+import { DappConnection } from './DappConnection'
 
 const Wrapper = styled.div`
   display: flex;

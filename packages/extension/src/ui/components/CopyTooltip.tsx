@@ -1,7 +1,7 @@
-import Tippy from "@tippyjs/react"
-import { FC, ReactNode, useEffect, useRef, useState } from "react"
-import CopyToClipboard from "react-copy-to-clipboard"
-import styled from "styled-components"
+import Tippy from '@tippyjs/react'
+import { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import CopyToClipboard from 'react-copy-to-clipboard'
+import styled from 'styled-components'
 
 export const Tooltip = styled.span`
   background: ${({ theme }) => theme.white};
@@ -20,12 +20,7 @@ interface CopyTooltipProps {
   children: ReactNode
 }
 
-export const CopyTooltip: FC<CopyTooltipProps> = ({
-  copyValue,
-  message,
-  autoDismiss = true,
-  children,
-}) => {
+export const CopyTooltip: FC<CopyTooltipProps> = ({ copyValue, message, autoDismiss = true, children }) => {
   const [visible, setVisible] = useState(false)
   const pidRef = useRef<any>()
 

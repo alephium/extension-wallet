@@ -1,16 +1,12 @@
-import { FC, useMemo } from "react"
-import styled from "styled-components"
+import { FC, useMemo } from 'react'
+import styled from 'styled-components'
 
-import { coerceErrorToString } from "../../shared/utils/error"
-import { useHardResetAndReload } from "../services/resetAndReload"
-import { P } from "../theme/Typography"
-import { CopyTooltip } from "./CopyTooltip"
-import { ErrorBoundaryState } from "./ErrorBoundary"
-import {
-  ContentCopyIcon,
-  RefreshIcon,
-  ReportGmailerrorredIcon,
-} from "./Icons/MuiIcons"
+import { coerceErrorToString } from '../../shared/utils/error'
+import { useHardResetAndReload } from '../services/resetAndReload'
+import { P } from '../theme/Typography'
+import { CopyTooltip } from './CopyTooltip'
+import { ErrorBoundaryState } from './ErrorBoundary'
+import { ContentCopyIcon, RefreshIcon, ReportGmailerrorredIcon } from './Icons/MuiIcons'
 
 const MessageContainer = styled.div`
   display: flex;
@@ -70,19 +66,20 @@ const fallbackErrorPayload = `v${version}
 Unable to parse error
 `
 
-export interface IErrorBoundaryFallbackWithCopyError
-  extends ErrorBoundaryState {
+export interface IErrorBoundaryFallbackWithCopyError extends ErrorBoundaryState {
   message?: string
 }
 
-const ErrorBoundaryFallbackWithCopyError: FC<
-  IErrorBoundaryFallbackWithCopyError
-> = ({ error, errorInfo, message = "Sorry, an error occurred" }) => {
+const ErrorBoundaryFallbackWithCopyError: FC<IErrorBoundaryFallbackWithCopyError> = ({
+  error,
+  errorInfo,
+  message = 'Sorry, an error occurred'
+}) => {
   const hardResetAndReload = useHardResetAndReload()
   const errorPayload = useMemo(() => {
     try {
       const displayError = coerceErrorToString(error)
-      const displayStack = errorInfo?.componentStack || "No stack trace"
+      const displayStack = errorInfo?.componentStack || 'No stack trace'
       return `v${version}
 
 ${displayError}

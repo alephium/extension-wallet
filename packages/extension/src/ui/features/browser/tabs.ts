@@ -1,9 +1,9 @@
-import { isNumber } from "lodash-es"
-import { useCallback, useEffect, useState } from "react"
-import browser from "webextension-polyfill"
+import { isNumber } from 'lodash-es'
+import { useCallback, useEffect, useState } from 'react'
+import browser from 'webextension-polyfill'
 
 export const openExtensionInTab = async () => {
-  const url = browser.runtime.getURL("index.html")
+  const url = browser.runtime.getURL('index.html')
   const tab = await browser.tabs.create({ url })
   return tab
 }

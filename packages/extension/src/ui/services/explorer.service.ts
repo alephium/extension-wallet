@@ -1,8 +1,6 @@
-export const getExplorerTransactionLink = (hash: string): string => {
-  const explorerUrl = "https://alephium.softfork.se/"
-  return `${explorerUrl}/#/transactions/${hash}`
-}
+export const getExplorerTransactionLink = (explorerUrl: string, hash: string): string =>
+  `${explorerUrl}/#/transactions/${hash}`
 
-export const openExplorerTransaction = (hash: string) => {
-  window.open(getExplorerTransactionLink(hash), "_blank")?.focus()
+export const openExplorerTransaction = (explorerUrl: string, hash: string) => {
+  window.open(getExplorerTransactionLink(explorerUrl, hash), '_blank')?.focus()
 }

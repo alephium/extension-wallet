@@ -1,25 +1,16 @@
-import { FC, useMemo } from "react"
-import { Navigate } from "react-router-dom"
-import styled from "styled-components"
+import { FC, useMemo } from 'react'
+import { Navigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { TransactionPayload } from "../../../shared/transactions"
-import {
-  Field,
-  FieldGroup,
-  FieldKey,
-  FieldValue,
-} from "../../components/Fields"
-import { routes } from "../../routes"
-import { assertNever } from "../../services/assertNever"
-import {
-  getAddressName,
-  useAddressMetadata,
-} from "../addresses/addressMetadata.state"
-import { ConfirmPageProps, ConfirmScreen } from "./ConfirmScreen"
-import { TransactionsList } from "./transaction/TransactionsList"
+import { TransactionPayload } from '../../../shared/transactions'
+import { Field, FieldGroup, FieldKey, FieldValue } from '../../components/Fields'
+import { routes } from '../../routes'
+import { assertNever } from '../../services/assertNever'
+import { getAddressName, useAddressMetadata } from '../addresses/addressMetadata.state'
+import { ConfirmPageProps, ConfirmScreen } from './ConfirmScreen'
+import { TransactionsList } from './transaction/TransactionsList'
 
-interface ApproveTransactionScreenProps
-  extends Omit<ConfirmPageProps, "onSubmit"> {
+interface ApproveTransactionScreenProps extends Omit<ConfirmPageProps, 'onSubmit'> {
   actionHash: string
   payload: TransactionPayload
   onSubmit: (payload: TransactionPayload) => void
@@ -31,15 +22,15 @@ const LeftPaddedField = styled.div`
 
 export const titleForTransactions = (payload: TransactionPayload) => {
   switch (payload.type) {
-    case "ALPH_SIGN_TRANSFER_TX":
-      return "Review Send"
+    case 'ALPH_SIGN_TRANSFER_TX':
+      return 'Review Send'
 
-    case "ALPH_SIGN_CONTRACT_CREATION_TX": {
-      return "Review Contract"
+    case 'ALPH_SIGN_CONTRACT_CREATION_TX': {
+      return 'Review Contract'
     }
 
-    case "ALPH_SIGN_SCRIPT_TX": {
-      return "Review Script"
+    case 'ALPH_SIGN_SCRIPT_TX': {
+      return 'Review Script'
     }
 
     default:
@@ -49,30 +40,30 @@ export const titleForTransactions = (payload: TransactionPayload) => {
 
 export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   payload,
-  selectedAddress,
+  defaultAddress,
   actionHash,
   onSubmit,
   ...props
 }) => {
-  const { addressNames } = useAddressMetadata()
+  const { metadata } = useAddressMetadata()
   const title = useMemo(() => {
     return titleForTransactions(payload)
   }, [payload])
 
-  if (!selectedAddress) {
-    return <Navigate to={routes.addresses()} />
+  if (!defaultAddress) {
+    return <Navigate to={routes.walletAddresses()} />
   }
 
-  const addressName = getAddressName(selectedAddress.hash, addressNames)
+  const addressName = getAddressName(defaultAddress.hash, metadata)
 
-  const confirmButtonVariant = "warn"
+  const confirmButtonVariant = 'warn'
 
   return (
     <ConfirmScreen
       title={title}
       confirmButtonText="Approve"
       confirmButtonVariant={confirmButtonVariant}
-      selectedAddress={selectedAddress}
+      defaultAddress={defaultAddress}
       onSubmit={() => {
         onSubmit(payload)
       }}

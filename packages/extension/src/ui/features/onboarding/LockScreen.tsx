@@ -1,18 +1,18 @@
-import { FC } from "react"
-import { useNavigate } from "react-router-dom"
-import styled from "styled-components"
+import { FC } from 'react'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { useAppState } from "../../app.state"
-import { Button } from "../../components/Button"
-import { routes } from "../../routes"
-import { startSession } from "../../services/backgroundSessions"
-import { P, StyledLink } from "../../theme/Typography"
-import { useActions } from "../actions/actions.state"
-import { StickyGroup } from "../actions/ConfirmScreen"
-import { recover } from "../recovery/recovery.service"
-import { Greetings, GreetingsWrapper } from "./Greetings"
-import LogoSvg from "./logo.svg"
-import { PasswordForm } from "./PasswordForm"
+import { useAppState } from '../../app.state'
+import { Button } from '../../components/buttons/Button'
+import { routes } from '../../routes'
+import { startSession } from '../../services/backgroundSessions'
+import { P, StyledLink } from '../../theme/Typography'
+import { useActions } from '../actions/actions.state'
+import { StickyGroup } from '../actions/ConfirmScreen'
+import { recover } from '../recovery/recovery.service'
+import { Greetings, GreetingsWrapper } from './Greetings'
+import LogoSvg from './logo.svg'
+import { PasswordForm } from './PasswordForm'
 
 const LockScreenWrapper = styled.div`
   display: flex;
@@ -35,16 +35,9 @@ const LockScreenWrapper = styled.div`
   }
 `
 
-export const greetings = [
-  "gm!",
-  "Hello!",
-  "Guten Tag!",
-  "Привет!",
-  "gm, ser!",
-  "hi fren",
-]
+export const greetings = ['gm!', 'Hello!', 'Guten Tag!', 'Привет!', 'gm, ser!', 'hi fren']
 
-const isPopup = new URLSearchParams(window.location.search).has("popup")
+const isPopup = new URLSearchParams(window.location.search).has('popup')
 
 export const LockScreen: FC = () => {
   const navigate = useNavigate()
@@ -60,7 +53,7 @@ export const LockScreen: FC = () => {
           useAppState.setState({ isLoading: true })
           try {
             await startSession(password)
-            const target = await recover()
+            const target = await recover(routes.addressTokens.path)
 
             // If only called by dapp (in popup) because the wallet was locked, but the dapp is already whitelisted/no transactions requested (actions=0), then close
             if (isPopup && !useActions.getState().actions.length) {
@@ -73,7 +66,7 @@ export const LockScreen: FC = () => {
           } catch {
             useAppState.setState({
               isLoading: false,
-              error: "Incorrect password",
+              error: 'Incorrect password'
             })
             return false
           }

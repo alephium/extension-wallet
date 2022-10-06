@@ -1,47 +1,47 @@
-import { createTheme } from "@mui/material/styles"
-import React, { FC } from "react"
-import {
-  DefaultTheme,
-  ThemeProvider as StyledComponentsThemeProvider,
-  createGlobalStyle,
-  css,
-} from "styled-components"
-import { normalize } from "styled-normalize"
+import 'swiper/css'
+import 'swiper/css/pagination'
 
-const white = "#FFFFFF"
-const black = "#000000"
+import { createTheme } from '@mui/material/styles'
+import React, { FC } from 'react'
+import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
+import { normalize } from 'styled-normalize'
+
+const white = '#FFFFFF'
+const black = '#000000'
 
 export const colors = {
   white,
   black,
 
-  bg1: "#161616",
-  bg2: "#333332",
-  bg3: "#474747",
-  bg4: "#5f5e5c",
-  bg5: "#fafafa",
+  bg1: '#141417',
+  bg2: '#1B1B1f',
+  bg3: '#27272C',
+  bg4: '#5f5e5c',
+  bg5: '#fafafa',
 
   text1: white,
-  text2: "#8f8e8c",
-  text3: "#5c5b59",
-  text4: "#c2c0be",
+  text2: '#8f8e8c',
+  text3: '#5c5b59',
+  text4: '#c2c0be',
 
-  red1: "#c12026",
-  red2: "#ff675c",
-  red3: "#ff875b",
-  red4: "#f36a3d",
+  red1: '#c12026',
+  red2: '#ff675c',
+  red3: '#ff875b',
+  red4: '#f36a3d',
 
-  blue1: "#29c5ff",
-  blue2: "#94e2ff",
+  blue1: '#29c5ff',
+  blue2: '#94e2ff',
 
-  yellow1: "#ffbf3d",
+  green1: '#3ed282',
+
+  yellow1: '#ffbf3d'
 }
 
 const MEDIA_WIDTHS = {
   sm: 600,
   md: 900,
   lg: 1200,
-  xl: 1536,
+  xl: 1536
 }
 
 /**
@@ -141,18 +141,14 @@ export const theme: DefaultTheme = {
   mediaMaxWidth: mediaMaxWidthTemplates,
   mediaMinWidth: mediaMinWidthTemplates,
   margin: {
-    extensionInTab: "10%",
-  },
+    extensionInTab: '10%'
+  }
 }
 
 export const ThemeProvider: FC<{
   children: React.ReactNode
 }> = ({ children }) => {
-  return (
-    <StyledComponentsThemeProvider theme={theme}>
-      {children}
-    </StyledComponentsThemeProvider>
-  )
+  return <StyledComponentsThemeProvider theme={theme}>{children}</StyledComponentsThemeProvider>
 }
 
 export interface GlobalStyleProps {
@@ -163,7 +159,7 @@ export const FixedGlobalStyle = createGlobalStyle<GlobalStyleProps>`
   ${normalize}
 
   body {
-    font-family: 'Barlow', sans-serif;
+    font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -171,8 +167,8 @@ export const FixedGlobalStyle = createGlobalStyle<GlobalStyleProps>`
     min-width: 360px;
     min-height: 600px;
 
-    width: ${({ extensionIsInTab }) => (extensionIsInTab ? "unset" : "360px")};
-    height: ${({ extensionIsInTab }) => (extensionIsInTab ? "unset" : "600px")};
+    width: ${({ extensionIsInTab }) => (extensionIsInTab ? 'unset' : '360px')};
+    height: ${({ extensionIsInTab }) => (extensionIsInTab ? 'unset' : '600px')};
 
     overscroll-behavior: none;
     -ms-overflow-style: none;  /* IE and Edge */
@@ -204,6 +200,6 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
 export const muiTheme = createTheme({
   palette: {
-    mode: "dark",
-  },
+    mode: 'dark'
+  }
 })

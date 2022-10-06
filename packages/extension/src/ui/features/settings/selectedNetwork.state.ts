@@ -1,6 +1,6 @@
-import create from "zustand"
+import create from 'zustand'
 
-import { Network } from "../../../shared/networks"
+import { Network } from '../../../shared/networks'
 
 interface State {
   selectedNetwork?: Network
@@ -11,12 +11,12 @@ const useSelectedNetworkStore = create<State>((set) => ({
   selectedNetwork: undefined,
   setSelectedNetwork: (selectedNetwork) =>
     set({
-      selectedNetwork,
-    }),
+      selectedNetwork
+    })
 }))
 
 export const useSelectedNetwork = () =>
   [
     useSelectedNetworkStore((state) => state.selectedNetwork),
-    useSelectedNetworkStore((state) => state.setSelectedNetwork),
+    useSelectedNetworkStore((state) => state.setSelectedNetwork)
   ] as const

@@ -1,12 +1,8 @@
-import { FC } from "react"
-import styled from "styled-components"
+import { FC } from 'react'
+import styled from 'styled-components'
 
-import { RowCentered } from "../../components/Row"
-import {
-  useHardReload,
-  useResetCache,
-  useSoftReload,
-} from "../../services/resetAndReload"
+import { RowCentered } from '../../components/Row'
+import { useHardReload, useResetCache, useSoftReload } from '../../services/resetAndReload'
 
 const Container = styled(RowCentered)`
   position: fixed;
@@ -29,7 +25,7 @@ const DevUI: FC = () => {
   const softReload = useSoftReload()
   const hardReload = useHardReload()
   return (
-    <Container gap={"4px"}>
+    <Container gap={'4px'}>
       <DevButton onClick={resetCache}>Reset cache</DevButton>
       <DevButton onClick={softReload}>Reload UI</DevButton>
       <DevButton onClick={hardReload}>Reload HTML</DevButton>

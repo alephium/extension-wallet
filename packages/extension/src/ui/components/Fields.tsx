@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components"
+import styled, { css } from 'styled-components'
 
 export const Field = styled.div<{ clickable?: boolean }>`
   display: flex;
@@ -20,7 +20,7 @@ export const FieldError = styled.div<{ justify?: string }>`
   color: ${({ theme }) => theme.text1};
   background-color: ${({ theme }) => theme.red1};
   display: flex;
-  justify-content: ${({ justify }) => (justify ? justify : "center")};
+  justify-content: ${({ justify }) => (justify ? justify : 'center')};
   align-items: center;
 
   padding: 8px 10px;

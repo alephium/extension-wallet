@@ -1,18 +1,18 @@
-import { FC, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import styled from "styled-components"
+import { FC, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { Network } from "../../../shared/networks"
-import { BackButton } from "../../components/BackButton"
-import { Button, ButtonGroupVertical } from "../../components/Button"
-import { Header } from "../../components/Header"
-import { InputText } from "../../components/InputText"
-import { routes } from "../../routes"
-import { addNetworks } from "../../services/backgroundNetworks"
-import { FormError, H2 } from "../../theme/Typography"
-import { useNetworkState } from "../networks/networks.state"
-import { useNetworks } from "../networks/useNetworks"
-import { recover } from "../recovery/recovery.service"
+import { Network } from '../../../shared/networks'
+import { BackButton } from '../../components/BackButton'
+import { Button, ButtonGroupVertical } from '../../components/buttons/Button'
+import { Header } from '../../components/Header'
+import { InputText } from '../../components/InputText'
+import { routes } from '../../routes'
+import { addNetworks } from '../../services/backgroundNetworks'
+import { FormError, H2 } from '../../theme/Typography'
+import { useNetworkState } from '../networks/networks.state'
+import { useNetworks } from '../networks/useNetworks'
+import { recover } from '../recovery/recovery.service'
 
 const AddTokenScreenWrapper = styled.div`
   display: flex;
@@ -36,7 +36,7 @@ interface AddNetworkScreenProps {
   hideBackButton?: boolean
   onSubmit?: () => void
   onReject?: () => void
-  mode?: "add" | "switch"
+  mode?: 'add' | 'switch'
 }
 
 export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
@@ -44,13 +44,13 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
   hideBackButton,
   onSubmit,
   onReject,
-  mode = "add",
+  mode = 'add'
 }) => {
   const navigate = useNavigate()
   const { allNetworks } = useNetworks({ suspense: false })
 
   const { setSwitcherNetworkId } = useNetworkState()
-  const [error, setError] = useState("")
+  const [error, setError] = useState('')
 
   return (
     <>
@@ -59,52 +59,37 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
       </Header>
 
       <AddTokenScreenWrapper>
-        <H2>{mode === "add" ? "Add" : "Switch"} Network</H2>
+        <H2>{mode === 'add' ? 'Add' : 'Switch'} Network</H2>
 
         <form
           onSubmit={async (e) => {
             e.preventDefault()
             if (requestedNetwork) {
               try {
-                if (mode === "add") {
+                if (mode === 'add') {
                   addNetworks([requestedNetwork])
                   onSubmit?.()
-                  navigate(await recover())
-                } else if (mode === "switch") {
+                  navigate(await recover(routes.settingsAddCustomNetwork.path))
+                } else if (mode === 'switch') {
                   onSubmit?.()
                   if (allNetworks?.some((n) => n.id === requestedNetwork.id)) {
                     setSwitcherNetworkId(requestedNetwork.id)
-                    navigate(await recover())
+                    navigate(await recover(routes.settingsAddCustomNetwork.path))
                   } else {
                     navigate(routes.addressTokens())
                   }
                 }
               } catch {
-                setError("Network already exists")
+                setError('Network already exists')
               }
             }
           }}
         >
           {requestedNetwork && (
             <>
-              <InputText
-                placeholder="Network ID"
-                type="text"
-                value={requestedNetwork.id}
-                disabled
-              />
-              <InputText
-                placeholder="Name"
-                type="text"
-                value={requestedNetwork.name}
-                disabled
-              />
-              <InputText
-                placeholder="Node URL"
-                type="text"
-                value={requestedNetwork.nodeUrl}
-                disabled
-              />
+              <InputText placeholder="Network ID" type="text" value={requestedNetwork.id} disabled />
+              <InputText placeholder="Name" type="text" value={requestedNetwork.name} disabled />
+              <InputText placeholder="Node URL" type="text" value={requestedNetwork.nodeUrl} disabled />
               {/*** Show Optional Fields only if the value is provided */}
               {requestedNetwork.explorerApiUrl && (
                 <InputText
@@ -115,12 +100,7 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
                 />
               )}
               {requestedNetwork.explorerUrl && (
-                <InputText
-                  placeholder="Explorer URL"
-                  type="text"
-                  value={requestedNetwork.explorerUrl}
-                  disabled
-                />
+                <InputText placeholder="Explorer URL" type="text" value={requestedNetwork.explorerUrl} disabled />
               )}
             </>
           )}
@@ -131,9 +111,7 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
                 Reject
               </Button>
             )}
-            <Button type="submit">
-              {mode === "add" ? "Add" : "Switch"} Network
-            </Button>
+            <Button type="submit">{mode === 'add' ? 'Add' : 'Switch'} Network</Button>
           </ButtonGroupVertical>
         </form>
       </AddTokenScreenWrapper>

@@ -1,20 +1,20 @@
 import {
   AddressAndKeys,
+  TOTAL_NUMBER_OF_GROUPS,
   deriveNewAddressData,
   getStorage,
-  TOTAL_NUMBER_OF_GROUPS,
   walletGenerate,
   walletImport,
-  walletOpen,
-} from "@alephium/sdk"
-import { Balance } from "@alephium/sdk/api/alephium"
-import { web3, ExplorerProvider, NodeProvider } from "@alephium/web3"
+  walletOpen
+} from '@alephium/sdk'
+import { AddressBalance } from '@alephium/sdk/api/explorer'
+import { ExplorerProvider, NodeProvider, web3 } from '@alephium/web3'
 import { PrivateKeyWallet } from '@alephium/web3-wallet'
-import { Transaction } from "@alephium/web3/dist/src/api/api-explorer"
-import { find, range } from "lodash-es"
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { find, range } from 'lodash-es'
 
-import { Network } from "../shared/networks"
-import type { IStorage } from "./storage"
+import { Network } from '../shared/networks'
+import type { IStorage } from './storage'
 
 const AlephiumStorage = getStorage()
 
@@ -29,7 +29,7 @@ interface WalletSession {
 
 export interface WalletStorageProps {
   backup?: string
-  selectedAddress?: AddressAndKeys
+  defaultAddress?: AddressAndKeys
   addresses?: AddressAndKeys[]
   discoveredOnce?: boolean
 }
@@ -42,8 +42,8 @@ export class Wallet {
   constructor(
     private readonly store: IStorage<WalletStorageProps>,
     private readonly getCurrentNetwork: GetCurrentNetwork,
-    private readonly onAutoLock?: () => Promise<void>,
-  ) { }
+    private readonly onAutoLock?: () => Promise<void>
+  ) {}
 
   async getNodeProvider(): Promise<NodeProvider> {
     const currentNetwork = await this.getCurrentNetwork()
@@ -54,7 +54,7 @@ export class Wallet {
         return currentNodeProvider
       }
     } catch (e) {
-      console.info("Error getting current node provider", e)
+      console.info('Error getting current node provider', e)
     }
 
     web3.setCurrentNodeProvider(currentNetwork.nodeUrl)
@@ -74,10 +74,8 @@ export class Wallet {
     return this.session !== undefined
   }
 
-  public async getAlephiumPrivateKeySigner(): Promise<
-    PrivateKeyWallet | undefined
-  > {
-    const addressAndKeys = await this.getAlephiumSelectedAddresses()
+  public async getAlephiumPrivateKeySigner(): Promise<PrivateKeyWallet | undefined> {
+    const addressAndKeys = await this.getAlephiumDefaultAddress()
 
     await this.getNodeProvider()
 
@@ -90,7 +88,7 @@ export class Wallet {
 
   public async getAlephiumAddresses(): Promise<AddressAndKeys[]> {
     // Only one for now
-    const addresses = await this.store.getItem("addresses")
+    const addresses = await this.store.getItem('addresses')
     if (addresses) {
       return addresses
     } else {
@@ -99,34 +97,31 @@ export class Wallet {
   }
 
   private resetAddresses() {
-    return this.store.setItem("addresses", [])
+    return this.store.setItem('addresses', [])
   }
 
   public async getSeedPhrase(): Promise<string> {
     if (!this.session) {
-      throw new Error("Session is not open")
+      throw new Error('Session is not open')
     }
     return this.session.mnemonic
   }
 
   public async restoreSeedPhrase(seedPhrase: string, password: string) {
     if (this.isInitialized() || this.session) {
-      throw new Error("Wallet is already initialized")
+      throw new Error('Wallet is already initialized')
     }
 
     try {
       const wallet = walletImport(seedPhrase)
-      AlephiumStorage.save("alephium-wallet-name", wallet.encrypt(password))
+      AlephiumStorage.save('alephium-wallet-name', wallet.encrypt(password))
       this.setSession(wallet.privateKey, password, wallet.seed, wallet.mnemonic)
     } catch {
-      throw Error("Restore seedphrase failed")
+      throw Error('Restore seedphrase failed')
     }
   }
 
-  public async startAlephiumSession(
-    walletName: string,
-    password: string,
-  ): Promise<boolean> {
+  public async startAlephiumSession(walletName: string, password: string): Promise<boolean> {
     if (this.session) {
       return true
     }
@@ -142,20 +137,10 @@ export class Wallet {
       if (!walletEncrypted) {
         const wallet = walletGenerate()
         AlephiumStorage.save(walletName, wallet.encrypt(password))
-        this.setSession(
-          wallet.privateKey,
-          password,
-          wallet.seed,
-          wallet.mnemonic,
-        )
+        this.setSession(wallet.privateKey, password, wallet.seed, wallet.mnemonic)
       } else {
         const wallet = walletOpen(password, walletEncrypted)
-        this.setSession(
-          wallet.privateKey,
-          password,
-          wallet.seed,
-          wallet.mnemonic,
-        )
+        this.setSession(wallet.privateKey, password, wallet.seed, wallet.mnemonic)
       }
 
       return true
@@ -168,22 +153,19 @@ export class Wallet {
     return this.session?.password === password
   }
 
-  public async getBalance(address: string): Promise<Balance> {
-    console.log("getBalance", address)
-    const nodeProvider = await this.getNodeProvider()
-    console.log("nodeProvider", nodeProvider)
-    const value = await nodeProvider.addresses.getAddressesAddressBalance(address)
-    console.log("balance", value)
+  public async getBalance(address: string): Promise<AddressBalance> {
+    const explorerProvider = await this.getExplorerProvider()
+    const value = await explorerProvider.addresses.getAddressesAddressBalance(address)
     return value
   }
 
   public async selectAlephiumAddress(address: string) {
     const addresses = await this.getAlephiumAddresses()
 
-    const selectedAddress = find(addresses, (addr) => addr.address === address)
+    const defaultAddress = find(addresses, (addr) => addr.address === address)
 
-    if (selectedAddress) {
-      await this.store.setItem("selectedAddress", selectedAddress)
+    if (defaultAddress) {
+      await this.store.setItem('defaultAddress', defaultAddress)
     }
   }
 
@@ -193,60 +175,53 @@ export class Wallet {
     } else {
       // do not store at the moment, but use public key and private key to sign
       // store later
-      const addresses = await this.store.getItem("addresses")
-      group = (group || group === 0) ? ~~group : undefined
+      const addresses = await this.store.getItem('addresses')
+      group = group || group === 0 ? ~~group : undefined
 
-      let newAndSelectedAddress
+      let newAndDefaultAddress
       if (addresses) {
-        group = (group || group === 0) ? ~~group : undefined
+        group = group || group === 0 ? ~~group : undefined
         const skipIndexes = addresses.map((address) => address.addressIndex)
-        newAndSelectedAddress = deriveNewAddressData(
-          this.session.seed,
-          group,
-          undefined,
-          skipIndexes
-        )
-        await this.store.setItem("addresses", [...addresses, newAndSelectedAddress])
+        newAndDefaultAddress = deriveNewAddressData(this.session.seed, group, undefined, skipIndexes)
+        await this.store.setItem('addresses', [...addresses, newAndDefaultAddress])
       } else {
         if (group === undefined) {
           const seed = this.session.seed
           const skipIndexes: number[] = []
-          const newAddresses = range(TOTAL_NUMBER_OF_GROUPS).map(group => {
+          const newAddresses = range(TOTAL_NUMBER_OF_GROUPS).map((group) => {
             const address = deriveNewAddressData(seed, group, undefined, skipIndexes)
             skipIndexes.push(address.addressIndex)
             return address
           })
-          newAndSelectedAddress = newAddresses[0]
-          await this.store.setItem("addresses", newAddresses)
+          newAndDefaultAddress = newAddresses[0]
+          await this.store.setItem('addresses', newAddresses)
         } else {
-          newAndSelectedAddress = deriveNewAddressData(this.session.seed, group, 0)
-          await this.store.setItem("addresses", [newAndSelectedAddress])
+          newAndDefaultAddress = deriveNewAddressData(this.session.seed, group, 0)
+          await this.store.setItem('addresses', [newAndDefaultAddress])
         }
       }
 
-      await this.store.setItem("selectedAddress", newAndSelectedAddress)
+      await this.store.setItem('defaultAddress', newAndDefaultAddress)
 
-      return newAndSelectedAddress
+      return newAndDefaultAddress
     }
   }
 
-  public async getAlephiumSelectedAddresses(): Promise<
-    AddressAndKeys | undefined
-  > {
+  public async getAlephiumDefaultAddress(): Promise<AddressAndKeys | undefined> {
     if (!this.session?.seed) {
       return undefined
     } else {
-      const selectedAddress = await this.store.getItem("selectedAddress")
-      if (!selectedAddress) {
-        const addresses = await this.store.getItem("addresses")
+      const defaultAddress = await this.store.getItem('defaultAddress')
+      if (!defaultAddress) {
+        const addresses = await this.store.getItem('addresses')
         if (addresses && addresses?.length > 0) {
-          await this.store.setItem("selectedAddress", addresses[0])
+          await this.store.setItem('defaultAddress', addresses[0])
           return addresses[0]
         } else {
           return undefined
         }
       } else {
-        return selectedAddress
+        return defaultAddress
       }
     }
   }
@@ -263,17 +238,10 @@ export class Wallet {
   // Get all transactions, maybe doesn't belong here
   public async getTransactions(address: string): Promise<Transaction[]> {
     const explorerProvider = await this.getExplorerProvider()
-    return await explorerProvider.addresses.getAddressesAddressTransactions(
-      address,
-    )
+    return await explorerProvider.addresses.getAddressesAddressTransactions(address)
   }
 
-  private setSession(
-    secret: string,
-    password: string,
-    seed: Buffer,
-    mnemonic: string,
-  ) {
+  private setSession(secret: string, password: string, seed: Buffer, mnemonic: string) {
     this.session = { secret, password, seed, mnemonic }
 
     setTimeout(() => {

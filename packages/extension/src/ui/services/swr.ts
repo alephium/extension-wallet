@@ -1,13 +1,7 @@
-import { useEffect } from "react"
-import useSWR, {
-  BareFetcher,
-  Cache,
-  Key,
-  SWRConfiguration,
-  unstable_serialize,
-} from "swr"
+import { useEffect } from 'react'
+import useSWR, { BareFetcher, Cache, Key, SWRConfiguration, unstable_serialize } from 'swr'
 
-import { reviveJsonBigNumber } from "../../shared/json"
+import { reviveJsonBigNumber } from '../../shared/json'
 
 export interface SWRConfigCommon {
   suspense?: boolean
@@ -25,7 +19,7 @@ const swrPersistedCache: Cache = {
     try {
       const value = localStorage.getItem(unstable_serialize(key))
       if (!value) {
-        throw new Error("No value found")
+        throw new Error('No value found')
       }
       return JSON.parse(value, reviveJsonBigNumber) ?? undefined
     } catch {
@@ -34,7 +28,7 @@ const swrPersistedCache: Cache = {
   },
   delete: (key) => {
     return localStorage.removeItem(unstable_serialize(key))
-  },
+  }
 }
 
 /** SWR fetcher used by useConditionallyEnabledSWR when disabled */
@@ -51,14 +45,10 @@ export function useConditionallyEnabledSWR<Data = any, Error = any>(
   enabled: boolean,
   key: Key,
   fetcher: BareFetcher<Data> | null,
-  config?: SWRConfiguration<Data, Error, BareFetcher<Data>>,
+  config?: SWRConfiguration<Data, Error, BareFetcher<Data>>
 ) {
   /** fetcher conditional on enabled */
-  const result = useSWR<Data, Error>(
-    key,
-    enabled ? fetcher : fetcherDisabled,
-    config,
-  )
+  const result = useSWR<Data, Error>(key, enabled ? fetcher : fetcherDisabled, config)
   /** revalidate when enabled changes */
   useEffect(() => {
     result.mutate()
@@ -89,5 +79,5 @@ export const swrCacheProvider: Cache = {
     } else {
       return swrPersistedCache.delete(key)
     }
-  },
+  }
 }

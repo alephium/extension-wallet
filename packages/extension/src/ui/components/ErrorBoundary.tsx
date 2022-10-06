@@ -1,4 +1,4 @@
-import { Component, cloneElement } from "react"
+import { Component, cloneElement } from 'react'
 
 interface ErrorBoundaryProps {
   fallback: React.ReactElement
@@ -10,16 +10,13 @@ export interface ErrorBoundaryState {
   errorInfo?: any
 }
 
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state = { error: null, errorInfo: null }
 
   /** server-side error */
   static getDerivedStateFromError(error: unknown) {
     return {
-      error,
+      error
     }
   }
 
@@ -27,7 +24,7 @@ export class ErrorBoundary extends Component<
   componentDidCatch(error: any, errorInfo: any) {
     this.setState({
       error: error,
-      errorInfo: errorInfo,
+      errorInfo: errorInfo
     })
   }
 

@@ -1,7 +1,7 @@
-import { FC } from "react"
-import styled from "styled-components"
+import { FC } from 'react'
+import styled from 'styled-components'
 
-import { ReportGmailerrorredIcon } from "./Icons/MuiIcons"
+import { ReportGmailerrorredIcon } from './Icons/MuiIcons'
 
 const Container = styled.div`
   display: flex;
@@ -20,9 +20,7 @@ interface ErrorBoundaryFallbackProps {
   title: string
 }
 
-export const ErrorBoundaryFallback: FC<ErrorBoundaryFallbackProps> = ({
-  title,
-}) => (
+export const ErrorBoundaryFallback: FC<ErrorBoundaryFallbackProps> = ({ title }) => (
   <Container>
     <ReportGmailerrorredIcon />
     <h3>{title}</h3>

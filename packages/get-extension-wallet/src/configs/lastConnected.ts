@@ -1,4 +1,4 @@
-import { StorageWrapper } from "./storageWrapper"
+import { StorageWrapper } from './storageWrapper'
 
-const lastConnected = new StorageWrapper("gsw-last")
+const lastConnected = new StorageWrapper('gsw-last')
 export default lastConnected

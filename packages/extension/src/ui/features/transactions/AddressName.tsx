@@ -1,7 +1,7 @@
-import { FC, InputHTMLAttributes, RefObject, useState } from "react"
-import styled from "styled-components"
+import { FC, InputHTMLAttributes, RefObject, useState } from 'react'
+import styled from 'styled-components'
 
-import { InputText } from "../../components/InputText"
+import { InputText } from '../../components/InputText'
 
 const Form = styled.form`
   display: flex;
@@ -40,18 +40,14 @@ interface AddressNameProps extends InputHTMLAttributes<HTMLInputElement> {
   inputRef: RefObject<HTMLInputElement>
 }
 
-export const AddressName: FC<AddressNameProps> = ({
-  value,
-  inputRef,
-  ...props
-}) => {
+export const AddressName: FC<AddressNameProps> = ({ value, inputRef, ...props }) => {
   const [isFocused, setIsFocused] = useState(false)
-  if (isFocused && value === "Unknown Address") {
-    value = ""
+  if (isFocused && value === 'Unknown Address') {
+    value = ''
   }
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-      ; (document.activeElement as any)?.blur()
+    ;(document.activeElement as any)?.blur()
   }
   return (
     <Form onSubmit={handleSubmit} autoComplete="off">

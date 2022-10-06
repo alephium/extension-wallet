@@ -1,16 +1,16 @@
-import { FC, ReactNode, useState } from "react"
-import styled from "styled-components"
+import { FC, ReactNode, useState } from 'react'
+import styled from 'styled-components'
 
-import { Button } from "../../components/Button"
-import { IconBar } from "../../components/IconBar"
-import { Paragraph } from "../../components/Page"
-import { useReturnTo } from "../../routes"
-import { checkPassword } from "../../services/backgroundSessions"
-import { H2 } from "../../theme/Typography"
-import { StickyGroup } from "../actions/ConfirmScreen"
-import { PasswordForm } from "../onboarding/PasswordForm"
-import { SeedPhrase } from "../recovery/SeedPhrase"
-import { useSeedPhrase } from "../recovery/useSeedPhrase"
+import { useAppState } from '../../app.state'
+import { Button } from '../../components/buttons/Button'
+import { IconBar } from '../../components/IconBar'
+import { useReturnTo } from '../../routes'
+import { checkPassword } from '../../services/backgroundSessions'
+import { H2, P } from '../../theme/Typography'
+import { StickyGroup } from '../actions/ConfirmScreen'
+import { PasswordForm } from '../onboarding/PasswordForm'
+import { SeedPhrase } from '../recovery/SeedPhrase'
+import { useSeedPhrase } from '../recovery/useSeedPhrase'
 
 const Container = styled.div`
   display: flex;
@@ -46,12 +46,19 @@ export const SeedSettingsScreen: FC = () => {
   if (!passwordIsValid) {
     return (
       <Wrapper>
-        <Paragraph>Enter your password to view your recovery phrase.</Paragraph>
+        <P>Enter your password to view your recovery phrase.</P>
 
         <PasswordForm
           verifyPassword={async (password) => {
             const isValid = await checkPassword(password)
             setPasswordIsValid(isValid)
+
+            if (!isValid) {
+              useAppState.setState({
+                error: 'Incorrect password'
+              })
+            }
+
             return isValid
           }}
         >
@@ -69,12 +76,13 @@ export const SeedSettingsScreen: FC = () => {
 
   return (
     <Wrapper>
-      <Paragraph>
-        Write these words down on paper. It is unsafe to save them on your
-        computer.
-      </Paragraph>
+      <P>Write these words down on paper. It is unsafe to save them on your computer.</P>
 
-      <SeedPhrase seedPhrase={seedPhrase} />
+      <SeedPhraseStyled seedPhrase={seedPhrase} />
     </Wrapper>
   )
 }
+
+const SeedPhraseStyled = styled(SeedPhrase)`
+  margin-top: 20px;
+`

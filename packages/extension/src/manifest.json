@@ -13,13 +13,7 @@
     "default_title": "Alephium",
     "default_popup": "index.html"
   },
-  "permissions": [
-    "downloads",
-    "tabs",
-    "storage",
-    "notifications",
-    "http://localhost/*"
-  ],
+  "permissions": ["downloads", "tabs", "storage", "notifications", "http://localhost/*"],
   "icons": {
     "16": "assets/favicon-16.png",
     "48": "assets/favicon-48.png",

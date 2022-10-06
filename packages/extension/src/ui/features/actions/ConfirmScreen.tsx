@@ -1,35 +1,16 @@
-import { FC, FormEvent, ReactNode, useState } from "react"
-import Measure from "react-measure"
-import { useNavigate } from "react-router-dom"
-import styled from "styled-components"
+import { FC, FormEvent, ReactNode, useState } from 'react'
+import Measure from 'react-measure'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { Address } from "../../../shared/Address"
-import {
-  Button,
-  ButtonGroupVertical,
-  ButtonVariant,
-} from "../../components/Button"
-import { H2 } from "../../theme/Typography"
-
-const ConfirmScreenWrapper = styled.form<{
-  addressShown: boolean
-  smallTopPadding: boolean
-}>`
-  display: flex;
-  flex-direction: column;
-  padding: ${({ smallTopPadding }) => (smallTopPadding ? "16px" : "48px")} 32px
-    0;
-  ${({ addressShown }) => (addressShown ? `padding-top: 0;` : ``)}
-
-  > ${H2} {
-    margin: 0 0 40px;
-  }
-`
+import { Address } from '../../../shared/addresses'
+import { Button, ButtonGroupVertical, ButtonVariant } from '../../components/buttons/Button'
+import { H2 } from '../../theme/Typography'
 
 export interface ConfirmPageProps {
   onSubmit?: (e: FormEvent<HTMLFormElement>) => void
   onReject?: () => void
-  selectedAddress?: Address
+  defaultAddress?: Address
 }
 
 interface ConfirmScreenProps extends ConfirmPageProps {
@@ -47,48 +28,16 @@ interface ConfirmScreenProps extends ConfirmPageProps {
   children: ReactNode
 }
 
-export const StickyGroup = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 16px 32px 24px;
-
-  background-color: ${({ theme }) => theme.bg1};
-  background: linear-gradient(
-    180deg,
-    rgba(16, 16, 16, 0.4) 0%,
-    ${({ theme }) => theme.bg1} 73.72%
-  );
-  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(10px);
-  z-index: 100;
-
-  > * + * {
-    margin-top: 24px;
-  }
-
-  ${({ theme }) => theme.mediaMinWidth.sm`
-    left: ${theme.margin.extensionInTab};
-    right: ${theme.margin.extensionInTab};
-  `}
-`
-
-const Placeholder = styled.div`
-  width: 100%;
-  margin-top: 8px;
-`
-
 export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   title,
-  confirmButtonText = "Confirm",
+  confirmButtonText = 'Confirm',
   confirmButtonDisabled,
   confirmButtonBackgroundColor,
   confirmButtonVariant,
-  rejectButtonText = "Reject",
+  rejectButtonText = 'Reject',
   onSubmit,
   onReject,
-  selectedAddress,
+  defaultAddress,
   singleButton = false,
   switchButtonOrder = false,
   smallTopPadding = false,
@@ -104,7 +53,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   return (
     <ConfirmScreenWrapper
       smallTopPadding={smallTopPadding}
-      addressShown={Boolean(showHeader && selectedAddress)}
+      addressShown={Boolean(showHeader && defaultAddress)}
       onSubmit={(e) => {
         e.preventDefault()
         return onSubmit?.(e)
@@ -117,7 +66,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
 
       <Placeholder
         style={{
-          height: placeholderHeight,
+          height: placeholderHeight
         }}
       />
       <Measure
@@ -139,9 +88,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
               <Button
                 disabled={confirmButtonDisabled}
                 style={{
-                  backgroundColor: confirmButtonDisabled
-                    ? undefined
-                    : confirmButtonBackgroundColor,
+                  backgroundColor: confirmButtonDisabled ? undefined : confirmButtonBackgroundColor
                 }}
                 variant={confirmButtonVariant}
                 type="submit"
@@ -155,3 +102,45 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
     </ConfirmScreenWrapper>
   )
 }
+
+export const StickyGroup = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 32px 24px;
+
+  background-color: ${({ theme }) => theme.bg1};
+  background: linear-gradient(180deg, rgba(16, 16, 16, 0.4) 0%, ${({ theme }) => theme.bg1} 73.72%);
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+
+  > * + * {
+    margin-top: 24px;
+  }
+
+  ${({ theme }) => theme.mediaMinWidth.sm`
+    left: ${theme.margin.extensionInTab};
+    right: ${theme.margin.extensionInTab};
+  `}
+`
+
+const Placeholder = styled.div`
+  width: 100%;
+  margin-top: 8px;
+`
+
+const ConfirmScreenWrapper = styled.form<{
+  addressShown: boolean
+  smallTopPadding: boolean
+}>`
+  display: flex;
+  flex-direction: column;
+  padding: ${({ smallTopPadding }) => (smallTopPadding ? 0 : '48px')} 32px 0;
+  ${({ addressShown }) => (addressShown ? `padding-top: 0;` : ``)}
+
+  > ${H2} {
+    margin: 0 0 20px;
+  }
+`

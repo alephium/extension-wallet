@@ -1,15 +1,8 @@
-import React, {
-  FC,
-  ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useState,
-} from "react"
-import browser from "webextension-polyfill"
+import React, { FC, ReactNode, createContext, useCallback, useContext, useState } from 'react'
+import browser from 'webextension-polyfill'
 
-import { delay } from "../../shared/utils/delay"
-import { useAppState } from "../app.state"
+import { delay } from '../../shared/utils/delay'
+import { useAppState } from '../app.state'
 
 export interface ISoftReloadContext {
   key: string
@@ -18,8 +11,7 @@ export interface ISoftReloadContext {
 
 export const SoftReloadContext = createContext<ISoftReloadContext | null>(null)
 
-export const useSoftReloadContext = () =>
-  useContext(SoftReloadContext) as ISoftReloadContext
+export const useSoftReloadContext = () => useContext(SoftReloadContext) as ISoftReloadContext
 
 /** the key returned should be different each time, does not need to be a unique id */
 const makeReloadKey = () => Date.now().toString()
@@ -51,20 +43,18 @@ export const useSoftReload = () => {
 /** re-load the HTML page, can have some side-effects including localStorage+SWR state pollution */
 export const useHardReload = () => {
   return useCallback(() => {
-    const url = browser.runtime.getURL("index.html")
+    const url = browser.runtime.getURL('index.html')
     window.location.href = url
   }, [])
 }
 
 /** reset local storage while preserving some UI state */
 
-export const RESET_CACHE_OMIT_KEYS = ["networkStatuses-all"]
+export const RESET_CACHE_OMIT_KEYS = ['networkStatuses-all']
 
 export const useResetCache = () => {
   return useCallback(() => {
-    const clearKeys = Object.keys(localStorage).filter(
-      (key) => !RESET_CACHE_OMIT_KEYS.includes(key),
-    )
+    const clearKeys = Object.keys(localStorage).filter((key) => !RESET_CACHE_OMIT_KEYS.includes(key))
     clearKeys.forEach((key) => localStorage.removeItem(key))
   }, [])
 }

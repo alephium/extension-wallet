@@ -1,8 +1,8 @@
-import { FC } from "react"
-import styled from "styled-components"
+import { FC } from 'react'
+import styled from 'styled-components'
 
-import { ErrorBoundaryState } from "./components/ErrorBoundary"
-import ErrorBoundaryFallbackWithCopyError from "./components/ErrorBoundaryFallbackWithCopyError"
+import { ErrorBoundaryState } from './components/ErrorBoundary'
+import ErrorBoundaryFallbackWithCopyError from './components/ErrorBoundaryFallbackWithCopyError'
 
 const FullscreenFallbackContainer = styled.div`
   width: 100vw;
@@ -11,10 +11,7 @@ const FullscreenFallbackContainer = styled.div`
   flex-direction: column;
 `
 
-const AppErrorBoundaryFallback: FC<ErrorBoundaryState> = ({
-  error,
-  errorInfo,
-}) => {
+const AppErrorBoundaryFallback: FC<ErrorBoundaryState> = ({ error, errorInfo }) => {
   return (
     <FullscreenFallbackContainer>
       <ErrorBoundaryFallbackWithCopyError error={error} errorInfo={errorInfo} />

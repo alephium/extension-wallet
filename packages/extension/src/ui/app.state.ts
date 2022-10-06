@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
-import create from "zustand"
+import { useEffect, useState } from 'react'
+import create from 'zustand'
 
-import { messageStream } from "../shared/messages"
+import { messageStream } from '../shared/messages'
 
 interface State {
   error?: string
@@ -11,7 +11,7 @@ interface State {
 
 export const useAppState = create<State>(() => ({
   isLoading: true,
-  isFirstRender: true,
+  isFirstRender: true
 }))
 
 export const useLoadingProgress = () => {
@@ -19,7 +19,7 @@ export const useLoadingProgress = () => {
 
   useEffect(() => {
     messageStream.subscribe(([message]) => {
-      if (message.type === "LOADING_PROGRESS") {
+      if (message.type === 'LOADING_PROGRESS') {
         setProgress(message.data >= 1 ? undefined : message.data)
       }
     })

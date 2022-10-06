@@ -1,28 +1,28 @@
 // playwright.config.ts
-import type { PlaywrightTestConfig } from "@playwright/test"
-import { devices } from "@playwright/test"
+import type { PlaywrightTestConfig } from '@playwright/test'
+import { devices } from '@playwright/test'
 
 const config: PlaywrightTestConfig = {
   timeout: 5 * 60e3, // 5 minutes
   reportSlowTests: {
     threshold: 1 * 60e3, // 1 minutes
-    max: 5,
+    max: 5
   },
   forbidOnly: !!process.env.CI,
-  testDir: "./e2e",
+  testDir: './e2e',
   retries: process.env.CI ? 2 : 0,
   use: {
-    trace: "on-first-retry",
+    trace: 'on-first-retry'
   },
   projects: [
     {
-      name: "Plugin view",
+      name: 'Plugin view',
       use: {
-        ...devices["Desktop Chrome"],
-        viewport: { width: 360, height: 600 },
-      },
-    },
-  ],
+        ...devices['Desktop Chrome'],
+        viewport: { width: 360, height: 600 }
+      }
+    }
+  ]
 }
 
 export default config

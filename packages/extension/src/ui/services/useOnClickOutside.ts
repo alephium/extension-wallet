@@ -1,9 +1,6 @@
-import { RefObject, useEffect, useRef } from "react"
+import { RefObject, useEffect, useRef } from 'react'
 
-export function useOnClickOutside(
-  node: RefObject<HTMLElement>,
-  handler?: () => void,
-) {
+export function useOnClickOutside(node: RefObject<HTMLElement>, handler?: () => void) {
   const handlerRef = useRef<undefined | (() => void)>(handler)
 
   useEffect(() => {
@@ -21,10 +18,10 @@ export function useOnClickOutside(
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener('mousedown', handleClickOutside)
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [node])
 }

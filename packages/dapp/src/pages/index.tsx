@@ -1,16 +1,16 @@
-import type { NextPage } from "next"
-import Head from "next/head"
-import { useEffect, useState } from "react"
+import type { NextPage } from 'next'
+import Head from 'next/head'
+import { useEffect, useState } from 'react'
 
-import { connectWallet, silentConnectWallet } from "../services/wallet.service"
-import styles from "../styles/Home.module.css"
+import { connectWallet, silentConnectWallet } from '../services/wallet.service'
+import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
   const [address, setAddress] = useState<string>()
   const [isConnected, setConnected] = useState(false)
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       const wallet = await silentConnectWallet()
       setAddress(wallet?.selectedAccount?.address)
       setConnected(!!wallet?.isConnected)

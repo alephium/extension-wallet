@@ -1,12 +1,12 @@
-import { FC } from "react"
-import { useNavigate } from "react-router-dom"
-import styled from "styled-components"
+import { FC } from 'react'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { Button, ButtonGroup } from "../../components/Button"
-import { routes } from "../../routes"
-import { H2 } from "../../theme/Typography"
-import { P } from "../../theme/Typography"
-import LogoSvg from "./logo.svg"
+import { Button, ButtonGroup } from '../../components/buttons/Button'
+import { routes } from '../../routes'
+import { H2 } from '../../theme/Typography'
+import { P } from '../../theme/Typography'
+import LogoSvg from './logo.svg'
 
 export const GreetingsWrapper = styled.div`
   position: relative;
@@ -57,9 +57,7 @@ export const WelcomeScreen: FC = () => {
       <P>Accessible, Scalable and Secure DeFi</P>
       <ButtonGroup>
         <Button onClick={() => navigate(routes.newWallet())}>New wallet</Button>
-        <Button onClick={() => navigate(routes.seedRecovery())}>
-          Restore wallet
-        </Button>
+        <Button onClick={() => navigate(routes.seedRecovery())}>Restore wallet</Button>
       </ButtonGroup>
     </WelcomeScreenWrapper>
   )

@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from 'styled-components'
 
 export const AddressWrapper = styled.span`
   display: flex;
@@ -24,7 +24,6 @@ export const AddressIconsWrapper = styled.span`
 export const Address = styled.a`
   display: flex;
   align-items: center;
-  justify-content: center;
 
   font-size: 14px;
   line-height: 14px;
