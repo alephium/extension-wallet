@@ -13,25 +13,12 @@ const allowedWords = bip39Words.split(" ")
 export const useSeedRecovery = create<State>(() => ({}))
 
 export const validateSeedPhrase = (seedPhrase: string): boolean => {
-  const words = wordlists.en.split(seedPhrase.trim())
-  // check seed phrase has correct number of words
-  if (words.length !== 24) {
-    return false
-  }
-  // check every word is in the wordlist
-  if (!words.every((word) => allowedWords.indexOf(word) >= 0)) {
-    return false
-  }
-
-  return true
+  const words = wordlists.en.split(seedPhrase)
+  // check seed phrase has correct number of words and every word is in the wordlist
+  return words.length !== 24 ? false : words.every((word) => allowedWords.indexOf(word) >= 0)
 }
 
-export const validatePassword = (password: string): boolean => {
-  if (password.length > 5) {
-    return true
-  }
-  return false
-}
+export const validatePassword = (password: string): boolean => password.length > 5
 
 export const validateAndSetSeedPhrase = (seedPhrase: string): void => {
   if (!validateSeedPhrase(seedPhrase)) {

@@ -20,7 +20,7 @@ export const SeedRecoveryScreen: FC = () => {
   )
   const handleRestoreClick = async () => {
     try {
-      validateAndSetSeedPhrase(seedPhraseInput)
+      validateAndSetSeedPhrase(seedPhraseInput.trim())
       if (textAreaElement.current !== null) {
         textAreaElement.current.value = ""
       }
