@@ -1,38 +1,38 @@
-import { convertSetToAlph } from '@alephium/sdk'
 import { FC } from 'react'
+import styled from 'styled-components'
 
 import { TransactionPayload } from '../../../../shared/transactions'
 import { WarningIcon } from '../../../components/Icons/WarningIcon'
-import { formatTruncatedAddress } from '../../../services/addresses'
-import { assertNever } from '../../../services/assertNever'
 import { TransactionBanner } from './TransactionBanner'
 
 export interface ITransactionsList {
   payload: TransactionPayload
 }
 
-export const messageForTransactions = (payload: TransactionPayload) => {
-  switch (payload.type) {
-    case 'ALPH_SIGN_TRANSFER_TX': {
-      const destination = payload.params.destinations[0]
-      const recipient = formatTruncatedAddress(destination.address)
-      const amount = convertSetToAlph(BigInt(destination.attoAlphAmount))
-      return `Sending ${amount} ALPH to ${recipient}`
-    }
-
-    case 'ALPH_SIGN_CONTRACT_CREATION_TX': {
-      return `Creating contract with bytecode ${payload.params.bytecode}`
-    }
-
-    case 'ALPH_SIGN_SCRIPT_TX': {
-      return `Running script with bytecode ${payload.params.bytecode}`
-    }
-
-    default:
-      assertNever(payload)
-  }
-}
-
 export const TransactionsList: FC<ITransactionsList> = ({ payload }) => {
-  return <>{<TransactionBanner icon={WarningIcon} message={messageForTransactions(payload)} />}</>
+  return (
+    <TransactionBanner icon={WarningIcon}>
+      {payload.type === 'ALPH_SIGN_TRANSFER_TX' && (
+        <div>Please, review your transaction data before approving your transaction.</div>
+      )}
+      {payload.type === 'ALPH_SIGN_CONTRACT_CREATION_TX' && (
+        <div>
+          <div>Creating contract with bytecode:</div>
+          <Bytecode>{payload.params.bytecode}</Bytecode>
+        </div>
+      )}
+      {payload.type === 'ALPH_SIGN_SCRIPT_TX' && (
+        <div>
+          <div>Running script with bytecode:</div>
+          <Bytecode>{payload.params.bytecode}</Bytecode>
+        </div>
+      )}
+    </TransactionBanner>
+  )
 }
+
+const Bytecode = styled.code`
+  word-break: break-all;
+  margin-top: 5px;
+  display: block;
+`

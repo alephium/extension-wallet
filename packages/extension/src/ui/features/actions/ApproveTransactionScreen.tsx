@@ -3,8 +3,10 @@ import { Navigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { TransactionPayload } from '../../../shared/transactions'
+import Amount from '../../components/Amount'
 import { Field, FieldGroup, FieldKey, FieldValue } from '../../components/Fields'
 import { routes } from '../../routes'
+import { formatTruncatedAddress } from '../../services/addresses'
 import { assertNever } from '../../services/assertNever'
 import { getAddressName, useAddressMetadata } from '../addresses/addressMetadata.state'
 import { ConfirmPageProps, ConfirmScreen } from './ConfirmScreen'
@@ -50,6 +52,15 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     return titleForTransactions(payload)
   }, [payload])
 
+  let recipient
+  let amount
+
+  if (payload.type === 'ALPH_SIGN_TRANSFER_TX') {
+    const destination = payload.params.destinations[0]
+    amount = BigInt(destination.attoAlphAmount)
+    recipient = formatTruncatedAddress(destination.address)
+  }
+
   if (!defaultAddress) {
     return <Navigate to={routes.walletAddresses()} />
   }
@@ -72,12 +83,32 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     >
       <TransactionsList payload={payload} />
       <FieldGroup>
-        <Field>
-          <FieldKey>From</FieldKey>
-          <FieldValue>
-            <LeftPaddedField>{addressName}</LeftPaddedField>
-          </FieldValue>
-        </Field>
+        <>
+          <Field>
+            <FieldKey>From</FieldKey>
+            <FieldValue>
+              <LeftPaddedField>{addressName}</LeftPaddedField>
+            </FieldValue>
+          </Field>
+          {recipient && (
+            <Field>
+              <FieldKey>To</FieldKey>
+              <FieldValue>
+                <LeftPaddedField>{recipient}</LeftPaddedField>
+              </FieldValue>
+            </Field>
+          )}
+          {amount && (
+            <Field>
+              <FieldKey>Amount</FieldKey>
+              <FieldValue>
+                <LeftPaddedField>
+                  <Amount value={amount} fullPrecision />
+                </LeftPaddedField>
+              </FieldValue>
+            </Field>
+          )}
+        </>
       </FieldGroup>
     </ConfirmScreen>
   )
