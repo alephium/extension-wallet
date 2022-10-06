@@ -1,4 +1,4 @@
-import browser from "webextension-polyfill"
+import browser from 'webextension-polyfill'
 
 const NOTIFICATION_WIDTH = 360
 const NOTIFICATION_HEIGHT = 600 + 28 // +28 for the title bar
@@ -16,13 +16,13 @@ export async function openUi() {
 }
 
 async function openPopup(): Promise<browser.windows.Window | undefined> {
-  const [openedExtension] = browser.extension.getViews({ type: "popup" })
+  const [openedExtension] = browser.extension.getViews({ type: 'popup' })
   if (openedExtension) {
     return
   }
 
   const [existingPopup] = await browser.tabs.query({
-    url: [browser.runtime.getURL("/*")],
+    url: [browser.runtime.getURL('/*')]
   })
 
   if (existingPopup && existingPopup.windowId) {
@@ -36,9 +36,7 @@ async function openPopup(): Promise<browser.windows.Window | undefined> {
 
     // Position window in top right corner of lastFocused window.
     top = lastFocused.top ?? 0
-    left =
-      (lastFocused.left ?? 0) +
-      Math.max((lastFocused.width ?? 0) - NOTIFICATION_WIDTH, 0)
+    left = (lastFocused.left ?? 0) + Math.max((lastFocused.width ?? 0) - NOTIFICATION_WIDTH, 0)
   } catch (_) {
     // The following properties are more than likely 0, due to being
     // opened from the background chrome process for the extension that
@@ -49,12 +47,12 @@ async function openPopup(): Promise<browser.windows.Window | undefined> {
   }
 
   const popup = await browser.windows.create({
-    url: "index.html?popup",
-    type: "popup",
+    url: 'index.html?popup',
+    type: 'popup',
     width: NOTIFICATION_WIDTH,
     height: NOTIFICATION_HEIGHT,
     left,
-    top,
+    top
   })
 
   return popup

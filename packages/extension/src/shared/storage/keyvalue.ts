@@ -1,29 +1,17 @@
-import browser from "webextension-polyfill"
+import browser from 'webextension-polyfill'
 
-import {
-  Implementations,
-  StorageArea,
-  getDefaultImplementations,
-} from "./implementations"
-import { StorageOptionsOrNameSpace, getOptionsWithDefaults } from "./options"
-import { AllowPromise, AreaName, BaseStorage } from "./types"
+import { Implementations, StorageArea, getDefaultImplementations } from './implementations'
+import { StorageOptionsOrNameSpace, getOptionsWithDefaults } from './options'
+import { AllowPromise, AreaName, BaseStorage } from './types'
 
-export interface IKeyValueStorage<
-  T extends Record<string, any> = Record<string, any>,
-> extends BaseStorage<T> {
+export interface IKeyValueStorage<T extends Record<string, any> = Record<string, any>> extends BaseStorage<T> {
   getItem<K extends keyof T>(key: K): Promise<T[K]>
   setItem<K extends keyof T>(key: K, value: T[K]): Promise<void>
   removeItem<K extends keyof T>(key: K): Promise<void>
-  subscribe<K extends keyof T>(
-    key: K,
-    callback: (value: T[K]) => AllowPromise<void>,
-  ): () => void
+  subscribe<K extends keyof T>(key: K, callback: (value: T[K]) => AllowPromise<void>): () => void
 }
 
-export class KeyValueStorage<
-  T extends Record<string, any> = Record<string, any>,
-> implements IKeyValueStorage<T>
-{
+export class KeyValueStorage<T extends Record<string, any> = Record<string, any>> implements IKeyValueStorage<T> {
   private storageImplementation: StorageArea
   public namespace: string
   public areaName: AreaName
@@ -31,7 +19,7 @@ export class KeyValueStorage<
   constructor(
     public readonly defaults: T,
     optionsOrNamespace: StorageOptionsOrNameSpace,
-    private readonly implementations: Implementations = getDefaultImplementations(),
+    private readonly implementations: Implementations = getDefaultImplementations()
   ) {
     const options = getOptionsWithDefaults(optionsOrNamespace)
     this.namespace = options.namespace
@@ -44,7 +32,7 @@ export class KeyValueStorage<
   }
 
   private getStorageKey<K extends keyof T>(key: K): string {
-    return this.namespace + ":" + key.toString()
+    return this.namespace + ':' + key.toString()
   }
 
   public async getItem<K extends keyof T>(key: K): Promise<T[K]> {
@@ -53,7 +41,7 @@ export class KeyValueStorage<
       const valueFromStorage = await this.storageImplementation.get(storageKey)
       return valueFromStorage[storageKey] ?? this.defaults[key]
     } catch (e: any) {
-      if (e?.toString().includes("Error in invocation of storage.get")) {
+      if (e?.toString().includes('Error in invocation of storage.get')) {
         return this.defaults[key]
       }
       throw e
@@ -69,15 +57,12 @@ export class KeyValueStorage<
     return this.storageImplementation.remove(storageKey)
   }
 
-  public subscribe<K extends keyof T>(
-    key: K,
-    callback: (value: T[K]) => AllowPromise<void>,
-  ): () => void {
+  public subscribe<K extends keyof T>(key: K, callback: (value: T[K]) => AllowPromise<void>): () => void {
     const storageKey = this.getStorageKey(key)
 
     const handler = async (
       changes: Record<string, browser.storage.StorageChange>,
-      areaName: browser.storage.AreaName,
+      areaName: browser.storage.AreaName
     ) => {
       if (this.areaName === areaName && changes[storageKey]) {
         callback(changes[storageKey].newValue)

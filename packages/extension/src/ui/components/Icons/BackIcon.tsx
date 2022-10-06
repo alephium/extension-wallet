@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC } from 'react'
 
 export const BackIcon: FC = () => (
   <svg
@@ -7,7 +7,7 @@ export const BackIcon: FC = () => (
     viewBox="0 0 32 32"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ cursor: "pointer" }}
+    style={{ cursor: 'pointer' }}
   >
     <circle cx="16" cy="16" r="16" fill="white" fillOpacity="0.1" />
     <g clipPath="url(#clip0_1326_13800)">

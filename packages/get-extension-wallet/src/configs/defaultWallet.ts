@@ -1,4 +1,4 @@
-import { StorageWrapper } from "./storageWrapper"
+import { StorageWrapper } from './storageWrapper'
 
-const defaultWallet = new StorageWrapper("gsw-default")
+const defaultWallet = new StorageWrapper('gsw-default')
 export default defaultWallet

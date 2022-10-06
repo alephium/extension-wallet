@@ -1,29 +1,23 @@
-import { isFunction, isNil } from "lodash-es"
+import { isFunction, isNil } from 'lodash-es'
 
-import { parseConfig } from "./helpers"
-import { Config, StaleWhileRevalidateCache } from "./types"
+import { parseConfig } from './helpers'
+import { Config, StaleWhileRevalidateCache } from './types'
 
 // modified from https://github.com/jperasmus/stale-while-revalidate-cache
 
-export function createStaleWhileRevalidateCache(
-  config: Config,
-): StaleWhileRevalidateCache {
-  const { storage, minTimeToStale, maxTimeToLive, serialize, deserialize } =
-    parseConfig(config)
+export function createStaleWhileRevalidateCache(config: Config): StaleWhileRevalidateCache {
+  const { storage, minTimeToStale, maxTimeToLive, serialize, deserialize } = parseConfig(config)
 
   async function staleWhileRevalidate<TReturnValue>(
     cacheKey: string | (() => string),
-    fn: () => TReturnValue,
+    fn: () => TReturnValue
   ): Promise<TReturnValue> {
     const key = String(isFunction(cacheKey) ? cacheKey() : cacheKey)
     const timeKey = `${key}_time`
 
     async function retrieveCachedValue() {
       try {
-        const [cachedValue, cachedTime] = await Promise.all([
-          storage.getItem(key),
-          storage.getItem(timeKey),
-        ])
+        const [cachedValue, cachedTime] = await Promise.all([storage.getItem(key), storage.getItem(timeKey)])
 
         let deserializedCachedValue = deserialize(cachedValue)
 
@@ -46,10 +40,7 @@ export function createStaleWhileRevalidateCache(
 
     async function persistValue(result: TReturnValue) {
       try {
-        await Promise.all([
-          storage.setItem(key, serialize(result)),
-          storage.setItem(timeKey, Date.now().toString()),
-        ])
+        await Promise.all([storage.setItem(key, serialize(result)), storage.setItem(timeKey, Date.now().toString())])
       } catch {
         // Ignore
       }

@@ -1,13 +1,13 @@
-import { getMessage } from "@extend-chrome/messages"
+import { getMessage } from '@extend-chrome/messages'
 
-import { AddressMessage } from "./AddressMessage"
-import { ActionMessage } from "./ActionMessage"
-import { MiscenalleousMessage } from "./MiscellaneousMessage"
-import { NetworkMessage } from "./NetworkMessage"
-import { PreAuthorisationMessage } from "./PreAuthorisationMessage"
-import { RecoveryMessage } from "./RecoveryMessage"
-import { SessionMessage } from "./SessionMessage"
-import { TransactionMessage } from "./TransactionMessage"
+import { ActionMessage } from './ActionMessage'
+import { AddressMessage } from './AddressMessage'
+import { MiscenalleousMessage } from './MiscellaneousMessage'
+import { NetworkMessage } from './NetworkMessage'
+import { PreAuthorisationMessage } from './PreAuthorisationMessage'
+import { RecoveryMessage } from './RecoveryMessage'
+import { SessionMessage } from './SessionMessage'
+import { TransactionMessage } from './TransactionMessage'
 
 export type MessageType =
   | AddressMessage
@@ -24,17 +24,11 @@ export type WindowMessageType = MessageType & {
   extensionId: string
 }
 
-export const [sendMessage, messageStream, _waitForMessage] =
-  getMessage<MessageType>("ALEPHIUM")
+export const [sendMessage, messageStream, _waitForMessage] = getMessage<MessageType>('ALEPHIUM')
 
-export async function waitForMessage<
-  K extends MessageType["type"],
-  T extends { type: K } & MessageType,
-  >(
-    type: K,
-    predicate: (x: T) => boolean = () => true,
+export async function waitForMessage<K extends MessageType['type'], T extends { type: K } & MessageType>(
+  type: K,
+  predicate: (x: T) => boolean = () => true
 ): Promise<T extends { data: infer S } ? S : undefined> {
-  return _waitForMessage(
-    ([msg]: any) => msg.type === type && predicate(msg),
-  ).then(([msg]: any) => msg.data)
+  return _waitForMessage(([msg]: any) => msg.type === type && predicate(msg)).then(([msg]: any) => msg.data)
 }

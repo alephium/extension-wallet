@@ -1,9 +1,6 @@
-import type {
-  GetAlephiumWalletOptions,
-  IAlephiumWindowObject,
-} from "./getAlephium"
-import { gaw } from "./getAlephium"
-import type { DisconnectOptions } from "./types"
+import type { GetAlephiumWalletOptions, IAlephiumWindowObject } from './getAlephium'
+import { gaw } from './getAlephium'
+import type { DisconnectOptions } from './types'
 
 export type {
   EventHandler,
@@ -13,8 +10,8 @@ export type {
   IAlephiumWindowObject,
   IStorageWrapper,
   ModalOptions,
-  WalletProvider,
-} from "./getAlephium"
+  WalletProvider
+} from './getAlephium'
 
 /**
  * Get the Alephium window object.
@@ -25,9 +22,7 @@ export type {
 export const getAlephium = (): IAlephiumWindowObject => {
   const alephium = gaw.getAlephium()
 
-  alephium.enable = async (options?: {
-    showModal?: boolean
-  }): Promise<string[]> => {
+  alephium.enable = async (options?: { showModal?: boolean }): Promise<string[]> => {
     const wallet = await connect({ showList: options?.showModal })
     return wallet?.enable(options) || []
   }
@@ -41,12 +36,10 @@ export const getAlephium = (): IAlephiumWindowObject => {
  * @param {GetAlephiumWalletOptions} [options]
  * @returns {Promise<IAlephiumWindowObject>}
  */
-export const connect = (
-  options?: GetAlephiumWalletOptions,
-): Promise<IAlephiumWindowObject | undefined> => {
+export const connect = (options?: GetAlephiumWalletOptions): Promise<IAlephiumWindowObject | undefined> => {
   return gaw.connect({
-    order: ["alephium"],
-    ...options,
+    order: ['alephium'],
+    ...options
   })
 }
 

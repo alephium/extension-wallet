@@ -1,7 +1,7 @@
-import browser from "webextension-polyfill"
+import browser from 'webextension-polyfill'
 
-import { MessageType } from "../shared/messages"
-import { sendMessage } from "../shared/messages"
+import { MessageType } from '../shared/messages'
+import { sendMessage } from '../shared/messages'
 
 interface Tab {
   id: number
@@ -19,7 +19,7 @@ export function removeTab(tabId?: number) {
   if (tabId !== undefined && hasTab(tabId)) {
     activeTabs.splice(
       activeTabs.findIndex((tab) => tab.id === tabId),
-      1,
+      1
     )
   }
 }
@@ -43,26 +43,18 @@ export function removeTabOfHost(host: string) {
   })
 }
 
-export async function sendMessageToHost(
-  message: MessageType,
-  host: string,
-): Promise<void> {
+export async function sendMessageToHost(message: MessageType, host: string): Promise<void> {
   const tabIds = getTabIdsOfHost(host)
-  await Promise.allSettled(
-    tabIds.map((tabId) => sendMessage(message, { tabId })),
-  )
+  await Promise.allSettled(tabIds.map((tabId) => sendMessage(message, { tabId })))
 }
 
 export async function sendMessageToActiveTabs(
   message: MessageType,
-  additionalTargets: Array<number | undefined> = [],
+  additionalTargets: Array<number | undefined> = []
 ): Promise<void> {
   const promises = []
   // Set avoids duplicates
-  for (const tabId of new Set([
-    ...activeTabs.map((tab) => tab.id),
-    ...additionalTargets,
-  ])) {
+  for (const tabId of new Set([...activeTabs.map((tab) => tab.id), ...additionalTargets])) {
     if (tabId !== undefined) {
       promises.push(sendMessage(message, { tabId }))
     }
@@ -76,7 +68,7 @@ export async function sendMessageToUi(message: MessageType) {
 
 export async function sendMessageToActiveTabsAndUi(
   message: MessageType,
-  additionalTargets: Array<number | undefined> = [],
+  additionalTargets: Array<number | undefined> = []
 ) {
   await sendMessageToUi(message)
   await sendMessageToActiveTabs(message, additionalTargets)

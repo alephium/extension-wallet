@@ -1,30 +1,30 @@
-import { fireEvent, render, screen } from "@testing-library/react"
-import { describe, test } from "vitest"
+import { fireEvent, render, screen } from '@testing-library/react'
+import { describe, test } from 'vitest'
 
-import { ArrayStorage } from "../array"
-import { useArrayStorage, useKeyValueStorage, useObjectStorage } from "../hooks"
-import { KeyValueStorage } from "../keyvalue"
-import { ObjectStorage } from "../object"
-import { chromeStorageMock } from "./chrome-storage.mock"
+import { ArrayStorage } from '../array'
+import { useArrayStorage, useKeyValueStorage, useObjectStorage } from '../hooks'
+import { KeyValueStorage } from '../keyvalue'
+import { ObjectStorage } from '../object'
+import { chromeStorageMock } from './chrome-storage.mock'
 
-describe("useKeyValueStorage()", () => {
-  test("should render with storage values", async () => {
+describe('useKeyValueStorage()', () => {
+  test('should render with storage values', async () => {
     const store = new KeyValueStorage(
       {
-        message: "Hello World!",
+        message: 'Hello World!'
       },
-      "ui-test-kv",
-      chromeStorageMock,
+      'ui-test-kv',
+      chromeStorageMock
     )
 
     function Component() {
-      const data = useKeyValueStorage(store, "message")
+      const data = useKeyValueStorage(store, 'message')
       return (
         <div>
           <p>{data}</p>
           <button
             onClick={() => {
-              store.setItem("message", "Bye World!")
+              store.setItem('message', 'Bye World!')
             }}
           >
             change value
@@ -34,19 +34,15 @@ describe("useKeyValueStorage()", () => {
     }
     render(<Component />)
 
-    await screen.findByText("Hello World!")
-    fireEvent.click(screen.getByText("change value"))
-    await screen.findByText("Bye World!")
+    await screen.findByText('Hello World!')
+    fireEvent.click(screen.getByText('change value'))
+    await screen.findByText('Bye World!')
   })
 })
 
-describe("useObjectStorage()", () => {
-  test("should render with storage values", async () => {
-    const store = new ObjectStorage(
-      "Hello World!",
-      "ui-test-object",
-      chromeStorageMock,
-    )
+describe('useObjectStorage()', () => {
+  test('should render with storage values', async () => {
+    const store = new ObjectStorage('Hello World!', 'ui-test-object', chromeStorageMock)
 
     function Component() {
       const data = useObjectStorage(store)
@@ -55,7 +51,7 @@ describe("useObjectStorage()", () => {
           <p>{data}</p>
           <button
             onClick={() => {
-              store.set("Bye World!")
+              store.set('Bye World!')
             }}
           >
             change value
@@ -65,28 +61,24 @@ describe("useObjectStorage()", () => {
     }
     render(<Component />)
 
-    await screen.findByText("Hello World!")
-    fireEvent.click(screen.getByText("change value"))
-    await screen.findByText("Bye World!")
+    await screen.findByText('Hello World!')
+    fireEvent.click(screen.getByText('change value'))
+    await screen.findByText('Bye World!')
   })
 })
 
-describe("useArrayStorage()", () => {
-  test("should render with storage values", async () => {
-    const store = new ArrayStorage(
-      ["Hello", "World!"],
-      "ui-test-array",
-      chromeStorageMock,
-    )
+describe('useArrayStorage()', () => {
+  test('should render with storage values', async () => {
+    const store = new ArrayStorage(['Hello', 'World!'], 'ui-test-array', chromeStorageMock)
 
     function Component() {
       const data = useArrayStorage(store)
       return (
         <div>
-          <p>{data.join(" ")}</p>
+          <p>{data.join(' ')}</p>
           <button
             onClick={() => {
-              store.add("See you tomorrow!")
+              store.add('See you tomorrow!')
             }}
           >
             change value
@@ -96,8 +88,8 @@ describe("useArrayStorage()", () => {
     }
     render(<Component />)
 
-    await screen.findByText("Hello World!")
-    fireEvent.click(screen.getByText("change value"))
-    await screen.findByText("Hello World! See you tomorrow!")
+    await screen.findByText('Hello World!')
+    fireEvent.click(screen.getByText('change value'))
+    await screen.findByText('Hello World! See you tomorrow!')
   })
 })

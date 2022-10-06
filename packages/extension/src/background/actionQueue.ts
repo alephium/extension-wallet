@@ -1,4 +1,4 @@
-import oHash from "object-hash"
+import oHash from 'object-hash'
 
 function objectHash(obj: object | null) {
   return oHash(obj, { unorderedArrays: true })
@@ -26,20 +26,13 @@ let globalQueue: ExtQueueItem<any>[] = []
 export interface Queue<T> {
   getAll: () => Promise<ExtQueueItem<T>[]>
   push: (item: T, expires?: number) => Promise<ExtQueueItem<T>>
-  override: (
-    hash: string,
-    overrides: Overrides,
-  ) => Promise<ExtQueueItem<T> | undefined>
+  override: (hash: string, overrides: Overrides) => Promise<ExtQueueItem<T> | undefined>
   remove: (hash: string) => Promise<ExtQueueItem<T> | null>
 }
 
-export async function getQueue<T extends object>(
-  config: QueueConfig<T> = {},
-): Promise<Queue<T>> {
+export async function getQueue<T extends object>(config: QueueConfig<T> = {}): Promise<Queue<T>> {
   async function getAll(): Promise<ExtQueueItem<T>[]> {
-    const notExpiredQueue = globalQueue.filter(
-      (item) => item.meta.expires > Date.now(),
-    )
+    const notExpiredQueue = globalQueue.filter((item) => item.meta.expires > Date.now())
 
     // set queue to storage if it has changed
     if (globalQueue.length !== notExpiredQueue.length) {
@@ -49,18 +42,15 @@ export async function getQueue<T extends object>(
     return notExpiredQueue
   }
 
-  async function push(
-    item: T,
-    expires: number = 5 * 60 * 60 * 1000,
-  ): Promise<ExtQueueItem<T>> {
+  async function push(item: T, expires: number = 5 * 60 * 60 * 1000): Promise<ExtQueueItem<T>> {
     const hash = objectHash(item)
     const existsAlready = globalQueue.some((item) => item.meta.hash === hash)
     const newItem = {
       ...item,
       meta: {
         hash,
-        expires: Date.now() + expires,
-      },
+        expires: Date.now() + expires
+      }
     }
     if (!existsAlready) {
       globalQueue.unshift(newItem)
@@ -70,10 +60,7 @@ export async function getQueue<T extends object>(
     return newItem
   }
 
-  async function override(
-    hash: string,
-    overrides: Overrides,
-  ): Promise<ExtQueueItem<T> | undefined> {
+  async function override(hash: string, overrides: Overrides): Promise<ExtQueueItem<T> | undefined> {
     const item = globalQueue.find((item) => item.meta.hash === hash)
     if (item) {
       item.override = overrides
@@ -93,6 +80,6 @@ export async function getQueue<T extends object>(
     getAll,
     push,
     override,
-    remove,
+    remove
   }
 }

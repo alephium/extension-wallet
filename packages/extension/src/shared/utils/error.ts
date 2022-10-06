@@ -1,9 +1,6 @@
-export const UNKNOWN_ERROR_MESSAGE = "Unknown error"
+export const UNKNOWN_ERROR_MESSAGE = 'Unknown error'
 
-export const coerceErrorToString = (
-  error: any,
-  includeStack = true,
-): string => {
+export const coerceErrorToString = (error: any, includeStack = true): string => {
   const errorObject = getErrorObject(error, includeStack)
   if (errorObject) {
     return JSON.stringify(errorObject, null, 2)
@@ -17,10 +14,8 @@ export const coerceErrorToString = (
 
 export const getErrorObject = (error: any, includeStack = true) => {
   try {
-    if (typeof error === "object" && error !== null) {
-      const keys = Object.getOwnPropertyNames(error).filter((key) =>
-        includeStack ? true : key !== "stack",
-      )
+    if (typeof error === 'object' && error !== null) {
+      const keys = Object.getOwnPropertyNames(error).filter((key) => (includeStack ? true : key !== 'stack'))
       const errorObject: Record<string, string> = {}
       keys.forEach((key) => {
         errorObject[key] = error[key]

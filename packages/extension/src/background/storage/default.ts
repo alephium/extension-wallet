@@ -1,10 +1,8 @@
-import browser from "webextension-polyfill"
+import browser from 'webextension-polyfill'
 
-import { IStorage } from "./interface"
+import { IStorage } from './interface'
 
-export async function getFromStorage<T, K extends string = string>(
-  key: K,
-): Promise<T | null> {
+export async function getFromStorage<T, K extends string = string>(key: K): Promise<T | null> {
   try {
     return JSON.parse((await browser.storage.local.get(key))[key]) ?? null
   } catch {
@@ -31,22 +29,19 @@ export function getAllStorage() {
 export class Storage<T extends Record<string, any>> implements IStorage<T> {
   private NS: string
   public defaults: T
-  constructor(defaults: T, namespace = "") {
+  constructor(defaults: T, namespace = '') {
     this.NS = namespace
     this.defaults = defaults
   }
 
   async getItem<K extends keyof T>(key: K): Promise<T[K]> {
-    return (
-      (await getFromStorage<T[K]>(this.NS + ":" + key.toString())) ??
-      this.defaults[key]
-    )
+    return (await getFromStorage<T[K]>(this.NS + ':' + key.toString())) ?? this.defaults[key]
   }
   async setItem<K extends keyof T>(key: K, value: T[K]): Promise<void> {
-    return setToStorage(this.NS + ":" + key.toString(), value)
+    return setToStorage(this.NS + ':' + key.toString(), value)
   }
 
   async removeItem<K extends keyof T>(key: K): Promise<void> {
-    return removeFromStorage(this.NS + ":" + key.toString())
+    return removeFromStorage(this.NS + ':' + key.toString())
   }
 }

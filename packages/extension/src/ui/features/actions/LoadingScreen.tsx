@@ -1,9 +1,9 @@
-import { FC, useEffect } from "react"
-import styled from "styled-components"
+import { FC, useEffect } from 'react'
+import styled from 'styled-components'
 
-import { useLoadingProgress } from "../../app.state"
-import { Spinner } from "../../components/Spinner"
-import { Greetings } from "../onboarding/Greetings"
+import { useLoadingProgress } from '../../app.state'
+import { Spinner } from '../../components/Spinner'
+import { Greetings } from '../onboarding/Greetings'
 
 const LoadingScreenWrapper = styled.div`
   display: flex;
@@ -15,12 +15,7 @@ const LoadingScreenWrapper = styled.div`
   height: 100vh;
 `
 
-const loadingTexts = [
-  "Loading…",
-  "Please wait…",
-  "Patience is a virtue…",
-  "Almost there…",
-]
+const loadingTexts = ['Loading…', 'Please wait…', 'Patience is a virtue…', 'Almost there…']
 
 export const LoadingScreen: FC = () => {
   const { progress, clearProgress } = useLoadingProgress()

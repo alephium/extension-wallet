@@ -1,9 +1,9 @@
-import { FC, ReactNode } from "react"
-import styled, { css } from "styled-components"
+import { FC, ReactNode } from 'react'
+import styled, { css } from 'styled-components'
 
 const BannerWrapper = styled.div<{
   noMargins?: boolean
-  type?: "danger"
+  type?: 'danger'
 }>`
   display: flex;
   cursor: pointer;
@@ -19,7 +19,7 @@ const BannerWrapper = styled.div<{
     `};
 
   ${({ type, theme }) =>
-    type === "danger" &&
+    type === 'danger' &&
     css`
       background-color: ${({ theme }) => theme.red1};
 
@@ -56,16 +56,10 @@ export interface BannerProps {
   description: string
   icon: ReactNode
   noMargins?: boolean
-  theme?: "danger"
+  theme?: 'danger'
 }
 
-export const Banner: FC<BannerProps> = ({
-  title,
-  description,
-  icon,
-  noMargins,
-  theme,
-}) => (
+export const Banner: FC<BannerProps> = ({ title, description, icon, noMargins, theme }) => (
   <BannerWrapper noMargins={noMargins} type={theme}>
     {icon}
     <BannerTextWrapper>

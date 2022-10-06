@@ -1,4 +1,4 @@
-import { connect, getAlephium } from "@alephium/get-extension-wallet"
+import { connect, getAlephium } from '@alephium/get-extension-wallet'
 
 export const silentConnectWallet = async () => {
   const windowAlephium = await connect({ showList: false })
@@ -8,7 +8,7 @@ export const silentConnectWallet = async () => {
 
 export const connectWallet = async () => {
   const windowAlephium = await connect({
-    include: ["alephium"],
+    include: ['alephium']
   })
   await windowAlephium?.enable()
   return windowAlephium

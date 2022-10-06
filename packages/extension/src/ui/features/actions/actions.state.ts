@@ -1,9 +1,9 @@
-import { useEffect } from "react"
-import create from "zustand"
+import { useEffect } from 'react'
+import create from 'zustand'
 
-import { ExtensionActionItem } from "../../../shared/actionQueue"
-import { messageStream } from "../../../shared/messages"
-import { getActions } from "../../services/backgroundActions"
+import { ExtensionActionItem } from '../../../shared/actionQueue'
+import { messageStream } from '../../../shared/messages'
+import { getActions } from '../../services/backgroundActions'
 
 interface State {
   actions: ExtensionActionItem[]
@@ -19,7 +19,7 @@ export const useActionsSubscription = () => {
     })()
 
     const subscription = messageStream.subscribe(([message]) => {
-      if (message.type === "ACTIONS_QUEUE_UPDATE") {
+      if (message.type === 'ACTIONS_QUEUE_UPDATE') {
         useActions.setState({ actions: message.data.actions })
       }
     })

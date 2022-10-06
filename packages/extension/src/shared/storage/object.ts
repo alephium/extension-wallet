@@ -1,9 +1,9 @@
-import { isPlainObject, merge } from "lodash-es"
+import { isPlainObject, merge } from 'lodash-es'
 
-import { Implementations, getDefaultImplementations } from "./implementations"
-import { KeyValueStorage } from "./keyvalue"
-import { StorageOptions, StorageOptionsOrNameSpace } from "./options"
-import { AreaName, BaseStorage } from "./types"
+import { Implementations, getDefaultImplementations } from './implementations'
+import { KeyValueStorage } from './keyvalue'
+import { StorageOptions, StorageOptionsOrNameSpace } from './options'
+import { AreaName, BaseStorage } from './types'
 
 type AllowPromise<T> = T | Promise<T>
 
@@ -33,7 +33,7 @@ export class ObjectStorage<T> implements IObjectStorage<T> {
   constructor(
     public readonly defaults: T,
     optionsOrNamespace: StorageOptionsOrNameSpace<ObjectStorageOptions<T>>,
-    implementations: Implementations = getDefaultImplementations(),
+    implementations: Implementations = getDefaultImplementations()
   ) {
     const passThrough = (value: any) => value
     function defaultMerge(oldValue: T, newValue: T) {
@@ -57,10 +57,10 @@ export class ObjectStorage<T> implements IObjectStorage<T> {
       inner: T
     }>(
       {
-        inner: this.serialize(this.defaults),
+        inner: this.serialize(this.defaults)
       },
       optionsOrNamespace,
-      implementations,
+      implementations
     )
 
     this.areaName = this.storageImplementation.areaName
@@ -68,20 +68,17 @@ export class ObjectStorage<T> implements IObjectStorage<T> {
   }
 
   public async get(): Promise<T> {
-    return this.deserialize(await this.storageImplementation.getItem("inner"))
+    return this.deserialize(await this.storageImplementation.getItem('inner'))
   }
 
   public async set(setter: Partial<T> | SetterFn<T>): Promise<void> {
     const oldState = await this.get()
-    const value = typeof setter === "function" ? setter(oldState) : setter
-    return this.storageImplementation.setItem(
-      "inner",
-      this.serialize(this.merge(oldState, value as T)),
-    )
+    const value = typeof setter === 'function' ? setter(oldState) : setter
+    return this.storageImplementation.setItem('inner', this.serialize(this.merge(oldState, value as T)))
   }
 
   public subscribe(callback: (value: T) => AllowPromise<void>): () => void {
-    return this.storageImplementation.subscribe("inner", (t) => {
+    return this.storageImplementation.subscribe('inner', (t) => {
       return callback(this.deserialize(t))
     })
   }

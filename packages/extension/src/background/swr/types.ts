@@ -1,8 +1,8 @@
-import type { IStorage } from "../storage"
+import type { IStorage } from '../storage'
 
 export type StaleWhileRevalidateCache = <TReturnValue>(
   cacheKey: string | (() => string),
-  fn: () => TReturnValue,
+  fn: () => TReturnValue
 ) => Promise<TReturnValue>
 
 export interface Config {

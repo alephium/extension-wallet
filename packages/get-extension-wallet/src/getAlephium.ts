@@ -1,44 +1,49 @@
-import defaultWallet from "./configs/defaultWallet"
-import lastWallet from "./configs/lastConnected"
-import show from "./modal"
+import {
+  Account,
+  SignDeployContractTxParams,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
+  SignHexStringParams,
+  SignHexStringResult,
+  SignMessageParams,
+  SignMessageResult,
+  SignTransferTxParams,
+  SignTransferTxResult,
+  SignUnsignedTxParams,
+  SignUnsignedTxResult,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type
+} from '@alephium/web3'
+
+import defaultWallet from './configs/defaultWallet'
+import lastWallet from './configs/lastConnected'
+import show from './modal'
 import type {
   DisconnectOptions,
   EventHandler,
   EventType,
   GetAlephiumWalletOptions,
   IAlephiumWindowObject,
-  IGetAlephiumWallet,
-} from "./types"
-import {
-  filterBy,
-  filterPreAuthorized,
-  isWalletObj,
-  shuffle,
-  sortBy,
-} from "./utils"
-
-import {
-  type Account,
-  type SignDeployContractTxParams,
-  type SignDeployContractTxResult,
-  type SignExecuteScriptTxParams,
-  type SignExecuteScriptTxResult,
-  type SignHexStringParams,
-  type SignHexStringResult,
-  type SignMessageParams,
-  type SignMessageResult,
-  type SignTransferTxParams,
-  type SignTransferTxResult,
-  type SignUnsignedTxParams,
-  type SignUnsignedTxResult
-} from "@alephium/web3"
+  IGetAlephiumWallet
+} from './types'
+import { filterBy, filterPreAuthorized, isWalletObj, shuffle, sortBy } from './utils'
 
 class GetAlephiumWallet implements IGetAlephiumWallet {
   #walletObjRef: { current?: IAlephiumWindowObject } = {}
 
-  connect = async (
-    options?: GetAlephiumWalletOptions,
-  ): Promise<IAlephiumWindowObject | undefined> => {
+  connect = async (options?: GetAlephiumWalletOptions): Promise<IAlephiumWindowObject | undefined> => {
     try {
       this.#declare()
 
@@ -48,7 +53,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         installed: installedWallets,
         preAuthorized,
         defaultWallet,
-        lastWallet,
+        lastWallet
       } = await this.#getInstalledWallets(options)
 
       // explicitly attempting to connect without showing the list,
@@ -78,7 +83,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           // 1st priority is user-set-default wallet
           defaultWallet,
           // 2nd priority is user-last-selected wallet
-          lastWallet,
+          lastWallet
         ] as IAlephiumWindowObject[]) {
           if (stateWallet) {
             return this.#setCurrentWallet(stateWallet)
@@ -127,9 +132,9 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
       new (class implements IAlephiumWindowObject {
         discriminator = '___IAlephiumWindowObject___'
         // default values
-        id = "disconnected"
-        name = "Disconnected"
-        icon = ""
+        id = 'disconnected'
+        name = 'Disconnected'
+        icon = ''
         selectedAccount?: Account = undefined
         isConnected = false
         /**
@@ -146,12 +151,10 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
          * connecting a wallet successfully
          * @param options
          */
-        enable = async (options?: {
-          showModal?: boolean
-        }): Promise<string[]> => {
+        enable = async (options?: { showModal?: boolean }): Promise<string[]> => {
           try {
             const wallet = await this.#connect({
-              showList: options?.showModal,
+              showList: options?.showModal
             })
             if (wallet) {
               const result = await wallet.enable()
@@ -164,43 +167,40 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           return []
         }
 
-        #call = async<T>(
-          methodName: string,
-          method: (obj: IAlephiumWindowObject) => Promise<T>
-        ): Promise<T> => {
+        #call = async <T>(methodName: string, method: (obj: IAlephiumWindowObject) => Promise<T>): Promise<T> => {
           const currentWallet = self.#walletObjRef.current
           if (!currentWallet) {
-            throw new Error(`can't ${methodName} with a disconnected wallet`);
+            throw new Error(`can't ${methodName} with a disconnected wallet`)
           }
           return await method(currentWallet)
         }
 
         getAccounts = async (): Promise<Account[]> => {
-          return await this.#call("getAccounts", (wallet) => wallet.getAccounts())
+          return await this.#call('getAccounts', (wallet) => wallet.getAccounts())
         }
 
         signTransferTx = async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
-          return await this.#call("signTransferTx", (wallet) => wallet.signTransferTx(params))
+          return await this.#call('signTransferTx', (wallet) => wallet.signTransferTx(params))
         }
 
         signDeployContractTx = async (params: SignDeployContractTxParams): Promise<SignDeployContractTxResult> => {
-          return await this.#call("signDeployContractTx", (wallet) => wallet.signDeployContractTx(params))
+          return await this.#call('signDeployContractTx', (wallet) => wallet.signDeployContractTx(params))
         }
 
         signExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
-          return await this.#call("signExecuteScriptTx", (wallet) => wallet.signExecuteScriptTx(params))
+          return await this.#call('signExecuteScriptTx', (wallet) => wallet.signExecuteScriptTx(params))
         }
 
         signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
-          return await this.#call("signUnsignedTx", (wallet) => wallet.signUnsignedTx(params))
+          return await this.#call('signUnsignedTx', (wallet) => wallet.signUnsignedTx(params))
         }
 
         signHexString = async (params: SignHexStringParams): Promise<SignHexStringResult> => {
-          return await this.#call("signHexString", (wallet) => wallet.signHexString(params))
+          return await this.#call('signHexString', (wallet) => wallet.signHexString(params))
         }
 
         signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
-          return await this.#call("signMessage", (wallet) => wallet.signMessage(params))
+          return await this.#call('signMessage', (wallet) => wallet.signMessage(params))
         }
 
         /**
@@ -208,21 +208,15 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
          */
         isPreauthorized = () =>
           self.#isConnected()
-            ? (
-              self.#walletObjRef.current as IAlephiumWindowObject
-            ).isPreauthorized()
-            : self
-              .#getInstalledWallets()
-              .then((result) => !!result.preAuthorized.length)
+            ? (self.#walletObjRef.current as IAlephiumWindowObject).isPreauthorized()
+            : self.#getInstalledWallets().then((result) => !!result.preAuthorized.length)
 
         off = (event: EventType, handleEvent: EventHandler) => {
           if (self.#isConnected()) {
             self.#walletObjRef.current?.off(event, handleEvent)
           } else {
             if (this.#callbacks[event]) {
-              this.#callbacks[event] = this.#callbacks[event].filter(
-                (callback) => callback !== handleEvent,
-              )
+              this.#callbacks[event] = this.#callbacks[event].filter((callback) => callback !== handleEvent)
             }
           }
         }
@@ -231,8 +225,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           if (self.#isConnected()) {
             self.#walletObjRef.current?.on(event, handleEvent)
           } else {
-            const listeners =
-              this.#callbacks[event] ?? (this.#callbacks[event] = [])
+            const listeners = this.#callbacks[event] ?? (this.#callbacks[event] = [])
             if (!listeners.includes(handleEvent)) {
               listeners.push(handleEvent)
             }
@@ -240,34 +233,31 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         }
 
         #connect = (options?: GetAlephiumWalletOptions) =>
-          (self.#walletObjRef.current
-            ? Promise.resolve(self.#walletObjRef.current)
-            : self.connect(options)
-          ).then((wallet) => {
-            if (wallet) {
-              // assign wallet data to the wallet-wrapper instance
-              // in case the user holds it and call it directly
-              // instead of getting a fresh reference each time
-              // via gsw.getAlephium()
-              this.id = wallet.id
-              this.name = wallet.name
-              this.icon = wallet.icon
-              //this.version = wallet.version
-              this.#refreshWalletProperties(wallet)
+          (self.#walletObjRef.current ? Promise.resolve(self.#walletObjRef.current) : self.connect(options)).then(
+            (wallet) => {
+              if (wallet) {
+                // assign wallet data to the wallet-wrapper instance
+                // in case the user holds it and call it directly
+                // instead of getting a fresh reference each time
+                // via gsw.getAlephium()
+                this.id = wallet.id
+                this.name = wallet.name
+                this.icon = wallet.icon
+                //this.version = wallet.version
+                this.#refreshWalletProperties(wallet)
 
-              // register pre-connect callbacks on target wallet
-              Object.entries(this.#callbacks).forEach(([event, handlers]) =>
-                handlers.forEach((h) => wallet.on(event as EventType, h)),
-              )
-              // then clear callbacks
-              this.#callbacks = {}
+                // register pre-connect callbacks on target wallet
+                Object.entries(this.#callbacks).forEach(([event, handlers]) =>
+                  handlers.forEach((h) => wallet.on(event as EventType, h))
+                )
+                // then clear callbacks
+                this.#callbacks = {}
+              }
+              return wallet
             }
-            return wallet
-          })
+          )
 
-        #refreshWalletProperties = (
-          wallet: IAlephiumWindowObject | undefined,
-        ) => {
+        #refreshWalletProperties = (wallet: IAlephiumWindowObject | undefined) => {
           if (!wallet) return
           this.selectedAccount = wallet.selectedAccount
           this.isConnected = wallet.isConnected
@@ -277,7 +267,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
   }
 
   getInstalledWallets(
-    options?: Omit<GetAlephiumWalletOptions, "showList" | "modalOptions">,
+    options?: Omit<GetAlephiumWalletOptions, 'showList' | 'modalOptions'>
   ): Promise<IAlephiumWindowObject[]> {
     return this.#getInstalledWallets(options).then((res) => res.installed)
   }
@@ -294,24 +284,20 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     return wallet
   }
 
-  #getInstalledWallets = async (
-    options?: Omit<GetAlephiumWalletOptions, "showList" | "modalOptions">,
-  ) => {
+  #getInstalledWallets = async (options?: Omit<GetAlephiumWalletOptions, 'showList' | 'modalOptions'>) => {
     await this.#waitForDocumentReady()
 
     // lookup installed wallets
     const installed = Object.values(
-      Object.getOwnPropertyNames(window).reduce<
-        Record<string, IAlephiumWindowObject>
-      >((wallets, key) => {
-        if (key.startsWith("alephium")) {
+      Object.getOwnPropertyNames(window).reduce<Record<string, IAlephiumWindowObject>>((wallets, key) => {
+        if (key.startsWith('alephium')) {
           const wallet = (window as Record<string, any>)[key]
           if (isWalletObj(key, wallet) && !wallets[wallet.id]) {
             wallets[wallet.id] = wallet
           }
         }
         return wallets
-      }, {}),
+      }, {})
     )
 
     // 1. lookup state wallets
@@ -322,9 +308,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     if (!lastWalletObj) lastWallet.delete()
 
     // fetch & shuffle all preAuthorized
-    const preAuthorized: IAlephiumWindowObject[] = shuffle(
-      await filterPreAuthorized(installed),
-    )
+    const preAuthorized: IAlephiumWindowObject[] = shuffle(await filterPreAuthorized(installed))
 
     /**
      * prioritize states wallets at given arr
@@ -347,27 +331,19 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
       installed: prioritizeStateWallets(installed),
       preAuthorized: prioritizeStateWallets(preAuthorized),
       defaultWallet: defaultWalletObj,
-      lastWallet: lastWalletObj,
+      lastWallet: lastWalletObj
     }
 
-    result.installed = filterBy<IAlephiumWindowObject>(
-      result.installed,
-      options,
-    )
+    result.installed = filterBy<IAlephiumWindowObject>(result.installed, options)
 
-    result.installed = sortBy<IAlephiumWindowObject>(
-      result.installed,
-      options?.order,
-    )
+    result.installed = sortBy<IAlephiumWindowObject>(result.installed, options?.order)
 
     const isFixedOrder = options && Array.isArray(options.order)
     if (!isFixedOrder) {
       // 1. prioritize preAuthorized wallets:
       // remove preAuthorized wallets from installed wallets list
       const preAuthorizedIds = new Set<string>(preAuthorized.map((pa) => pa.id))
-      result.installed = result.installed.filter(
-        (w) => !preAuthorizedIds.has(w.id),
-      )
+      result.installed = result.installed.filter((w) => !preAuthorizedIds.has(w.id))
       // put preAuthorized wallets first
       result.installed = [...preAuthorized, ...result.installed]
 
@@ -381,7 +357,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
   #waitForDocumentReady = () => {
     const isReady = () => {
       const readyState = document.readyState
-      return readyState === "complete"
+      return readyState === 'complete'
     }
 
     return new Promise<void>((resolve) => {
@@ -399,7 +375,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
   }
 
   #declare = () => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       window.gsw = true
     }
   }
@@ -411,4 +387,4 @@ export const connect = gaw.connect
 export const disconnect = gaw.disconnect
 export const getInstalledWallets = gaw.getInstalledWallets
 
-export * from "./types"
+export * from './types'

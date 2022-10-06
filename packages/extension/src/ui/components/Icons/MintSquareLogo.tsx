@@ -1,20 +1,10 @@
-import { FC, SVGProps } from "react"
+import { FC, SVGProps } from 'react'
 
 export const MintSquareLogo: FC<SVGProps<SVGSVGElement>> = (props) => {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g clipPath="url(#clip0_2894_43466)">
-        <path
-          d="M8.86768 8.75537L9.99919 7.63489L11.1307 8.75537L9.99919 9.87589L8.86768 8.75537Z"
-          fill="#FAFAFA"
-        />
+        <path d="M8.86768 8.75537L9.99919 7.63489L11.1307 8.75537L9.99919 9.87589L8.86768 8.75537Z" fill="#FAFAFA" />
         <path
           fillRule="evenodd"
           clipRule="evenodd"

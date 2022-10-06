@@ -2,9 +2,9 @@ name: Audit
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
   schedule:
     - cron: '15 23 * * 0'
 
@@ -13,6 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     name: audit check
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@v2
-    - run: yarn audit --production
+      - name: Checkout the code
+        uses: actions/checkout@v2
+      - run: yarn audit --production

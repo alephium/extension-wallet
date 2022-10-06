@@ -1,19 +1,33 @@
 import {
-  type Account,
-  type SignDeployContractTxParams,
-  type SignDeployContractTxResult,
-  type SignerProvider,
-  type SignExecuteScriptTxParams,
-  type SignExecuteScriptTxResult,
-  type SignHexStringParams,
-  type SignHexStringResult,
-  type SignMessageParams,
-  type SignMessageResult,
-  type SignTransferTxParams,
-  type SignTransferTxResult,
-  type SignUnsignedTxParams,
-  type SignUnsignedTxResult
-} from "@alephium/web3"
+  Account,
+  SignDeployContractTxParams,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
+  SignHexStringParams,
+  SignHexStringResult,
+  SignMessageParams,
+  SignMessageResult,
+  SignTransferTxParams,
+  SignTransferTxResult,
+  SignUnsignedTxParams,
+  SignUnsignedTxResult,
+  SignerProvider,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type
+} from '@alephium/web3'
 
 export interface IStorageWrapper {
   set(value: string | null | undefined): boolean
@@ -22,7 +36,7 @@ export interface IStorageWrapper {
 }
 
 export type ModalOptions = {
-  theme?: "light" | "dark"
+  theme?: 'light' | 'dark'
 }
 
 export type DisconnectOptions = {
@@ -36,7 +50,7 @@ export type DisconnectOptions = {
   clearDefaultWallet?: boolean
 }
 
-export type Order = string[] | "community" | "random" | null | undefined
+export type Order = string[] | 'community' | 'random' | null | undefined
 
 export type GetAlephiumWalletOptions = {
   /**
@@ -106,9 +120,7 @@ export interface IGetAlephiumWallet {
    * Once connected to a wallet, clients can retrieve the wallet's
    * `IAlephiumWindowObject` instance by calling `getAlephium()`
    */
-  connect(
-    options?: GetAlephiumWalletOptions,
-  ): Promise<IAlephiumWindowObject | undefined>
+  connect(options?: GetAlephiumWalletOptions): Promise<IAlephiumWindowObject | undefined>
 
   /**
    * disconnect from a wallet
@@ -121,7 +133,7 @@ export interface IGetAlephiumWallet {
    * @param options see `connect` `options` for `order`, `include` & `exclude`
    */
   getInstalledWallets(
-    options?: Omit<GetAlephiumWalletOptions, "showList" | "modalOptions">,
+    options?: Omit<GetAlephiumWalletOptions, 'showList' | 'modalOptions'>
   ): Promise<IAlephiumWindowObject[]>
 
   /**
@@ -131,7 +143,7 @@ export interface IGetAlephiumWallet {
   getAlephium(): IAlephiumWindowObject
 }
 
-export type EventType = "addressesChanged" | "networkChanged"
+export type EventType = 'addressesChanged' | 'networkChanged'
 
 export type EventHandler = (data: any) => void
 
@@ -161,8 +173,8 @@ export type WalletProvider = {
   name: string
   icon: string
   downloads:
-  | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
-  | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
+    | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
+    | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
 }
 
 declare global {

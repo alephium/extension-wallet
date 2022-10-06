@@ -1,14 +1,8 @@
-import { FC } from "react"
+import { FC } from 'react'
 
 export const EditIcon: FC = () => {
   return (
-    <svg
-      width="12"
-      height="13"
-      viewBox="0 0 12 13"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_2117_22765)">
         <path
           d="M7.5337 2.49295C7.51053 2.46956 7.48296 2.45099 7.45259 2.43829C7.42221 2.42559 7.38963 2.41902 7.3567 2.41895C7.32382 2.41895 7.29125 2.42545 7.26088 2.43806C7.23051 2.45067 7.20292 2.46915 7.1797 2.49245L1.7187 7.95495C1.67184 8.00183 1.64551 8.0654 1.64551 8.1317C1.64551 8.19799 1.67184 8.26156 1.7187 8.30844L4.1927 10.7824C4.23959 10.8293 4.30316 10.8556 4.36945 10.8556C4.43575 10.8556 4.49932 10.8293 4.5462 10.7824L10.0047 5.32395C10.0514 5.27708 10.0777 5.21361 10.0777 5.14745C10.0777 5.08128 10.0514 5.01781 10.0047 4.97095L7.5337 2.49295Z"
@@ -25,12 +19,7 @@ export const EditIcon: FC = () => {
       </g>
       <defs>
         <clipPath id="clip0_2117_22765">
-          <rect
-            width="12"
-            height="12"
-            fill="white"
-            transform="translate(0 0.5)"
-          />
+          <rect width="12" height="12" fill="white" transform="translate(0 0.5)" />
         </clipPath>
       </defs>
     </svg>
