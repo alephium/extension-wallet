@@ -1,5 +1,5 @@
 import { convertAlphToSet } from '@alephium/sdk'
-import { Balance } from '@alephium/sdk/api/alephium'
+import { AddressBalance } from '@alephium/sdk/api/explorer'
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { Schema, object } from 'yup'
 
 import { inputAmountSchema } from '../../../shared/token/amount'
+import Amount from '../../components/Amount'
 import { Button } from '../../components/buttons/Button'
 import Column, { ColumnCenter } from '../../components/Column'
 import { IconBar } from '../../components/IconBar'
@@ -21,16 +22,16 @@ import DefaultAddressSwitcher from '../addresses/DefaultAddressSwitcher'
 import { TokenIcon } from '../assets/TokenIcon'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
 
+const name = 'Alephium'
+const symbol = 'ALPH'
+const image = 'https://raw.githubusercontent.com/alephium/alephium-brand-guide/master/logos/light/Logo-Icon.png'
+
 export const SendTokenScreen: FC = () => {
   const navigate = useNavigate()
   const resolver = useYupValidationResolver(SendSchema)
   const { address: addressParam } = useParams()
   const defaultAddress = useDefaultAddress()?.hash
   const [address, setAddress] = useState(addressParam === 'undefined' ? defaultAddress : addressParam)
-
-  const name = 'Alephium'
-  const symbol = 'ALPH'
-  const image = 'https://raw.githubusercontent.com/alephium/alephium-brand-guide/master/logos/light/Logo-Icon.png'
 
   const {
     handleSubmit,
@@ -45,12 +46,19 @@ export const SendTokenScreen: FC = () => {
     resolver
   })
 
-  const [balance, setBalance] = useState<Balance | undefined>(undefined)
+  const [balance, setBalance] = useState<AddressBalance>()
+  const [availableBalance, setAvailableBalance] = useState(BigInt(0))
 
   useEffect(() => {
     if (address) {
       getBalance(address).then((balance) => {
         setBalance(balance)
+
+        if (balance?.balance) {
+          setAvailableBalance(
+            balance.lockedBalance ? BigInt(balance.balance) - BigInt(balance.lockedBalance) : BigInt(balance.balance)
+          )
+        }
       })
     }
   }, [address])
@@ -61,10 +69,9 @@ export const SendTokenScreen: FC = () => {
   const inputAmount = formValues.amount
 
   // TODO: Take fee into consideration
-  const isInputAmountGtBalance =
-    (inputAmount ? convertAlphToSet(inputAmount) : 0) >= (balance ? BigInt(balance.balance) : 0)
+  const isInputAmountGtAvailableBalance = (inputAmount ? convertAlphToSet(inputAmount) : 0) >= availableBalance
 
-  const disableSubmit = !isDirty || isSubmitting || (submitCount > 0 && !isDirty) || isInputAmountGtBalance
+  const disableSubmit = !isDirty || isSubmitting || (submitCount > 0 && !isDirty) || isInputAmountGtAvailableBalance
 
   if (!address) {
     return <Navigate to={routes.walletAddresses()} />
@@ -106,7 +113,10 @@ export const SendTokenScreen: FC = () => {
                 alwaysShowTitle={true}
                 borderRadius={9}
               />
-              <FormInfo>{balance?.balanceHint || 0} available</FormInfo>
+              <FormInfo>
+                <span>Available: </span>
+                <Amount value={availableBalance} fullPrecision />
+              </FormInfo>
             </AddressSwitcherContainer>
             <InputAndMessages>
               <ControlledInputText
@@ -118,7 +128,7 @@ export const SendTokenScreen: FC = () => {
                 type="number"
                 LeftComponent={<TokenIcon name={name} url={image} size={32} />}
               ></ControlledInputText>
-              {inputAmount && isInputAmountGtBalance && <FormError>Insufficient balance</FormError>}
+              {inputAmount && isInputAmountGtAvailableBalance && <FormError>Insufficient balance</FormError>}
               {errors.amount && <FormError>{errors.amount.message}</FormError>}
             </InputAndMessages>
 

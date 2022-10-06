@@ -1,4 +1,4 @@
-import { Balance } from '@alephium/web3/dist/src/api/api-alephium'
+import { AddressBalance } from '@alephium/sdk/api/explorer'
 
 import { AddressAndPublicKey } from '../addresses'
 
@@ -21,12 +21,12 @@ export type AddressMessage =
   | { type: 'GET_ADDRESS_BALANCE'; data: { address: string } }
   | {
       type: 'GET_ADDRESS_BALANCE_RES'
-      data: Balance
+      data: AddressBalance
     }
   | { type: 'GET_ADDRESSES_BALANCE'; data: { addresses: string[] } }
   | {
       type: 'GET_ADDRESSES_BALANCE_RES'
-      data: Balance[]
+      data: AddressBalance[]
     }
   | { type: 'DELETE_ADDRESS'; data: { address: string } }
   | { type: 'DELETE_ADDRESS_RES' }

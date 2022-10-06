@@ -7,7 +7,7 @@ import {
   walletImport,
   walletOpen
 } from '@alephium/sdk'
-import { Balance } from '@alephium/sdk/api/alephium'
+import { AddressBalance } from '@alephium/sdk/api/explorer'
 import { ExplorerProvider, NodeProvider, web3 } from '@alephium/web3'
 import { PrivateKeyWallet } from '@alephium/web3-wallet'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
@@ -153,12 +153,9 @@ export class Wallet {
     return this.session?.password === password
   }
 
-  public async getBalance(address: string): Promise<Balance> {
-    console.log('getBalance', address)
-    const nodeProvider = await this.getNodeProvider()
-    console.log('nodeProvider', nodeProvider)
-    const value = await nodeProvider.addresses.getAddressesAddressBalance(address)
-    console.log('balance', value)
+  public async getBalance(address: string): Promise<AddressBalance> {
+    const explorerProvider = await this.getExplorerProvider()
+    const value = await explorerProvider.addresses.getAddressesAddressBalance(address)
     return value
   }
 
