@@ -89,7 +89,7 @@ export type ControlledInputProps<T extends FieldValues> = InputFieldProps &
   AdditionalControlledInputProps
 
 const Label = styled.label`
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
   font-weight: 500;
   height: 20px;
   font-size: 17px;
@@ -109,10 +109,10 @@ const InputCss = css`
 
   text-shadow: none;
 
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg.accent};
   border-radius: 9px;
   border: 0;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.font.primary};
 
   padding: 0 15px;
   padding-top: 22px;
@@ -127,7 +127,7 @@ const InputCss = css`
   }
 
   &:focus + ${Label} {
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.font.primary};
     font-weight: 600;
     transform: scale(0.7) translate3d(21px, 36px, 0);
   }
@@ -138,8 +138,8 @@ const InputCss = css`
   }
 
   &:disabled {
-    color: ${({ theme }) => theme.text2};
-    border-bottom: 1px solid ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.font.secondary};
+    border-bottom: 1px solid ${({ theme }) => theme.font.secondary};
   }
 `
 
@@ -186,7 +186,7 @@ const LeftComponentContainer = styled.div`
   bottom: 0;
   height: ${inputHeight}px;
   width: ${inputHeight / 1.2}px;
-  border-right: 1px solid ${({ theme }) => theme.text3};
+  border-right: 1px solid ${({ theme }) => theme.font.secondary};
   display: flex;
   align-items: center;
   justify-content: center;

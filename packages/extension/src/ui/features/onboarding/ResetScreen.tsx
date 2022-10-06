@@ -16,7 +16,7 @@ export const ResetScreen: FC = () => {
     <ConfirmScreen
       title="Reset wallet"
       confirmButtonText="RESET"
-      confirmButtonBackgroundColor={theme.red1}
+      confirmButtonBackgroundColor={theme.global.alert}
       rejectButtonText="Cancel"
       onSubmit={() => {
         resetAll()

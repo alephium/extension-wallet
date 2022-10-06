@@ -112,13 +112,13 @@ const CarouselContainer = styled.div`
   }
 
   .swiper-pagination-bullet {
-    background-color: ${({ theme }) => theme.text2};
+    background-color: ${({ theme }) => theme.font.secondary};
     width: 10px;
     height: 10px;
   }
 
   .swiper-pagination-bullet-active {
-    background-color: ${({ theme }) => theme.text1};
+    background-color: ${({ theme }) => theme.font.primary};
   }
 `
 

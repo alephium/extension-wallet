@@ -52,20 +52,20 @@ const ColorPicker = ({ value, onChange, className }: ColorPickerProps) => {
               styles={{
                 default: {
                   card: {
-                    backgroundColor: theme.bg2,
+                    backgroundColor: theme.bg.primary,
                     borderRadius: '9px'
                   },
                   triangle: {
-                    borderColor: `transparent transparent ${theme.bg2}`
+                    borderColor: `transparent transparent ${theme.bg.primary}`
                   },
                   hash: {
-                    backgroundColor: theme.bg3,
+                    backgroundColor: theme.bg.accent,
                     marginTop: '5px'
                   },
                   input: {
-                    backgroundColor: theme.bg3,
+                    backgroundColor: theme.bg.accent,
                     boxShadow: 'none',
-                    color: theme.text1,
+                    color: theme.font.primary,
                     height: '30px',
                     marginTop: '5px'
                   }
@@ -90,7 +90,7 @@ const InputContainer = styled.div`
   border-radius: 9px;
   height: 57px;
   padding: 15px;
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg.accent};
   margin-top: 20px;
   cursor: pointer;
 
@@ -100,7 +100,7 @@ const InputContainer = styled.div`
 `
 
 const Label = styled.label`
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
   font-weight: normal;
   font-size: 17px;
   flex: 1;

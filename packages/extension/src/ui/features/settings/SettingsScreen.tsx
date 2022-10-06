@@ -70,21 +70,21 @@ export const Title = styled.h3`
   font-weight: 600;
   font-size: 17px;
   line-height: 22px;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.font.primary};
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
   svg {
-    color: ${({ theme }) => theme.text2};
+    color: ${({ theme }) => theme.font.secondary};
     font-size: 12px;
   }
 `
 
 export const P = styled.p`
   font-size: 15px;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
   margin-top: 16px;
 `
 
@@ -104,7 +104,7 @@ export const SettingsScreenWrapper = styled.div`
   hr {
     border: none;
     height: 1px;
-    background-color: ${({ theme }) => theme.bg3};
+    background-color: ${({ theme }) => theme.bg.accent};
   }
 `
 
@@ -117,7 +117,7 @@ export const SettingsLinkItem = styled(Link)`
   padding: 24px 32px;
 
   &:hover svg {
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.font.primary};
   }
 `
 

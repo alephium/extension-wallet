@@ -17,16 +17,16 @@ export const getVariantColor =
     switch (variant) {
       case 'warn':
         return hover
-          ? colord(theme.red4).saturate(1).lighten(0.075).toRgbString()
+          ? colord(theme.global.accent).saturate(1).lighten(0.075).toRgbString()
           : disabled
-          ? colord(theme.red4).alpha(0.5).toRgbString()
-          : theme.red4
+          ? colord(theme.global.accent).alpha(0.5).toRgbString()
+          : theme.global.accent
       case 'danger':
         return hover
-          ? colord(theme.red1).lighten(0.075).toRgbString()
+          ? colord(theme.global.alert).lighten(0.075).toRgbString()
           : disabled
-          ? colord(theme.red1).alpha(0.5).toRgbString()
-          : theme.red1
+          ? colord(theme.global.alert).alpha(0.5).toRgbString()
+          : theme.global.alert
     }
     return hover && !disabled ? `rgba(255, 255, 255, 0.25)` : `rgba(255, 255, 255, 0.15);`
   }
@@ -47,7 +47,7 @@ export const Button = styled.button<IButton>`
   width: 100%;
   outline: none;
   border: none;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.font.primary};
   cursor: pointer;
   transition: all 200ms ease-in-out;
 

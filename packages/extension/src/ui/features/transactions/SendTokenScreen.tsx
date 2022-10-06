@@ -154,7 +154,7 @@ export const BalanceText = styled.div`
   font-size: 15px;
   line-height: 20px;
   text-align: center;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 export const StyledForm = styled.form`
@@ -182,7 +182,7 @@ export const InputTokenSymbol = styled.span`
   font-weight: 600;
   font-size: 17px;
   line-height: 22px;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const FormError = styled.p`
@@ -191,7 +191,7 @@ const FormError = styled.p`
   font-weight: 400;
   font-size: 13px;
   line-height: 18px;
-  color: ${({ theme }) => theme.red1};
+  color: ${({ theme }) => theme.global.alert};
   margin-top: 8px;
   margin-left: 30px;
   text-align: left;
@@ -203,7 +203,7 @@ const FormInfo = styled.p`
   font-weight: 400;
   font-size: 13px;
   line-height: 18px;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
   margin-top: 8px;
   margin-right: 30px;
   text-align: right;

@@ -33,10 +33,10 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       pending: 'Pending'
     }[infoType],
     amountTextColor: {
-      in: theme.green1,
-      out: theme.blue1,
-      move: theme.text1,
-      pending: theme.text1
+      in: theme.global.valid,
+      out: theme.global.accent,
+      move: theme.font.primary,
+      pending: theme.font.primary
     }[infoType],
     amountSign: {
       in: '+ ',
@@ -51,16 +51,16 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       pending: CircleEllipsis
     }[infoType],
     iconColor: {
-      in: theme.green1,
-      out: theme.blue1,
-      move: theme.text3,
-      pending: theme.text3
+      in: theme.global.valid,
+      out: theme.global.accent,
+      move: theme.font.secondary,
+      pending: theme.font.secondary
     }[infoType],
     iconBgColor: {
-      in: colord(theme.green1).alpha(0.11).toRgbString(),
-      out: colord(theme.blue1).alpha(0.11).toRgbString(),
-      move: colord(theme.text2).alpha(0.11).toRgbString(),
-      pending: colord(theme.text2).alpha(0.11).toRgbString()
+      in: colord(theme.global.valid).alpha(0.11).toRgbString(),
+      out: colord(theme.global.accent).alpha(0.11).toRgbString(),
+      move: colord(theme.font.secondary).alpha(0.11).toRgbString(),
+      pending: colord(theme.font.secondary).alpha(0.11).toRgbString()
     }[infoType]
   }
 }

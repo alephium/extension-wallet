@@ -15,5 +15,5 @@ export const Spinner: FC<CircularProgressProps> = (props) => {
     props = { ...props, value, variant: 'determinate' }
   }
 
-  return <CircularProgress {...props} style={{ ...defaultStyle, color: theme.text1, ...props.style }} />
+  return <CircularProgress {...props} style={{ ...defaultStyle, color: theme.font.primary, ...props.style }} />
 }

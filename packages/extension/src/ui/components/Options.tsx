@@ -23,7 +23,7 @@ const OptionWrapper = styled.div<{
   padding: 16px;
   border-radius: 8px;
   background-color: ${({ disabled, backgroundColor, theme }) =>
-    disabled ? theme.text3 : backgroundColor ?? theme.bg2};
+    disabled ? theme.font.secondary : backgroundColor ?? theme.bg.primary};
   cursor: ${({ disabled }) => (disabled ? 'auto' : 'pointer')};
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `

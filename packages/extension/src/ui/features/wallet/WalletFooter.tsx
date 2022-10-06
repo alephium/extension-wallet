@@ -92,7 +92,7 @@ export const FooterTab = styled(Link)<{ isActive: boolean }>`
     background: rgba(255, 255, 255, 0.05);
   }
 
-  color: ${({ isActive, theme }) => (isActive ? theme.text1 : theme.text2)};
+  color: ${({ isActive, theme }) => (isActive ? theme.font.primary : theme.font.secondary)};
 
   background-color: ${({ isActive }) => (isActive ? 'rgba(255, 255, 255, 0.1)' : 'initial')};
 `

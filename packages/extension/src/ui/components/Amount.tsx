@@ -92,7 +92,7 @@ const Amount = ({
         )}
         {value && (
           <FadedPart>
-            <AlefSymbol color={theme.text1} />
+            <AlefSymbol color={theme.font.primary} />
           </FadedPart>
         )}
       </>

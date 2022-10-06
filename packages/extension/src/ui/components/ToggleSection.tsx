@@ -43,13 +43,13 @@ const ToggleSection = ({ title, marginTop, onClick = () => null, children, class
 export default styled(ToggleSection)`
   display: flex;
   flex-direction: column;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.bg.primary};
   border-radius: 9px;
   padding-bottom: 21px;
 `
 
 const Label = styled.span`
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
   font-weight: normal;
   height: 20px;
   font-size: 17px;
@@ -72,6 +72,6 @@ const CellChildren = styled(motion.div)`
 `
 
 const CellChildrenInner = styled.div`
-  border-top: 1px solid ${({ theme }) => theme.bg2};
+  border-top: 1px solid ${({ theme }) => theme.bg.primary};
   padding: 0 21px;
 `

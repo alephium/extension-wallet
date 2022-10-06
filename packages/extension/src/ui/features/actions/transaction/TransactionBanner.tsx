@@ -2,8 +2,8 @@ import { FC } from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
-  background-color: ${({ theme }) => theme.red4};
-  color: ${({ theme }) => theme.text1};
+  background-color: ${({ theme }) => theme.global.accent};
+  color: ${({ theme }) => theme.font.primary};
   font-size: 13px;
   font-weight: 600;
   padding: 12px 16px;

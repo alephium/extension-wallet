@@ -32,7 +32,7 @@ const DotIcon = styled(DotSVG)`
   height: 8px;
   flex-shrink: 0;
   * {
-    fill: ${({ color, theme }) => color || theme.text1};
+    fill: ${({ color, theme }) => color || theme.font.primary};
   }
 `
 

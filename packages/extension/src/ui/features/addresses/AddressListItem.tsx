@@ -93,7 +93,7 @@ export const AddressListItemWrapper = styled.div<AddressListItemWrapperProps & {
 
   * {
     ${({ addressColor, theme }) => {
-      const color = colord(addressColor).isDark() ? theme.text1 : theme.bg1
+      const color = colord(addressColor).isDark() ? theme.font.primary : theme.bg.secondary
       return css`
         color: ${color} !important;
 
