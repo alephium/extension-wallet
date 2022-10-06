@@ -54,11 +54,13 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   let recipient
   let amount
+  let recipientName = ''
 
   if (payload.type === 'ALPH_SIGN_TRANSFER_TX') {
     const destination = payload.params.destinations[0]
+    recipient = destination.address
+    recipientName = getAddressName(recipient, metadata)
     amount = BigInt(destination.attoAlphAmount)
-    recipient = formatTruncatedAddress(destination.address)
   }
 
   if (!defaultAddress) {
@@ -67,13 +69,11 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   const addressName = getAddressName(defaultAddress.hash, metadata)
 
-  const confirmButtonVariant = 'warn'
-
   return (
     <ConfirmScreen
       title={title}
       confirmButtonText="Approve"
-      confirmButtonVariant={confirmButtonVariant}
+      confirmButtonVariant="warn"
       defaultAddress={defaultAddress}
       onSubmit={() => {
         onSubmit(payload)
@@ -94,7 +94,11 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
             <Field>
               <FieldKey>To</FieldKey>
               <FieldValue>
-                <LeftPaddedField>{recipient}</LeftPaddedField>
+                <LeftPaddedField>
+                  {recipientName && recipientName !== 'Unnamed Address'
+                    ? recipientName
+                    : formatTruncatedAddress(recipient)}
+                </LeftPaddedField>
               </FieldValue>
             </Field>
           )}
