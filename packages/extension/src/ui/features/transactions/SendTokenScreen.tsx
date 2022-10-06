@@ -1,5 +1,4 @@
 import { convertAlphToSet } from '@alephium/sdk'
-import { AddressBalance } from '@alephium/sdk/api/explorer'
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
@@ -46,14 +45,11 @@ export const SendTokenScreen: FC = () => {
     resolver
   })
 
-  const [balance, setBalance] = useState<AddressBalance>()
   const [availableBalance, setAvailableBalance] = useState(BigInt(0))
 
   useEffect(() => {
     if (address) {
       getBalance(address).then((balance) => {
-        setBalance(balance)
-
         if (balance?.balance) {
           setAvailableBalance(
             balance.lockedBalance ? BigInt(balance.balance) - BigInt(balance.lockedBalance) : BigInt(balance.balance)
