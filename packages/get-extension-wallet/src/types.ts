@@ -1,4 +1,4 @@
-import {
+import type {
   Account,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
@@ -12,21 +12,7 @@ import {
   SignTransferTxResult,
   SignUnsignedTxParams,
   SignUnsignedTxResult,
-  SignerProvider,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type
+  SignerProvider
 } from '@alephium/web3'
 
 export interface IStorageWrapper {

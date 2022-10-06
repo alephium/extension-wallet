@@ -1,4 +1,4 @@
-import {
+import type {
   Account,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
@@ -11,20 +11,7 @@ import {
   SignTransferTxParams,
   SignTransferTxResult,
   SignUnsignedTxParams,
-  SignUnsignedTxResult,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type
+  SignUnsignedTxResult
 } from '@alephium/web3'
 
 import defaultWallet from './configs/defaultWallet'
