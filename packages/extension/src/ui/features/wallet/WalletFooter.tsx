@@ -74,6 +74,7 @@ export const FooterTab = styled(Link)<{ isActive: boolean }>`
   cursor: pointer;
   border-radius: 9px;
   width: 75px;
+  font-size: 12px;
 
   svg {
     font-size: 1.8rem;
