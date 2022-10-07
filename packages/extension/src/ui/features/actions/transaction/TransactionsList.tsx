@@ -12,16 +12,16 @@ export interface ITransactionsList {
 export const TransactionsList: FC<ITransactionsList> = ({ payload }) => {
   return (
     <TransactionBanner icon={WarningIcon}>
-      {payload.type === 'ALPH_SIGN_TRANSFER_TX' && (
+      {(payload.type === 'ALPH_SIGN_TRANSFER_TX' || payload.type === 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX') && (
         <div>Please, review your transaction data before approving your transaction.</div>
       )}
-      {payload.type === 'ALPH_SIGN_CONTRACT_CREATION_TX' && (
+      {(payload.type === 'ALPH_SIGN_CONTRACT_CREATION_TX' || payload.type === 'ALPH_SIGN_AND_SUBMIT_CONTRACT_CREATION_TX') && (
         <div>
           <div>Creating contract with bytecode:</div>
           <Bytecode>{payload.params.bytecode}</Bytecode>
         </div>
       )}
-      {payload.type === 'ALPH_SIGN_SCRIPT_TX' && (
+      {(payload.type === 'ALPH_SIGN_SCRIPT_TX' || payload.type === 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX') && (
         <div>
           <div>Running script with bytecode:</div>
           <Bytecode>{payload.params.bytecode}</Bytecode>

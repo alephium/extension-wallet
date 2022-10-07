@@ -43,21 +43,10 @@ export class Wallet {
     private readonly store: IStorage<WalletStorageProps>,
     private readonly getCurrentNetwork: GetCurrentNetwork,
     private readonly onAutoLock?: () => Promise<void>
-  ) {}
+  ) { }
 
   async getNodeProvider(): Promise<NodeProvider> {
-    const currentNetwork = await this.getCurrentNetwork()
-    let currentNodeProvider: NodeProvider | undefined = undefined
-    try {
-      currentNodeProvider = web3.getCurrentNodeProvider()
-      if (currentNodeProvider.baseUrl === currentNetwork.nodeUrl) {
-        return currentNodeProvider
-      }
-    } catch (e) {
-      console.info('Error getting current node provider', e)
-    }
-
-    web3.setCurrentNodeProvider(currentNetwork.nodeUrl)
+    web3.setCurrentNodeProvider((await this.getCurrentNetwork()).nodeUrl)
     return web3.getCurrentNodeProvider()
   }
 

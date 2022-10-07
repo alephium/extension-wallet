@@ -31,5 +31,6 @@
     "scripts": ["background.js"],
     "persistent": true
   },
+  "content_security_policy": "script-src 'self' 'wasm-unsafe-eval';",
   "web_accessible_resources": ["inpage.js"]
 }

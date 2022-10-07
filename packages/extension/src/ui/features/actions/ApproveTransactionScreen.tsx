@@ -25,13 +25,24 @@ const LeftPaddedField = styled.div`
 export const titleForTransactions = (payload: TransactionPayload) => {
   switch (payload.type) {
     case 'ALPH_SIGN_TRANSFER_TX':
-      return 'Review Send'
+      return 'Review Transfer Signing'
+
+    case 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX':
+      return 'Review Transfer'
 
     case 'ALPH_SIGN_CONTRACT_CREATION_TX': {
+      return 'Review Contract Signing'
+    }
+
+    case 'ALPH_SIGN_AND_SUBMIT_CONTRACT_CREATION_TX': {
       return 'Review Contract'
     }
 
     case 'ALPH_SIGN_SCRIPT_TX': {
+      return 'Review Script Signing'
+    }
+
+    case 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX': {
       return 'Review Script'
     }
 

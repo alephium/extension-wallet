@@ -12,8 +12,9 @@ import type {
   SignTransferTxResult,
   SignUnsignedTxParams,
   SignUnsignedTxResult,
-  SignerProvider
 } from '@alephium/web3'
+
+import { SignerProvider } from '@alephium/web3'
 
 export interface IStorageWrapper {
   set(value: string | null | undefined): boolean
@@ -98,15 +99,15 @@ export interface IGetAlephiumWallet {
    *      3. modify default wallet settings
    *
    * @param options
-   * @returns Promise of `IAlephiumWindowObject` if the user have chosen a
+   * @returns Promise of `AlephiumWindowObject` if the user have chosen a
    * wallet from the list, undefined when the list got closed without choosing
    * a wallet (i.e. the user simply canceled the "connect to a wallet" request,
    * or chose to install a wallet from the wallets-discovery list).
    *
    * Once connected to a wallet, clients can retrieve the wallet's
-   * `IAlephiumWindowObject` instance by calling `getAlephium()`
+   * `AlephiumWindowObject` instance by calling `getAlephium()`
    */
-  connect(options?: GetAlephiumWalletOptions): Promise<IAlephiumWindowObject | undefined>
+  connect(options?: GetAlephiumWalletOptions): Promise<AlephiumWindowObject | undefined>
 
   /**
    * disconnect from a wallet
@@ -120,20 +121,20 @@ export interface IGetAlephiumWallet {
    */
   getInstalledWallets(
     options?: Omit<GetAlephiumWalletOptions, 'showList' | 'modalOptions'>
-  ): Promise<IAlephiumWindowObject[]>
+  ): Promise<AlephiumWindowObject[]>
 
   /**
-   * return last-chosen wallet `IAlephiumWindowObject` instance,
+   * return last-chosen wallet `AlephiumWindowObject` instance,
    * or default wrapper if disconnected
    */
-  getAlephium(): IAlephiumWindowObject
+  getAlephium(): AlephiumWindowObject
 }
 
 export type EventType = 'addressesChanged' | 'networkChanged'
 
 export type EventHandler = (data: any) => void
 
-export declare class IAlephiumWindowObject implements SignerProvider {
+export abstract class AlephiumWindowObject extends SignerProvider {
   discriminator: string
   enable: (options?: { showModal?: boolean }) => Promise<string[]>
   isPreauthorized: () => Promise<boolean>
@@ -144,14 +145,7 @@ export declare class IAlephiumWindowObject implements SignerProvider {
   name: string
   icon: string
   isConnected: boolean
-  selectedAccount?: Account
-  getAccounts(): Promise<Account[]>
-  signTransferTx(params: SignTransferTxParams): Promise<SignTransferTxResult>
-  signDeployContractTx(params: SignDeployContractTxParams): Promise<SignDeployContractTxResult>
-  signExecuteScriptTx(params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult>
-  signUnsignedTx(params: SignUnsignedTxParams): Promise<SignUnsignedTxResult>
-  signHexString(params: SignHexStringParams): Promise<SignHexStringResult>
-  signMessage(params: SignMessageParams): Promise<SignMessageResult>
+  defaultAddress?: Account
 }
 
 export type WalletProvider = {
@@ -159,8 +153,8 @@ export type WalletProvider = {
   name: string
   icon: string
   downloads:
-    | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
-    | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
+  | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
+  | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
 }
 
 declare global {

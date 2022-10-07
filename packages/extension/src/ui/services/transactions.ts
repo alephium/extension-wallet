@@ -9,7 +9,7 @@ import { formatDate } from './dates'
 export const sendAlephiumTransferTransaction = async (fromAddr: string, toAddr: string, amountInAlph: string) => {
   const amount = convertAlphToSet(amountInAlph)
   const payload: TransactionPayload = {
-    type: 'ALPH_SIGN_TRANSFER_TX',
+    type: 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX',
     params: {
       signerAddress: fromAddr,
       destinations: [

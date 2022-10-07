@@ -16,7 +16,7 @@ export type NetworkMessage =
   | { type: 'SET_CURRENT_NETWORK'; data: { networkId: string } }
   | { type: 'SET_CURRENT_NETWORK_RES'; data: { networkId: string } }
   | { type: 'GET_CURRENT_NETWORK' }
-  | { type: 'GET_CURRENT_NETWORK_RES'; data: { networkId: string } }
+  | { type: 'GET_CURRENT_NETWORK_RES'; data: { network: Network } }
   | { type: 'GET_CUSTOM_NETWORKS_RES'; data: Network[] }
   // - used by dapps to request addition of custom network
   | { type: 'REQUEST_ADD_CUSTOM_NETWORK'; data: Network }
