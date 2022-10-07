@@ -132,7 +132,6 @@ export const alephiumWindowObject: AlephiumWindowObject = {
       userEventHandlers.splice(eventIndex, 1)
     }
   },
-
   getAccounts: async (): Promise<Account[]> => {
     sendMessage({ type: "GET_ADDRESSES" })
     const addresses = await waitForMessage("GET_ADDRESSES_RES", 100)
@@ -144,6 +143,14 @@ export const alephiumWindowObject: AlephiumWindowObject = {
         publicKey: addr.publicKey,
       }
     })
+  },
+  getSelectedAccount: async (): Promise<Account> => {
+    const { alephium } = window
+    if (alephium?.selectedAccount) {
+      return Promise.resolve(alephium.selectedAccount)
+    } else {
+      throw new Error("no selected account")
+    }
   },
   signTransferTx: async (
     params: SignTransferTxParams,
@@ -186,6 +193,5 @@ export const alephiumWindowObject: AlephiumWindowObject = {
     params: SignMessageParams,
   ): Promise<SignMessageResult> => {
     throw Error(`signMessage unsupported ${params}`)
-  },
+  }
 }
-

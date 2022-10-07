@@ -239,6 +239,10 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           }
         }
 
+        getSelectedAccount = async () => {
+          return Promise.resolve(this.selectedAccount)
+        }
+
         #connect = (options?: GetAlephiumWalletOptions) =>
           (self.#walletObjRef.current
             ? Promise.resolve(self.#walletObjRef.current)

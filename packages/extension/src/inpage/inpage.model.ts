@@ -12,7 +12,8 @@ import {
   SignTransferTxResult,
   SignUnsignedTxParams,
   SignUnsignedTxResult,
-  SignerProvider,
+  NodeProvider,
+  SignerProviderWithoutNodeProvider,
 } from "@alephium/web3"
 
 export type AccountChangeEventHandler = (accounts: string[]) => void
@@ -33,7 +34,7 @@ export type WalletEvents =
     handler: NetworkChangeEventHandler
   }
 
-declare class IAlephiumWindowObject implements SignerProvider {
+declare class IAlephiumWindowObject implements SignerProviderWithoutNodeProvider {
   id: "alephium"
   name: "Alephium"
   icon: string
@@ -47,6 +48,7 @@ declare class IAlephiumWindowObject implements SignerProvider {
     event: WalletEvents["type"],
     handleEvent: WalletEvents["handler"],
   ) => void
+  getSelectedAccount(): Promise<Account>
   selectedAccount?: Account
   currentNetwork: string
   getAccounts(): Promise<Account[]>
@@ -63,7 +65,7 @@ declare class IAlephiumWindowObject implements SignerProvider {
 }
 
 interface ConnectedAlephiumWindowObject extends IAlephiumWindowObject {
-  isConnected: true
+  isConnected: boolean
   selectedAccount: Account
   chainId: string
 }

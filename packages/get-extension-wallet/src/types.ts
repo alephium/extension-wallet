@@ -2,7 +2,7 @@ import {
   type Account,
   type SignDeployContractTxParams,
   type SignDeployContractTxResult,
-  type SignerProvider,
+  type SignerProviderWithoutNodeProvider,
   type SignExecuteScriptTxParams,
   type SignExecuteScriptTxResult,
   type SignHexStringParams,
@@ -135,7 +135,7 @@ export type EventType = "addressesChanged" | "networkChanged"
 
 export type EventHandler = (data: any) => void
 
-export declare class IAlephiumWindowObject implements SignerProvider {
+export declare class IAlephiumWindowObject implements SignerProviderWithoutNodeProvider {
   discriminator: string
   enable: (options?: { showModal?: boolean }) => Promise<string[]>
   isPreauthorized: () => Promise<boolean>
@@ -147,6 +147,7 @@ export declare class IAlephiumWindowObject implements SignerProvider {
   icon: string
   isConnected: boolean
   selectedAccount?: Account
+  getSelectedAccount(): Promise<Account>
   getAccounts(): Promise<Account[]>
   signTransferTx(params: SignTransferTxParams): Promise<SignTransferTxResult>
   signDeployContractTx(params: SignDeployContractTxParams): Promise<SignDeployContractTxResult>
