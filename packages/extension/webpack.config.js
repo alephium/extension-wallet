@@ -68,6 +68,10 @@ module.exports = {
           target: "es2015",
         },
       },
+      {
+        test: /\.wasm$/,
+        type: "webassembly/async",
+      }
     ],
   },
   plugins: [
@@ -83,18 +87,18 @@ module.exports = {
       "process.env.VERSION": JSON.stringify(process.env.npm_package_version),
     }),
     new ProvidePlugin({
-      Buffer: ["buffer", "Buffer"],
-      React: "react",
+      process: "process/browser.js"
     }),
-
+    new ProvidePlugin({
+      Buffer: ["buffer", "Buffer"],
+      React: "react"
+    }),
     !isProd && // eslint should run before the build starts
       new ESLintPlugin({
         extensions: ["ts", "tsx"],
         fix: true,
         threads: true,
       }),
-
-    new ForkTsCheckerWebpackPlugin(), // does the type checking in a separate process (non-blocking in dev) as esbuild is skipping type checking
     new Dotenv({
       systemvars: true,
       safe: safeEnvVars,
@@ -105,6 +109,7 @@ module.exports = {
     fallback: {
       buffer: require.resolve("buffer/"),
       fs: false,
+      //process: "process/browser",
       crypto: require.resolve("crypto-browserify"),
       stream: require.resolve("stream-browserify"),
     },
@@ -120,14 +125,14 @@ module.exports = {
             target: "es2015", // Syntax to compile to (see options below for possible values)
           }),
         ],
-        splitChunks: {
-          chunks: "async",
-        },
       }
     : undefined,
   output: {
-    filename: "[name].js",
-    path: path.resolve(__dirname, "dist"),
-    sourceMapFilename: "../sourcemaps/[file].map",
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist'),
+    sourceMapFilename: '../sourcemaps/[file].map'
   },
+  experiments: {
+    asyncWebAssembly: true
+  }
 }
