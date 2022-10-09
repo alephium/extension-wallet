@@ -27,8 +27,8 @@ const SeedWordBadge = styled.div`
 const SeedWordBadgeNumber = styled.span`
   font-weight: 600;
   border-radius: 20px;
-  color: ${({ theme }) => theme.bg1};
-  background-color: ${({ theme }) => theme.bg5};
+  color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.highlight};
   margin-right: 4px;
   line-height: 18px;
   width: 18px;

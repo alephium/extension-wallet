@@ -17,8 +17,8 @@ const Toggle = ({ toggled, onToggle, className, disabled, handleColors, label }:
   const theme = useTheme()
 
   const toggleBackgroundVariants = {
-    off: { backgroundColor: theme.bg3 },
-    on: { backgroundColor: handleColors ? theme.bg2 : theme.blue1 }
+    off: { backgroundColor: theme.bg.accent },
+    on: { backgroundColor: handleColors ? theme.bg.primary : theme.global.accent }
   }
 
   const handleContainerVariants = {
@@ -27,8 +27,8 @@ const Toggle = ({ toggled, onToggle, className, disabled, handleColors, label }:
   }
 
   const handleVariants = {
-    off: { backgroundColor: handleColors?.[0] ?? theme.text1 },
-    on: { backgroundColor: handleColors?.[1] ?? theme.text1 }
+    off: { backgroundColor: handleColors?.[0] ?? theme.font.primary },
+    on: { backgroundColor: handleColors?.[1] ?? theme.font.primary }
   }
 
   const toggleState = toggled ? 'on' : 'off'
@@ -98,7 +98,7 @@ const ToggleHandleContainer = styled(motion.div)`
 const ToggleHandle = styled(motion.div)`
   height: 100%;
   width: 100%;
-  background-color: ${({ theme }) => theme.text1};
+  background-color: ${({ theme }) => theme.font.primary};
   border-radius: ${toggleWidth}px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 `

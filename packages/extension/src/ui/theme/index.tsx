@@ -6,35 +6,40 @@ import React, { FC } from 'react'
 import { DefaultTheme, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, css } from 'styled-components'
 import { normalize } from 'styled-normalize'
 
-const white = '#FFFFFF'
-const black = '#000000'
-
 export const colors = {
-  white,
-  black,
-
-  bg1: '#141417',
-  bg2: '#1B1B1f',
-  bg3: '#27272C',
   bg4: '#5f5e5c',
-  bg5: '#fafafa',
-
-  text1: white,
-  text2: '#8f8e8c',
-  text3: '#5c5b59',
-  text4: '#c2c0be',
-
-  red1: '#c12026',
-  red2: '#ff675c',
-  red3: '#ff875b',
-  red4: '#f36a3d',
-
-  blue1: '#29c5ff',
   blue2: '#94e2ff',
 
-  green1: '#3ed282',
-
-  yellow1: '#ffbf3d'
+  bg: {
+    highlight: '#fafafa',
+    primary: '#19191E',
+    secondary: '#141417',
+    tertiary: '#101012',
+    accent: '#27272C'
+  },
+  font: {
+    primary: 'rgba(255, 255, 255, 0.95)',
+    secondary: 'rgba(255, 255, 255, 0.65)',
+    tertiary: 'rgba(255, 255, 255, 0.40)',
+    contrast: '#19191E'
+  },
+  border: {
+    primary: '#CCCCCC',
+    secondary: '#f1f1f1'
+  },
+  global: {
+    accent: '#5981f3',
+    alert: '#ed4a34',
+    valid: '#4ebf08',
+    star: '#FFD66D'
+  },
+  gradient: {
+    yellow: '#FFCD82',
+    orange: '#F95B50',
+    red: '#EA3D74',
+    purple: '#6A5DF8',
+    cyan: '#49D2ED'
+  }
 }
 
 const MEDIA_WIDTHS = {
@@ -193,8 +198,8 @@ export const FixedGlobalStyle = createGlobalStyle<GlobalStyleProps>`
 
 export const ThemedGlobalStyle = createGlobalStyle`
   body {
-    color: ${({ theme }) => theme.text1};
-    background-color: ${({ theme }) => theme.bg1};
+    color: ${({ theme }) => theme.font.primary};
+    background-color: ${({ theme }) => theme.bg.secondary};
   }
 `
 

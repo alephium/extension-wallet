@@ -17,8 +17,8 @@ export const Field = styled.div<{ clickable?: boolean }>`
 `
 
 export const FieldError = styled.div<{ justify?: string }>`
-  color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.red1};
+  color: ${({ theme }) => theme.font.primary};
+  background-color: ${({ theme }) => theme.global.alert};
   display: flex;
   justify-content: ${({ justify }) => (justify ? justify : 'center')};
   align-items: center;
@@ -29,28 +29,28 @@ export const FieldError = styled.div<{ justify?: string }>`
 `
 
 export const FieldGroup = styled.section<{ error?: boolean }>`
-  background: ${({ theme }) => theme.bg2};
+  background: ${({ theme }) => theme.bg.primary};
   border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.bg2};
+  border: 1px solid ${({ theme }) => theme.bg.primary};
   display: flex;
   flex-direction: column;
   margin-bottom: 12px;
   overflow: hidden;
   > ${Field} + ${Field} {
-    border-top: 1px solid ${({ theme }) => theme.bg1};
+    border-top: 1px solid ${({ theme }) => theme.bg.secondary};
   }
 
   ${({ theme, error = false }) =>
     error &&
     css`
-      border-color: ${theme.red1};
+      border-color: ${theme.global.alert};
     `}
 `
 
 export const FieldValue = styled.div`
   display: flex;
   align-items: center;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.font.primary};
 
   font-size: 15px;
   font-weight: 600;
@@ -72,7 +72,7 @@ export const FieldKey = styled(FieldValue)<{ withoutColor?: boolean }>`
   ${({ withoutColor = false }) =>
     !withoutColor &&
     css`
-      color: ${({ theme }) => theme.text2};
+      color: ${({ theme }) => theme.font.secondary};
     `}
 `
 

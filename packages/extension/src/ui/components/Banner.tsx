@@ -9,7 +9,7 @@ const BannerWrapper = styled.div<{
   cursor: pointer;
   align-items: center;
   padding: 16px;
-  background-color: ${({ theme }) => theme.white};
+  background-color: ${({ theme }) => theme.bg.highlight};
   border-radius: 8px;
 
   ${({ noMargins = false }) =>
@@ -21,11 +21,11 @@ const BannerWrapper = styled.div<{
   ${({ type, theme }) =>
     type === 'danger' &&
     css`
-      background-color: ${({ theme }) => theme.red1};
+      background-color: ${({ theme }) => theme.global.alert};
 
       h1,
       p {
-        color: ${theme.text1};
+        color: ${theme.font.primary};
       }
     `};
 `
@@ -48,7 +48,7 @@ const BannerDescription = styled.p`
   font-weight: 400;
   font-size: 13px;
   line-height: 20px;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 export interface BannerProps {

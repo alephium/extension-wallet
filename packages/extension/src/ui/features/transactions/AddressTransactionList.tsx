@@ -61,7 +61,7 @@ const AddressTransactionList = ({ address }: AddressTransactionListProps) => {
 const Paragraph = styled(P)`
   margin-top: 25px;
   text-align: center;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 export default AddressTransactionList

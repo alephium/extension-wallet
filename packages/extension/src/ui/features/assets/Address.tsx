@@ -33,7 +33,7 @@ export const Address = styled.a`
   border-radius: 12px;
   padding: 4px 10px;
   white-space: nowrap;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.font.primary};
   text-decoration: none;
 
   cursor: pointer;

@@ -128,7 +128,9 @@ const HoverSelect = ({
             key={value}
             onClick={() => handleItemClick(value)}
             animate={{
-              backgroundColor: shouldAnimateItem(value) ? colord(theme.bg3).lighten(0.05).toHex() : theme.bg3
+              backgroundColor: shouldAnimateItem(value)
+                ? colord(theme.bg.accent).lighten(0.05).toHex()
+                : theme.bg.accent
             }}
             variants={itemContainerVariants}
             style={{
@@ -182,7 +184,7 @@ const ItemList = styled(motion.div)`
   margin-left: auto;
   z-index: 3;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg.accent};
   overflow: auto;
 
   overscroll-behavior: none;
@@ -209,14 +211,14 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
 
   padding: 15px;
 
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ theme }) => theme.bg.accent};
   color: rgba(255, 255, 255, 0.7);
   z-index: 1;
 
   cursor: pointer;
 
   &:hover {
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.font.primary};
 
     &::after {
       content: '';
@@ -233,7 +235,7 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
 
   // Selected network
   &:first-child {
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.font.primary};
     font-weight: 600;
     cursor: default;
     position: sticky;
@@ -254,6 +256,6 @@ const ItemContent = styled(motion.div)`
 const Title = styled(motion.span)`
   position: absolute;
   opacity: 0;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
   font-weight: 600;
 `

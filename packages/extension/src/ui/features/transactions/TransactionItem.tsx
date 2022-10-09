@@ -15,7 +15,7 @@ import { useTransactionUI } from './useTransactionUI'
 const TransactionSubtitle = styled.p`
   font-size: 13px;
   line-height: 18px;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.font.secondary};
   margin: 0;
 `
 

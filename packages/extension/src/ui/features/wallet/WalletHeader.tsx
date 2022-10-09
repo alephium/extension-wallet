@@ -21,7 +21,7 @@ const WalletHeader = ({ title, buttons, className }: WalletHeaderProps) => {
   const headerBGColor = useTransform(
     scrollY,
     [0, 100],
-    [colord(theme.bg1).alpha(0.0).toHex(), colord(theme.bg2).alpha(0.9).toHex()]
+    [colord(theme.bg.secondary).alpha(0.0).toHex(), colord(theme.bg.primary).alpha(0.9).toHex()]
   )
 
   const titleY = useTransform(scrollY, [0, 100], [-100, 0])
