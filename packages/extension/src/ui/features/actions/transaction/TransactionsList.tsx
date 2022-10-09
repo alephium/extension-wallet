@@ -27,6 +27,24 @@ export const TransactionsList: FC<ITransactionsList> = ({ payload }) => {
           <Bytecode>{payload.params.bytecode}</Bytecode>
         </div>
       )}
+      {payload.type === 'ALPH_SIGN_UNSIGNED_TX' && (
+        <div>
+          <div>Sign the unsigned transaction:</div>
+          <Bytecode>{payload.params.unsignedTx}</Bytecode>
+        </div>
+      )}
+      {payload.type === 'ALPH_SIGN_HEX_STRING' && (
+        <div>
+          <div>Sign the hex string:</div>
+          <Bytecode>{payload.params.hexString}</Bytecode>
+        </div>
+      )}
+      {payload.type === 'ALPH_SIGN_MESSAGE' && (
+        <div>
+          <div>Sign message:</div>
+          <Bytecode>{payload.params.message}</Bytecode>
+        </div>
+      )}
     </TransactionBanner>
   )
 }

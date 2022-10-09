@@ -46,6 +46,18 @@ export const titleForTransactions = (payload: TransactionPayload) => {
       return 'Review Script'
     }
 
+    case 'ALPH_SIGN_UNSIGNED_TX': {
+      return 'Review Transaction Signing'
+    }
+
+    case 'ALPH_SIGN_HEX_STRING': {
+      return 'Review Hex String Signing'
+    }
+
+    case 'ALPH_SIGN_MESSAGE': {
+      return 'Review Message Signing'
+    }
+
     default:
       assertNever(payload)
   }

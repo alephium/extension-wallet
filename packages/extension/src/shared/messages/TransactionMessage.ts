@@ -1,4 +1,4 @@
-import { SignDeployContractTxParams, SignExecuteScriptTxParams, SignTransferTxParams } from '@alephium/web3'
+import { SignDeployContractTxParams, SignExecuteScriptTxParams, SignHexStringParams, SignMessageParams, SignTransferTxParams, SignUnsignedTxParams } from '@alephium/web3'
 import { Transaction as AlephiumTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { TransactionResult } from '../transactions'
@@ -28,6 +28,19 @@ export type TransactionPayload =
     type: 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX'
     params: SignExecuteScriptTxParams
   }
+  | {
+    type: 'ALPH_SIGN_UNSIGNED_TX'
+    params: SignUnsignedTxParams
+  }
+  | {
+    type: 'ALPH_SIGN_HEX_STRING'
+    params: SignHexStringParams
+  }
+  | {
+    type: 'ALPH_SIGN_MESSAGE'
+    params: SignMessageParams
+  }
+
 
 export type TransactionMessage =
   | { type: 'GET_TRANSACTIONS'; data: { address: string } }

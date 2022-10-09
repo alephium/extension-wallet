@@ -78,5 +78,35 @@ export const executeAlephiumTransaction = async (
         }
       })
     }
+
+    case 'ALPH_SIGN_UNSIGNED_TX': {
+      return await withSigner(async (signer) => {
+        const signResult = await signer.signUnsignedTx(payload.params)
+        return {
+          type: 'ALPH_SIGN_UNSIGNED_TX_RES',
+          result: signResult
+        }
+      })
+    }
+
+    case 'ALPH_SIGN_HEX_STRING': {
+      return await withSigner(async (signer) => {
+        const signResult = await signer.signHexString(payload.params)
+        return {
+          type: 'ALPH_SIGN_HEX_STRING_RES',
+          result: signResult
+        }
+      })
+    }
+
+    case 'ALPH_SIGN_MESSAGE': {
+      return await withSigner(async (signer) => {
+        const signResult = await signer.signMessage(payload.params)
+        return {
+          type: 'ALPH_SIGN_MESSAGE_RES',
+          result: signResult
+        }
+      })
+    }
   }
 }

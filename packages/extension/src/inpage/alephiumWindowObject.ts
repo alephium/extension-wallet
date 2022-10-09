@@ -12,7 +12,8 @@ import {
   SignTransferTxParams,
   SignTransferTxResult,
   SignUnsignedTxParams,
-  SignUnsignedTxResult
+  SignUnsignedTxResult,
+  SubmissionResult
 } from '@alephium/web3'
 import { WindowMessageType } from '../shared/messages'
 import { defaultNetworks } from '../shared/networks'
@@ -114,7 +115,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     }
   }
 
-  // FIXME: proper type
   off = (event: WalletEvents['type'], handleEvent: WalletEvents['handler']) => {
     if (event !== 'addressesChanged' && event !== 'networkChanged') {
       assertNever(event)
@@ -148,6 +148,15 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     ).result as SignTransferTxResult
   }
 
+  signAndSubmitTransferTx = async (params: SignTransferTxParams): Promise<SubmissionResult> => {
+    return (
+      await executeAlephiumTransaction({
+        type: 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX',
+        params
+      })
+    ).result as SubmissionResult
+  }
+
   signDeployContractTx = async (params: SignDeployContractTxParams): Promise<SignDeployContractTxResult> => {
     return (
       await executeAlephiumTransaction({
@@ -157,20 +166,33 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     ).result as SignDeployContractTxResult
   }
 
+  signAndSubmitDeployContractTx = async (params: SignDeployContractTxParams): Promise<SubmissionResult> => {
+    return (
+      await executeAlephiumTransaction({
+        type: 'ALPH_SIGN_AND_SUBMIT_CONTRACT_CREATION_TX',
+        params
+      })
+    ).result as SubmissionResult
+  }
+
   signExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
     return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_SCRIPT_TX', params })).result as SignExecuteScriptTxResult
   }
 
+  signAndSubmitExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SubmissionResult> => {
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX', params })).result as SubmissionResult
+  }
+
   signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
-    throw Error(`signUnsignedTx unsupported ${params}`)
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_UNSIGNED_TX', params })).result as SignUnsignedTxResult
   }
 
   signHexString = async (params: SignHexStringParams): Promise<SignHexStringResult> => {
-    throw Error(`signHexString unsupported ${params}`)
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_HEX_STRING', params })).result as SignHexStringResult
   }
 
   signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
-    throw Error(`signMessage unsupported ${params}`)
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_MESSAGE', params })).result as SignMessageResult
   }
 
   signRaw = async (signerAddress: string, hexString: string): Promise<string> => {

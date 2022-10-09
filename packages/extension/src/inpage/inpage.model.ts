@@ -31,7 +31,6 @@ export abstract class AlephiumWindowObject extends SignerProvider {
   abstract on(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void
   abstract off(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void
   defaultAddress?: Account
-
 }
 
 declare global {
