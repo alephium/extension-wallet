@@ -14,7 +14,7 @@ export type NetworkMessage =
       data: NetworkStatus[]
     }
   | { type: 'SET_CURRENT_NETWORK'; data: { networkId: string } }
-  | { type: 'SET_CURRENT_NETWORK_RES'; data: { networkId: string } }
+  | { type: 'SET_CURRENT_NETWORK_RES'; data: { network: Network } }
   | { type: 'GET_CURRENT_NETWORK' }
   | { type: 'GET_CURRENT_NETWORK_RES'; data: { network: Network } }
   | { type: 'GET_CUSTOM_NETWORKS_RES'; data: Network[] }

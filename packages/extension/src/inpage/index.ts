@@ -59,14 +59,14 @@ window.addEventListener('message', async ({ data }: MessageEvent<WindowMessageTy
       }
     }
   } else if (data.type === 'SET_CURRENT_NETWORK_RES') {
-    const { networkId } = data.data
+    const { network } = data.data
 
-    if (networkId !== alephium.currentNetwork) {
-      alephium.currentNetwork = networkId
+    if (network.id !== alephium.currentNetwork) {
+      alephium.currentNetwork = network.id
 
       for (const userEvent of userEventHandlers) {
         if (userEvent.type === 'networkChanged') {
-          userEvent.handler(networkId)
+          userEvent.handler(network)
         }
       }
     }

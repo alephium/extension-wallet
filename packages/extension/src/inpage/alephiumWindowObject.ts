@@ -16,7 +16,7 @@ import {
   SubmissionResult
 } from '@alephium/web3'
 import { WindowMessageType } from '../shared/messages'
-import { defaultNetworks } from '../shared/networks'
+import { defaultNetworks, Network } from '../shared/networks'
 import { TransactionPayload, TransactionResult } from '../shared/transactions'
 import { assertNever } from '../ui/services/assertNever'
 import { alephiumIcon } from './icon'
@@ -200,4 +200,10 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   }
 
   nodeProvider = new NodeProvider(defaultNetworks[0].nodeUrl)
+
+  updateNodeProvider: NetworkChangeEventHandler = (network: Network) => {
+    this.nodeProvider = new NodeProvider(network.nodeUrl)
+  }
 })
+
+alephiumWindowObject.on("networkChanged", alephiumWindowObject.updateNodeProvider)
