@@ -12,14 +12,14 @@ const Home: NextPage = () => {
   useEffect(() => {
     ;(async () => {
       const wallet = await silentConnectWallet()
-      setAddress(wallet?.selectedAccount?.address)
+      setAddress(wallet?.defaultAddress?.address)
       setConnected(!!wallet?.isConnected)
     })()
   }, [])
 
   const handleConnectClick = async () => {
     const wallet = await connectWallet()
-    setAddress(wallet?.selectedAccount?.address)
+    setAddress(wallet?.defaultAddress?.address)
     setConnected(!!wallet?.isConnected)
   }
 

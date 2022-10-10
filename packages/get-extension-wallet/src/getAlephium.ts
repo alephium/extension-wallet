@@ -1,5 +1,6 @@
 import type {
   Account,
+  NodeProvider,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
@@ -13,24 +14,19 @@ import type {
   SignUnsignedTxParams,
   SignUnsignedTxResult
 } from '@alephium/web3'
+import { isPlainObject } from 'lodash-es'
 
 import defaultWallet from './configs/defaultWallet'
 import lastWallet from './configs/lastConnected'
 import show from './modal'
-import type {
-  DisconnectOptions,
-  EventHandler,
-  EventType,
-  GetAlephiumWalletOptions,
-  IAlephiumWindowObject,
-  IGetAlephiumWallet
-} from './types'
+import { AlephiumWindowObject } from './types'
+import type { DisconnectOptions, EventHandler, EventType, GetAlephiumWalletOptions, IGetAlephiumWallet } from './types'
 import { filterBy, filterPreAuthorized, isWalletObj, shuffle, sortBy } from './utils'
 
 class GetAlephiumWallet implements IGetAlephiumWallet {
-  #walletObjRef: { current?: IAlephiumWindowObject } = {}
+  #walletObjRef: { current?: AlephiumWindowObject } = {}
 
-  connect = async (options?: GetAlephiumWalletOptions): Promise<IAlephiumWindowObject | undefined> => {
+  connect = async (options?: GetAlephiumWalletOptions): Promise<AlephiumWindowObject | undefined> => {
     try {
       this.#declare()
 
@@ -71,7 +67,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           defaultWallet,
           // 2nd priority is user-last-selected wallet
           lastWallet
-        ] as IAlephiumWindowObject[]) {
+        ] as AlephiumWindowObject[]) {
           if (stateWallet) {
             return this.#setCurrentWallet(stateWallet)
           }
@@ -109,20 +105,20 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     return connected
   }
 
-  getAlephium = (): IAlephiumWindowObject => {
+  getAlephium = (): AlephiumWindowObject => {
     this.#declare()
     const self = this
 
     return (
       this.#walletObjRef.current ??
       // create a wrapper
-      new (class implements IAlephiumWindowObject {
+      new (class extends AlephiumWindowObject {
         discriminator = '___IAlephiumWindowObject___'
         // default values
         id = 'disconnected'
         name = 'Disconnected'
         icon = ''
-        selectedAccount?: Account = undefined
+        defaultAddress?: Account = undefined
         isConnected = false
         /**
          * stores pre-enabled wallet `on` calls' listeners
@@ -154,16 +150,12 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           return []
         }
 
-        #call = async <T>(methodName: string, method: (obj: IAlephiumWindowObject) => Promise<T>): Promise<T> => {
+        #call = async <T>(methodName: string, method: (obj: AlephiumWindowObject) => Promise<T>): Promise<T> => {
           const currentWallet = self.#walletObjRef.current
           if (!currentWallet) {
             throw new Error(`can't ${methodName} with a disconnected wallet`)
           }
           return await method(currentWallet)
-        }
-
-        getAccounts = async (): Promise<Account[]> => {
-          return await this.#call('getAccounts', (wallet) => wallet.getAccounts())
         }
 
         signTransferTx = async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
@@ -190,12 +182,25 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           return await this.#call('signMessage', (wallet) => wallet.signMessage(params))
         }
 
+        signRaw = async (signerAddress: string, hexString: string): Promise<string> => {
+          return await this.#call('signRaw', (wallet) => wallet.signRaw(signerAddress, hexString))
+        }
+
+        nodeProvider = (() => {
+          const provider = self.#walletObjRef.current.nodeProvider
+          if (provider) {
+            return provider
+          } else {
+            throw new Error('Node provider not found')
+          }
+        })()
+
         /**
          * @return true when there is at least 1 pre-authorized wallet
          */
         isPreauthorized = () =>
           self.#isConnected()
-            ? (self.#walletObjRef.current as IAlephiumWindowObject).isPreauthorized()
+            ? (self.#walletObjRef.current as AlephiumWindowObject).isPreauthorized()
             : self.#getInstalledWallets().then((result) => !!result.preAuthorized.length)
 
         off = (event: EventType, handleEvent: EventHandler) => {
@@ -217,6 +222,10 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
               listeners.push(handleEvent)
             }
           }
+        }
+
+        getSelectedAccount = async () => {
+          return Promise.resolve(this.defaultAddress)
         }
 
         #connect = (options?: GetAlephiumWalletOptions) =>
@@ -244,9 +253,9 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
             }
           )
 
-        #refreshWalletProperties = (wallet: IAlephiumWindowObject | undefined) => {
+        #refreshWalletProperties = (wallet: AlephiumWindowObject | undefined) => {
           if (!wallet) return
-          this.selectedAccount = wallet.selectedAccount
+          this.defaultAddress = wallet.defaultAddress
           this.isConnected = wallet.isConnected
         }
       })()
@@ -255,7 +264,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
 
   getInstalledWallets(
     options?: Omit<GetAlephiumWalletOptions, 'showList' | 'modalOptions'>
-  ): Promise<IAlephiumWindowObject[]> {
+  ): Promise<AlephiumWindowObject[]> {
     return this.#getInstalledWallets(options).then((res) => res.installed)
   }
 
@@ -263,7 +272,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     return !!this.#walletObjRef.current
   }
 
-  #setCurrentWallet = (wallet: IAlephiumWindowObject | undefined) => {
+  #setCurrentWallet = (wallet: AlephiumWindowObject | undefined) => {
     this.#walletObjRef.current = wallet
     if (wallet) {
       lastWallet.set(wallet.id)
@@ -275,17 +284,21 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     await this.#waitForDocumentReady()
 
     // lookup installed wallets
-    const installed = Object.values(
-      Object.getOwnPropertyNames(window).reduce<Record<string, IAlephiumWindowObject>>((wallets, key) => {
-        if (key.startsWith('alephium')) {
-          const wallet = (window as Record<string, any>)[key]
+    let installed: AlephiumWindowObject[] = []
+
+    const alephiumProviders = window['alephiumProviders']
+    if (isPlainObject(alephiumProviders)) {
+      installed = Object.values(
+        Object.getOwnPropertyNames(alephiumProviders).reduce<Record<string, AlephiumWindowObject>>((wallets, key) => {
+          const wallet = (alephiumProviders as Record<string, any>)[key]
           if (isWalletObj(key, wallet) && !wallets[wallet.id]) {
             wallets[wallet.id] = wallet
           }
-        }
-        return wallets
-      }, {})
-    )
+
+          return wallets
+        }, {})
+      )
+    }
 
     // 1. lookup state wallets
     // 2. remove state-set wallets if they aren't available anymore
@@ -295,12 +308,12 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     if (!lastWalletObj) lastWallet.delete()
 
     // fetch & shuffle all preAuthorized
-    const preAuthorized: IAlephiumWindowObject[] = shuffle(await filterPreAuthorized(installed))
+    const preAuthorized: AlephiumWindowObject[] = shuffle(await filterPreAuthorized(installed))
 
     /**
      * prioritize states wallets at given arr
      */
-    const prioritizeStateWallets = (arr: IAlephiumWindowObject[]) => {
+    const prioritizeStateWallets = (arr: AlephiumWindowObject[]) => {
       // iterate last->first priorities since we push state-wallet at top
       ;[lastWalletObj, defaultWalletObj].forEach((stateWallet) => {
         if (stateWallet) {
@@ -321,9 +334,9 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
       lastWallet: lastWalletObj
     }
 
-    result.installed = filterBy<IAlephiumWindowObject>(result.installed, options)
+    result.installed = filterBy<AlephiumWindowObject>(result.installed, options)
 
-    result.installed = sortBy<IAlephiumWindowObject>(result.installed, options?.order)
+    result.installed = sortBy<AlephiumWindowObject>(result.installed, options?.order)
 
     const isFixedOrder = options && Array.isArray(options.order)
     if (!isFixedOrder) {

@@ -1,20 +1,26 @@
+import { isPlainObject } from 'lodash-es'
+
 import { WindowMessageType } from '../shared/messages'
 import { alephiumWindowObject, userEventHandlers } from './alephiumWindowObject'
 
 function attach() {
+  window.alephiumProviders =
+    window.alephiumProviders && isPlainObject(window.alephiumProviders) ? window.alephiumProviders : {}
+
   try {
-    delete window.alephium
+    delete window.alephiumProviders.alephium
     // set read only property to window
-    Object.defineProperty(window, 'alephium', {
+    Object.defineProperty(window.alephiumProviders, 'alephium', {
       value: alephiumWindowObject,
       writable: false
     })
   } catch {
     // ignore
   }
+
   // we need 2 different try catch blocks because we want to execute both even if one of them fails
   try {
-    window.alephium = alephiumWindowObject
+    window.alephiumProviders.alephium = alephiumWindowObject
   } catch {
     // ignore
   }
@@ -31,10 +37,12 @@ document.addEventListener('DOMContentLoaded', () => attachHandler())
 document.addEventListener('readystatechange', () => attachHandler())
 
 window.addEventListener('message', async ({ data }: MessageEvent<WindowMessageType>) => {
-  const { alephium } = window
+  const { alephiumProviders } = window
+  const alephium = alephiumProviders?.alephium
   if (!alephium) {
     return
   }
+
   if (data.type === 'CONNECT_ADDRESS') {
     const { address, publicKey, addressIndex } = data.data
     if (address !== alephium.defaultAddress?.address) {
@@ -59,14 +67,14 @@ window.addEventListener('message', async ({ data }: MessageEvent<WindowMessageTy
       }
     }
   } else if (data.type === 'SET_CURRENT_NETWORK_RES') {
-    const { networkId } = data.data
+    const { network } = data.data
 
-    if (networkId !== alephium.currentNetwork) {
-      alephium.currentNetwork = networkId
+    if (network.id !== alephium.currentNetwork) {
+      alephium.currentNetwork = network.id
 
       for (const userEvent of userEventHandlers) {
         if (userEvent.type === 'networkChanged') {
-          userEvent.handler(networkId)
+          userEvent.handler(network)
         }
       }
     }

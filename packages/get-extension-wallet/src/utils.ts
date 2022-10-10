@@ -1,4 +1,4 @@
-import type { GetAlephiumWalletOptions, IAlephiumWindowObject, Order, WalletProvider } from './types'
+import type { AlephiumWindowObject, GetAlephiumWalletOptions, Order, WalletProvider } from './types'
 
 /**
  * @see https://github.com/GoogleChrome/web-vitals/blob/main/src/lib/generateUniqueID.ts
@@ -17,7 +17,7 @@ export const shuffle = <T extends any[]>(arr: T): T => {
  * filters given wallets array, return only preAuthorized instances
  * @param wallets
  */
-export const filterPreAuthorized = (wallets: IAlephiumWindowObject[]): Promise<IAlephiumWindowObject[]> =>
+export const filterPreAuthorized = (wallets: AlephiumWindowObject[]): Promise<AlephiumWindowObject[]> =>
   Promise.all(
     wallets.map((w) =>
       w
@@ -25,14 +25,14 @@ export const filterPreAuthorized = (wallets: IAlephiumWindowObject[]): Promise<I
         .then((authorized) => (authorized ? w : undefined))
         .catch(() => undefined)
     )
-  ).then((result) => result.filter((res) => !!res) as IAlephiumWindowObject[])
+  ).then((result) => result.filter((res) => !!res) as AlephiumWindowObject[])
 
 export const isWalletObj = (key: string, wallet: any): boolean => {
   try {
     if (
       wallet &&
       [
-        // wallet's must have methods/members, see IAlephiumWindowObject
+        // wallet's must have methods/members, see AlephiumWindowObject
         'isConnected',
         'enable',
         'isPreauthorized',
@@ -47,7 +47,7 @@ export const isWalletObj = (key: string, wallet: any): boolean => {
   return false
 }
 
-export const sortBy = <T extends IAlephiumWindowObject | WalletProvider>(wallets: T[], order: Order): T[] => {
+export const sortBy = <T extends AlephiumWindowObject | WalletProvider>(wallets: T[], order: Order): T[] => {
   if (order && Array.isArray(order)) {
     // skip default/preAuthorized priorities,
     // sort by client-specific order
@@ -70,7 +70,7 @@ export const sortBy = <T extends IAlephiumWindowObject | WalletProvider>(wallets
   }
 }
 
-export function filterBy<T extends IAlephiumWindowObject | WalletProvider>(
+export function filterBy<T extends AlephiumWindowObject | WalletProvider>(
   installed: T[],
   options?: Omit<GetAlephiumWalletOptions, 'showList'>
 ): T[] {

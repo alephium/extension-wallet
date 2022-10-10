@@ -32,16 +32,16 @@ export const getNetworks = async (): Promise<Network[]> => {
 
 export const getNetwork = async (): Promise<Network> => {
   const allNetworks = await getNetworks()
-  const currentNetworkId = await getCurrentNetwork()
+  const currentNetworkId = (await getCurrentNetwork()).id
   return allNetworks.find(({ id }) => id === currentNetworkId) || defaultNetwork
 }
 
-export const setCurrentNetwork = async (networkId: string): Promise<{ networkId: string }> => {
+export const setCurrentNetwork = async (networkId: string): Promise<{ network: Network }> => {
   const allNetworks = await getNetworks()
   const network = allNetworks.find(({ id }) => id === networkId) || defaultNetwork
 
   networksStore.setItem('currentNetwork', network)
-  return { networkId: network.id }
+  return { network: network }
 }
 
 export const getNetworkStatuses = async (): Promise<NetworkStatus[]> => {
@@ -70,9 +70,9 @@ export const isNetworkHealthy = async (network: Network): Promise<boolean> => {
   }
 }
 
-export const getCurrentNetwork = async (): Promise<string> => {
+export const getCurrentNetwork = async (): Promise<Network> => {
   const currentNetwork = await networksStore.getItem('currentNetwork')
-  return currentNetwork.id
+  return currentNetwork
 }
 
 export const getNetworkById = async (id: string): Promise<Network | undefined> => {

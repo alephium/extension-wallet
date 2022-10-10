@@ -36,10 +36,10 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
     }
 
     case 'GET_CURRENT_NETWORK': {
-      const networkId = await getCurrentNetwork()
+      const network = await getCurrentNetwork()
       return sendToTabAndUi({
         type: 'GET_CURRENT_NETWORK_RES',
-        data: { networkId }
+        data: { network }
       })
     }
 
