@@ -1,8 +1,6 @@
-import {
-  Account,
-  SignerProvider
-} from '@alephium/web3'
-import { defaultNetworks, Network } from '../shared/networks'
+import { Account, SignerProvider } from '@alephium/web3'
+
+import { Network, defaultNetworks } from '../shared/networks'
 import { alephiumIcon } from './icon'
 
 export type AccountChangeEventHandler = (accounts: string[]) => void
@@ -11,16 +9,16 @@ export type NetworkChangeEventHandler = (network: Network) => void
 
 export type WalletEvents =
   | {
-    type: 'addressesChanged'
-    handler: AccountChangeEventHandler
-  }
+      type: 'addressesChanged'
+      handler: AccountChangeEventHandler
+    }
   | {
-    type: 'networkChanged'
-    handler: NetworkChangeEventHandler
-  }
+      type: 'networkChanged'
+      handler: NetworkChangeEventHandler
+    }
 
 export abstract class AlephiumWindowObject extends SignerProvider {
-  id = "alephium"
+  id = 'alephium'
   name = 'Alephium'
   icon = alephiumIcon
   isConnected = false

@@ -1,33 +1,40 @@
 import {
+  Account,
   NodeProvider,
-  type Account,
-  type SignDeployContractTxParams,
-  type SignDeployContractTxResult,
-  type SignExecuteScriptTxParams,
-  type SignExecuteScriptTxResult,
-  type SignHexStringParams,
-  type SignHexStringResult,
-  type SignMessageParams,
-  type SignMessageResult,
-  type SignTransferTxParams,
-  type SignTransferTxResult,
-  type SignUnsignedTxParams,
-  type SignUnsignedTxResult
+  SignDeployContractTxParams,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
+  SignHexStringParams,
+  SignHexStringResult,
+  SignMessageParams,
+  SignMessageResult,
+  SignTransferTxParams,
+  SignTransferTxResult,
+  SignUnsignedTxParams,
+  SignUnsignedTxResult,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type,
+  type
 } from '@alephium/web3'
+import { isPlainObject } from 'lodash-es'
 
 import defaultWallet from './configs/defaultWallet'
 import lastWallet from './configs/lastConnected'
 import show from './modal'
 import { AlephiumWindowObject } from './types'
-import type {
-  DisconnectOptions,
-  EventHandler,
-  EventType,
-  GetAlephiumWalletOptions,
-  IGetAlephiumWallet
-} from './types'
+import type { DisconnectOptions, EventHandler, EventType, GetAlephiumWalletOptions, IGetAlephiumWallet } from './types'
 import { filterBy, filterPreAuthorized, isWalletObj, shuffle, sortBy } from './utils'
-import { isPlainObject } from 'lodash-es'
 
 class GetAlephiumWallet implements IGetAlephiumWallet {
   #walletObjRef: { current?: AlephiumWindowObject } = {}

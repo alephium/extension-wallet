@@ -11,9 +11,8 @@ import type {
   SignTransferTxParams,
   SignTransferTxResult,
   SignUnsignedTxParams,
-  SignUnsignedTxResult,
+  SignUnsignedTxResult
 } from '@alephium/web3'
-
 import { SignerProvider } from '@alephium/web3'
 
 export interface IStorageWrapper {
@@ -153,8 +152,8 @@ export type WalletProvider = {
   name: string
   icon: string
   downloads:
-  | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
-  | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
+    | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
+    | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
 }
 
 declare global {

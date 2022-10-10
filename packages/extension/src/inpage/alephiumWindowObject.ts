@@ -15,8 +15,9 @@ import {
   SignUnsignedTxResult,
   SubmissionResult
 } from '@alephium/web3'
+
 import { WindowMessageType } from '../shared/messages'
-import { defaultNetworks, Network } from '../shared/networks'
+import { Network, defaultNetworks } from '../shared/networks'
 import { TransactionPayload, TransactionResult } from '../shared/transactions'
 import { assertNever } from '../ui/services/assertNever'
 import { alephiumIcon } from './icon'
@@ -138,7 +139,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     if (alephium?.defaultAddress) {
       return Promise.resolve(alephium.defaultAddress)
     } else {
-      throw new Error("no selected account")
+      throw new Error('no selected account')
     }
   }
 
@@ -179,11 +180,13 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   }
 
   signExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
-    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_SCRIPT_TX', params })).result as SignExecuteScriptTxResult
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_SCRIPT_TX', params }))
+      .result as SignExecuteScriptTxResult
   }
 
   signAndSubmitExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SubmissionResult> => {
-    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX', params })).result as SubmissionResult
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX', params }))
+      .result as SubmissionResult
   }
 
   signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
@@ -207,6 +210,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   updateNodeProvider: NetworkChangeEventHandler = (network: Network) => {
     this.nodeProvider = NodeProvider.Proxy(new NodeProvider(network.nodeUrl))
   }
-})
+})()
 
-alephiumWindowObject.on("networkChanged", alephiumWindowObject.updateNodeProvider)
+alephiumWindowObject.on('networkChanged', alephiumWindowObject.updateNodeProvider)

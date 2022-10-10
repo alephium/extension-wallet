@@ -1,4 +1,4 @@
-import type { GetAlephiumWalletOptions, AlephiumWindowObject, Order, WalletProvider } from './types'
+import type { AlephiumWindowObject, GetAlephiumWalletOptions, Order, WalletProvider } from './types'
 
 /**
  * @see https://github.com/GoogleChrome/web-vitals/blob/main/src/lib/generateUniqueID.ts
@@ -8,7 +8,7 @@ export const generateUID = () => `${Date.now()}-${Math.floor(Math.random() * (9e
 export const shuffle = <T extends any[]>(arr: T): T => {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+    ;[arr[i], arr[j]] = [arr[j], arr[i]]
   }
   return arr
 }
@@ -43,7 +43,7 @@ export const isWalletObj = (key: string, wallet: any): boolean => {
       // test for new fields only after attempting
       return ['id'].every((key) => key in wallet)
     }
-  } catch (err) { }
+  } catch (err) {}
   return false
 }
 

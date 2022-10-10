@@ -43,7 +43,7 @@ export class Wallet {
     private readonly store: IStorage<WalletStorageProps>,
     private readonly getCurrentNetwork: GetCurrentNetwork,
     private readonly onAutoLock?: () => Promise<void>
-  ) { }
+  ) {}
 
   async getNodeProvider(): Promise<NodeProvider> {
     web3.setCurrentNodeProvider((await this.getCurrentNetwork()).nodeUrl)

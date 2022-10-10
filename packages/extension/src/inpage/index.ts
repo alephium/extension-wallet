@@ -1,11 +1,11 @@
+import { isPlainObject } from 'lodash-es'
+
 import { WindowMessageType } from '../shared/messages'
 import { alephiumWindowObject, userEventHandlers } from './alephiumWindowObject'
-import { isPlainObject } from 'lodash-es'
 
 function attach() {
   window.alephiumProviders =
-    (window.alephiumProviders && isPlainObject(window.alephiumProviders)) ?
-      window.alephiumProviders : {}
+    window.alephiumProviders && isPlainObject(window.alephiumProviders) ? window.alephiumProviders : {}
 
   try {
     delete window.alephiumProviders.alephium

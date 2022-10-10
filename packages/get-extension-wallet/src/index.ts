@@ -1,4 +1,4 @@
-import type { GetAlephiumWalletOptions, AlephiumWindowObject } from './getAlephium'
+import type { AlephiumWindowObject, GetAlephiumWalletOptions } from './getAlephium'
 import { gaw } from './getAlephium'
 import type { DisconnectOptions } from './types'
 

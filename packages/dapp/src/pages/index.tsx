@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   const [isConnected, setConnected] = useState(false)
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       const wallet = await silentConnectWallet()
       setAddress(wallet?.defaultAddress?.address)
       setConnected(!!wallet?.isConnected)

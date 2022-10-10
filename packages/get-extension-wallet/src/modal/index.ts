@@ -1,7 +1,7 @@
 import 'svelte'
 
 import discoveryWallets from '../discovery'
-import type { GetAlephiumWalletOptions, AlephiumWindowObject, WalletProvider } from '../types'
+import type { AlephiumWindowObject, GetAlephiumWalletOptions, WalletProvider } from '../types'
 import { filterBy, sortBy } from '../utils'
 import Modal from './Modal.svelte'
 
