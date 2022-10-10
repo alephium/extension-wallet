@@ -1,3 +1,4 @@
+import { AddressToken } from '../shared/addresses'
 import { AddressMessage } from '../shared/messages/AddressMessage'
 import { sendMessageToUi } from './activeTabs'
 import { HandleMessage, UnhandledMessage } from './background'
@@ -71,11 +72,67 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
         })
       )
 
-      console.log(balances)
-
       return sendToTabAndUi({
         type: 'GET_ADDRESSES_BALANCE_RES',
         data: balances
+      })
+    }
+
+    case 'GET_ADDRESS_TOKENS': {
+      console.log('GET_ADDRESS_TOKENS')
+
+      const tokens = await wallet.getAddressTokens(msg.data.address)
+
+      return sendToTabAndUi({
+        type: 'GET_ADDRESS_TOKENS_RES',
+        data: tokens
+      })
+    }
+
+    case 'GET_ADDRESS_TOKEN_BALANCE': {
+      console.log('GET_ADDRESS_TOKEN_BALANCE')
+      const { address, tokenId } = msg.data
+      const tokens = await wallet.getAddressTokenBalance(address, tokenId)
+
+      return sendToTabAndUi({
+        type: 'GET_ADDRESS_TOKEN_BALANCE_RES',
+        data: tokens
+      })
+    }
+
+    case 'GET_ADDRESSES_TOKENS_BALANCE': {
+      console.log('GET_ADDRESSES_TOKENS_BALANCE')
+
+      const tokens: AddressToken[] = []
+
+      for (const address of msg.data.addresses) {
+        const addressTokens = await wallet.getAddressTokens(address)
+
+        for (const addressToken of addressTokens) {
+          const tokensEntry = tokens.find((token) => token.id === addressToken)
+          const addressTokenBalance = await wallet.getAddressTokenBalance(address, addressToken)
+
+          if (tokensEntry) {
+            tokensEntry.balance.balance += BigInt(addressTokenBalance.balance)
+            tokensEntry.balance.lockedBalance += BigInt(addressTokenBalance.lockedBalance)
+          } else {
+            tokens.push({
+              id: addressToken,
+              balance: {
+                balance: BigInt(addressTokenBalance.balance),
+                lockedBalance: BigInt(addressTokenBalance.lockedBalance)
+              },
+              // TODO: Get ticker and name from https://github.com/alephium/tokens-meta
+              ticker: addressToken.slice(0, 3),
+              name: addressToken
+            })
+          }
+        }
+      }
+
+      return sendToTabAndUi({
+        type: 'GET_ADDRESSES_TOKENS_BALANCE_RES',
+        data: tokens
       })
     }
 

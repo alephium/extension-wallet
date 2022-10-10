@@ -1,6 +1,6 @@
 import { AddressBalance } from '@alephium/sdk/api/explorer'
 
-import { AddressAndPublicKey } from '../addresses'
+import { AddressAndPublicKey, AddressToken } from '../addresses'
 
 export type AddressMessage =
   | { type: 'NEW_ADDRESS'; data?: number }
@@ -28,6 +28,12 @@ export type AddressMessage =
       type: 'GET_ADDRESSES_BALANCE_RES'
       data: AddressBalance[]
     }
+  | { type: 'GET_ADDRESS_TOKENS'; data: { address: string } }
+  | { type: 'GET_ADDRESS_TOKENS_RES'; data: string[] }
+  | { type: 'GET_ADDRESS_TOKEN_BALANCE'; data: { address: string; tokenId: string } }
+  | { type: 'GET_ADDRESS_TOKEN_BALANCE_RES'; data: AddressBalance }
+  | { type: 'GET_ADDRESSES_TOKENS_BALANCE'; data: { addresses: string[] } }
+  | { type: 'GET_ADDRESSES_TOKENS_BALANCE_RES'; data: AddressToken[] }
   | { type: 'DELETE_ADDRESS'; data: { address: string } }
   | { type: 'DELETE_ADDRESS_RES' }
   | { type: 'DELETE_ADDRESS_REJ' }
