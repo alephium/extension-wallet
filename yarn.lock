@@ -19,12 +19,12 @@
     find-up "^2.1.0"
     fs-extra "^10.0.1"
 
-"@alephium/web3-wallet@0.2.0-rc.32":
-  version "0.2.0-rc.32"
-  resolved "https://registry.npmjs.org/@alephium/web3-wallet/-/web3-wallet-0.2.0-rc.32.tgz"
-  integrity sha512-ZdtA9s4hgcqFPM0+5ZdlHioTx4JGeapPtnREeqFpPwY2NedOdKsmPVv/vECJg9y41GYdyoF96lYuNRERO7bbGw==
+"@alephium/web3-wallet@0.2.0-rc.33":
+  version "0.2.0-rc.33"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.2.0-rc.33.tgz#e7bb6b9c4b35ac7d3dc8e4c693eda4fbb1a1fe63"
+  integrity sha512-oUS3aXoyCjwK1Z2Iiveauy7MASW4LL8bHA9l78L7QOXa/rbX2xvbsCl62J3uRELqhlV2A6Bnkdcp4QiEq3dDUA==
   dependencies:
-    "@alephium/web3" "^0.2.0-rc.32"
+    "@alephium/web3" "^0.2.0-rc.33"
     "@types/node" "16.7.8"
     bip32 "3.1.0"
     bip39 "3.0.4"
@@ -32,10 +32,10 @@
     fs-extra "10.0.1"
     tiny-secp256k1 "2.2.1"
 
-"@alephium/web3@0.2.0-rc.32", "@alephium/web3@^0.2.0-rc.32":
-  version "0.2.0-rc.32"
-  resolved "https://registry.npmjs.org/@alephium/web3/-/web3-0.2.0-rc.32.tgz"
-  integrity sha512-5LaoxDVta1nr6fXpQRRNx/OQJp7wXdd5090xiVGXZIKT+MpK8ddgSlvsc5NmEwIotqhi7aV2l3GbcWJwG5nbwA==
+"@alephium/web3@0.2.0-rc.33", "@alephium/web3@^0.2.0-rc.33":
+  version "0.2.0-rc.33"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.2.0-rc.33.tgz#4b19b1a88bd8c1d0138b494e020bc39cc05c7b25"
+  integrity sha512-Lwvi5hieVvarC5IkIpTHutmBuTMhqN4GOx611KMFKJ7AculqFiX+KVn7/STjxVN5uPB93OaooZBpgBT1LM3ytg==
   dependencies:
     base-x "4.0.0"
     blakejs "1.2.1"

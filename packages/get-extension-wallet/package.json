@@ -54,6 +54,6 @@
   },
   "dependencies": {
     "bowser": "^2.11.0",
-    "@alephium/web3": "0.2.0-rc.32"
+    "@alephium/web3": "0.2.0-rc.33"
   }
 }

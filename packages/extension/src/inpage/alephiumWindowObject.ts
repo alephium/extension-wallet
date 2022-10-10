@@ -199,10 +199,10 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     throw Error(`signRaw unsupported signerAddress: ${signerAddress}, hexString: ${hexString}`)
   }
 
-  nodeProvider = new NodeProvider(defaultNetworks[0].nodeUrl)
+  nodeProvider = NodeProvider.Proxy(new NodeProvider(defaultNetworks[0].nodeUrl))
 
   updateNodeProvider: NetworkChangeEventHandler = (network: Network) => {
-    this.nodeProvider = new NodeProvider(network.nodeUrl)
+    this.nodeProvider = NodeProvider.Proxy(new NodeProvider(network.nodeUrl))
   }
 })
 
