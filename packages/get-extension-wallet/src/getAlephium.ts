@@ -1,4 +1,4 @@
-import {
+import type {
   Account,
   NodeProvider,
   SignDeployContractTxParams,
@@ -12,20 +12,7 @@ import {
   SignTransferTxParams,
   SignTransferTxResult,
   SignUnsignedTxParams,
-  SignUnsignedTxResult,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type,
-  type
+  SignUnsignedTxResult
 } from '@alephium/web3'
 import { isPlainObject } from 'lodash-es'
 
