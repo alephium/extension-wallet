@@ -79,7 +79,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   let amount
   let recipientName = ''
 
-  if (payload.type === 'ALPH_SIGN_TRANSFER_TX') {
+  if (payload.type === 'ALPH_SIGN_TRANSFER_TX' || payload.type === 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX') {
     const destination = payload.params.destinations[0]
     recipient = destination.address
     recipientName = getAddressName(recipient, metadata)
