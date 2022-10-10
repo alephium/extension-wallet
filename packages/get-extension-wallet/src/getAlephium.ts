@@ -27,6 +27,7 @@ import type {
   IGetAlephiumWallet
 } from './types'
 import { filterBy, filterPreAuthorized, isWalletObj, shuffle, sortBy } from './utils'
+import { isPlainObject } from 'lodash-es'
 
 class GetAlephiumWallet implements IGetAlephiumWallet {
   #walletObjRef: { current?: AlephiumWindowObject } = {}
@@ -289,17 +290,21 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     await this.#waitForDocumentReady()
 
     // lookup installed wallets
-    const installed = Object.values(
-      Object.getOwnPropertyNames(window).reduce<Record<string, AlephiumWindowObject>>((wallets, key) => {
-        if (key.startsWith('alephium')) {
-          const wallet = (window as Record<string, any>)[key]
+    let installed: AlephiumWindowObject[] = []
+
+    const alephiumProviders = window['alephiumProviders']
+    if (isPlainObject(alephiumProviders)) {
+      installed = Object.values(
+        Object.getOwnPropertyNames(alephiumProviders).reduce<Record<string, AlephiumWindowObject>>((wallets, key) => {
+          const wallet = (alephiumProviders as Record<string, any>)[key]
           if (isWalletObj(key, wallet) && !wallets[wallet.id]) {
             wallets[wallet.id] = wallet
           }
-        }
-        return wallets
-      }, {})
-    )
+
+          return wallets
+        }, {})
+      )
+    }
 
     // 1. lookup state wallets
     // 2. remove state-set wallets if they aren't available anymore

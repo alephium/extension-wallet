@@ -64,7 +64,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   enable = (_options?: { showModal?: boolean }): Promise<string[]> =>
     new Promise((resolve) => {
       const handleMessage = ({ data }: MessageEvent<WindowMessageType>) => {
-        const { alephium } = window
+        const { alephiumProviders } = window
+        const alephium = alephiumProviders?.alephium
         if (!alephium) {
           return
         }
@@ -131,7 +132,9 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   }
 
   getSelectedAccount = async (): Promise<Account> => {
-    const { alephium } = window
+    const { alephiumProviders } = window
+    const alephium = alephiumProviders?.alephium
+
     if (alephium?.defaultAddress) {
       return Promise.resolve(alephium.defaultAddress)
     } else {
