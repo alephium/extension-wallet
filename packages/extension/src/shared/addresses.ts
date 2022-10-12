@@ -15,6 +15,8 @@ export type AddressToken = {
     balance: bigint
     lockedBalance: bigint
   }
+  decimals: number
+  logo?: string
 }
 
 export class Address {

@@ -14,6 +14,9 @@ interface WalletAssetsScreenProps {
   className?: string
 }
 
+// TODO: Get from js-sdk
+const NUM_OF_ZEROS_IN_QUINTILLION = 18
+
 const WalletAssetsScreen: FC<WalletAssetsScreenProps> = ({ className }) => {
   const { addresses } = useAddresses()
   const [totalBalance, setTotalBalance] = useState<bigint | undefined>(undefined)
@@ -62,16 +65,21 @@ const WalletAssetsScreen: FC<WalletAssetsScreenProps> = ({ className }) => {
         <TokensListSection>
           <DividerTitle>Tokens</DividerTitle>
           <TokensList>
-            {tokens.map(({ id, ticker, name, balance }) => {
-              const totalBalance = balance.balance + balance.lockedBalance
+            {tokens.map(({ id, ticker, name, balance, decimals, logo }) => {
+              const totalBalance = (BigInt(balance.balance) + BigInt(balance.lockedBalance)).toString()
+
+              // TODO: Use produceZeros from js-sdk
+              const trailingZeros = '0'.repeat(NUM_OF_ZEROS_IN_QUINTILLION - decimals)
+
+              console.log('logo', logo)
 
               return (
                 <TokenItem key={id}>
                   <LeftGroup>
-                    <TokenIcon>{ticker}</TokenIcon>
+                    <TokenIcon>{logo ? <TokenLogo src={logo} alt={`${name} logo`} /> : ticker}</TokenIcon>
                     <TokenName>{name}</TokenName>
                   </LeftGroup>
-                  <TokenAmount token={ticker} value={totalBalance} fadeDecimals />
+                  <TokenAmount token={ticker} value={BigInt(totalBalance + trailingZeros)} fadeDecimals />
                 </TokenItem>
               )
             })}
@@ -137,6 +145,7 @@ const TokenIcon = styled.div`
   width: 45px;
   height: 45px;
   border-radius: 45px;
+  padding: 10px;
   background-color: ${({ theme }) => theme.bg.highlight};
   color: ${({ theme }) => theme.font.contrast};
   display: flex;
@@ -165,4 +174,9 @@ const TokenName = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 250px;
+`
+
+const TokenLogo = styled.img`
+  width: 100%;
+  height: auto;
 `
