@@ -155,6 +155,7 @@ const TokenIcon = styled.div`
   flex-shrink: 0;
 `
 
+// TODO: Consider merging with TXAmount
 const TokenAmount = styled(Amount)`
   font-weight: 600;
   font-size: 17px;

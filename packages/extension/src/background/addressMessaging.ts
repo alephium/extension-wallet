@@ -123,7 +123,7 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
                 lockedBalance: BigInt(addressTokenBalance.lockedBalance)
               },
               // TODO: Get ticker and name from https://github.com/alephium/tokens-meta
-              ticker: addressToken.slice(0, 3),
+              ticker: `TK${addressToken.slice(0, 2)}`,
               name: addressToken,
               decimals: 0,
               logo: `https://picsum.photos/20${Math.floor(Math.random() * 10)}`

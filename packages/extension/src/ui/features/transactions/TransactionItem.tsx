@@ -88,6 +88,7 @@ export const TXDetailsWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 `
 
 export const TXTextGroup = styled.div`
@@ -128,4 +129,7 @@ const TransactionWrapper = styled(TXWrapper)<{ highlighted?: boolean }>`
 const TXAmount = styled(Amount)`
   font-weight: 600;
   font-size: 17px;
+  flex-grow: 1;
+  flex-shrink: 0;
+  text-align: right;
 `
