@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { AddressToken } from '../../../shared/addresses'
 import { attoAlphToFiat } from '../../../shared/utils/amount'
@@ -108,30 +108,14 @@ const TokensListSection = styled.div`
 const TokensList = styled.div``
 
 // TODO: Consider merging with TXDetailsWrapper and TXWrapper
-const TokenItem = styled.div<{ highlighted?: boolean }>`
+const TokenItem = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 16px 24px;
-  cursor: pointer;
-
-  transition: all 200ms ease-in-out;
 
   width: 100%;
   justify-content: space-between;
-
-  cursor: pointer;
-
-  ${({ highlighted }) =>
-    highlighted &&
-    css`
-      background-color: rgba(255, 255, 255, 0.1);
-    `}
-
-  &:hover, &:focus {
-    outline: 0;
-    background-color: rgba(255, 255, 255, 0.15);
-  }
 `
 
 const LeftGroup = styled.div`
