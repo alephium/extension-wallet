@@ -158,6 +158,11 @@ export class Wallet {
     return await explorerProvider.addresses.getAddressesAddressTokensTokenIdBalance(address, tokenId)
   }
 
+  public async getAddressTokenTransactions(address: string, tokenId: string): Promise<Transaction[]> {
+    const explorerProvider = await this.getExplorerProvider()
+    return await explorerProvider.addresses.getAddressesAddressTokensTokenIdTransactions(address, tokenId)
+  }
+
   public async selectAlephiumAddress(address: string) {
     const addresses = await this.getAlephiumAddresses()
 
