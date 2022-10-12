@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { MIN_UTXO_SET_AMOUNT, calAmountDelta } from '@alephium/sdk'
+import { MIN_UTXO_SET_AMOUNT, isConsolidationTx } from '@alephium/sdk'
 import { Input, Output, Transaction, UnconfirmedTransaction } from '@alephium/sdk/api/explorer'
-import { uniq } from 'lodash'
 
 import { Address } from '../addresses'
 
@@ -75,9 +74,6 @@ export const hasOnlyInputsWith = (inputs: Input[], addresses: Address[]): boolea
 export const hasOnlyOutputsWith = (outputs: Output[], addresses: Address[]): boolean =>
   outputs.every((o) => o?.address && addresses.map((a) => a.hash).indexOf(o.address) >= 0)
 
-export const getDirection = (tx: Transaction, address: AddressHash): TransactionDirection =>
-  calAmountDelta(tx, address) < 0 ? 'out' : 'in'
-
 export const calculateUnconfirmedTxSentAmount = (tx: UnconfirmedTransaction, address: AddressHash): bigint => {
   if (!tx.inputs || !tx.outputs) {
     throw 'Missing transaction details'
@@ -95,13 +91,6 @@ export const calculateUnconfirmedTxSentAmount = (tx: UnconfirmedTransaction, add
   )
 
   return totalOutputAmount - totalOutputAmountOfAddress
-}
-
-export const isConsolidationTx = (tx: Transaction | UnconfirmedTransaction): boolean => {
-  const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
-  const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
-
-  return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
 // It can currently only take care of sending transactions.
