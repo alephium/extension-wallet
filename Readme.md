@@ -18,7 +18,10 @@ yarn        # setup dependencies
 yarn build  # run build process for all packages
 ```
 
-To load the locally built chrome extension into your browser, follow the guide [here](https://developer.chrome.com/docs/extensions/mv3/getstarted/#manifest)
+To load the locally built extension into your browser, follow the guide [here](https://developer.chrome.com/docs/extensions/mv3/getstarted/#manifest)
+for chrome and [here](https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/) for firefox.
+
+The extension folder is located at `packages/extension/dist`
 
 ## Development
 
