@@ -7,18 +7,6 @@ export type TimeInMs = number
 
 export type AddressHash = string
 
-export type AddressToken = {
-  id: string
-  ticker: string
-  name: string
-  balance: {
-    balance: bigint
-    lockedBalance: bigint
-  }
-  decimals: number
-  logo?: string
-}
-
 export class Address {
   readonly hash: AddressHash
   readonly shortHash: string

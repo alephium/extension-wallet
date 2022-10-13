@@ -1,5 +1,5 @@
-import { AddressToken } from '../shared/addresses'
 import { AddressMessage } from '../shared/messages/AddressMessage'
+import { AddressToken } from '../shared/tokens'
 import { sendMessageToUi } from './activeTabs'
 import { HandleMessage, UnhandledMessage } from './background'
 import { encryptForUi } from './crypto'
@@ -121,12 +121,7 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
               balance: {
                 balance: BigInt(addressTokenBalance.balance),
                 lockedBalance: BigInt(addressTokenBalance.lockedBalance)
-              },
-              // TODO: Get ticker and name from https://github.com/alephium/tokens-meta
-              ticker: `TK${addressToken.slice(0, 2)}`,
-              name: addressToken,
-              decimals: 0,
-              logo: `https://picsum.photos/20${Math.floor(Math.random() * 10)}`
+              }
             })
           }
         }

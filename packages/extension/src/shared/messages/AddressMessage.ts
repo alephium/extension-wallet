@@ -1,6 +1,7 @@
 import { AddressBalance } from '@alephium/sdk/api/explorer'
 
-import { AddressAndPublicKey, AddressToken } from '../addresses'
+import { AddressAndPublicKey } from '../addresses'
+import { AddressToken } from '../tokens'
 
 export type AddressMessage =
   | { type: 'NEW_ADDRESS'; data?: number }

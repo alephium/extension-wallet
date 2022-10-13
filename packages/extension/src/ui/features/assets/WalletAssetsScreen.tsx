@@ -1,7 +1,8 @@
+import { NUM_OF_ZEROS_IN_QUINTILLION, produceZeros } from '@alephium/sdk'
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { AddressToken } from '../../../shared/addresses'
+import { AddressToken, TokenMetadata } from '../../../shared/tokens'
 import { attoAlphToFiat } from '../../../shared/utils/amount'
 import Amount from '../../components/Amount'
 import { getAddressesTokensBalance, getBalances } from '../../services/backgroundAddresses'
@@ -14,13 +15,18 @@ interface WalletAssetsScreenProps {
   className?: string
 }
 
-// TODO: Get from js-sdk
-const NUM_OF_ZEROS_IN_QUINTILLION = 18
+const COINGECKO_URL = 'https://api.coingecko.com/api/v3/simple/price?ids=alephium&vs_currencies=usd'
+// TODO: Use official Alephium tokens-meta repo
+const TOKEN_METADATA_URL = 'https://raw.githubusercontent.com/nop33/token-meta/master/tokens.json'
+const TOKEN_IMAGE_URL = 'https://raw.githubusercontent.com/nop33/token-meta/master/images/'
 
 const WalletAssetsScreen: FC<WalletAssetsScreenProps> = ({ className }) => {
   const { addresses } = useAddresses()
   const [totalBalance, setTotalBalance] = useState<bigint | undefined>(undefined)
   const [tokens, setTokens] = useState<AddressToken[]>()
+  const [tokensMetadata, setTokensMetadata] = useState<{
+    [key: string]: TokenMetadata
+  }>()
   const [fiatBalance, setFiatBalance] = useState<number>()
   const { switcherNetworkId } = useNetworkState()
 
@@ -41,8 +47,18 @@ const WalletAssetsScreen: FC<WalletAssetsScreenProps> = ({ className }) => {
   }, [])
 
   useEffect(() => {
+    const fetchTokensMetadata = async () => {
+      const response = await fetch(TOKEN_METADATA_URL)
+      const data = await response.json()
+      setTokensMetadata(data)
+    }
+
+    fetchTokensMetadata()
+  }, [])
+
+  useEffect(() => {
     const fetchFiatPrice = async () => {
-      const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=alephium&vs_currencies=usd`)
+      const response = await fetch(COINGECKO_URL)
       const data = await response.json()
       const latestPrice = attoAlphToFiat(totalBalance, parseFloat(data.alephium['usd']))
       setFiatBalance(latestPrice)
@@ -65,21 +81,24 @@ const WalletAssetsScreen: FC<WalletAssetsScreenProps> = ({ className }) => {
         <TokensListSection>
           <DividerTitle>Tokens</DividerTitle>
           <TokensList>
-            {tokens.map(({ id, ticker, name, balance, decimals, logo }) => {
+            {tokens.map(({ id, balance }) => {
               const totalBalance = (BigInt(balance.balance) + BigInt(balance.lockedBalance)).toString()
-
-              // TODO: Use produceZeros from js-sdk
-              const trailingZeros = '0'.repeat(NUM_OF_ZEROS_IN_QUINTILLION - decimals)
-
-              console.log('logo', logo)
+              const metadata = tokensMetadata ? tokensMetadata[id] : undefined
+              const trailingZeros = produceZeros(NUM_OF_ZEROS_IN_QUINTILLION - (metadata?.decimals ?? 0))
 
               return (
                 <TokenItem key={id}>
                   <LeftGroup>
-                    <TokenIcon>{logo ? <TokenLogo src={logo} alt={`${name} logo`} /> : ticker}</TokenIcon>
-                    <TokenName>{name}</TokenName>
+                    <TokenIcon>
+                      {metadata?.image ? <TokenLogo src={`${TOKEN_IMAGE_URL}${metadata.image}`} /> : metadata?.symbol}
+                    </TokenIcon>
+                    <TokenName>{metadata?.name ?? id}</TokenName>
                   </LeftGroup>
-                  <TokenAmount token={ticker} value={BigInt(totalBalance + trailingZeros)} fadeDecimals />
+                  <TokenAmount
+                    token={metadata?.symbol ?? id.slice(0, 3)}
+                    value={BigInt(totalBalance + trailingZeros)}
+                    fadeDecimals
+                  />
                 </TokenItem>
               )
             })}
