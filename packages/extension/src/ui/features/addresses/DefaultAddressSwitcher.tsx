@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 
 import AddressName from '../../components/AddressName'
 import HoverSelect, { HoverSelectItem } from '../../components/HoverSelect'
@@ -37,12 +37,22 @@ const DefaultAddressSwitcher = ({
   const [selectedAddress, setSelectedAddress] = useState(selectedAddressHash || defaultAddress?.hash)
 
   const handleOnItemClick = (hash: string) => {
-    if (setSelectedAsDefault) {
+    if (setSelectedAsDefault && defaultAddress && defaultAddress.hash !== hash) {
       setDefaultAddress(hash)
     }
-    setSelectedAddress(hash)
-    onAddressSelect && onAddressSelect(hash)
+    if (selectedAddress !== hash) {
+      setSelectedAddress(hash)
+      onAddressSelect && onAddressSelect(hash)
+    }
   }
+
+  // Set as default on first render
+  useEffect(() => {
+    if (selectedAddressHash) {
+      handleOnItemClick(selectedAddressHash)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const addressItems: HoverSelectItem[] = addresses.map((address) => {
     const metadata = addressesMetadata[address.hash]
