@@ -1,0 +1,62 @@
+{
+  "0": {
+    "deployContractResults": {
+      "TokenFaucet": {
+        "groupIndex": 0,
+        "txId": "c534444f511a4b239b42f2af5e5cc1f69e87846cba296532319247da322ee77a",
+        "blockHash": "87d7ea54130bc48e5ace8378152ede6414092c443ff90a04066d15dcd6dfb510",
+        "contractId": "557542e827e0849d8d9c94f93749464c288c8bb0e70bfe2e611c31952add684b",
+        "contractAddress": "zSYURFj3vHP1HvQy8X7UThpK3xGWyMdQV27rskHix5fx",
+        "codeHash": "cde0b502cba53d2c225cde1501c8e05daa694f62f9221201b11229a7fac30711",
+        "issueTokenAmount": "100"
+      }
+    },
+    "runScriptResults": {},
+    "migrations": {}
+  },
+  "1": {
+    "deployContractResults": {
+      "TokenFaucet": {
+        "groupIndex": 1,
+        "txId": "69c7e404cd1041267ba065474c5ed78607edac176134d8a9e3ee0dfee9dea43a",
+        "blockHash": "f9891f32d56d690ed111c311cfe6f0ae6c1436f4c004a98e358668b8862869b5",
+        "contractId": "968c0627f2f5f0c9f4e58e40d9b842d0771284edd830b3c83d4eb46c31d3ddfd",
+        "contractAddress": "24pd74cUbDs67fUpWQ6K3x3bvuvL98AmUDwkvVDRqz1PS",
+        "codeHash": "cde0b502cba53d2c225cde1501c8e05daa694f62f9221201b11229a7fac30711",
+        "issueTokenAmount": "100"
+      }
+    },
+    "runScriptResults": {},
+    "migrations": {}
+  },
+  "2": {
+    "deployContractResults": {
+      "TokenFaucet": {
+        "groupIndex": 2,
+        "txId": "df51f3b9ee0656cba8035b94656320bf115e860317f3a39c22b87be65094d431",
+        "blockHash": "2e8c388acb12b815cd32a5bf202d983a9302d0afa968eaa2ccc0d03abbd40dfa",
+        "contractId": "3d2692d8eb9e436f88932e38bff7856688ea92a8998018c0cfba432bde97e275",
+        "contractAddress": "xof6aTGtDMCsVYGuRLJRw3SkGofsxC5rG8ccXBS7ZB3S",
+        "codeHash": "cde0b502cba53d2c225cde1501c8e05daa694f62f9221201b11229a7fac30711",
+        "issueTokenAmount": "100"
+      }
+    },
+    "runScriptResults": {},
+    "migrations": {}
+  },
+  "3": {
+    "deployContractResults": {
+      "TokenFaucet": {
+        "groupIndex": 3,
+        "txId": "13eb2ea9a84a2585d1e0211e3be77fec6fa3d2eebb773741d7b51aaff2491710",
+        "blockHash": "7f954959381660b5016edbc00d52063ef9ce621d0535fbf911416fbff859e7ff",
+        "contractId": "32fc62bb354f7d209e56111e747ae4f80853e20098ada74ba3a539b7333dc340",
+        "contractAddress": "x7yi4VPmVWrppSWsYaVRXNozWcZMWiKV3PHwxdgPKoMq",
+        "codeHash": "cde0b502cba53d2c225cde1501c8e05daa694f62f9221201b11229a7fac30711",
+        "issueTokenAmount": "100"
+      }
+    },
+    "runScriptResults": {},
+    "migrations": {}
+  }
+}

@@ -3,15 +3,17 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 33333",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 33333",
     "export": "next export",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "npx @alephium/cli deploy -n devnet"
   },
   "dependencies": {
-    "@alephium/get-extension-wallet": "0.3.0",
-    "@alephium/web3": "0.2.0-rc.33",
+    "alephium-get-extension-wallet-for-test": "0.3.1-rc.0",
+    "@alephium/web3": "0.2.0-rc.36",
+    "@alephium/cli": "0.2.0-rc.36",
     "ethers": "^5.5.1",
     "next": "^12.1.4",
     "react": "^18.0.0",

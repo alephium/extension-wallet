@@ -1,0 +1,24 @@
+{
+  "compilerOptionsUsed": {
+    "ignoreUnusedConstantsWarnings": false,
+    "ignoreUnusedVariablesWarnings": false,
+    "ignoreUnusedFieldsWarnings": false,
+    "ignoreUnusedPrivateFunctionsWarnings": false,
+    "ignoreReadonlyCheckWarnings": false,
+    "ignoreExternalCallCheckWarnings": false
+  },
+  "infos": {
+    "contracts/token.ral": {
+      "sourceCodeHash": "3df1420956b79772bc96c61d260cac722ab157e01c60dcae39ef4bf62bafc99c",
+      "bytecodeDebugPatch": "=10-2+4c=47+3a00=1+7e02175468652063757272656e742062616c616e63652069732000=46",
+      "codeHashDebug": "ccdaa53664ee38bb65c230426e4cf04f8d8d3bc4a9b7fcac384404c998a02cfa",
+      "warnings": []
+    },
+    "contracts/withdraw.ral": {
+      "sourceCodeHash": "6f42aa997846601cab0b4c54b26e70b1c323ac250e1fb1f7907ef6fb8bd58898",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    }
+  }
+}

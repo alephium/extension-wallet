@@ -5,9 +5,11 @@ import { useEffect, useState } from 'react'
 import { connectWallet, silentConnectWallet } from '../services/wallet.service'
 import styles from '../styles/Home.module.css'
 
+import { getToken } from '../get_token'
+
 const Home: NextPage = () => {
-  const [address, setAddress] = useState<string>()
-  const [isConnected, setConnected] = useState(false)
+  const [_address, setAddress] = useState<string>()
+  const [_isConnected, setConnected] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -17,10 +19,15 @@ const Home: NextPage = () => {
     })()
   }, [])
 
-  const handleConnectClick = async () => {
+  const getTokenClick = async () => {
     const wallet = await connectWallet()
-    setAddress(wallet?.defaultAddress?.address)
-    setConnected(!!wallet?.isConnected)
+    if (wallet === undefined) {
+      throw Error('Please connect wallet first')
+    }
+    setAddress(wallet.defaultAddress?.address)
+    setConnected(!!wallet.isConnected)
+    const result = await getToken(wallet)
+    console.log('get token transaction id: ' + result.txId)
   }
 
   return (
@@ -31,19 +38,11 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        {isConnected ? (
-          <>
-            <h3 style={{ margin: 0 }}>
-              Wallet address: <code>{address}</code>
-            </h3>
-          </>
-        ) : (
-          <>
-            <button className={styles.connect} onClick={handleConnectClick}>
-              Connect Wallet
-            </button>
-          </>
-        )}
+        <>
+          <button className={styles.connect} onClick={getTokenClick}>
+            Get Token
+          </button>
+        </>
       </main>
     </div>
   )

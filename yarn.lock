@@ -2,14 +2,6 @@
 # yarn lockfile v1
 
 
-"@alephium/get-extension-wallet@0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-0.3.0.tgz#5a65558a9c36da2a88ba20cbfb9b5d0f6cfa82d6"
-  integrity sha512-2uF/zP2t3MFJHXbzHOVmoSU/NMltPlA4+iy3WfU1+GT0soRxoWA8i7/70dMBucgQrZge+gFY+ZEHNqbXNxZaEA==
-  dependencies:
-    "@alephium/web3" "0.2.0-rc.33"
-    bowser "^2.11.0"
-
 "@alephium/sdk@0.1.0":
   version "0.1.0"
   resolved "https://registry.npmjs.org/@alephium/sdk/-/sdk-0.1.0.tgz"
@@ -29,7 +21,7 @@
 
 "@alephium/web3-wallet@0.2.0-rc.36":
   version "0.2.0-rc.36"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.2.0-rc.36.tgz#57ecd83bc34bf4a328d80343408ab4435be7f526"
+  resolved "https://registry.npmjs.org/@alephium/web3-wallet/-/web3-wallet-0.2.0-rc.36.tgz"
   integrity sha512-PDMao8+dHNrIcg89MPhcaY2M0i5OaKh+BMVah1JUpBSz606K76eEYShBMFoUArDi6lF012BK68svuxRtLXH67w==
   dependencies:
     "@alephium/web3" "^0.2.0-rc.36"
@@ -40,21 +32,9 @@
     fs-extra "10.0.1"
     tiny-secp256k1 "2.2.1"
 
-"@alephium/web3@0.2.0-rc.33":
-  version "0.2.0-rc.33"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.2.0-rc.33.tgz#4b19b1a88bd8c1d0138b494e020bc39cc05c7b25"
-  integrity sha512-Lwvi5hieVvarC5IkIpTHutmBuTMhqN4GOx611KMFKJ7AculqFiX+KVn7/STjxVN5uPB93OaooZBpgBT1LM3ytg==
-  dependencies:
-    base-x "4.0.0"
-    blakejs "1.2.1"
-    buffer "^6.0.3"
-    cross-fetch "^3.1.5"
-    elliptic "6.5.4"
-    eventemitter3 "^4.0.7"
-
 "@alephium/web3@0.2.0-rc.36", "@alephium/web3@^0.2.0-rc.36":
   version "0.2.0-rc.36"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.2.0-rc.36.tgz#43d98e9c48b90df4c7e2481a9a3651f92ce8351f"
+  resolved "https://registry.npmjs.org/@alephium/web3/-/web3-0.2.0-rc.36.tgz"
   integrity sha512-Y8AOSb5WCBXcKUJ9PQX3AsJfAMDTrDFqHDMocjpUxG9YEuYsFZsGXV1AHWgf8bnFKYhqX7q/jsB+8DA6EK6+5A==
   dependencies:
     base-x "4.0.0"
@@ -2680,7 +2660,7 @@
 
 "@next/swc-darwin-arm64@12.3.1":
   version "12.3.1"
-  resolved "https://registry.yarnpkg.com/@next/swc-darwin-arm64/-/swc-darwin-arm64-12.3.1.tgz#b105457d6760a7916b27e46c97cb1a40547114ae"
+  resolved "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-12.3.1.tgz"
   integrity sha512-hT/EBGNcu0ITiuWDYU9ur57Oa4LybD5DOQp4f22T6zLfpoBMfBibPtR8XktXmOyFHrL/6FC2p9ojdLZhWhvBHg==
 
 "@next/swc-darwin-x64@12.3.1":
@@ -2710,12 +2690,12 @@
 
 "@next/swc-linux-x64-gnu@12.3.1":
   version "12.3.1"
-  resolved "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-12.3.1.tgz"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-12.3.1.tgz#c66468f5e8181ffb096c537f0dbfb589baa6a9c1"
   integrity sha512-JWEaMyvNrXuM3dyy9Pp5cFPuSSvG82+yABqsWugjWlvfmnlnx9HOQZY23bFq3cNghy5V/t0iPb6cffzRWylgsA==
 
 "@next/swc-linux-x64-musl@12.3.1":
   version "12.3.1"
-  resolved "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-12.3.1.tgz"
+  resolved "https://registry.yarnpkg.com/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-12.3.1.tgz#c6269f3e96ac0395bc722ad97ce410ea5101d305"
   integrity sha512-xoEWQQ71waWc4BZcOjmatuvPUXKTv6MbIFzpm4LFeCHsg2iwai0ILmNXf81rJR+L1Wb9ifEke2sQpZSPNz1Iyg==
 
 "@next/swc-win32-arm64-msvc@12.3.1":
@@ -6009,12 +5989,12 @@ esbuild-darwin-64@0.15.8:
 
 esbuild-darwin-arm64@0.14.54:
   version "0.14.54"
-  resolved "https://registry.yarnpkg.com/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.14.54.tgz#3f7cdb78888ee05e488d250a2bdaab1fa671bf73"
+  resolved "https://registry.npmjs.org/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.14.54.tgz"
   integrity sha512-OPafJHD2oUPyvJMrsCvDGkRrVCar5aVyHfWGQzY1dWnzErjrDuSETxwA2HSsyg2jORLY8yBfzc1MIpUkXlctmw==
 
 esbuild-darwin-arm64@0.15.8:
   version "0.15.8"
-  resolved "https://registry.yarnpkg.com/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.15.8.tgz#91c110daa46074fdfc18f411247ca0d1228aacc3"
+  resolved "https://registry.npmjs.org/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.15.8.tgz"
   integrity sha512-8tjEaBgAKnXCkP7bhEJmEqdG9HEV6oLkF36BrMzpfW2rgaw0c48Zrxe+9RlfeGvs6gDF4w+agXyTjikzsS3izw==
 
 esbuild-freebsd-64@0.14.54:
@@ -6049,12 +6029,12 @@ esbuild-linux-32@0.15.8:
 
 esbuild-linux-64@0.14.54:
   version "0.14.54"
-  resolved "https://registry.npmjs.org/esbuild-linux-64/-/esbuild-linux-64-0.14.54.tgz"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-64/-/esbuild-linux-64-0.14.54.tgz#de5fdba1c95666cf72369f52b40b03be71226652"
   integrity sha512-EgjAgH5HwTbtNsTqQOXWApBaPVdDn7XcK+/PtJwZLT1UmpLoznPd8c5CxqsH2dQK3j05YsB3L17T8vE7cp4cCg==
 
 esbuild-linux-64@0.15.8:
   version "0.15.8"
-  resolved "https://registry.npmjs.org/esbuild-linux-64/-/esbuild-linux-64-0.15.8.tgz"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-64/-/esbuild-linux-64-0.15.8.tgz#8e738c926d145cdd4e9bcb2febc96d89dc27dc09"
   integrity sha512-4HxrsN9eUzJXdVGMTYA5Xler82FuZUu21bXKN42zcLHHNKCAMPUzD62I+GwDhsdgUBAUj0tRXDdsQHgaP6v0HA==
 
 esbuild-linux-arm64@0.14.54:
@@ -6906,7 +6886,7 @@ fs.realpath@^1.0.0:
 
 fsevents@~2.3.2:
   version "2.3.2"
-  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
+  resolved "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
 
 function-bind@^1.1.1:
@@ -9787,16 +9767,7 @@ postcss@8.4.14:
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
-postcss@^8.4.12, postcss@^8.4.16:
-  version "8.4.16"
-  resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.16.tgz"
-  integrity sha512-ipHE1XBvKzm5xI7hiHCZJCSugxvsdq2mPnsq5+UF+VHCjiBvtDrlxJfMBToWaP9D5XlgNmcFGqoHmUn0EYEaRQ==
-  dependencies:
-    nanoid "^3.3.4"
-    picocolors "^1.0.0"
-    source-map-js "^1.0.2"
-
-postcss@^8.4.7:
+postcss@^8.4.12, postcss@^8.4.16, postcss@^8.4.7:
   version "8.4.17"
   resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.17.tgz"
   integrity sha512-UNxNOLQydcOFi41yHNMcKRZ39NeXlr8AxGuZJsdub8vIb12fHzcq37DTU/QtbI6WLxNg2gF9Z+8qtRwTj1UI1Q==

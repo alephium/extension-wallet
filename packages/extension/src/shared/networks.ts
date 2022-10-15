@@ -16,18 +16,11 @@ export interface NetworkStatus {
 
 export const defaultNetworks: Network[] = [
   {
-    id: 'softfork',
-    nodeUrl: 'https://alephium-dev.softfork.se',
-    explorerApiUrl: 'https://alephium-dev-explorer-api.softfork.se',
-    explorerUrl: 'https://alephium-dev-explorer.softfork.se',
-    name: 'Softfork'
-  },
-  {
-    id: 'localhost',
+    id: 'devnet',
     nodeUrl: 'http://127.0.0.1:22973',
-    explorerApiUrl: 'http://localhost:9090',
-    explorerUrl: 'http://localhost:3000',
-    name: 'Localhost'
+    explorerApiUrl: 'http://127.0.0.1:9090',
+    explorerUrl: 'http://127.0.0.1:3000',
+    name: 'devnet'
   },
   {
     id: 'testnet',
