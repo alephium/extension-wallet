@@ -30,19 +30,19 @@ export const titleForTransactions = (payload: TransactionPayload) => {
     case 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX':
       return 'Review Transfer'
 
-    case 'ALPH_SIGN_CONTRACT_CREATION_TX': {
+    case 'ALPH_SIGN_DEPLOY_CONTRACT_TX': {
       return 'Review Contract Signing'
     }
 
-    case 'ALPH_SIGN_AND_SUBMIT_CONTRACT_CREATION_TX': {
+    case 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX': {
       return 'Review Contract'
     }
 
-    case 'ALPH_SIGN_SCRIPT_TX': {
+    case 'ALPH_SIGN_EXECUTE_SCRIPT_TX': {
       return 'Review Script Signing'
     }
 
-    case 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX': {
+    case 'ALPH_SIGN_AND_SUBMIT_EXECUTE_SCRIPT_TX': {
       return 'Review Script'
     }
 
@@ -50,8 +50,8 @@ export const titleForTransactions = (payload: TransactionPayload) => {
       return 'Review Transaction Signing'
     }
 
-    case 'ALPH_SIGN_HEX_STRING': {
-      return 'Review Hex String Signing'
+    case 'ALPH_SIGN_AND_SUBMIT_UNSIGNED_TX': {
+      return 'Review Transaction'
     }
 
     case 'ALPH_SIGN_MESSAGE': {

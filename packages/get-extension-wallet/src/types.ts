@@ -1,19 +1,4 @@
-import type {
-  Account,
-  SignDeployContractTxParams,
-  SignDeployContractTxResult,
-  SignExecuteScriptTxParams,
-  SignExecuteScriptTxResult,
-  SignHexStringParams,
-  SignHexStringResult,
-  SignMessageParams,
-  SignMessageResult,
-  SignTransferTxParams,
-  SignTransferTxResult,
-  SignUnsignedTxParams,
-  SignUnsignedTxResult
-} from '@alephium/web3'
-import { SignerProvider } from '@alephium/web3'
+import type { Account, SignerProvider } from '@alephium/web3'
 
 export interface IStorageWrapper {
   set(value: string | null | undefined): boolean
@@ -133,7 +118,7 @@ export type EventType = 'addressesChanged' | 'networkChanged'
 
 export type EventHandler = (data: any) => void
 
-export abstract class AlephiumWindowObject extends SignerProvider {
+export interface AlephiumWindowObject extends SignerProvider {
   discriminator: string
   enable: (options?: { showModal?: boolean }) => Promise<string[]>
   isPreauthorized: () => Promise<boolean>

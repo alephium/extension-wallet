@@ -39,41 +39,41 @@ export const executeAlephiumTransaction = async (
       })
     }
 
-    case 'ALPH_SIGN_CONTRACT_CREATION_TX': {
+    case 'ALPH_SIGN_DEPLOY_CONTRACT_TX': {
       return await withSigner(async (signer) => {
         const signResult = await signer.signDeployContractTx(payload.params)
         return {
-          type: 'ALPH_SIGN_CONTRACT_CREATION_TX_RES',
+          type: 'ALPH_SIGN_DEPLOY_CONTRACT_TX_RES',
           result: signResult
         }
       })
     }
 
-    case 'ALPH_SIGN_AND_SUBMIT_CONTRACT_CREATION_TX': {
+    case 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX': {
       return await withSigner(async (signer) => {
         const submitResult = await signer.signAndSubmitDeployContractTx(payload.params)
         return {
-          type: 'ALPH_SIGN_AND_SUBMIT_CONTRACT_CREATION_TX_RES',
+          type: 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX_RES',
           result: submitResult
         }
       })
     }
 
-    case 'ALPH_SIGN_SCRIPT_TX': {
+    case 'ALPH_SIGN_EXECUTE_SCRIPT_TX': {
       return await withSigner(async (signer) => {
         const signResult = await signer.signExecuteScriptTx(payload.params)
         return {
-          type: 'ALPH_SIGN_SCRIPT_TX_RES',
+          type: 'ALPH_SIGN_EXECUTE_SCRIPT_TX_RES',
           result: signResult
         }
       })
     }
 
-    case 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX': {
+    case 'ALPH_SIGN_AND_SUBMIT_EXECUTE_SCRIPT_TX': {
       return await withSigner(async (signer) => {
         const submitResult = await signer.signAndSubmitExecuteScriptTx(payload.params)
         return {
-          type: 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX_RES',
+          type: 'ALPH_SIGN_AND_SUBMIT_EXECUTE_SCRIPT_TX_RES',
           result: submitResult
         }
       })
@@ -89,12 +89,12 @@ export const executeAlephiumTransaction = async (
       })
     }
 
-    case 'ALPH_SIGN_HEX_STRING': {
+    case 'ALPH_SIGN_AND_SUBMIT_UNSIGNED_TX': {
       return await withSigner(async (signer) => {
-        const signResult = await signer.signHexString(payload.params)
+        const submitResult = await signer.signAndSubmitUnsignedTx(payload.params)
         return {
-          type: 'ALPH_SIGN_HEX_STRING_RES',
-          result: signResult
+          type: 'ALPH_SIGN_AND_SUBMIT_UNSIGNED_TX_RES',
+          result: submitResult
         }
       })
     }

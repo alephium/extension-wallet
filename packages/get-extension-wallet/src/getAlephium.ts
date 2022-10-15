@@ -1,12 +1,9 @@
 import type {
   Account,
-  NodeProvider,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
-  SignHexStringParams,
-  SignHexStringResult,
   SignMessageParams,
   SignMessageResult,
   SignTransferTxParams,
@@ -19,8 +16,14 @@ import { isPlainObject } from 'lodash-es'
 import defaultWallet from './configs/defaultWallet'
 import lastWallet from './configs/lastConnected'
 import show from './modal'
-import { AlephiumWindowObject } from './types'
-import type { DisconnectOptions, EventHandler, EventType, GetAlephiumWalletOptions, IGetAlephiumWallet } from './types'
+import type {
+  AlephiumWindowObject,
+  DisconnectOptions,
+  EventHandler,
+  EventType,
+  GetAlephiumWalletOptions,
+  IGetAlephiumWallet
+} from './types'
 import { filterBy, filterPreAuthorized, isWalletObj, shuffle, sortBy } from './utils'
 
 class GetAlephiumWallet implements IGetAlephiumWallet {
@@ -112,8 +115,8 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     return (
       this.#walletObjRef.current ??
       // create a wrapper
-      new (class extends AlephiumWindowObject {
-        discriminator = '___IAlephiumWindowObject___'
+      new (class implements AlephiumWindowObject {
+        discriminator = '___AlephiumWindowObject___'
         // default values
         id = 'disconnected'
         name = 'Disconnected'
@@ -158,36 +161,49 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           return await method(currentWallet)
         }
 
-        signTransferTx = async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
-          return await this.#call('signTransferTx', (wallet) => wallet.signTransferTx(params))
+        signAndSubmitTransferTx = async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
+          return await this.#call('signAndSubmitTransferTx', (wallet) => wallet.signAndSubmitTransferTx(params))
         }
 
-        signDeployContractTx = async (params: SignDeployContractTxParams): Promise<SignDeployContractTxResult> => {
-          return await this.#call('signDeployContractTx', (wallet) => wallet.signDeployContractTx(params))
+        signAndSubmitDeployContractTx = async (
+          params: SignDeployContractTxParams
+        ): Promise<SignDeployContractTxResult> => {
+          return await this.#call('signAndSubmitDeployContractTx', (wallet) =>
+            wallet.signAndSubmitDeployContractTx(params)
+          )
         }
 
-        signExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
-          return await this.#call('signExecuteScriptTx', (wallet) => wallet.signExecuteScriptTx(params))
+        signAndSubmitExecuteScriptTx = async (
+          params: SignExecuteScriptTxParams
+        ): Promise<SignExecuteScriptTxResult> => {
+          return await this.#call('signAndSubmitExecuteScriptTx', (wallet) =>
+            wallet.signAndSubmitExecuteScriptTx(params)
+          )
         }
 
         signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
           return await this.#call('signUnsignedTx', (wallet) => wallet.signUnsignedTx(params))
         }
 
-        signHexString = async (params: SignHexStringParams): Promise<SignHexStringResult> => {
-          return await this.#call('signHexString', (wallet) => wallet.signHexString(params))
+        signAndSubmitUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
+          return await this.#call('signAndSubmitUnsignedTx', (wallet) => wallet.signAndSubmitUnsignedTx(params))
         }
 
         signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
           return await this.#call('signMessage', (wallet) => wallet.signMessage(params))
         }
 
-        signRaw = async (signerAddress: string, hexString: string): Promise<string> => {
-          return await this.#call('signRaw', (wallet) => wallet.signRaw(signerAddress, hexString))
-        }
-
         nodeProvider = (() => {
           const provider = self.#walletObjRef.current.nodeProvider
+          if (provider) {
+            return provider
+          } else {
+            throw new Error('Node provider not found')
+          }
+        })()
+
+        explorerProvider = (() => {
+          const provider = self.#walletObjRef.current.explorerProvider
           if (provider) {
             return provider
           } else {

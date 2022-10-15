@@ -1,7 +1,6 @@
 import { Account, SignerProvider } from '@alephium/web3'
 
-import { Network, defaultNetworks } from '../shared/networks'
-import { alephiumIcon } from './icon'
+import { Network } from '../shared/networks'
 
 export type AccountChangeEventHandler = (accounts: string[]) => void
 
@@ -17,18 +16,18 @@ export type WalletEvents =
       handler: NetworkChangeEventHandler
     }
 
-export abstract class AlephiumWindowObject extends SignerProvider {
-  id = 'alephium'
-  name = 'Alephium'
-  icon = alephiumIcon
-  isConnected = false
-  currentNetwork = defaultNetworks[0].id
+export interface AlephiumWindowObject extends SignerProvider {
+  id: 'alephium'
+  name: 'Alephium'
+  icon: string
+  isConnected: boolean
+  currentNetwork: string
 
-  abstract enable(options?: { showModal?: boolean }): Promise<string[]>
-  abstract isPreauthorized(): Promise<boolean>
-  abstract on(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void
-  abstract off(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void
-  abstract updateNodeProvider: NetworkChangeEventHandler
+  enable(options?: { showModal?: boolean }): Promise<string[]>
+  isPreauthorized(): Promise<boolean>
+  on(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void
+  off(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void
+  updateProviders: NetworkChangeEventHandler
   defaultAddress?: Account
 }
 
