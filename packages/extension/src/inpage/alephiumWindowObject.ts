@@ -1,19 +1,17 @@
 import {
   Account,
+  ExplorerProvider,
   NodeProvider,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
-  SignHexStringParams,
-  SignHexStringResult,
   SignMessageParams,
   SignMessageResult,
   SignTransferTxParams,
   SignTransferTxResult,
   SignUnsignedTxParams,
-  SignUnsignedTxResult,
-  SubmissionResult
+  SignUnsignedTxResult
 } from '@alephium/web3'
 
 import { WindowMessageType } from '../shared/messages'
@@ -55,9 +53,9 @@ export const executeAlephiumTransaction = async (data: TransactionPayload): Prom
   }
 }
 
-export const alephiumWindowObject: AlephiumWindowObject = new (class extends AlephiumWindowObject {
-  id = 'alephium'
-  name = 'Alephium'
+export const alephiumWindowObject: AlephiumWindowObject = new (class implements AlephiumWindowObject {
+  id = 'alephium' as const
+  name = 'Alephium' as const
   icon = alephiumIcon
   defaultAddress = undefined
   currentNetwork = defaultNetworks[0].id
@@ -152,49 +150,49 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     ).result as SignTransferTxResult
   }
 
-  signAndSubmitTransferTx = async (params: SignTransferTxParams): Promise<SubmissionResult> => {
+  signAndSubmitTransferTx = async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
     return (
       await executeAlephiumTransaction({
         type: 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX',
         params
       })
-    ).result as SubmissionResult
+    ).result as SignTransferTxResult
   }
 
   signDeployContractTx = async (params: SignDeployContractTxParams): Promise<SignDeployContractTxResult> => {
     return (
       await executeAlephiumTransaction({
-        type: 'ALPH_SIGN_CONTRACT_CREATION_TX',
+        type: 'ALPH_SIGN_DEPLOY_CONTRACT_TX',
         params
       })
     ).result as SignDeployContractTxResult
   }
 
-  signAndSubmitDeployContractTx = async (params: SignDeployContractTxParams): Promise<SubmissionResult> => {
+  signAndSubmitDeployContractTx = async (params: SignDeployContractTxParams): Promise<SignDeployContractTxResult> => {
     return (
       await executeAlephiumTransaction({
-        type: 'ALPH_SIGN_AND_SUBMIT_CONTRACT_CREATION_TX',
+        type: 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX',
         params
       })
-    ).result as SubmissionResult
+    ).result as SignDeployContractTxResult
   }
 
   signExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
-    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_SCRIPT_TX', params }))
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_EXECUTE_SCRIPT_TX', params }))
       .result as SignExecuteScriptTxResult
   }
 
-  signAndSubmitExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SubmissionResult> => {
-    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX', params }))
-      .result as SubmissionResult
+  signAndSubmitExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_AND_SUBMIT_EXECUTE_SCRIPT_TX', params }))
+      .result as SignExecuteScriptTxResult
   }
 
   signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
     return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_UNSIGNED_TX', params })).result as SignUnsignedTxResult
   }
 
-  signHexString = async (params: SignHexStringParams): Promise<SignHexStringResult> => {
-    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_HEX_STRING', params })).result as SignHexStringResult
+  signAndSubmitUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
+    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_AND_SUBMIT_UNSIGNED_TX', params })).result as SignUnsignedTxResult
   }
 
   signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
@@ -206,10 +204,12 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   }
 
   nodeProvider = NodeProvider.Proxy(new NodeProvider(defaultNetworks[0].nodeUrl))
+  explorerProvider = ExplorerProvider.Proxy(new ExplorerProvider(defaultNetworks[0].explorerApiUrl))
 
-  updateNodeProvider: NetworkChangeEventHandler = (network: Network) => {
+  updateProviders: NetworkChangeEventHandler = (network: Network) => {
     this.nodeProvider = NodeProvider.Proxy(new NodeProvider(network.nodeUrl))
+    this.explorerProvider = ExplorerProvider.Proxy(new ExplorerProvider(network.explorerApiUrl))
   }
 })()
 
-alephiumWindowObject.on('networkChanged', alephiumWindowObject.updateNodeProvider)
+alephiumWindowObject.on('networkChanged', alephiumWindowObject.updateProviders)

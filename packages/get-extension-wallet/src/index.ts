@@ -7,7 +7,7 @@ export type {
   EventType,
   GetAlephiumWalletOptions,
   IGetAlephiumWallet,
-  AlephiumWindowObject,
+  AlephiumWindowObject as AlephiumWindowObject,
   IStorageWrapper,
   ModalOptions,
   WalletProvider
@@ -17,7 +17,7 @@ export type {
  * Get the Alephium window object.
  *
  * @deprecated Please use the connect export and the returned wallet object instead.
- * @returns {Promise<IAlephiumWindowObject>}
+ * @returns {Promise<AlephiumWindowObject>}
  */
 export const getAlephium = (): AlephiumWindowObject => {
   const alephium = gaw.getAlephium()
@@ -34,7 +34,7 @@ export const getAlephium = (): AlephiumWindowObject => {
  * Connect to a Alephium wallet.
  *
  * @param {GetAlephiumWalletOptions} [options]
- * @returns {Promise<IAlephiumWindowObject>}
+ * @returns {Promise<AlephiumWindowObject>}
  */
 export const connect = (options?: GetAlephiumWalletOptions): Promise<AlephiumWindowObject | undefined> => {
   return gaw.connect({

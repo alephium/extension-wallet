@@ -15,7 +15,7 @@ export const sendAlephiumTransferTransaction = async (fromAddr: string, toAddr: 
       destinations: [
         {
           address: toAddr,
-          attoAlphAmount: amount.toString()
+          attoAlphAmount: amount
         }
       ]
     }
