@@ -50,6 +50,8 @@ export type TransactionPayload =
 export type TransactionMessage =
   | { type: 'GET_TRANSACTIONS'; data: { address: string } }
   | { type: 'GET_TRANSACTIONS_RES'; data: AlephiumTransaction[] }
+  | { type: 'GET_ADDRESS_TOKEN_TRANSACTIONS'; data: { address: string; tokenId: string } }
+  | { type: 'GET_ADDRESS_TOKEN_TRANSACTIONS_RES'; data: AlephiumTransaction[] }
   | {
       type: 'EXECUTE_TRANSACTION'
       data: TransactionPayload

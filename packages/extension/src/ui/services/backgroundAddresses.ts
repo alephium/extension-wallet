@@ -52,6 +52,21 @@ export const getBalances = async (addresses: string[]) => {
   return waitForMessage('GET_ADDRESSES_BALANCE_RES')
 }
 
+export const getAddressTokens = async (address: string) => {
+  sendMessage({ type: 'GET_ADDRESS_TOKENS', data: { address } })
+  return waitForMessage('GET_ADDRESS_TOKENS_RES')
+}
+
+export const getAddressTokenBalance = async (address: string, tokenId: string) => {
+  sendMessage({ type: 'GET_ADDRESS_TOKEN_BALANCE', data: { address, tokenId } })
+  return waitForMessage('GET_ADDRESS_TOKEN_BALANCE_RES')
+}
+
+export const getAddressesTokensBalance = async (addresses: string[]) => {
+  sendMessage({ type: 'GET_ADDRESSES_TOKENS_BALANCE', data: { addresses } })
+  return waitForMessage('GET_ADDRESSES_TOKENS_BALANCE_RES')
+}
+
 export const getSeedPhrase = async (): Promise<string> => {
   const { secret, encryptedSecret } = await generateEncryptedSecret()
   sendMessage({

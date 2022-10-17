@@ -17,6 +17,15 @@ export const handleTransactionMessage: HandleMessage<TransactionMessage> = async
       })
     }
 
+    case 'GET_ADDRESS_TOKEN_TRANSACTIONS': {
+      const transactions = await wallet.getAddressTokenTransactions(msg.data.address, msg.data.tokenId)
+
+      return sendToTabAndUi({
+        type: 'GET_ADDRESS_TOKEN_TRANSACTIONS_RES',
+        data: transactions
+      })
+    }
+
     case 'EXECUTE_TRANSACTION': {
       const { meta } = await actionQueue.push({
         type: 'TRANSACTION',
