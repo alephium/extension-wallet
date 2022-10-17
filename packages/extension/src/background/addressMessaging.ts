@@ -79,8 +79,6 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
     }
 
     case 'GET_ADDRESS_TOKENS': {
-      console.log('GET_ADDRESS_TOKENS')
-
       const tokens = await wallet.getAddressTokens(msg.data.address)
 
       return sendToTabAndUi({
@@ -90,7 +88,6 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
     }
 
     case 'GET_ADDRESS_TOKEN_BALANCE': {
-      console.log('GET_ADDRESS_TOKEN_BALANCE')
       const { address, tokenId } = msg.data
       const tokens = await wallet.getAddressTokenBalance(address, tokenId)
 
@@ -101,8 +98,6 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
     }
 
     case 'GET_ADDRESSES_TOKENS_BALANCE': {
-      console.log('GET_ADDRESSES_TOKENS_BALANCE')
-
       const tokens: AddressToken[] = []
 
       for (const address of msg.data.addresses) {
