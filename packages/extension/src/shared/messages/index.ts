@@ -49,7 +49,7 @@ export const [sendMessage, messageStream, _waitForMessage] = function() {
       try {
         result = JSON.parse(message) as MessageType
       } catch (error) {
-        console.log(`unknown message: ${message}`)
+        console.error(`unknown message: ${message}`)
         throw error
       }
       return predicate === undefined ? true : predicate(result)
