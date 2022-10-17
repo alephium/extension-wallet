@@ -69,7 +69,7 @@ const Amount = ({
     fractionalPart = amountParts[1]
   }
 
-  const displaySuffix = moneySymbol && suffix ? ` ${suffix}` : fiatCurrency ? ` ${fiatCurrency}` : ''
+  const displaySuffix = moneySymbol + (suffix ? ` ${suffix}` : fiatCurrency ? ` ${fiatCurrency}` : '')
 
   return (
     <span className={className}>
