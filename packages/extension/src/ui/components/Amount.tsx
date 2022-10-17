@@ -32,6 +32,7 @@ interface AmountProps {
   suffix?: string
   fiat?: number
   fiatCurrency?: Currency
+  token?: string
   className?: string
 }
 
@@ -43,6 +44,7 @@ const Amount = ({
   prefix,
   suffix,
   fiatCurrency,
+  token,
   fiat
 }: AmountProps) => {
   const theme = useTheme()
@@ -69,28 +71,30 @@ const Amount = ({
     fractionalPart = amountParts[1]
   }
 
-  const displaySuffix = moneySymbol && suffix ? ` ${suffix}` : fiatCurrency ? ` ${fiatCurrency}` : ''
+  const displaySuffix = `${moneySymbol}${
+    suffix ? ` ${suffix}` : token ? ` ${token}` : fiatCurrency ? ` ${fiatCurrency}` : ''
+  }`
 
   return (
     <span className={className}>
       <>
         {amount !== undefined ? (
-          fadeDecimals ? (
-            <>
-              {prefix && <span>{prefix}</span>}
-              <span>{integralPart}</span>
-              <FadedPart>
-                .{fractionalPart}
-                {displaySuffix && <span>{displaySuffix}</span>}
-              </FadedPart>
-            </>
-          ) : (
-            `${integralPart}.${fractionalPart}`
-          )
+          <>
+            {fadeDecimals ? (
+              <>
+                {prefix && <span>{prefix}</span>}
+                <span>{integralPart}</span>
+                <FadedPart>.{fractionalPart}</FadedPart>
+              </>
+            ) : (
+              `${integralPart}.${fractionalPart}`
+            )}
+            {displaySuffix && <FadedPart>{displaySuffix}</FadedPart>}
+          </>
         ) : (
           '-'
         )}
-        {value && (
+        {value && !token && (
           <FadedPart>
             <AlefSymbol color={theme.font.primary} />
           </FadedPart>

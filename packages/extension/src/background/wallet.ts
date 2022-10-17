@@ -148,6 +148,21 @@ export class Wallet {
     return value
   }
 
+  public async getAddressTokens(address: string): Promise<string[]> {
+    const explorerProvider = await this.getExplorerProvider()
+    return await explorerProvider.addresses.getAddressesAddressTokens(address)
+  }
+
+  public async getAddressTokenBalance(address: string, tokenId: string): Promise<AddressBalance> {
+    const explorerProvider = await this.getExplorerProvider()
+    return await explorerProvider.addresses.getAddressesAddressTokensTokenIdBalance(address, tokenId)
+  }
+
+  public async getAddressTokenTransactions(address: string, tokenId: string): Promise<Transaction[]> {
+    const explorerProvider = await this.getExplorerProvider()
+    return await explorerProvider.addresses.getAddressesAddressTokensTokenIdTransactions(address, tokenId)
+  }
+
   public async selectAlephiumAddress(address: string) {
     const addresses = await this.getAlephiumAddresses()
 
