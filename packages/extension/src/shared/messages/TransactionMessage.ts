@@ -1,7 +1,6 @@
 import {
   SignDeployContractTxParams,
   SignExecuteScriptTxParams,
-  SignHexStringParams,
   SignMessageParams,
   SignTransferTxParams,
   SignUnsignedTxParams
@@ -20,19 +19,19 @@ export type TransactionPayload =
       params: SignTransferTxParams
     }
   | {
-      type: 'ALPH_SIGN_CONTRACT_CREATION_TX'
+      type: 'ALPH_SIGN_DEPLOY_CONTRACT_TX'
       params: SignDeployContractTxParams
     }
   | {
-      type: 'ALPH_SIGN_AND_SUBMIT_CONTRACT_CREATION_TX'
+      type: 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX'
       params: SignDeployContractTxParams
     }
   | {
-      type: 'ALPH_SIGN_SCRIPT_TX'
+      type: 'ALPH_SIGN_EXECUTE_SCRIPT_TX'
       params: SignExecuteScriptTxParams
     }
   | {
-      type: 'ALPH_SIGN_AND_SUBMIT_SCRIPT_TX'
+      type: 'ALPH_SIGN_AND_SUBMIT_EXECUTE_SCRIPT_TX'
       params: SignExecuteScriptTxParams
     }
   | {
@@ -40,8 +39,8 @@ export type TransactionPayload =
       params: SignUnsignedTxParams
     }
   | {
-      type: 'ALPH_SIGN_HEX_STRING'
-      params: SignHexStringParams
+      type: 'ALPH_SIGN_AND_SUBMIT_UNSIGNED_TX'
+      params: SignUnsignedTxParams
     }
   | {
       type: 'ALPH_SIGN_MESSAGE'
