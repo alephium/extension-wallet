@@ -116,7 +116,7 @@ export interface IGetAlephiumWallet {
 
 export type EventType = 'addressesChanged' | 'networkChanged'
 
-export type EventHandler = (data: any) => void
+export type EventHandler = (data: any) => Promise<void>
 
 export interface AlephiumWindowObject extends SignerProvider {
   discriminator: string
