@@ -2,9 +2,9 @@ import { Account, SignerProvider } from '@alephium/web3'
 
 import { Network } from '../shared/networks'
 
-export type AccountChangeEventHandler = (accounts: string[]) => Promise<void>
+export type AccountChangeEventHandler = (accounts: string[]) => Promise<void> | void
 
-export type NetworkChangeEventHandler = (network: Network) => Promise<void>
+export type NetworkChangeEventHandler = (network: Network) => Promise<void> | void
 
 export type WalletEvents =
   | {

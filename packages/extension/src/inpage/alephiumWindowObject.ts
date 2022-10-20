@@ -209,7 +209,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
   updateProviders: NetworkChangeEventHandler = (network: Network) => {
     this.nodeProvider = NodeProvider.Proxy(new NodeProvider(network.nodeUrl))
     this.explorerProvider = ExplorerProvider.Proxy(new ExplorerProvider(network.explorerApiUrl))
-    return Promise.resolve()
   }
 })()
 
