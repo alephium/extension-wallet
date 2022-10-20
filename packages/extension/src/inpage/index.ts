@@ -54,7 +54,7 @@ window.addEventListener('message', async ({ data }: MessageEvent<WindowMessageTy
 
       for (const userEvent of userEventHandlers) {
         if (userEvent.type === 'addressesChanged') {
-          userEvent.handler([address])
+          await userEvent.handler([address])
         }
       }
     }
@@ -63,7 +63,7 @@ window.addEventListener('message', async ({ data }: MessageEvent<WindowMessageTy
     alephium.isConnected = false
     for (const userEvent of userEventHandlers) {
       if (userEvent.type === 'addressesChanged') {
-        userEvent.handler([])
+        await userEvent.handler([])
       }
     }
   } else if (data.type === 'SET_CURRENT_NETWORK_RES') {
@@ -74,7 +74,7 @@ window.addEventListener('message', async ({ data }: MessageEvent<WindowMessageTy
 
       for (const userEvent of userEventHandlers) {
         if (userEvent.type === 'networkChanged') {
-          userEvent.handler(network)
+          await userEvent.handler(network)
         }
       }
     }
