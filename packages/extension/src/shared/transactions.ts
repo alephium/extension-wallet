@@ -18,24 +18,12 @@ export interface TransactionMeta {
 
 export type TransactionPayload =
   | {
-      type: 'ALPH_SIGN_TRANSFER_TX'
-      params: SignTransferTxParams
-    }
-  | {
       type: 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX'
       params: SignTransferTxParams
     }
   | {
-      type: 'ALPH_SIGN_DEPLOY_CONTRACT_TX'
-      params: SignDeployContractTxParams
-    }
-  | {
       type: 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX'
       params: SignDeployContractTxParams
-    }
-  | {
-      type: 'ALPH_SIGN_EXECUTE_SCRIPT_TX'
-      params: SignExecuteScriptTxParams
     }
   | {
       type: 'ALPH_SIGN_AND_SUBMIT_EXECUTE_SCRIPT_TX'
@@ -56,24 +44,12 @@ export type TransactionPayload =
 
 export type TransactionResult =
   | {
-      type: 'ALPH_SIGN_TRANSFER_TX_RES'
-      result: SignTransferTxResult
-    }
-  | {
       type: 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX_RES'
       result: SignTransferTxResult
     }
   | {
-      type: 'ALPH_SIGN_DEPLOY_CONTRACT_TX_RES'
-      result: SignDeployContractTxResult
-    }
-  | {
       type: 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX_RES'
       result: SignDeployContractTxResult
-    }
-  | {
-      type: 'ALPH_SIGN_EXECUTE_SCRIPT_TX_RES'
-      result: SignExecuteScriptTxResult
     }
   | {
       type: 'ALPH_SIGN_AND_SUBMIT_EXECUTE_SCRIPT_TX_RES'

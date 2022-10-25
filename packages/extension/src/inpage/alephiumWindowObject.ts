@@ -118,7 +118,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
   off = (event: WalletEvents['type'], handleEvent: WalletEvents['handler']) => {
     if (event !== 'addressesChanged' && event !== 'networkChanged') {
       assertNever(event)
-      throw new Error(`Unknwown event: ${event}`)
+      throw new Error(`Unknown event: ${event}`)
     }
 
     const eventIndex = userEventHandlers.findIndex(
@@ -141,15 +141,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
     }
   }
 
-  signTransferTx = async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
-    return (
-      await executeAlephiumTransaction({
-        type: 'ALPH_SIGN_TRANSFER_TX',
-        params
-      })
-    ).result as SignTransferTxResult
-  }
-
   signAndSubmitTransferTx = async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
     return (
       await executeAlephiumTransaction({
@@ -159,15 +150,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
     ).result as SignTransferTxResult
   }
 
-  signDeployContractTx = async (params: SignDeployContractTxParams): Promise<SignDeployContractTxResult> => {
-    return (
-      await executeAlephiumTransaction({
-        type: 'ALPH_SIGN_DEPLOY_CONTRACT_TX',
-        params
-      })
-    ).result as SignDeployContractTxResult
-  }
-
   signAndSubmitDeployContractTx = async (params: SignDeployContractTxParams): Promise<SignDeployContractTxResult> => {
     return (
       await executeAlephiumTransaction({
@@ -175,11 +157,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
         params
       })
     ).result as SignDeployContractTxResult
-  }
-
-  signExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
-    return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_EXECUTE_SCRIPT_TX', params }))
-      .result as SignExecuteScriptTxResult
   }
 
   signAndSubmitExecuteScriptTx = async (params: SignExecuteScriptTxParams): Promise<SignExecuteScriptTxResult> => {
@@ -197,10 +174,6 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
 
   signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
     return (await executeAlephiumTransaction({ type: 'ALPH_SIGN_MESSAGE', params })).result as SignMessageResult
-  }
-
-  signRaw = async (signerAddress: string, hexString: string): Promise<string> => {
-    throw Error(`signRaw unsupported signerAddress: ${signerAddress}, hexString: ${hexString}`)
   }
 
   nodeProvider = NodeProvider.Proxy(new NodeProvider(defaultNetworks[0].nodeUrl))

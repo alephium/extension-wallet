@@ -19,16 +19,6 @@ export const executeAlephiumTransaction = async (
   }
 
   switch (payload.type) {
-    case 'ALPH_SIGN_TRANSFER_TX': {
-      return await withSigner(async (signer) => {
-        const signResult = await signer.signTransferTx(payload.params)
-        return {
-          type: 'ALPH_SIGN_TRANSFER_TX_RES',
-          result: signResult
-        }
-      })
-    }
-
     case 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX': {
       return await withSigner(async (signer) => {
         const submissionResult = await signer.signAndSubmitTransferTx(payload.params)
@@ -39,32 +29,12 @@ export const executeAlephiumTransaction = async (
       })
     }
 
-    case 'ALPH_SIGN_DEPLOY_CONTRACT_TX': {
-      return await withSigner(async (signer) => {
-        const signResult = await signer.signDeployContractTx(payload.params)
-        return {
-          type: 'ALPH_SIGN_DEPLOY_CONTRACT_TX_RES',
-          result: signResult
-        }
-      })
-    }
-
     case 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX': {
       return await withSigner(async (signer) => {
         const submitResult = await signer.signAndSubmitDeployContractTx(payload.params)
         return {
           type: 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX_RES',
           result: submitResult
-        }
-      })
-    }
-
-    case 'ALPH_SIGN_EXECUTE_SCRIPT_TX': {
-      return await withSigner(async (signer) => {
-        const signResult = await signer.signExecuteScriptTx(payload.params)
-        return {
-          type: 'ALPH_SIGN_EXECUTE_SCRIPT_TX_RES',
-          result: signResult
         }
       })
     }

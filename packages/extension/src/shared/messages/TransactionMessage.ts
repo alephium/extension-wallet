@@ -11,24 +11,12 @@ import { TransactionResult } from '../transactions'
 
 export type TransactionPayload =
   | {
-      type: 'ALPH_SIGN_TRANSFER_TX'
-      params: SignTransferTxParams
-    }
-  | {
       type: 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX'
       params: SignTransferTxParams
     }
   | {
-      type: 'ALPH_SIGN_DEPLOY_CONTRACT_TX'
-      params: SignDeployContractTxParams
-    }
-  | {
       type: 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX'
       params: SignDeployContractTxParams
-    }
-  | {
-      type: 'ALPH_SIGN_EXECUTE_SCRIPT_TX'
-      params: SignExecuteScriptTxParams
     }
   | {
       type: 'ALPH_SIGN_AND_SUBMIT_EXECUTE_SCRIPT_TX'
