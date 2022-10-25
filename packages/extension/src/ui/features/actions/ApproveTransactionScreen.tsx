@@ -24,22 +24,11 @@ const LeftPaddedField = styled.div`
 
 export const titleForTransactions = (payload: TransactionPayload) => {
   switch (payload.type) {
-    case 'ALPH_SIGN_TRANSFER_TX':
-      return 'Review Transfer Signing'
-
     case 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX':
       return 'Review Transfer'
 
-    case 'ALPH_SIGN_DEPLOY_CONTRACT_TX': {
-      return 'Review Contract Signing'
-    }
-
     case 'ALPH_SIGN_AND_SUBMIT_DEPLOY_CONTRACT_TX': {
       return 'Review Contract'
-    }
-
-    case 'ALPH_SIGN_EXECUTE_SCRIPT_TX': {
-      return 'Review Script Signing'
     }
 
     case 'ALPH_SIGN_AND_SUBMIT_EXECUTE_SCRIPT_TX': {
@@ -79,7 +68,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   let amount
   let recipientName = ''
 
-  if (payload.type === 'ALPH_SIGN_TRANSFER_TX' || payload.type === 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX') {
+  if (payload.type === 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX') {
     const destination = payload.params.destinations[0]
     recipient = destination.address
     recipientName = getAddressName(recipient, metadata)
