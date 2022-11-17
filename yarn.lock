@@ -2,29 +2,26 @@
 # yarn lockfile v1
 
 
-"@alephium/sdk@0.2.0-rc.0":
-  version "0.2.0-rc.0"
-  resolved "https://registry.npmjs.org/@alephium/sdk/-/sdk-0.2.0-rc.0.tgz"
-  integrity sha512-mWSNqOwBUL6TnfUlNOy9ag/vg1xfBmImIiP7Flgk5rO2M924UcrSlWuJcwQ/UmrEVw13kzlB3BsRNdHvHz5DBw==
+"@alephium/sdk@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@alephium/sdk/-/sdk-0.3.0.tgz#e63af8722312bc5decdf4f8c75489be93e41e04f"
+  integrity sha512-GvGve/JoH8yKbk4lsdXDA7P2shrSCmcjC1c+OyvzSZLbEq/SQQFiUB7RukzCF9hpdsMbqo5V0cQ7uU11zKfVww==
   dependencies:
     base-x "^4.0.0"
     bcfg "~0.1.6"
     bip32 "^2.0.6"
     bip39 "^3.0.4"
     blakejs "^1.1.1"
-    chalk "^4.1.2"
     cross-fetch "^3.1.5"
     crypto-js "^4.1.1"
     elliptic "^6.5.4"
-    find-up "^2.1.0"
-    fs-extra "^10.0.1"
 
-"@alephium/web3-wallet@0.2.0-rc.36":
-  version "0.2.0-rc.36"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.2.0-rc.36.tgz#57ecd83bc34bf4a328d80343408ab4435be7f526"
-  integrity sha512-PDMao8+dHNrIcg89MPhcaY2M0i5OaKh+BMVah1JUpBSz606K76eEYShBMFoUArDi6lF012BK68svuxRtLXH67w==
+"@alephium/web3-wallet@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.2.0.tgz#e632ea0fda762c3cffe3c47ece8bf5e684364a3c"
+  integrity sha512-dVIGrgQ0QM/2rNN95+xI7uGzJC1RIZIMb5cFOK58E3bKbeH+SDtTRuGHxkPMr83v+nlnnDyrZhjOWzbVLT3DyQ==
   dependencies:
-    "@alephium/web3" "^0.2.0-rc.36"
+    "@alephium/web3" "^0.2.0"
     "@types/node" "16.7.8"
     bip32 "3.1.0"
     bip39 "3.0.4"
@@ -32,10 +29,10 @@
     fs-extra "10.0.1"
     tiny-secp256k1 "2.2.1"
 
-"@alephium/web3@0.2.0-rc.36", "@alephium/web3@^0.2.0-rc.36":
-  version "0.2.0-rc.36"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.2.0-rc.36.tgz#43d98e9c48b90df4c7e2481a9a3651f92ce8351f"
-  integrity sha512-Y8AOSb5WCBXcKUJ9PQX3AsJfAMDTrDFqHDMocjpUxG9YEuYsFZsGXV1AHWgf8bnFKYhqX7q/jsB+8DA6EK6+5A==
+"@alephium/web3@0.2.0", "@alephium/web3@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.2.0.tgz#37f13b785c1fdb31db8f6eb845c0fcdb2849d93b"
+  integrity sha512-BH14umraAtRbwS4XssbKH6KfVn29Cfla+0zZvok+jJctbuHUhB4Ht1GTs2/fXivmdtYBSh2cosPWuCdg4xTtgw==
   dependencies:
     base-x "4.0.0"
     blakejs "1.2.1"
@@ -6732,7 +6729,7 @@ find-root@^1.0.0:
   resolved "https://registry.npmjs.org/find-root/-/find-root-1.1.0.tgz"
   integrity sha512-NKfW6bec6GfKc0SGx1e07QZY9PE99u0Bft/0rzSD5k3sO/vwkVUpDUKVm5Gpp5Ue3YfShPFTX2070tDs5kB9Ng==
 
-find-up@^2.0.0, find-up@^2.1.0:
+find-up@^2.0.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/find-up/-/find-up-2.1.0.tgz"
   integrity sha512-NWzkk0jSJtTt08+FBFMvXoeZnOJD+jTtsRmBYbAIzJdX6l7dLgR7CTubCM5/eDdPUBvLCeVasP1brfVR/9/EZQ==
@@ -6848,7 +6845,7 @@ fs-extra@10.0.1:
     jsonfile "^6.0.1"
     universalify "^2.0.0"
 
-fs-extra@^10.0.0, fs-extra@^10.0.1, fs-extra@^10.1.0:
+fs-extra@^10.0.0, fs-extra@^10.1.0:
   version "10.1.0"
   resolved "https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz"
   integrity sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==

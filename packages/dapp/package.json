@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@alephium/get-extension-wallet": "0.4.0-rc.0",
-    "@alephium/web3": "0.2.0-rc.36",
+    "@alephium/web3": "0.2.0",
     "ethers": "^5.5.1",
     "next": "^12.1.4",
     "react": "^18.0.0",
