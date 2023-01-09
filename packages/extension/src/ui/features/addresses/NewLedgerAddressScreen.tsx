@@ -17,7 +17,9 @@ import { deployAddress } from './addresses.service'
 import { useAddresses } from './addresses.state'
 import { useAddressMetadata } from './addressMetadata.state'
 
-const NewAddressScreen = () => {
+const ImportLedgerAddressesScreen = () => {
+  console.log(`============= 0`)
+
   const navigate = useNavigate()
 
   const yupSchemaValidator = useYupValidationResolver(AddressMetadataWithGroupSchema)
@@ -37,7 +39,9 @@ const NewAddressScreen = () => {
   const { addAddress } = useAddresses()
   const { setAddressMetadata } = useAddressMetadata()
 
-  const handleAddAddress = async () => {
+  console.log(`============= A`)
+
+  const handleImportLedgerAddresses = async () => {
     useAppState.setState({ isLoading: true })
     try {
       const group = getValues('group')
@@ -58,17 +62,19 @@ const NewAddressScreen = () => {
     }
   }
 
+  console.log(`============= B`)
+
   return (
     <>
       <IconBar back />
       <ConfirmScreen
-        title="New address"
+        title="Ledger"
         singleButton
-        confirmButtonText="Create"
+        confirmButtonText="Import"
         smallTopPadding
-        onSubmit={handleSubmit(handleAddAddress)}
+        onSubmit={handleSubmit(handleImportLedgerAddresses)}
       >
-        <P>Create a new address to help you manage your assets.</P>
+        <P>Import Ledger addresses.</P>
         <br />
         <ControlledInputText
           autoFocus
@@ -107,4 +113,4 @@ const NewAddressScreen = () => {
   )
 }
 
-export default NewAddressScreen
+export default ImportLedgerAddressesScreen
