@@ -45,11 +45,11 @@ export const WalletContainer: FC<AddressScreenContentProps> = ({ currentTab, chi
             )}
             {currentTab === 'addresses' && (
               <>
-                <Link to={routes.newAddress.path}>
+                {/* <Link to={routes.newAddress.path}>
                   <IconButton size={40}>
                     <Plus />
                   </IconButton>
-                </Link>
+                </Link> */}
                 <Link to={routes.newLedgerAddress.path}>
                   <IconButton size={40}>
                     <Usb />
