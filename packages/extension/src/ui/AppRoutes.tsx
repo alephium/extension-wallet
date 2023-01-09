@@ -9,6 +9,7 @@ import { ErrorScreen } from './features/actions/ErrorScreen'
 import { LoadingScreen } from './features/actions/LoadingScreen'
 import AddressSettingsScreen from './features/addresses/AddressSettingsScreen'
 import NewAddressScreen from './features/addresses/NewAddressScreen'
+import LedgerAddressScreen from './features/addresses/LedgerAddressScreen'
 import { LockScreen } from './features/onboarding/LockScreen'
 import { NewWalletScreen } from './features/onboarding/NewWalletScreen'
 import { ResetScreen } from './features/onboarding/ResetScreen'
@@ -78,6 +79,7 @@ const walletRoutes = (
     <Route path={routes.addressTokens.path} element={<WalletContainerScreen tab="assets" />} />
     <Route path={routes.walletAddresses.path} element={<WalletContainerScreen tab="addresses" />} />
     <Route path={routes.newAddress.path} element={<NewAddressScreen />} />
+    <Route path={routes.newLedgerAddress.path} element={<LedgerAddressScreen />} />
     <Route path={routes.addressSettings.path} element={<AddressSettingsScreen />} />
     <Route path={routes.addressActivity.path} element={<WalletContainerScreen tab="transfers" />} />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
