@@ -46,6 +46,7 @@ export const routes = {
   addressTokens: route('/address/tokens'),
   walletAddresses: route('/wallet/addresses'),
   newAddress: route('/wallet/new-address'),
+  newLedgerAddress: route('wallet/import-ledger'),
   addressActivity: route('/address/activity'),
   addressSettings: route((address: string) => `/address/${address}/settings`, `/address/:address/settings`),
   addressDeleteConfirm: route(

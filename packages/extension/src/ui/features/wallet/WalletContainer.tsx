@@ -1,4 +1,4 @@
-import { ArrowUpDown, LayoutTemplate, List, Plus, Settings as SettingsIcon } from 'lucide-react'
+import { ArrowUpDown, LayoutTemplate, List, Plus, Settings as SettingsIcon, Usb } from 'lucide-react'
 import { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -44,11 +44,18 @@ export const WalletContainer: FC<AddressScreenContentProps> = ({ currentTab, chi
               </>
             )}
             {currentTab === 'addresses' && (
-              <Link to={routes.newAddress.path}>
-                <IconButton size={40}>
-                  <Plus />
-                </IconButton>
-              </Link>
+              <>
+                <Link to={routes.newAddress.path}>
+                  <IconButton size={40}>
+                    <Plus />
+                  </IconButton>
+                </Link>
+                <Link to={routes.newLedgerAddress.path}>
+                  <IconButton size={40}>
+                    <Usb />
+                  </IconButton>
+                </Link>
+              </>
             )}
           </>
         }

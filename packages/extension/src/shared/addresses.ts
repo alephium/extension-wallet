@@ -68,7 +68,7 @@ export const AddressGroupSchema: Schema<AddressGroup> = object({
 
 export type AddressMetadataWithGroup = AddressMetadata & AddressGroup
 
-// TODO: How to merge the two above while infering the types? (using concat?)
+// TODO: How to merge the two above while inferring the types? (using concat?)
 export const AddressMetadataWithGroupSchema: Schema<AddressMetadataWithGroup> = object().required().shape({
   name: string().required(),
   color: string().required(),
