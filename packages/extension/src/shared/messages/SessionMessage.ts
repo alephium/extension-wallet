@@ -6,8 +6,8 @@ export type SessionMessage =
   | { type: 'HAS_SESSION_RES'; data: boolean }
   | { type: 'IS_INITIALIZED' }
   | {
-    type: 'IS_INITIALIZED_RES'
-    data: { initialized: boolean }
+      type: 'IS_INITIALIZED_RES'
+      data: { initialized: boolean }
   }
   | { type: 'START_SESSION'; data: { secure: true; body: string } }
   | { type: 'START_SESSION_REJ' }

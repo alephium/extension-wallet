@@ -19,7 +19,7 @@ export const handleSessionMessage: HandleMessage<SessionMessage> = async ({
       }
       const { plaintext } = await compactDecrypt(body, privateKey)
       const sessionPassword = arrayBufferToString(plaintext)
-      const result = await wallet.startAlephiumSession('alephium-wallet-name', sessionPassword)
+      const result = await wallet.startAlephiumSession(sessionPassword)
 
       if (result) {
         const defaultAddress = await wallet.getAlephiumDefaultAddress()
@@ -54,8 +54,7 @@ export const handleSessionMessage: HandleMessage<SessionMessage> = async ({
     }
 
     case 'IS_INITIALIZED': {
-      // TODO: check if session open is a good indicator
-      const initialized = wallet.isSessionOpen()
+      const initialized = wallet.isInitialized()
       return sendToTabAndUi({
         type: 'IS_INITIALIZED_RES',
         data: { initialized }

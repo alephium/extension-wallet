@@ -20,15 +20,15 @@ const AlephiumStorage = getStorage()
 
 export const SESSION_DURATION = 15 * 60 * 60 * 1000 // 15 hours
 
+const WalletName = 'alephium-extension-wallet'
+
 interface WalletSession {
-  secret: string // private key
   password: string
   seed: Buffer
   mnemonic: string
 }
 
 export interface WalletStorageProps {
-  backup?: string
   defaultAddress?: AddressAndPublicKey
   addresses?: AddressAndPublicKey[]
   discoveredOnce?: boolean
@@ -56,7 +56,13 @@ export class Wallet {
   }
 
   public isInitialized(): boolean {
-    return this.isSessionOpen()
+    try {
+      AlephiumStorage.load(WalletName)
+    } catch {
+      return false
+    }
+
+    return true
   }
 
   public isSessionOpen(): boolean {
@@ -104,21 +110,21 @@ export class Wallet {
 
     try {
       const wallet = walletImport(seedPhrase)
-      AlephiumStorage.save('alephium-wallet-name', wallet.encrypt(password))
-      this.setSession(wallet.privateKey, password, wallet.seed, wallet.mnemonic)
+      AlephiumStorage.save(WalletName, wallet.encrypt(password))
+      this.setSession(password, wallet.seed, wallet.mnemonic)
     } catch {
       throw Error('Restore seedphrase failed')
     }
   }
 
-  public async startAlephiumSession(walletName: string, password: string): Promise<boolean> {
+  public async startAlephiumSession(password: string): Promise<boolean> {
     if (this.session) {
       return true
     }
 
     let walletEncrypted
     try {
-      walletEncrypted = AlephiumStorage.load(walletName)
+      walletEncrypted = AlephiumStorage.load(WalletName)
     } catch {
       walletEncrypted = undefined
     }
@@ -126,11 +132,11 @@ export class Wallet {
     try {
       if (!walletEncrypted) {
         const wallet = walletGenerate()
-        AlephiumStorage.save(walletName, wallet.encrypt(password))
-        this.setSession(wallet.privateKey, password, wallet.seed, wallet.mnemonic)
+        AlephiumStorage.save(WalletName, wallet.encrypt(password))
+        this.setSession(password, wallet.seed, wallet.mnemonic)
       } else {
         const wallet = walletOpen(password, walletEncrypted)
-        this.setSession(wallet.privateKey, password, wallet.seed, wallet.mnemonic)
+        this.setSession(password, wallet.seed, wallet.mnemonic)
       }
 
       return true
@@ -225,21 +231,17 @@ export class Wallet {
   }
 
   public async getAlephiumDefaultAddress(): Promise<AddressAndPublicKey | undefined> {
-    if (!this.session?.seed) {
-      return undefined
-    } else {
-      const defaultAddress = await this.store.getItem('defaultAddress')
-      if (!defaultAddress) {
-        const addresses = await this.store.getItem('addresses')
-        if (addresses && addresses?.length > 0) {
-          await this.store.setItem('defaultAddress', addresses[0])
-          return addresses[0]
-        } else {
-          return undefined
-        }
+    const defaultAddress = await this.store.getItem('defaultAddress')
+    if (!defaultAddress) {
+      const addresses = await this.store.getItem('addresses')
+      if (addresses && addresses?.length > 0) {
+        await this.store.setItem('defaultAddress', addresses[0])
+        return addresses[0]
       } else {
-        return defaultAddress
+        return undefined
       }
+    } else {
+      return defaultAddress
     }
   }
 
@@ -258,8 +260,8 @@ export class Wallet {
     return await explorerProvider.addresses.getAddressesAddressTransactions(address)
   }
 
-  private setSession(secret: string, password: string, seed: Buffer, mnemonic: string) {
-    this.session = { secret, password, seed, mnemonic }
+  private setSession(password: string, seed: Buffer, mnemonic: string) {
+    this.session = { password, seed, mnemonic }
 
     setTimeout(() => {
       this.lock()

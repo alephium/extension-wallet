@@ -5,8 +5,8 @@ export type PreAuthorisationMessage =
   | { type: 'CONNECT_DAPP_RES'; data: AddressAndPublicKey }
   | { type: 'PREAUTHORIZE'; data: string }
   | {
-    type: 'REJECT_PREAUTHORIZATION'
-    data: { host: string; actionHash: string }
+      type: 'REJECT_PREAUTHORIZATION'
+      data: { host: string; actionHash: string }
   }
   | { type: 'REMOVE_PREAUTHORIZATION'; data: string }
   | { type: 'REMOVE_PREAUTHORIZATION_RES' }
