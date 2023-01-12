@@ -4,11 +4,13 @@ import { getHDWalletPath } from '@alephium/web3-wallet'
 import { Schema, object, string } from 'yup'
 
 export type TransactionType = 'consolidation' | 'transfer' | 'sweep'
+export type AddressType = 'hot' | 'ledger'
 export type TimeInMs = number
 
 export type AddressHash = string
 
 export class Address {
+  readonly type: AddressType
   readonly hash: AddressHash
   readonly shortHash: string
   readonly publicKey: string
@@ -20,7 +22,8 @@ export class Address {
   availableBalance: bigint
   lastUsed?: TimeInMs
 
-  constructor(hash: string, publicKey: string, index: number) {
+  constructor(type: AddressType, hash: string, publicKey: string, index: number) {
+    this.type = type
     this.hash = hash
     this.shortHash = `${this.hash.substring(0, 10)}...`
     this.publicKey = publicKey

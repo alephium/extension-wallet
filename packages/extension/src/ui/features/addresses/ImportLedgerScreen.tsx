@@ -37,7 +37,7 @@ const ImportLedgerScreen = () => {
   const { addAddress } = useAddresses()
   const { setAddressMetadata } = useAddressMetadata()
 
-  const handleAddAddress = async () => {
+  const handleImport = async () => {
     useAppState.setState({ isLoading: true })
     try {
       const group = getValues('group')
@@ -66,7 +66,7 @@ const ImportLedgerScreen = () => {
         singleButton
         confirmButtonText="Import"
         smallTopPadding
-        onSubmit={handleSubmit(handleAddAddress)}
+        onSubmit={handleSubmit(handleImport)}
       >
         <P>Connect your ledger to the computer before importing.</P>
         <br />
