@@ -174,6 +174,18 @@ export class Wallet {
     }
   }
 
+
+  deriveAddressAndPublicKey(seed: Buffer, forGroup?: number | undefined, addressIndex?: number | undefined, skipAddressIndexes?: number[]): AddressAndPublicKey {
+    const addressAndKeys = deriveNewAddressData(seed, forGroup, addressIndex, skipAddressIndexes)
+    const derivationPath = getHDWalletPath(addressAndKeys.addressIndex)
+    return {
+      address: addressAndKeys.address,
+      publicKey: addressAndKeys.publicKey,
+      addressIndex: addressAndKeys.addressIndex,
+      derivationPath
+    }
+  }
+
   public async addAlephiumAddress(group?: number): Promise<AddressAndPublicKey | undefined> {
     if (!this.session?.seed) {
       return undefined
@@ -187,21 +199,21 @@ export class Wallet {
       if (addresses) {
         group = group || group === 0 ? ~~group : undefined
         const skipIndexes = addresses.map((address) => address.addressIndex)
-        newAndDefaultAddress = deriveNewAddressData(this.session.seed, group, undefined, skipIndexes)
+        newAndDefaultAddress = this.deriveAddressAndPublicKey(this.session.seed, group, undefined, skipIndexes)
         await this.store.setItem('addresses', [...addresses, newAndDefaultAddress])
       } else {
         if (group === undefined) {
           const seed = this.session.seed
           const skipIndexes: number[] = []
           const newAddresses = range(TOTAL_NUMBER_OF_GROUPS).map((group) => {
-            const address = deriveNewAddressData(seed, group, undefined, skipIndexes)
+            const address = this.deriveAddressAndPublicKey(seed, group, undefined, skipIndexes)
             skipIndexes.push(address.addressIndex)
             return address
           })
           newAndDefaultAddress = newAddresses[0]
           await this.store.setItem('addresses', newAddresses)
         } else {
-          newAndDefaultAddress = deriveNewAddressData(this.session.seed, group, 0)
+          newAndDefaultAddress = this.deriveAddressAndPublicKey(this.session.seed, group, 0)
           await this.store.setItem('addresses', [newAndDefaultAddress])
         }
       }

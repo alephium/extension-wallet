@@ -46,7 +46,8 @@ const NewAddressScreen = () => {
       connectAddress({
         address: newAddress.hash,
         publicKey: newAddress.publicKey,
-        addressIndex: newAddress.group
+        addressIndex: newAddress.index,
+        derivationPath: newAddress.deviationPath
       })
       setAddressMetadata(newAddress.hash, { name: getValues('name'), color: getValues('color') })
       navigate(await recover(routes.walletAddresses.path))
