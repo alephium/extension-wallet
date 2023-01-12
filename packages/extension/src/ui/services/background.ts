@@ -20,6 +20,6 @@ export const resetPreAuthorizatinos = () => {
 
 if (process.env.NODE_ENV === 'development') {
   messageStream.subscribe(([message]) => {
-    console.log('Received message', message)
+    console.debug('Received message', message)
   })
 }
