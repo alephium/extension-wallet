@@ -1,5 +1,4 @@
 import {
-  AddressAndKeys,
   TOTAL_NUMBER_OF_GROUPS,
   deriveNewAddressData,
   getStorage,
@@ -8,10 +7,11 @@ import {
   walletOpen
 } from '@alephium/sdk'
 import { AddressBalance } from '@alephium/sdk/api/explorer'
-import { ExplorerProvider, NodeProvider, web3 } from '@alephium/web3'
-import { PrivateKeyWallet } from '@alephium/web3-wallet'
+import { ExplorerProvider, NodeProvider, web3, groupOfAddress } from '@alephium/web3'
+import { PrivateKeyWallet, getHDWalletPath } from '@alephium/web3-wallet'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { find, range } from 'lodash-es'
+import { AddressAndPublicKey } from '../shared/addresses'
 
 import { Network } from '../shared/networks'
 import type { IStorage } from './storage'
@@ -29,8 +29,8 @@ interface WalletSession {
 
 export interface WalletStorageProps {
   backup?: string
-  defaultAddress?: AddressAndKeys
-  addresses?: AddressAndKeys[]
+  defaultAddress?: AddressAndPublicKey
+  addresses?: AddressAndPublicKey[]
   discoveredOnce?: boolean
 }
 
@@ -60,22 +60,23 @@ export class Wallet {
   }
 
   public isSessionOpen(): boolean {
-    return this.session !== undefined
+    return !!this.session
   }
 
   public async getAlephiumPrivateKeySigner(): Promise<PrivateKeyWallet | undefined> {
-    const addressAndKeys = await this.getAlephiumDefaultAddress()
-
-    await this.getNodeProvider()
+    const addressAndPublicKey = await this.getAlephiumDefaultAddress()
+    const nodeProvider = await this.getNodeProvider()
 
     let result = undefined
-    if (addressAndKeys) {
-      result = new PrivateKeyWallet(addressAndKeys.privateKey)
+    if (addressAndPublicKey && !!this.session) {
+      const group = groupOfAddress(addressAndPublicKey.address)
+      const addressAndKeys = deriveNewAddressData(this.session.seed, group, addressAndPublicKey.addressIndex)
+      result = new PrivateKeyWallet(addressAndKeys.privateKey, nodeProvider)
     }
     return result
   }
 
-  public async getAlephiumAddresses(): Promise<AddressAndKeys[]> {
+  public async getAlephiumAddresses(): Promise<AddressAndPublicKey[]> {
     // Only one for now
     const addresses = await this.store.getItem('addresses')
     if (addresses) {
@@ -173,7 +174,7 @@ export class Wallet {
     }
   }
 
-  public async addAlephiumAddress(group?: number): Promise<AddressAndKeys | undefined> {
+  public async addAlephiumAddress(group?: number): Promise<AddressAndPublicKey | undefined> {
     if (!this.session?.seed) {
       return undefined
     } else {
@@ -211,7 +212,7 @@ export class Wallet {
     }
   }
 
-  public async getAlephiumDefaultAddress(): Promise<AddressAndKeys | undefined> {
+  public async getAlephiumDefaultAddress(): Promise<AddressAndPublicKey | undefined> {
     if (!this.session?.seed) {
       return undefined
     } else {
