@@ -8,7 +8,7 @@ import {
 } from '@alephium/sdk'
 import { AddressBalance } from '@alephium/sdk/api/explorer'
 import { ExplorerProvider, NodeProvider, web3, groupOfAddress } from '@alephium/web3'
-import { PrivateKeyWallet, getHDWalletPath } from '@alephium/web3-wallet'
+import { PrivateKeyWallet } from '@alephium/web3-wallet'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { find, range } from 'lodash-es'
 import { AddressAndPublicKey } from '../shared/addresses'
@@ -180,15 +180,12 @@ export class Wallet {
     }
   }
 
-
   deriveAddressAndPublicKey(seed: Buffer, forGroup?: number | undefined, addressIndex?: number | undefined, skipAddressIndexes?: number[]): AddressAndPublicKey {
     const addressAndKeys = deriveNewAddressData(seed, forGroup, addressIndex, skipAddressIndexes)
-    const derivationPath = getHDWalletPath(addressAndKeys.addressIndex)
     return {
       address: addressAndKeys.address,
       publicKey: addressAndKeys.publicKey,
-      addressIndex: addressAndKeys.addressIndex,
-      derivationPath
+      addressIndex: addressAndKeys.addressIndex
     }
   }
 

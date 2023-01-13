@@ -8,7 +8,7 @@ export type SessionMessage =
   | {
       type: 'IS_INITIALIZED_RES'
       data: { initialized: boolean }
-  }
+    }
   | { type: 'START_SESSION'; data: { secure: true; body: string } }
   | { type: 'START_SESSION_REJ' }
   | { type: 'START_SESSION_RES'; data?: AddressAndPublicKey }

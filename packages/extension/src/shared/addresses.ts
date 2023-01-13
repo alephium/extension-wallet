@@ -40,7 +40,6 @@ export declare type AddressAndPublicKey = {
   address: string
   publicKey: string
   addressIndex: number
-  derivationPath: string
 }
 
 export type AddressMetadata = {

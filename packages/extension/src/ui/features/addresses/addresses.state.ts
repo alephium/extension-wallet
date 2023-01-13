@@ -32,8 +32,7 @@ export const useAddresses = create<State>()((set) => ({
       connectAddress({
         address: defaultAddress.hash,
         publicKey: defaultAddress.publicKey,
-        addressIndex: defaultAddress.index,
-        derivationPath: defaultAddress.deviationPath
+        addressIndex: defaultAddress.index
       })
 
       return {

@@ -65,8 +65,7 @@ export const NewWalletScreen: FC<NewWalletScreenProps> = ({ overrideSubmit, over
         connectAddress({
           address: newAddress.hash,
           publicKey: newAddress.publicKey,
-          addressIndex: newAddress.index,
-          derivationPath: newAddress.deviationPath
+          addressIndex: newAddress.index
         })
       }
       navigate(await recover(routes.addressTokens.path))
