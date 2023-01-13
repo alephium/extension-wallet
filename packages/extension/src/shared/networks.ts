@@ -16,13 +16,6 @@ export interface NetworkStatus {
 
 export const defaultNetworks: Network[] = [
   {
-    id: 'softfork',
-    nodeUrl: 'https://alephium-dev.softfork.se',
-    explorerApiUrl: 'https://alephium-dev-explorer-api.softfork.se',
-    explorerUrl: 'https://alephium-dev-explorer.softfork.se',
-    name: 'Softfork'
-  },
-  {
     id: 'localhost',
     nodeUrl: 'http://127.0.0.1:22973',
     explorerApiUrl: 'http://localhost:9090',
@@ -31,16 +24,16 @@ export const defaultNetworks: Network[] = [
   },
   {
     id: 'testnet',
-    nodeUrl: 'https://wallet-v18.testnet.alephium.org',
-    explorerApiUrl: 'https://backend-v18.testnet.alephium.org',
-    explorerUrl: 'https://explorer-v18.testnet.alephium.org',
+    nodeUrl: 'https://wallet.testnet.alephium.org',
+    explorerApiUrl: 'https://backend.testnet.alephium.org',
+    explorerUrl: 'https://explorer.testnet.alephium.org',
     name: 'Testnet'
   },
   {
     id: 'mainnet',
-    nodeUrl: 'https://wallet-v18.mainnet.alephium.org',
-    explorerApiUrl: 'https://backend-v18.mainnet.alephium.org',
-    explorerUrl: 'https://explorer-v18.mainnet.alephium.org',
+    nodeUrl: 'https://wallet.mainnet.alephium.org',
+    explorerApiUrl: 'https://backend.mainnet.alephium.org',
+    explorerUrl: 'https://explorer.mainnet.alephium.org',
     name: 'Mainnet'
   }
 ]

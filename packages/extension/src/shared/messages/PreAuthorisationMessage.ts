@@ -1,8 +1,8 @@
-import { AddressAndKeys } from '@alephium/sdk'
+import { AddressAndPublicKey } from '../addresses'
 
 export type PreAuthorisationMessage =
   | { type: 'CONNECT_DAPP'; data: { host: string } }
-  | { type: 'CONNECT_DAPP_RES'; data: AddressAndKeys }
+  | { type: 'CONNECT_DAPP_RES'; data: AddressAndPublicKey }
   | { type: 'PREAUTHORIZE'; data: string }
   | {
       type: 'REJECT_PREAUTHORIZATION'

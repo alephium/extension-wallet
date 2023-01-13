@@ -1,4 +1,4 @@
-import { AddressAndKeys } from '@alephium/sdk'
+import { AddressAndPublicKey } from '../addresses'
 
 export type SessionMessage =
   | { type: 'STOP_SESSION' }
@@ -11,7 +11,7 @@ export type SessionMessage =
     }
   | { type: 'START_SESSION'; data: { secure: true; body: string } }
   | { type: 'START_SESSION_REJ' }
-  | { type: 'START_SESSION_RES'; data?: AddressAndKeys }
+  | { type: 'START_SESSION_RES'; data?: AddressAndPublicKey }
   | { type: 'LOADING_PROGRESS'; data: number }
   | { type: 'CHECK_PASSWORD'; data: { body: string } }
   | { type: 'CHECK_PASSWORD_REJ' }

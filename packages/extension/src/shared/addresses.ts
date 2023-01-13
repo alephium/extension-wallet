@@ -1,5 +1,6 @@
 import { TOTAL_NUMBER_OF_GROUPS, addressToGroup } from '@alephium/sdk'
 import { AddressInfo } from '@alephium/sdk/api/explorer'
+import { getHDWalletPath } from '@alephium/web3-wallet'
 import { Schema, object, string } from 'yup'
 
 export type TransactionType = 'consolidation' | 'transfer' | 'sweep'
@@ -13,6 +14,7 @@ export class Address {
   readonly publicKey: string
   readonly group: number
   readonly index: number
+  readonly deviationPath: string
 
   details: AddressInfo
   availableBalance: bigint
@@ -24,6 +26,7 @@ export class Address {
     this.publicKey = publicKey
     this.group = addressToGroup(hash, TOTAL_NUMBER_OF_GROUPS)
     this.index = index
+    this.deviationPath = getHDWalletPath(this.index)
     this.details = {
       balance: '',
       lockedBalance: '',
