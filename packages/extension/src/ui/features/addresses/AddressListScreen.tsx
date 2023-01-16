@@ -80,6 +80,10 @@ export const AddressListScreen = () => {
         </ActionsContainer>
       </AddressList>
       <div>
+        <SectionTitle>Tokens</SectionTitle>
+        {focusedAddress && <AddressTransactionList address={focusedAddress} />}
+      </div>
+      <div>
         <SectionTitle>Last transactions</SectionTitle>
         {focusedAddress && <AddressTransactionList address={focusedAddress} />}
       </div>
