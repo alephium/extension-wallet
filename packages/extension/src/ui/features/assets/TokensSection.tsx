@@ -1,7 +1,7 @@
 import Amount from '../../components/Amount'
 import styled from 'styled-components'
 import { Address } from '../../../shared/addresses'
-import { AddressToken, TokenMetadata } from '../../../shared/tokens'
+import { AddressToken, TokenMetadata, TOKEN_METADATA_URL, TOKEN_IMAGE_URL } from '../../../shared/tokens'
 import { DividerTitle } from '../../theme/Typography'
 import { FC, useEffect, useState } from 'react'
 import { NUM_OF_ZEROS_IN_QUINTILLION, produceZeros } from '@alephium/sdk'
@@ -10,11 +10,6 @@ import { getAddressesTokensBalance } from '../../services/backgroundAddresses'
 interface TokensListProps {
   addresses: Address[]
 }
-
-// TODO: Use official Alephium tokens-meta repo
-const TOKEN_METADATA_URL = 'https://raw.githubusercontent.com/nop33/token-meta/master/tokens.json'
-const TOKEN_IMAGE_URL = 'https://raw.githubusercontent.com/nop33/token-meta/master/images/'
-
 
 export const TokensSection: FC<TokensListProps> = ({ addresses }) => {
   const [tokens, setTokens] = useState<AddressToken[]>([])
