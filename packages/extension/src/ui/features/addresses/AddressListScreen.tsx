@@ -8,6 +8,7 @@ import { Address } from '../../../shared/addresses'
 import IconWithLabelButton from '../../components/buttons/IconWithLabelButton'
 import { routes } from '../../routes'
 import { P, SectionTitle } from '../../theme/Typography'
+import { TokensSection } from '../assets/TokensSection'
 import AddressTransactionList from '../transactions/AddressTransactionList'
 import { useAddresses } from './addresses.state'
 import { AddressListSlideItem } from './AddressListSlideItem'
@@ -80,8 +81,7 @@ export const AddressListScreen = () => {
         </ActionsContainer>
       </AddressList>
       <div>
-        <SectionTitle>Tokens</SectionTitle>
-        {focusedAddress && <AddressTransactionList address={focusedAddress} />}
+        {focusedAddress && <TokensSection addresses={[focusedAddress]} />}
       </div>
       <div>
         <SectionTitle>Last transactions</SectionTitle>
