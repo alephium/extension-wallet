@@ -50,7 +50,7 @@ export const WalletContainer: FC<AddressScreenContentProps> = ({ currentTab, chi
                   <Plus />
                 </IconButton>
               </Link>
-              <Link to={routes.newLedgerAddress.path}>
+              <Link to={routes.importLedgerAddress.path}>
                 <IconButton size={40}>
                   <Usb />
                 </IconButton>

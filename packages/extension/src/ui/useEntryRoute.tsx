@@ -29,7 +29,12 @@ const determineEntry = async () => {
 
   const hasSession = await hasActiveSession()
   if (hasSession) {
-    return recover(routes.addressTokens.path)
+    const url = window.location.href
+    if (url.includes('wallet/connect-ledger')) {
+      return url.split('#/')[1]
+    } else {
+      return recover(routes.addressTokens.path)
+    }
   }
   return routes.lockScreen()
 }

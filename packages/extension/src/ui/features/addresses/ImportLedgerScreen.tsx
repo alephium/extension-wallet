@@ -1,8 +1,11 @@
+import browser from 'webextension-polyfill'
+
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { openConnectLedger } from '../../../background/openUi'
 
-import { AddressMetadataWithGroup, AddressMetadataWithGroupSchema } from '../../../shared/addresses'
+import { Address, AddressMetadataWithGroup, AddressMetadataWithGroupSchema } from '../../../shared/addresses'
+import { waitForMessage } from '../../../shared/messages'
 import { useAppState } from '../../app.state'
 import ColorPicker from '../../components/ColorPicker'
 import { IconBar } from '../../components/IconBar'
@@ -14,9 +17,21 @@ import { FormError, P } from '../../theme/Typography'
 import { ConfirmScreen } from '../actions/ConfirmScreen'
 import { recover } from '../recovery/recovery.service'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
-import { importLedgerAddress } from './addresses.service'
 import { useAddresses } from './addresses.state'
 import { useAddressMetadata } from './addressMetadata.state'
+
+function initLedgerWindowListener(): Promise<Address> {
+  return new Promise((resolve)=>{
+    async function onMessage(message: any, sender: any, sendResponse: any) {
+      if (typeof message == 'object' && 'ledgerAddress' in message) {
+        browser.runtime.onMessage.removeListener(onMessage)
+        resolve(message['ledgerAddress'] as Address)
+        sendResponse && sendResponse()
+      }
+    }
+    browser.runtime.onMessage.addListener(onMessage)
+  })
+}
 
 const ImportLedgerScreen = () => {
   const navigate = useNavigate()
@@ -39,24 +54,25 @@ const ImportLedgerScreen = () => {
   const { setAddressMetadata } = useAddressMetadata()
 
   const handleImport = async () => {
-    // useAppState.setState({ isLoading: true })
+    useAppState.setState({ isLoading: true })
     try {
-      // const group = getValues('group')
-      // const newAddress = await importLedgerAddress(`m/44'/1234'/0'/0/0`)
-      // addAddress(newAddress)
-      // connectAddress({
-      //   address: newAddress.hash,
-      //   publicKey: newAddress.publicKey,
-      //   addressIndex: newAddress.group
-      // })
-      // setAddressMetadata(newAddress.hash, { name: getValues('name'), color: getValues('color') })
-      openConnectLedger()
+      const group = getValues('group')
+      openConnectLedger(parseInt(group ?? '0'))
+      const newAddress = await initLedgerWindowListener()
+      console.log(`===== ${JSON.stringify(newAddress)}`)
+      addAddress(newAddress)
+      connectAddress({
+        address: newAddress.hash,
+        publicKey: newAddress.publicKey,
+        addressIndex: newAddress.index
+      })
+      setAddressMetadata(newAddress.hash, { name: getValues('name'), color: getValues('color') })
       navigate(await recover(routes.walletAddresses.path))
     } catch (error: any) {
       useAppState.setState({ error: `${error}` })
       navigate(routes.error())
     } finally {
-      // useAppState.setState({ isLoading: false })
+      useAppState.setState({ isLoading: false })
     }
   }
 
@@ -64,7 +80,7 @@ const ImportLedgerScreen = () => {
     <>
       <IconBar back />
       <ConfirmScreen
-        title="Import Ledger"
+        title="Ledger Address"
         singleButton
         confirmButtonText="Import"
         smallTopPadding

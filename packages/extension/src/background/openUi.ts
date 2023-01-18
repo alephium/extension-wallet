@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+import { routes } from '../ui/routes'
 
 const NOTIFICATION_WIDTH = 360
 const NOTIFICATION_HEIGHT = 600 + 28 // +28 for the title bar
@@ -58,11 +59,11 @@ async function openPopup(): Promise<browser.windows.Window | undefined> {
   return popup
 }
 
-export async function openConnectLedger() {
+export async function openConnectLedger(group: number) {
   const left = 0
   const top = 0
   await browser.windows.create({
-    url: 'index.html#/wallet/connect-ledger',
+    url: `index.html#/${routes.connectLedger(group)}`,
     type: 'popup',
     width: NOTIFICATION_WIDTH,
     height: NOTIFICATION_HEIGHT,

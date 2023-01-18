@@ -5,11 +5,12 @@ import { AddressToken } from '../tokens'
 
 export type AddressMessage =
   | { type: 'NEW_ADDRESS'; data?: number }
-  | {
-      type: 'NEW_ADDRESS_RES'
-      data: AddressAndPublicKey
-    }
+  | { type: 'NEW_ADDRESS_RES'; data: AddressAndPublicKey }
   | { type: 'NEW_ADDRESS_REJ'; data: { error: string } }
+  | { type: 'LEDGER_ADDRESS_RES'; data: AddressAndPublicKey }
+  | { type: 'LEDGER_ADDRESS_REJ'; data: { error: string } }
+  | { type: 'LEDGER_ADDRESS_RES_FORWARD'; data: AddressAndPublicKey }
+  | { type: 'LEDGER_ADDRESS_REJ_FORWARD'; data: { error: string } }
   | { type: 'DISCONNECT_ADDRESS' }
   | { type: 'CONNECT_ADDRESS'; data: AddressAndPublicKey }
   | { type: 'GET_ADDRESSES'; data?: { showHidden: boolean } }

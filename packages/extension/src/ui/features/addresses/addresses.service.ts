@@ -43,6 +43,7 @@ export const importLedgerAddress = async (path: string) => {
   const account = await app.getAccount(path)
   const splitedPath = splitPath(path)
   const addressIndex = splitedPath[splitedPath.length - 1]
+  await transport.close()
 
   return new Address('ledger', account.address, account.publicKey, addressIndex)
 }

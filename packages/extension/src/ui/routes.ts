@@ -46,8 +46,8 @@ export const routes = {
   addressTokens: route('/address/tokens'),
   walletAddresses: route('/wallet/addresses'),
   newAddress: route('/wallet/new-address'),
-  newLedgerAddress: route('/wallet/import-ledger'),
-  connectLedger: route('/wallet/connect-ledger'),
+  importLedgerAddress: route('/wallet/import-ledger'),
+  connectLedger: route((group: number) => `/wallet/connect-ledger/${group}`, '/wallet/connect-ledger/:group'),
   addressActivity: route('/address/activity'),
   addressSettings: route((address: string) => `/address/${address}/settings`, `/address/:address/settings`),
   addressDeleteConfirm: route(

@@ -48,6 +48,21 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
       }
     }
 
+    case 'LEDGER_ADDRESS_RES': {
+      console.log(`=========== ${JSON.stringify(msg.data)}`)
+      return sendToTabAndUi({
+        type: 'LEDGER_ADDRESS_RES_FORWARD',
+        data: msg.data
+      })
+    }
+
+    case 'LEDGER_ADDRESS_REJ': {
+      return sendToTabAndUi({
+        type: 'LEDGER_ADDRESS_REJ_FORWARD',
+        data: msg.data
+      })
+    }
+
     case 'GET_DEFAULT_ADDRESS': {
       const defaultAddress = await wallet.getAlephiumDefaultAddress()
       return sendToTabAndUi({

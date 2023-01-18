@@ -66,7 +66,6 @@ const nonWalletRoutes = (
   <>
     <Route path={routes.welcome.path} element={<WelcomeScreen />} />
     <Route path={routes.newWallet.path} element={<NewWalletScreen />} />
-    <Route path={routes.connectLedger.path} element={<ConnectLedgerScreen />} />
     <Route path={routes.seedRecovery.path} element={<SeedRecoveryScreen />} />
     <Route path={routes.seedRecoveryPassword.path} element={<SeedRecoveryPasswordScreen />} />
     <Route path={routes.lockScreen.path} element={<LockScreen />} />
@@ -81,7 +80,8 @@ const walletRoutes = (
     <Route path={routes.addressTokens.path} element={<WalletContainerScreen tab="assets" />} />
     <Route path={routes.walletAddresses.path} element={<WalletContainerScreen tab="addresses" />} />
     <Route path={routes.newAddress.path} element={<NewAddressScreen />} />
-    <Route path={routes.newLedgerAddress.path} element={<ImportLedgerScreen />} />
+    <Route path={routes.importLedgerAddress.path} element={<ImportLedgerScreen />} />
+    <Route path={routes.connectLedger.path} element={<ConnectLedgerScreen />} />
     <Route path={routes.addressSettings.path} element={<AddressSettingsScreen />} />
     <Route path={routes.addressActivity.path} element={<WalletContainerScreen tab="transfers" />} />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
