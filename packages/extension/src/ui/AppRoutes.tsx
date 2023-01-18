@@ -27,6 +27,7 @@ import { SendTokenScreen } from './features/transactions/SendTokenScreen'
 import { WalletContainerScreen } from './features/wallet/WalletContainerScreen'
 import { routes } from './routes'
 import { useEntryRoute } from './useEntryRoute'
+import ConnectLedgerScreen from './features/addresses/ConnectLedgerScreen'
 
 export const ResponsiveBehaviour = styled.div`
   ${({ theme }) => theme.mediaMinWidth.sm`
@@ -65,6 +66,7 @@ const nonWalletRoutes = (
   <>
     <Route path={routes.welcome.path} element={<WelcomeScreen />} />
     <Route path={routes.newWallet.path} element={<NewWalletScreen />} />
+    <Route path={routes.connectLedger.path} element={<ConnectLedgerScreen />} />
     <Route path={routes.seedRecovery.path} element={<SeedRecoveryScreen />} />
     <Route path={routes.seedRecoveryPassword.path} element={<SeedRecoveryPasswordScreen />} />
     <Route path={routes.lockScreen.path} element={<LockScreen />} />
@@ -99,6 +101,7 @@ export const AppRoutes: FC = () => {
 
   const { isLoading } = useAppState()
   const { actions } = useActions()
+  console.log(`==== ${JSON.stringify(actions)}`)
 
   if (isLoading) {
     return <LoadingScreen />

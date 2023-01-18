@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { openConnectLedger } from '../../../background/openUi'
 
 import { AddressMetadataWithGroup, AddressMetadataWithGroupSchema } from '../../../shared/addresses'
 import { useAppState } from '../../app.state'
@@ -13,7 +14,7 @@ import { FormError, P } from '../../theme/Typography'
 import { ConfirmScreen } from '../actions/ConfirmScreen'
 import { recover } from '../recovery/recovery.service'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
-import { deployAddress } from './addresses.service'
+import { importLedgerAddress } from './addresses.service'
 import { useAddresses } from './addresses.state'
 import { useAddressMetadata } from './addressMetadata.state'
 
@@ -38,23 +39,24 @@ const ImportLedgerScreen = () => {
   const { setAddressMetadata } = useAddressMetadata()
 
   const handleImport = async () => {
-    useAppState.setState({ isLoading: true })
+    // useAppState.setState({ isLoading: true })
     try {
-      const group = getValues('group')
-      const newAddress = await deployAddress(group ? parseInt(group) : undefined)
-      addAddress(newAddress)
-      connectAddress({
-        address: newAddress.hash,
-        publicKey: newAddress.publicKey,
-        addressIndex: newAddress.group
-      })
-      setAddressMetadata(newAddress.hash, { name: getValues('name'), color: getValues('color') })
+      // const group = getValues('group')
+      // const newAddress = await importLedgerAddress(`m/44'/1234'/0'/0/0`)
+      // addAddress(newAddress)
+      // connectAddress({
+      //   address: newAddress.hash,
+      //   publicKey: newAddress.publicKey,
+      //   addressIndex: newAddress.group
+      // })
+      // setAddressMetadata(newAddress.hash, { name: getValues('name'), color: getValues('color') })
+      openConnectLedger()
       navigate(await recover(routes.walletAddresses.path))
     } catch (error: any) {
       useAppState.setState({ error: `${error}` })
       navigate(routes.error())
     } finally {
-      useAppState.setState({ isLoading: false })
+      // useAppState.setState({ isLoading: false })
     }
   }
 

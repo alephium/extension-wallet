@@ -57,3 +57,16 @@ async function openPopup(): Promise<browser.windows.Window | undefined> {
 
   return popup
 }
+
+export async function openConnectLedger() {
+  const left = 0
+  const top = 0
+  await browser.windows.create({
+    url: 'index.html#/wallet/connect-ledger',
+    type: 'popup',
+    width: NOTIFICATION_WIDTH,
+    height: NOTIFICATION_HEIGHT,
+    left,
+    top
+  })
+}

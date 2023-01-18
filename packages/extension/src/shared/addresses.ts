@@ -4,7 +4,7 @@ import { getHDWalletPath } from '@alephium/web3-wallet'
 import { Schema, object, string } from 'yup'
 
 export type TransactionType = 'consolidation' | 'transfer' | 'sweep'
-export type AddressType = 'hot' | 'ledger'
+export type AddressType = 'browser' | 'ledger'
 export type TimeInMs = number
 
 export type AddressHash = string
