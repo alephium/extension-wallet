@@ -5,7 +5,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Schema, object } from 'yup'
 
-import { inputAmountSchema } from '../../../shared/token/amount'
+import { alphInputAmountSchema, tokenInputAmountSchema } from '../../../shared/token/amount'
 import { ALPH_IMAGE, ALPH_NAME, TokenMetadata, TOKEN_METADATA_URL, TOKEN_IMAGE_URL } from '../../../shared/tokens'
 import Amount from '../../components/Amount'
 import { Button } from '../../components/buttons/Button'
@@ -22,6 +22,7 @@ import DefaultAddressSwitcher from '../addresses/DefaultAddressSwitcher'
 import { TokenIcon } from '../assets/TokenIcon'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
 import { string, array } from 'yup'
+import { Token } from '@alephium/web3'
 
 export const SendTokenScreen: FC = () => {
   const navigate = useNavigate()
@@ -123,9 +124,13 @@ export const SendTokenScreen: FC = () => {
       <ColumnCenter>
         <StyledForm
           onSubmit={handleSubmit(({ alphAmount, recipient, tokenAmounts }) => {
-            const tokens = tokenAmounts.map(tokenAmount => {
-              return { id: tokenAmount.tokenId, amount: BigInt(tokenAmount.amount) }
+            const tokens: Token[] = []
+            tokenAmounts.forEach(tokenAmount => {
+              if (tokenAmount.amount) {
+                tokens.push({ id: tokenAmount.tokenId, amount: BigInt(tokenAmount.amount) })
+              }
             })
+
             sendAlephiumTransferTransaction(address, recipient, alphAmount, tokens)
             navigate(routes.addressTokens())
           })}
@@ -183,7 +188,7 @@ export const SendTokenScreen: FC = () => {
                         const metadata = tokensMetadata ? tokensMetadata[tokenAmount.id] : undefined
                         const tokenImage = metadata?.image && `${TOKEN_IMAGE_URL}${metadata.image}`
                         const tokenName = metadata?.symbol ?? tokenAmount.tokenId.slice(0, 3)
-                        const tokenInputAmount = formValues.tokenAmounts.find((ta) => ta.tokenId === tokenAmount.tokenId)?.amount
+                        const tokenInputAmount = +(formValues.tokenAmounts.find((ta) => ta.tokenId === tokenAmount.tokenId)?.amount ?? 0)
 
                         return (
                           <InputAndMessages key={tokenAmount.id}>
@@ -195,7 +200,8 @@ export const SendTokenScreen: FC = () => {
                               type="number"
                               LeftComponent={<TokenIcon name={tokenName} url={tokenImage} size={32} />}
                             ></ControlledInputText>
-                            {+(tokenInputAmount ?? 0) < 0 && <FormError>Negative balance</FormError>}
+                            {tokenInputAmount < 0 && <FormError>Negative balance</FormError>}
+                            {!Number.isInteger(tokenInputAmount) && <FormError>Not an integer</FormError>}
                             {balance && isTokenInputAmountGtAvailableBalance(tokenAmount) && <FormError>Insufficient balance</FormError>}
                             <FormInfo>
                               <span>Available: {balance}</span>
@@ -292,14 +298,14 @@ const FormInfo = styled.p`
 
 interface TokenAmount {
   tokenId: string
-  amount: string
+  amount?: string
   balance: string
 }
 
 const TokenAmountSchema: Schema<TokenAmount> = object().required().shape({
   tokenId: string().trim().required(),
-  amount: inputAmountSchema,
-  balance: inputAmountSchema
+  amount: tokenInputAmountSchema,
+  balance: tokenInputAmountSchema.required()
 })
 
 export interface SendInput {
@@ -310,6 +316,6 @@ export interface SendInput {
 
 const SendSchema: Schema<SendInput> = object().required().shape({
   recipient: addressSchema,
-  alphAmount: inputAmountSchema,
+  alphAmount: alphInputAmountSchema,
   tokenAmounts: array().of(TokenAmountSchema).required()
 })

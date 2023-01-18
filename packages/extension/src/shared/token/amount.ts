@@ -1,9 +1,9 @@
 import { MIN_UTXO_SET_AMOUNT, convertSetToAlph } from '@alephium/sdk'
 import { string } from 'yup'
 
-export const inputAmountSchema = string()
+export const alphInputAmountSchema = string()
   .trim()
-  .required('Amount is required')
+  .required('ALPH Amount is required')
   .test((amount, ctx) => {
     if (!amount) {
       return ctx.createError({ message: 'Amount is required' })
@@ -24,4 +24,18 @@ export const inputAmountSchema = string()
     return true
   })
 
-export const isValidInputAmount = (amount: string) => inputAmountSchema.isValidSync(amount)
+export const tokenInputAmountSchema = string()
+  .trim()
+  .test((amount, ctx) => {
+    try {
+      if (!!amount && !Number.isInteger(+amount)) {
+        return ctx.createError({
+          message: `Token amount must be integer`
+        })
+      }
+    } catch {
+      return ctx.createError({ message: 'Amount should be a number' })
+    }
+
+    return true
+  })
