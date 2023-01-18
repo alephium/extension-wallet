@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { Schema, object } from 'yup'
 
 import { alphInputAmountSchema, tokenInputAmountSchema } from '../../../shared/token/amount'
-import { ALPH_IMAGE, ALPH_NAME, TokenMetadata, TOKEN_METADATA_URL, TOKEN_IMAGE_URL } from '../../../shared/tokens'
+import { ALPH_IMAGE, ALPH_NAME, TokenMetadata, TOKEN_IMAGE_URL, fetchTokensMetadata } from '../../../shared/tokens'
 import Amount from '../../components/Amount'
 import { Button } from '../../components/buttons/Button'
 import Column, { ColumnCenter } from '../../components/Column'
@@ -81,13 +81,7 @@ export const SendTokenScreen: FC = () => {
   }, [address, append, remove])
 
   useEffect(() => {
-    const fetchTokensMetadata = async () => {
-      const response = await fetch(TOKEN_METADATA_URL)
-      const data = await response.json()
-      setTokensMetadata(data)
-    }
-
-    fetchTokensMetadata()
+    fetchTokensMetadata().then(setTokensMetadata)
   }, [])
 
   // TODO: web3 add parse number
@@ -185,7 +179,7 @@ export const SendTokenScreen: FC = () => {
                     {
                       fields.map((tokenAmount, index) => {
                         const balance = tokenAmount.balance
-                        const metadata = tokensMetadata ? tokensMetadata[tokenAmount.id] : undefined
+                        const metadata = tokensMetadata ? tokensMetadata[tokenAmount.tokenId] : undefined
                         const tokenImage = metadata?.image && `${TOKEN_IMAGE_URL}${metadata.image}`
                         const tokenName = metadata?.symbol ?? tokenAmount.tokenId.slice(0, 3)
                         const tokenInputAmount = +(formValues.tokenAmounts.find((ta) => ta.tokenId === tokenAmount.tokenId)?.amount ?? 0)

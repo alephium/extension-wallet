@@ -1,6 +1,7 @@
-import { FC, useMemo } from 'react'
+import { FC, useMemo, useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { ALPH_SYMBOL, fetchTokensMetadata, TokenMetadata } from '../../../shared/tokens'
 
 import { TransactionPayload } from '../../../shared/transactions'
 import Amount from '../../components/Amount'
@@ -11,6 +12,7 @@ import { assertNever } from '../../services/assertNever'
 import { getAddressName, useAddressMetadata } from '../addresses/addressMetadata.state'
 import { ConfirmPageProps, ConfirmScreen } from './ConfirmScreen'
 import { TransactionsList } from './transaction/TransactionsList'
+import { Token } from '@alephium/web3'
 
 interface ApproveTransactionScreenProps extends Omit<ConfirmPageProps, 'onSubmit'> {
   actionHash: string
@@ -59,13 +61,22 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   onSubmit,
   ...props
 }) => {
+  useEffect(() => {
+    fetchTokensMetadata().then(setTokensMetadata)
+  }, [])
+
   const { metadata } = useAddressMetadata()
   const title = useMemo(() => {
     return titleForTransactions(payload)
   }, [payload])
 
+  const [tokensMetadata, setTokensMetadata] = useState<{
+    [key: string]: TokenMetadata
+  }>()
+
   let recipient
   let amount
+  let tokens: Token[] = []
   let recipientName = ''
 
   if (payload.type === 'ALPH_SIGN_AND_SUBMIT_TRANSFER_TX') {
@@ -73,6 +84,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     recipient = destination.address
     recipientName = getAddressName(recipient, metadata)
     amount = BigInt(destination.attoAlphAmount)
+    tokens = destination.tokens || []
   }
 
   if (!defaultAddress) {
@@ -116,13 +128,33 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           )}
           {amount && (
             <Field>
-              <FieldKey>Amount</FieldKey>
+              <FieldKey>{ALPH_SYMBOL}</FieldKey>
               <FieldValue>
                 <LeftPaddedField>
                   <Amount value={amount} fullPrecision />
                 </LeftPaddedField>
               </FieldValue>
             </Field>
+          )}
+          {tokens.length > 0 && (
+            <div>
+              {
+                tokens.map((token) => {
+                  const metadata = tokensMetadata ? tokensMetadata[token.id] : undefined
+                  const tokenSymbol = metadata?.symbol ?? token.id.slice(0, 5)
+                  return (
+                    <Field key={token.id}>
+                      <FieldKey>{tokenSymbol}</FieldKey>
+                      <FieldValue>
+                        <LeftPaddedField>
+                          {token.amount.toString()}
+                        </LeftPaddedField>
+                      </FieldValue>
+                    </Field>
+                  )
+                })
+              }
+            </div>
           )}
         </>
       </FieldGroup>

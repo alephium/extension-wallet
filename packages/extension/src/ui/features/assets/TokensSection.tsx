@@ -1,7 +1,7 @@
 import Amount from '../../components/Amount'
 import styled from 'styled-components'
 import { Address } from '../../../shared/addresses'
-import { AddressToken, TokenMetadata, TOKEN_METADATA_URL, TOKEN_IMAGE_URL } from '../../../shared/tokens'
+import { AddressToken, TokenMetadata, fetchTokensMetadata, TOKEN_IMAGE_URL } from '../../../shared/tokens'
 import { DividerTitle } from '../../theme/Typography'
 import { FC, useEffect, useState } from 'react'
 import { NUM_OF_ZEROS_IN_QUINTILLION, produceZeros } from '@alephium/sdk'
@@ -25,13 +25,7 @@ export const TokensSection: FC<TokensListProps> = ({ addresses }) => {
   }, [addresses])
 
   useEffect(() => {
-    const fetchTokensMetadata = async () => {
-      const response = await fetch(TOKEN_METADATA_URL)
-      const data = await response.json()
-      setTokensMetadata(data)
-    }
-
-    fetchTokensMetadata()
+    fetchTokensMetadata().then(setTokensMetadata)
   }, [])
 
   return (
