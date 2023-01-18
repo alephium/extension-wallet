@@ -92,12 +92,21 @@ export const SendTokenScreen: FC = () => {
   // TODO: web3 add parse number
 
   const formValues = watch()
-  const inputAmount = formValues.alphAmount
+  const inputAlphAmount = formValues.alphAmount
 
   // TODO: Take fee into consideration
-  const isInputAmountGtAvailableBalance = (inputAmount ? convertAlphToSet(inputAmount) : 0) >= availableBalance
+  const isAlphInputAmountGtAvailableBalance = (): boolean => {
+    const alphAmount = inputAlphAmount ? +inputAlphAmount : 0
+    const setAmount = alphAmount >= 0 ? convertAlphToSet(alphAmount.toString()) : BigInt(0)
+    return setAmount > availableBalance
+  }
 
-  const disableSubmit = !isDirty || isSubmitting || (submitCount > 0 && !isDirty) || isInputAmountGtAvailableBalance
+  const isTokenInputAmountGtAvailableBalance = (tokenAmount: TokenAmount): boolean => {
+    const tokenInputAmount = formValues.tokenAmounts.find((ta) => ta.tokenId === tokenAmount.tokenId)?.amount
+    return +(tokenInputAmount ?? 0) > +tokenAmount.balance
+  }
+
+  const disableSubmit = !isDirty || isSubmitting || (submitCount > 0 && !isDirty) || +inputAlphAmount < 0 || isAlphInputAmountGtAvailableBalance()
 
   if (!address) {
     return <Navigate to={routes.walletAddresses()} />
@@ -114,7 +123,10 @@ export const SendTokenScreen: FC = () => {
       <ColumnCenter>
         <StyledForm
           onSubmit={handleSubmit(({ alphAmount, recipient, tokenAmounts }) => {
-            sendAlephiumTransferTransaction(address, recipient, alphAmount)
+            const tokens = tokenAmounts.map(tokenAmount => {
+              return { id: tokenAmount.tokenId, amount: BigInt(tokenAmount.amount) }
+            })
+            sendAlephiumTransferTransaction(address, recipient, alphAmount, tokens)
             navigate(routes.addressTokens())
           })}
         >
@@ -152,7 +164,8 @@ export const SendTokenScreen: FC = () => {
                 type="number"
                 LeftComponent={<TokenIcon name={ALPH_NAME} url={ALPH_IMAGE} size={32} />}
               ></ControlledInputText>
-              {inputAmount && isInputAmountGtAvailableBalance && <FormError>Insufficient balance</FormError>}
+              {+inputAlphAmount < 0 && <FormError>Negative balance</FormError>}
+              {+inputAlphAmount >= 0 && isAlphInputAmountGtAvailableBalance() && <FormError>Insufficient balance</FormError>}
               {errors.alphAmount && <FormError>{errors.alphAmount.message}</FormError>}
               <FormInfo>
                 <span>Available: </span>
@@ -170,21 +183,20 @@ export const SendTokenScreen: FC = () => {
                         const metadata = tokensMetadata ? tokensMetadata[tokenAmount.id] : undefined
                         const tokenImage = metadata?.image && `${TOKEN_IMAGE_URL}${metadata.image}`
                         const tokenName = metadata?.symbol ?? tokenAmount.tokenId.slice(0, 3)
-                        const tokenInputAmount = formValues.tokenAmounts.find((ta) => ta.tokenId === tokenAmount.id)?.amount
-                        const isTokenInputAmountGtAvailableBalance = (tokenInputAmount ? convertAlphToSet(tokenInputAmount) : 0) > BigInt(tokenAmount.balance)
+                        const tokenInputAmount = formValues.tokenAmounts.find((ta) => ta.tokenId === tokenAmount.tokenId)?.amount
 
                         return (
                           <InputAndMessages key={tokenAmount.id}>
                             <ControlledInputText
                               autoComplete="off"
-                              autoFocus
                               control={control}
                               placeholder="Amount"
                               name={`tokenAmounts.${index}.amount`}
                               type="number"
                               LeftComponent={<TokenIcon name={tokenName} url={tokenImage} size={32} />}
                             ></ControlledInputText>
-                            {balance && isTokenInputAmountGtAvailableBalance && <FormError>Insufficient balance</FormError>}
+                            {+(tokenInputAmount ?? 0) < 0 && <FormError>Negative balance</FormError>}
+                            {balance && isTokenInputAmountGtAvailableBalance(tokenAmount) && <FormError>Insufficient balance</FormError>}
                             <FormInfo>
                               <span>Available: {balance}</span>
                             </FormInfo>
