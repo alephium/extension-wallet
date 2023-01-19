@@ -6,12 +6,13 @@ export const silentConnectWallet = async () => {
   return windowAlephium
 }
 
-export const connectWallet = async () => {
+export const connectWallet = async (group: number) => {
+  console.log("connectWallet", group)
   const windowAlephium = await connect({
     include: ['alephium']
   })
 
-  await windowAlephium?.enable({ chainGroup: 3 })
+  await windowAlephium?.enable({ chainGroup: group })
   return windowAlephium
 }
 

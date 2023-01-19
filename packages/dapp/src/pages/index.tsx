@@ -7,7 +7,7 @@ import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
   const [address, setAddress] = useState<string>()
-  const [group, setGroup] = useState<number>()
+  const [group, setGroup] = useState<number>(0)
   const [isConnected, setConnected] = useState(false)
 
   useEffect(() => {
@@ -19,11 +19,15 @@ const Home: NextPage = () => {
     })()
   }, [])
 
-  const handleConnectClick = async () => {
-    const wallet = await connectWallet()
+  const handleConnectClick = async (group) => {
+    const wallet = await connectWallet(group)
     setAddress(wallet?.defaultAddress?.address)
     setGroup(wallet?.defaultAddress?.group)
     setConnected(!!wallet?.isConnected)
+  }
+
+  const handleChange = (event) => {
+    setGroup(event.target.value);
   }
 
   return (
@@ -45,9 +49,13 @@ const Home: NextPage = () => {
           </>
         ) : (
           <>
-            <button className={styles.connect} onClick={handleConnectClick}>
-              Connect Wallet
-            </button>
+            <form onSubmit={handleConnectClick}>
+              <label>
+                Name:
+                <input type="number" value={group} min={0} max={3} onChange={handleChange} />
+              </label>
+              <input type="submit" value="submit" />
+            </form>
           </>
         )}
       </main>
