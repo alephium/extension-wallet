@@ -1,6 +1,6 @@
 {
   "name": "@alephium/dapp",
-  "version": "0.4.0-rc.4",
+  "version": "0.4.0-rc.5",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@alephium/get-extension-wallet": "0.4.0-rc.4",
+    "@alephium/get-extension-wallet": "0.4.0-rc.5",
     "@alephium/web3": "v0.3.0-rc.5",
     "ethers": "^5.5.1",
     "next": "^12.1.4",

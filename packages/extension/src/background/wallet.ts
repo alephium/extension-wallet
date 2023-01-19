@@ -227,18 +227,24 @@ export class Wallet {
     }
   }
 
-  public async getAlephiumDefaultAddress(): Promise<AddressAndPublicKey | undefined> {
+  matchGroup(address: string, group?: number): boolean {
+    return !group || groupOfAddress(address) === group
+  }
+
+  public async getAlephiumDefaultAddress(group?: number): Promise<AddressAndPublicKey | undefined> {
     const defaultAddress = await this.store.getItem('defaultAddress')
-    if (!defaultAddress) {
-      const addresses = await this.store.getItem('addresses')
-      if (addresses && addresses?.length > 0) {
-        await this.store.setItem('defaultAddress', addresses[0])
-        return addresses[0]
-      } else {
-        return undefined
-      }
-    } else {
+    if (defaultAddress && this.matchGroup(defaultAddress.address, group)) {
       return defaultAddress
+    } else {
+      const addresses = await this.store.getItem('addresses')
+      if (addresses) {
+        const result = addresses.find((address) => this.matchGroup(address.address, group))
+        if (result) {
+          await this.store.setItem('defaultAddress', result)
+        }
+
+        return result
+      }
     }
   }
 

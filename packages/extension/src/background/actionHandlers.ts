@@ -16,8 +16,8 @@ export const handleActionApproval = async (
 
   switch (action.type) {
     case 'CONNECT_DAPP': {
-      const { host } = action.payload
-      const defaultAddress = await wallet.getAlephiumDefaultAddress()
+      const { host, group } = action.payload
+      const defaultAddress = await wallet.getAlephiumDefaultAddress(group)
 
       if (!defaultAddress) {
         openUi()
