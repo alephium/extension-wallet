@@ -104,7 +104,8 @@ module.exports = {
       buffer: require.resolve('buffer/'),
       fs: false,
       crypto: require.resolve('crypto-browserify'),
-      stream: require.resolve('stream-browserify')
+      stream: require.resolve('stream-browserify'),
+      path: require.resolve("path-browserify")
     },
     alias: {
       '@mui/styled-engine': '@mui/styled-engine-sc'

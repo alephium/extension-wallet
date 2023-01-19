@@ -1,5 +1,5 @@
 import {
-  Account,
+  Address,
   ExplorerProvider,
   NodeProvider,
   SignDeployContractTxParams,
@@ -130,12 +130,12 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
     }
   }
 
-  getSelectedAccount = async (): Promise<Account> => {
+  getSelectedAddress = async (): Promise<Address> => {
     const { alephiumProviders } = window
     const alephium = alephiumProviders?.alephium
 
     if (alephium?.defaultAddress) {
-      return Promise.resolve(alephium.defaultAddress)
+      return Promise.resolve(alephium.defaultAddress.address)
     } else {
       throw new Error('no selected account')
     }

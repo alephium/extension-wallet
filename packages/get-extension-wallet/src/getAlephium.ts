@@ -240,8 +240,8 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           }
         }
 
-        getSelectedAccount = async () => {
-          return Promise.resolve(this.defaultAddress)
+        getSelectedAddress = async () => {
+          return Promise.resolve(this.defaultAddress.address)
         }
 
         #connect = (options?: GetAlephiumWalletOptions) =>
