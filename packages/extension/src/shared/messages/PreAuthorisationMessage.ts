@@ -1,7 +1,7 @@
 import { AddressAndPublicKey } from '../addresses'
 
 export type PreAuthorisationMessage =
-  | { type: 'CONNECT_DAPP'; data: { host: string } }
+  | { type: 'CONNECT_DAPP'; data: { host: string, group?: number } }
   | { type: 'CONNECT_DAPP_RES'; data: AddressAndPublicKey }
   | { type: 'PREAUTHORIZE'; data: string }
   | {

@@ -13,13 +13,14 @@ export const handlePreAuthorizationMessage: HandleMessage<PreAuthorisationMessag
 }) => {
   switch (msg.type) {
     case 'CONNECT_DAPP': {
-      const defaultAddress = await wallet.getAlephiumDefaultAddress()
+      const { host, group } = msg.data
+      const defaultAddress = await wallet.getAlephiumDefaultAddress(group)
       const isAuthorized = await isPreAuthorized(msg.data.host)
 
       if (sender.tab?.id) {
         addTab({
           id: sender.tab?.id,
-          host: msg.data.host
+          host: host
         })
       }
 

@@ -1,4 +1,4 @@
-import { Account, SignerProvider } from '@alephium/web3'
+import { Account, InteractiveSignerProvider, EnableOptionsBase } from '@alephium/web3'
 
 import { Network } from '../shared/networks'
 
@@ -16,14 +16,18 @@ export type WalletEvents =
       handler: NetworkChangeEventHandler
     }
 
-export interface AlephiumWindowObject extends SignerProvider {
+export type EnableOptions = EnableOptionsBase & {
+  showModal?: boolean
+}
+
+export interface AlephiumWindowObject extends InteractiveSignerProvider<EnableOptions> {
   id: 'alephium'
   name: 'Alephium'
   icon: string
   isConnected: boolean
   currentNetwork: string
 
-  enable(options?: { showModal?: boolean }): Promise<string[]>
+  enable(options?: EnableOptions): Promise<void>
   isPreauthorized(): Promise<boolean>
   on(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void
   off(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void

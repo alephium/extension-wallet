@@ -22,7 +22,8 @@ import type {
   EventHandler,
   EventType,
   GetAlephiumWalletOptions,
-  IGetAlephiumWallet
+  IGetAlephiumWallet,
+  EnableOptions
 } from './types'
 import { filterBy, filterPreAuthorized, isWalletObj, shuffle, sortBy } from './utils'
 
@@ -123,6 +124,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         icon = ''
         defaultAddress?: Account = undefined
         isConnected = false
+        disconnect = () => Promise.resolve() // TODO: FIXME
         /**
          * stores pre-enabled wallet `on` calls' listeners
          * @private
@@ -137,20 +139,19 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
          * connecting a wallet successfully
          * @param options
          */
-        enable = async (options?: { showModal?: boolean }): Promise<string[]> => {
+        enable = async (options?: EnableOptions): Promise<void> => {
           try {
             const wallet = await this.#connect({
               showList: options?.showModal
             })
             if (wallet) {
-              const result = await wallet.enable()
+              const result = await wallet.enable(options)
               this.#refreshWalletProperties(wallet)
               return result
             }
           } catch (err) {
             console.error(err)
           }
-          return []
         }
 
         #call = async <T>(methodName: string, method: (obj: AlephiumWindowObject) => Promise<T>): Promise<T> => {

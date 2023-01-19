@@ -1,6 +1,7 @@
 import {
   Address,
   ExplorerProvider,
+  groupOfAddress,
   NodeProvider,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
@@ -23,7 +24,8 @@ import {
   AccountChangeEventHandler,
   AlephiumWindowObject,
   NetworkChangeEventHandler,
-  WalletEvents
+  WalletEvents,
+  EnableOptions
 } from './inpage.model'
 import { sendMessage, waitForMessage, waitForMessages } from './messageActions'
 
@@ -60,7 +62,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
   defaultAddress = undefined
   currentNetwork = defaultNetworks[0].id
   isConnected = false
-  enable = (_options?: { showModal?: boolean }): Promise<string[]> =>
+  disconnect = () => Promise.resolve() // TODO: FIXME
+  enable = (_options?: EnableOptions): Promise<void> =>
     new Promise((resolve) => {
       const handleMessage = ({ data }: MessageEvent<WindowMessageType>) => {
         const { alephiumProviders } = window
@@ -71,21 +74,21 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
 
         if ((data.type === 'CONNECT_DAPP_RES' && data.data) || (data.type === 'START_SESSION_RES' && data.data)) {
           window.removeEventListener('message', handleMessage)
-          const { address, publicKey, addressIndex } = data.data
+          const { address, publicKey } = data.data
           alephium.defaultAddress = {
             address,
             publicKey,
-            group: addressIndex
+            group: groupOfAddress(address)
           }
           alephium.isConnected = true
-          resolve([address])
+          resolve()
         }
       }
       window.addEventListener('message', handleMessage)
 
       sendMessage({
         type: 'CONNECT_DAPP',
-        data: { host: window.location.host }
+        data: { host: window.location.host, group: _options?.chainGroup }
       })
     })
 

@@ -1,6 +1,6 @@
 import type { AlephiumWindowObject, GetAlephiumWalletOptions } from './getAlephium'
 import { gaw } from './getAlephium'
-import type { DisconnectOptions } from './types'
+import type { DisconnectOptions, EnableOptions } from './types'
 
 export type {
   EventHandler,
@@ -22,9 +22,9 @@ export type {
 export const getAlephium = (): AlephiumWindowObject => {
   const alephium = gaw.getAlephium()
 
-  alephium.enable = async (options?: { showModal?: boolean }): Promise<string[]> => {
+  alephium.enable = async (options?: EnableOptions): Promise<void> => {
     const wallet = await connect({ showList: options?.showModal })
-    return wallet?.enable(options) || []
+    return wallet?.enable(options)
   }
 
   return alephium
