@@ -19,11 +19,16 @@ const Home: NextPage = () => {
     })()
   }, [])
 
-  const handleConnectClick = async () => {
-    const wallet = await connectWallet()
+  const handleConnectClick = async (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    const wallet = await connectWallet(group)
     setAddress(wallet?.defaultAddress?.address)
     setGroup(wallet?.defaultAddress?.group)
     setConnected(!!wallet?.isConnected)
+  }
+
+  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+    setGroup(+event.currentTarget.value);
   }
 
   return (
@@ -45,9 +50,13 @@ const Home: NextPage = () => {
           </>
         ) : (
           <>
-            <button className={styles.connect} onClick={handleConnectClick}>
-              Connect Wallet
-            </button>
+            <form onSubmit={handleConnectClick}>
+              <label>
+                Group:
+                <input type="number" value={group || 0} min={0} max={3} onChange={handleChange} />
+              </label>
+              <input type="submit" value="submit" />
+            </form>
           </>
         )}
       </main>

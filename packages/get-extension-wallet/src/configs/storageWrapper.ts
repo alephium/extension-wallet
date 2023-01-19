@@ -9,13 +9,13 @@ export class StorageWrapper implements IStorageWrapper {
 
   constructor(key: string) {
     this.#prefix = key
-    console.log(`StorageWrapper ${key}`, 'constructor')
+    console.debug(`StorageWrapper ${key}`, 'constructor')
 
     this.#init()
   }
 
   set(value: string | null | undefined) {
-    console.log(`StorageWrapper ${this.#key || this.#prefix}`, 'set', value)
+    console.debug(`StorageWrapper ${this.#key || this.#prefix}`, 'set', value)
 
     if (!this.#initialized && !this.#init()) {
       return false
@@ -26,7 +26,7 @@ export class StorageWrapper implements IStorageWrapper {
     this.value = value
     if (value) {
       this.#key = `${this.#prefix}-${generateUID()}`
-      console.log(`StorageWrapper ${this.#key}`, 'set - new key', this.#key)
+      console.debug(`StorageWrapper ${this.#key}`, 'set - new key', this.#key)
       localStorage.setItem(this.#key, value)
     }
 
@@ -35,12 +35,12 @@ export class StorageWrapper implements IStorageWrapper {
 
   get() {
     this.#validateValue()
-    console.log(`StorageWrapper ${this.#key || this.#prefix}`, 'get', 'value', this.value)
+    console.debug(`StorageWrapper ${this.#key || this.#prefix}`, 'get', 'value', this.value)
     return this.value
   }
 
   delete() {
-    console.log(`StorageWrapper ${this.#key || this.#prefix}`, 'delete')
+    console.debug(`StorageWrapper ${this.#key || this.#prefix}`, 'delete')
 
     if (!this.#initialized && !this.#init()) {
       return false
@@ -53,7 +53,7 @@ export class StorageWrapper implements IStorageWrapper {
   }
 
   #validateValue() {
-    console.log(`StorageWrapper ${this.#key || this.#prefix}`, 'validateValue', 'value', this.value)
+    console.debug(`StorageWrapper ${this.#key || this.#prefix}`, 'validateValue', 'value', this.value)
     if (this.value) {
       this.set(this.value)
     }
@@ -64,7 +64,7 @@ export class StorageWrapper implements IStorageWrapper {
       if (!this.#initialized && typeof window !== 'undefined') {
         // init with prev key/value
         this.#key = Object.keys(localStorage).find((sk) => sk.startsWith(this.#prefix))
-        console.log(`StorageWrapper ${this.#prefix}`, 'init', this.#key)
+        console.debug(`StorageWrapper ${this.#prefix}`, 'init', this.#key)
 
         // set initialized as soon as we managed to extract data
         // from localStorage, so the `set` call below won't result
