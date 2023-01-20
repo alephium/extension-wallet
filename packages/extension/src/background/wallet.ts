@@ -172,6 +172,7 @@ export class Wallet {
 
   public async selectAlephiumAddress(address: string) {
     const addresses = await this.getAlephiumAddresses()
+    console.log(`===== select: ${address} - ${JSON.stringify(addresses)}`)
 
     const defaultAddress = find(addresses, (addr) => addr.address === address)
 
@@ -195,7 +196,7 @@ export class Wallet {
     } else {
       // do not store at the moment, but use public key and private key to sign
       // store later
-      const addresses = await this.store.getItem('addresses')
+      const addresses = await this.store.getItem('addresses') ?? []
       group = group || group === 0 ? ~~group : undefined
 
       let newAndDefaultAddress
