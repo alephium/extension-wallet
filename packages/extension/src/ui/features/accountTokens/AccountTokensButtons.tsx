@@ -7,7 +7,6 @@ import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
 import { useNetworkFeeToken, useTokensWithBalance } from "./tokens.state"
-import { useAccountIsDeployed } from "./useAccountStatus"
 
 const { AddIcon, SendIcon, PluginIcon } = icons
 
@@ -24,7 +23,6 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
   const sendToken = useNetworkFeeToken(switcherNetworkId)
   const { tokenDetails, tokenDetailsIsInitialising } =
     useTokensWithBalance(account)
-  const accountIsDeployed = useAccountIsDeployed(account)
 
   const hasNonZeroBalance = useMemo(() => {
     return tokenDetails.some(({ balance }) => balance?.gt(0))
@@ -39,7 +37,6 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
   const onSend = useCallback(() => {
     /** tokenDetailsIsInitialising - balance is unknown, let the Send screen deal with it */
     if (
-      accountIsDeployed &&
       (tokenDetailsIsInitialising || hasNonZeroBalance)
     ) {
       navigate(routes.sendScreen())
@@ -47,7 +44,6 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
       setAlertDialogIsOpen(true)
     }
   }, [
-    accountIsDeployed,
     hasNonZeroBalance,
     navigate,
     tokenDetailsIsInitialising,
@@ -61,11 +57,9 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
     navigate(routes.addPlugin(account?.address))
   }, [account?.address, navigate])
 
-  const title = accountIsDeployed ? "Add funds" : "Deploying"
+  const title = "Add funds"
   const message = `You need to ${
-    accountIsDeployed
-      ? "add funds to this account"
-      : "wait for this account to deploy"
+    "add funds to this account"
   } before you can send`
 
   return (
@@ -74,10 +68,10 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
         isOpen={alertDialogIsOpen}
         title={title}
         message={message}
-        cancelTitle={accountIsDeployed ? undefined : "OK"}
+        cancelTitle={undefined}
         onCancel={onCancel}
         confirmTitle="Add funds"
-        onConfirm={accountIsDeployed ? onAddFunds : undefined}
+        onConfirm={onAddFunds}
       />
       <SimpleGrid columns={sendToken ? 2 : 1} spacing={2}>
         <Button

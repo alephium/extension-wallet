@@ -104,7 +104,8 @@
 
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "paths": {
-      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
+      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"],
+      "@alephium/web3": ["../../node_modules/@alephium/web3"]
     },
     "plugins": [
       {

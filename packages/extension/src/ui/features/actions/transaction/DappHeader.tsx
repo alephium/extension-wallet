@@ -2,6 +2,7 @@ import { H5, icons } from "@argent/ui"
 import { Box, Center, VStack } from "@chakra-ui/react"
 import React, { useMemo } from "react"
 import { Call } from "starknet"
+import { TransactionParams } from "../../../../shared/actionQueue/types"
 
 import { ApiTransactionReviewResponse } from "../../../../shared/transactionReview.service"
 import { titleForTransactions } from "./titleForTransactions"
@@ -9,17 +10,15 @@ import { titleForTransactions } from "./titleForTransactions"
 const { NetworkIcon } = icons
 
 export interface DappHeaderProps {
-  transactions: Call | Call[]
-  transactionReview?: ApiTransactionReviewResponse
+  transaction: TransactionParams
 }
 
 export const DappHeader = ({
-  transactions,
-  transactionReview,
+  transaction,
 }: DappHeaderProps) => {
   const title = useMemo(() => {
-    return titleForTransactions(transactions, transactionReview)
-  }, [transactionReview, transactions])
+    return titleForTransactions(transaction)
+  }, [transaction])
 
   return (
     <Box mb="4">

@@ -1,3 +1,4 @@
+import { Destination } from "@alephium/web3"
 import { CopyTooltip, P4 } from "@argent/ui"
 import {
   Accordion,
@@ -10,17 +11,62 @@ import {
 } from "@chakra-ui/react"
 import { FC } from "react"
 import { Call, number } from "starknet"
+import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
 
 import { entryPointToHumanReadable } from "../../../../shared/transactions"
 import { formatTruncatedAddress } from "../../../services/addresses"
 
+
+export interface TransactionActionRow {
+    key: string
+    value: string
+}
+export interface TransactionAction {
+  header: TransactionActionRow
+  details: TransactionActionRow[]
+}
+
+
+function getTokensFromDestination(destination: Destination): TransactionActionRow[] {
+  return [{key: 'ALPH', value: destination.attoAlphAmount.toString()},
+    ...(destination.tokens ?? []).map(token => ({key: token.id, value: token.amount.toString()}))]
+}
+
+export function extractActions(transaction: ReviewTransactionResult): TransactionAction[] {
+  switch (transaction.type) {
+    case 'TRANSFER':
+      return transaction.params.destinations.map((destination) => {
+        return {
+          header: { key: 'Transfer', value: destination.address },
+          details: getTokensFromDestination(destination)
+        }
+      })
+    case 'DEPLOY_CONTRACT':
+      return [{
+        header: { key: 'Deploy contract', value: transaction.result.contractAddress },
+        details: []
+      }]
+    case 'EXECUTE_SCRIPT':
+      return [{
+        header: { key: 'Call contract', value: 'add soon' },
+        details: []
+      }] // TODO: extract detailed actions
+    case 'UNSIGNED_TX':
+      return [{
+        header: { key: 'Raw transaction', value: 'add soon' },
+        details: []
+      }] // TODO: extract detailed actions
+  }
+}
+
 export interface TransactionActionsProps {
-  transactions: Call[]
+  transaction: ReviewTransactionResult
 }
 
 export const TransactionActions: FC<TransactionActionsProps> = ({
-  transactions,
+  transaction
 }) => {
+  const transactions = extractActions(transaction)
   return (
     <Box borderRadius="xl">
       <Box backgroundColor="neutrals.700" px="3" py="2.5" borderTopRadius="xl">
@@ -40,7 +86,7 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
             border="none"
             color="white"
             isDisabled={
-              !transaction.calldata || transaction.calldata?.length === 0
+              transaction.details.length === 0
             }
           >
             {({ isDisabled, isExpanded }) => (
@@ -58,8 +104,7 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                       pb: "3.5",
                     }}
                     disabled={
-                      !transaction.calldata ||
-                      transaction.calldata?.length === 0
+                      transaction.details.length === 0
                     }
                     _disabled={{
                       cursor: "auto",
@@ -74,10 +119,10 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                     }}
                   >
                     <P4 fontWeight="bold">
-                      {entryPointToHumanReadable(transaction.entrypoint)}
+                      {entryPointToHumanReadable(transaction.header.key)}
                     </P4>
                     <P4 color="neutrals.400" fontWeight="bold">
-                      {formatTruncatedAddress(transaction.contractAddress)}
+                      {formatTruncatedAddress(transaction.header.value)}
                     </P4>
                   </AccordionButton>
                 </h2>
@@ -91,21 +136,21 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                 >
                   <Divider color="black" opacity="1" />
                   <Flex flexDirection="column" gap="12px" py="3.5">
-                    {transaction.calldata?.map((calldata, cdIndex) => (
+                    {transaction.details.map((detail, cdIndex) => (
                       <Flex
                         key={cdIndex}
                         justifyContent="space-between"
                         gap="2"
                       >
                         <P4 color="neutrals.300" fontWeight="bold">
-                          Calldata {cdIndex + 1}
+                          detail.key
                         </P4>
                         <P4
                           color="neutrals.400"
                           fontWeight="bold"
                           maxWidth="70%"
                         >
-                          <CopyTooltip copyValue={calldata} prompt={calldata}>
+                          <CopyTooltip copyValue={detail.value} prompt={detail.value}>
                             <Box
                               _hover={{
                                 bg: "neutrals.700",
@@ -117,9 +162,9 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                               overflow="hidden"
                               minWidth="0"
                             >
-                              {number.isHex(calldata)
-                                ? formatTruncatedAddress(calldata)
-                                : calldata}
+                              {number.isHex(detail.value)
+                                ? formatTruncatedAddress(detail.value)
+                                : detail.value}
                             </Box>
                           </CopyTooltip>
                         </P4>

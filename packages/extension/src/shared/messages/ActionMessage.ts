@@ -1,6 +1,6 @@
 import type { typedData } from "starknet"
 
-import { ExtensionActionItem } from "../actionQueue/types"
+import { ExtensionActionItem, TransactionResult } from "../actionQueue/types"
 
 export type ActionMessage =
   | { type: "GET_ACTIONS" }
@@ -8,7 +8,14 @@ export type ActionMessage =
       type: "GET_ACTIONS_RES"
       data: ExtensionActionItem[]
     }
-  | { type: "APPROVE_ACTION"; data: { actionHash: string } }
+  | {
+      type: "APPROVE_ACTION"
+      data: { actionHash: string; additionalData?: any }
+    }
+  | {
+      type: "APPROVE_Transaction_ACTION"
+      data: { actionHash: string; result: TransactionResult }
+    }
   | { type: "REJECT_ACTION"; data: { actionHash: string | string[] } }
   | { type: "SIGN_MESSAGE"; data: typedData.TypedData }
   | { type: "SIGN_MESSAGE_RES"; data: { actionHash: string } }

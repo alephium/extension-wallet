@@ -1,5 +1,6 @@
 import { isArray, lowerCase } from "lodash-es"
 import { Call } from "starknet"
+import { ReviewTransactionResult } from "./actionQueue/types"
 
 import { ARGENT_TRANSACTION_REVIEW_STARKNET_URL } from "./api/constants"
 import { Fetcher, fetcher } from "./api/fetcher"
@@ -148,27 +149,9 @@ export const fetchTransactionReview = ({
 }
 
 export const getDisplayWarnAndReasonForTransactionReview = (
-  transactionReview?: Pick<
-    ApiTransactionReviewResponse,
-    "assessment" | "reason"
-  >,
+  transaction: ReviewTransactionResult
 ) => {
-  if (!transactionReview) {
-    return {}
-  }
-  const warn = transactionReview.assessment === "warn"
-  const suffix = transactionReview.reason
-    ? ` (Reason: ${lowerCase(transactionReview.reason)})`
-    : ""
-  const reason = warn
-    ? transactionReview.reason === "recipient_is_token_address"
-      ? "You are sending tokens to their own address. This is likely to burn them."
-      : `This transaction has been flagged as dangerous. We recommend you reject this transaction unless you are sure.${suffix}`
-    : undefined
-  return {
-    warn,
-    reason,
-  }
+  return { warn: false, reason: undefined}
 }
 
 /** finds activity of type 'swap */

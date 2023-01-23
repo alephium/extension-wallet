@@ -43,15 +43,6 @@ const ApproveDeclareContractScreen: FC<ApproveDeclareContractScreenProps> = ({
       selectedAccount={selectedAccount}
       onSubmit={onSubmit}
       showHeader={false}
-      footer={
-        <DeclareContractFeeEstimation
-          onErrorChange={setDisableConfirm}
-          accountAddress={selectedAccount.address}
-          networkId={selectedAccount.networkId}
-          actionHash={actionHash}
-          payload={payload}
-        />
-      }
       {...props}
     >
       <AccountAddress selectedAccount={selectedAccount} />

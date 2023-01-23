@@ -20,6 +20,7 @@ import { keyframes } from "@chakra-ui/react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { analytics } from "../../../background/analytics"
+import { TransactionParams } from "../../../shared/actionQueue/types"
 import { executeTransaction } from "../../services/backgroundTransactions"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { HighPriceImpactModal } from "./ui/HighPriceImpactModal"
@@ -185,7 +186,7 @@ const Swap = () => {
           trade?.outputAmount.currency.symbol,
       })
 
-      return executeTransaction({ transactions: swapCalls }).then(() => {
+      return executeTransaction({} as TransactionParams).then(() => {
         onUserInput(Field.INPUT, "")
       })
     }

@@ -1,19 +1,22 @@
 import { getAccounts } from "../shared/account/store"
-import { ActionItem, ExtQueueItem } from "../shared/actionQueue/types"
+import {
+  ActionItem,
+  ExtQueueItem,
+  ReviewTransactionResult,
+} from "../shared/actionQueue/types"
 import { MessageType } from "../shared/messages"
 import { addNetwork, getNetworks } from "../shared/network"
 import { preAuthorize } from "../shared/preAuthorizations"
 import { isEqualWalletAddress } from "../shared/wallet.service"
 import { assertNever } from "../ui/services/assertNever"
-import { accountDeployAction } from "./accounDeployAction"
 import { analytics } from "./analytics"
 import { BackgroundService } from "./background"
 import { openUi } from "./openUi"
 import { executeTransactionAction } from "./transactions/transactionExecution"
-import { udcDeclareContract, udcDeployContract } from "./udcAction"
 
 export const handleActionApproval = async (
   action: ExtQueueItem<ActionItem>,
+  additionalData: any | undefined,
   background: BackgroundService,
 ): Promise<MessageType | undefined> => {
   const { wallet } = background
@@ -41,48 +44,27 @@ export const handleActionApproval = async (
 
     case "TRANSACTION": {
       try {
-        const response = await executeTransactionAction(action, background)
+        const selectedAccount = await wallet.getSelectedAccount()
+
+        if (!selectedAccount || !additionalData) {
+          openUi()
+          return
+        }
+
+        const transaction = additionalData as ReviewTransactionResult
+        await executeTransactionAction(
+          transaction,
+          background,
+          selectedAccount.networkId,
+        )
 
         return {
           type: "TRANSACTION_SUBMITTED",
-          data: { txHash: response.transaction_hash, actionHash },
+          data: { result: transaction.result, actionHash },
         }
       } catch (error: unknown) {
         return {
           type: "TRANSACTION_FAILED",
-          data: { actionHash, error: `${error}` },
-        }
-      }
-    }
-
-    case "DEPLOY_ACCOUNT_ACTION": {
-      try {
-        const txHash = await accountDeployAction(action, background)
-
-        analytics.track("deployAccount", {
-          status: "success",
-          trigger: "sign",
-          networkId: action.payload.networkId,
-        })
-
-        return {
-          type: "DEPLOY_ACCOUNT_ACTION_SUBMITTED",
-          data: { txHash, actionHash },
-        }
-      } catch (exception: unknown) {
-        let error = `${exception}`
-        if (error.includes("403")) {
-          error = `${error}\n\nA 403 error means there's already something running on the selected port. On macOS, AirPlay is using port 5000 by default, so please try running your node on another port and changing the port in Argent X settings.`
-        }
-
-        analytics.track("deployAccount", {
-          status: "failure",
-          networkId: action.payload.networkId,
-          errorMessage: `${error}`,
-        })
-
-        return {
-          type: "DEPLOY_ACCOUNT_ACTION_FAILED",
           data: { actionHash, error: `${error}` },
         }
       }
@@ -93,9 +75,7 @@ export const handleActionApproval = async (
       if (!(await wallet.isSessionOpen())) {
         throw Error("you need an open session")
       }
-      const starknetAccount = await wallet.getSelectedStarknetAccount()
-
-      const [r, s] = await starknetAccount.signMessage(typedData)
+      const account = await wallet.getSelectedAccount()
 
       return {
         type: "SIGNATURE_SUCCESS",
@@ -104,13 +84,6 @@ export const handleActionApproval = async (
           s: s.toString(),
           actionHash,
         },
-      }
-    }
-
-    case "REQUEST_TOKEN": {
-      return {
-        type: "APPROVE_REQUEST_TOKEN",
-        data: { actionHash },
       }
     }
 
@@ -177,58 +150,6 @@ export const handleActionApproval = async (
       }
     }
 
-    case "DECLARE_CONTRACT_ACTION": {
-      try {
-        const { classHash, txHash } = await udcDeclareContract(
-          action,
-          background,
-        )
-
-        return {
-          type: "DECLARE_CONTRACT_ACTION_SUBMITTED",
-          data: { txHash, actionHash, classHash },
-        }
-      } catch (exception: unknown) {
-        let error = `${exception}`
-        if (error.includes("403")) {
-          error = `${error}\n\nA 403 error means there's already something running on the selected port. On macOS, AirPlay is using port 5000 by default, so please try running your node on another port and changing the port in Argent X settings.`
-        }
-
-        return {
-          type: "DECLARE_CONTRACT_ACTION_FAILED",
-          data: { actionHash, error: `${error}` },
-        }
-      }
-    }
-
-    case "DEPLOY_CONTRACT_ACTION": {
-      try {
-        const { txHash, contractAddress } = await udcDeployContract(
-          action,
-          background,
-        )
-
-        return {
-          type: "DEPLOY_CONTRACT_ACTION_SUBMITTED",
-          data: {
-            txHash,
-            deployedContractAddress: contractAddress,
-            actionHash,
-          },
-        }
-      } catch (exception: unknown) {
-        let error = `${exception}`
-        if (error.includes("403")) {
-          error = `${error}\n\nA 403 error means there's already something running on the selected port. On macOS, AirPlay is using port 5000 by default, so please try running your node on another port and changing the port in Argent X settings.`
-        }
-
-        return {
-          type: "DEPLOY_CONTRACT_ACTION_FAILED",
-          data: { actionHash, error: `${error}` },
-        }
-      }
-    }
-
     default:
       assertNever(action)
   }
@@ -258,23 +179,9 @@ export const handleActionRejection = async (
       }
     }
 
-    case "DEPLOY_ACCOUNT_ACTION": {
-      return {
-        type: "DEPLOY_ACCOUNT_ACTION_FAILED",
-        data: { actionHash },
-      }
-    }
-
     case "SIGN": {
       return {
         type: "SIGNATURE_FAILURE",
-        data: { actionHash },
-      }
-    }
-
-    case "REQUEST_TOKEN": {
-      return {
-        type: "REJECT_REQUEST_TOKEN",
         data: { actionHash },
       }
     }
@@ -292,21 +199,6 @@ export const handleActionRejection = async (
         data: { actionHash },
       }
     }
-
-    case "DECLARE_CONTRACT_ACTION": {
-      return {
-        type: "REQUEST_DECLARE_CONTRACT_REJ",
-        data: { actionHash },
-      }
-    }
-    case "DEPLOY_CONTRACT_ACTION": {
-      return {
-        type: "REQUEST_DEPLOY_CONTRACT_REJ",
-        data: { actionHash },
-      }
-    }
-
-    /* TODO: add deploy */
 
     default:
       assertNever(action)

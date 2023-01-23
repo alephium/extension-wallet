@@ -1,74 +1,75 @@
-import { FC, useState } from "react"
+import { node, SignUnsignedTxParams, TransactionBuilder } from "@alephium/web3"
+import { NodeProvider } from "@alephium/web3"
+import { FC, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { Call } from "starknet"
+import { ReviewTransactionResult, TransactionParams, TransactionResult } from "../../../shared/actionQueue/types"
 
 import { routes } from "../../routes"
 import { usePageTracking } from "../../services/analytics"
+import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { useCheckUpgradeAvailable } from "../accounts/upgrade.service"
-import { UpgradeScreenV4 } from "../accounts/UpgradeScreenV4"
 import { useFeeTokenBalance } from "../accountTokens/tokens.service"
 import { useTokensInNetwork } from "../accountTokens/tokens.state"
-import { useCurrentNetwork } from "../networks/useNetworks"
+import { useCurrentNetwork, useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
 import { ConfirmPageProps } from "./DeprecatedConfirmScreen"
-import { CombinedFeeEstimation } from "./feeEstimation/CombinedFeeEstimation"
 import { FeeEstimation } from "./feeEstimation/FeeEstimation"
 import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import { DappHeader } from "./transaction/DappHeader"
 import { TransactionsList } from "./transaction/TransactionsList"
-import { useTransactionReview } from "./transaction/useTransactionReview"
 
 export interface ApproveTransactionScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
   actionHash: string
-  transactions: Call | Call[]
-  onSubmit: (transactions: Call | Call[]) => void
+  transaction: TransactionParams
+  onSubmit: (result: ReviewTransactionResult | undefined) => void
+}
+
+async function buildTransaction(nodeUrl: string, account: Account, transaction: TransactionParams): Promise<ReviewTransactionResult> {
+  const builder = TransactionBuilder.create(nodeUrl)
+  switch (transaction.type) {
+    case 'TRANSFER':
+      return { type: transaction.type, params: transaction.params, result: await builder.buildTransferTx(transaction.params, account.publicKey) }
+    case 'DEPLOY_CONTRACT':
+      return { type: transaction.type, params: transaction.params, result: await builder.buildDeployContractTx(transaction.params, account.publicKey) }
+    case 'EXECUTE_SCRIPT':
+      return { type: transaction.type, params: transaction.params, result: await builder.buildExecuteScriptTx(transaction.params, account.publicKey) }
+    case 'UNSIGNED_TX':
+      return { type: transaction.type, params: transaction.params, result: await builder.buildUnsignedTx(transaction.params) }
+  }
 }
 
 export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
-  transactions,
+  transaction,
   selectedAccount,
   actionHash,
   onSubmit,
   ...props
 }) => {
+
   usePageTracking("signTransaction", {
     networkId: selectedAccount?.networkId || "unknown",
   })
   const [disableConfirm, setDisableConfirm] = useState(true)
-  const { id: networkId } = useCurrentNetwork()
-  const tokensByNetwork = useTokensInNetwork(networkId)
+  const [buildResult, setBuildResult] = useState<ReviewTransactionResult>()
+  const { id: networkId, nodeUrl } = useNetwork(selectedAccount?.networkId ?? "unknown")
 
-  const { data: transactionReview } = useTransactionReview({
-    account: selectedAccount,
-    transactions,
-    actionHash,
-  })
+  // TODO: handle error
+  useEffect(() => {
+    const build = async () => {
+      if (selectedAccount === undefined) {
+        return
+      }
 
-  const { feeTokenBalance } = useFeeTokenBalance(selectedAccount)
-
-  const { needsUpgrade = false } = useCheckUpgradeAvailable(selectedAccount)
-  const { pendingTransactions } = useAccountTransactions(selectedAccount)
-
-  const isUpgradeTransaction =
-    !Array.isArray(transactions) && transactions.entrypoint === "upgrade"
-  const hasUpgradeTransactionPending = pendingTransactions.some(
-    (t) => t.meta?.isUpgrade,
-  )
-  const shouldShowUpgrade = Boolean(
-    needsUpgrade &&
-      feeTokenBalance?.gt(0) &&
-      !hasUpgradeTransactionPending &&
-      !isUpgradeTransaction,
-  )
+      const buildResult = await buildTransaction(nodeUrl, selectedAccount, transaction)
+      setBuildResult(buildResult)
+    }
+    build()
+  }, [nodeUrl, selectedAccount, transaction])
 
   if (!selectedAccount) {
     return <Navigate to={routes.accounts()} />
-  }
-
-  if (shouldShowUpgrade) {
-    return <UpgradeScreenV4 upgradeType="account" {...props} />
   }
 
   return (
@@ -78,24 +79,16 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       confirmButtonDisabled={disableConfirm}
       selectedAccount={selectedAccount}
       onSubmit={() => {
-        onSubmit(transactions)
+        onSubmit(buildResult)
       }}
       showHeader={true}
       footer={
-        selectedAccount.needsDeploy ? (
-          <CombinedFeeEstimation
-            onErrorChange={setDisableConfirm}
-            accountAddress={selectedAccount.address}
-            networkId={selectedAccount.networkId}
-            transactions={transactions}
-            actionHash={actionHash}
-          />
-        ) : (
+        (
           <FeeEstimation
             onErrorChange={setDisableConfirm}
             accountAddress={selectedAccount.address}
             networkId={selectedAccount.networkId}
-            transactions={transactions}
+            transaction={buildResult}
             actionHash={actionHash}
           />
         )
@@ -103,16 +96,17 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       {...props}
     >
       <DappHeader
-        transactions={transactions}
-        transactionReview={transactionReview}
+        transaction={transaction}
       />
 
-      <TransactionsList
-        networkId={networkId}
-        transactions={transactions}
-        transactionReview={transactionReview}
-        tokensByNetwork={tokensByNetwork}
-      />
+      {buildResult === undefined ?
+        (<></>) // TODO: show pending status
+      : (
+        <TransactionsList
+          networkId={networkId}
+          transactionReview={buildResult}
+        />
+      )}
       <AccountNetworkInfo account={selectedAccount} />
     </ConfirmScreen>
   )

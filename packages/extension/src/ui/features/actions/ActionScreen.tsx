@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { TransactionResult } from "../../../shared/actionQueue/types"
 
 import { waitForMessage } from "../../../shared/messages"
 import { removePreAuthorization } from "../../../shared/preAuthorizations"
@@ -10,12 +11,11 @@ import { assertNever } from "../../services/assertNever"
 import { selectAccount } from "../../services/backgroundAccounts"
 import { approveAction, rejectAction } from "../../services/backgroundActions"
 import { Account } from "../accounts/Account"
-import { useSelectedAccount } from "../accounts/accounts.state"
+import { useAccount, useSelectedAccount } from "../accounts/accounts.state"
 import { EXTENSION_IS_POPUP } from "../browser/constants"
 import { focusExtensionTab, useExtensionIsInTab } from "../browser/tabs"
 import { useActions } from "./actions.state"
 import { AddNetworkScreen } from "./AddNetworkScreen"
-import { AddTokenScreen } from "./AddTokenScreen"
 import { ApproveDeclareContractScreen } from "./ApproveDeclareContractScreen"
 import { ApproveDeployAccountScreen } from "./ApproveDeployAccount"
 import { ApproveDeployContractScreen } from "./ApproveDeployContractScreen"
@@ -25,12 +25,16 @@ import { ConnectDappScreen } from "./connectDapp/ConnectDappScreen"
 
 export const ActionScreen: FC = () => {
   const navigate = useNavigate()
-  const account = useSelectedAccount()
+  const selectedAccount = useSelectedAccount()
   const extensionIsInTab = useExtensionIsInTab()
   const actions = useActions()
 
   const [action] = actions
   const isLastAction = actions.length === 1
+  const signerAccount = useAccount(action.type === 'TRANSACTION' && selectedAccount
+    ? { address: action.payload.params.signerAddress, networkId: selectedAccount?.networkId }
+    : undefined
+  )
 
   const closePopup = useCallback(() => {
     if (EXTENSION_IS_POPUP) {
@@ -90,16 +94,6 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "REQUEST_TOKEN":
-      return (
-        <AddTokenScreen
-          defaultToken={action.payload}
-          hideBackButton
-          onSubmit={onSubmit}
-          onReject={onReject}
-        />
-      )
-
     case "REQUEST_ADD_CUSTOM_NETWORK":
       return (
         <AddNetworkScreen
@@ -125,13 +119,13 @@ export const ActionScreen: FC = () => {
     case "TRANSACTION":
       return (
         <ApproveTransactionScreen
-          transactions={action.payload.transactions}
+          transaction={action.payload}
           actionHash={action.meta.hash}
-          onSubmit={async () => {
+          onSubmit={async (builtTransaction) => {
             analytics.track("signedTransaction", {
-              networkId: account?.networkId || "unknown",
+              networkId: selectedAccount?.networkId || "unknown",
             })
-            await approveAction(action)
+            await approveAction(action, builtTransaction)
             useAppState.setState({ isLoading: true })
             const result = await Promise.race([
               waitForMessage(
@@ -146,7 +140,7 @@ export const ActionScreen: FC = () => {
             // (await) blocking as the window may closes afterwards
             await analytics.track("sentTransaction", {
               success: !("error" in result),
-              networkId: account?.networkId || "unknown",
+              networkId: selectedAccount?.networkId || "unknown",
             })
             if ("error" in result) {
               useAppState.setState({
@@ -160,51 +154,7 @@ export const ActionScreen: FC = () => {
             }
           }}
           onReject={onReject}
-          selectedAccount={account}
-        />
-      )
-
-    case "DEPLOY_ACCOUNT_ACTION":
-      return (
-        <ApproveDeployAccountScreen
-          actionHash={action.meta.hash}
-          onSubmit={async () => {
-            analytics.track("signedTransaction", {
-              networkId: account?.networkId || "unknown",
-            })
-            await approveAction(action)
-            useAppState.setState({ isLoading: true })
-            const result = await Promise.race([
-              waitForMessage(
-                "DEPLOY_ACCOUNT_ACTION_SUBMITTED",
-                ({ data }) => data.actionHash === action.meta.hash,
-              ),
-              waitForMessage(
-                "DEPLOY_ACCOUNT_ACTION_FAILED",
-                ({ data }) => data.actionHash === action.meta.hash,
-              ),
-            ])
-            // (await) blocking as the window may closes afterwards
-            await analytics.track("sentTransaction", {
-              success: !("error" in result),
-              networkId: account?.networkId || "unknown",
-            })
-            if ("error" in result) {
-              useAppState.setState({
-                error: `Sending transaction failed: ${result.error}`,
-                isLoading: false,
-              })
-              navigate(routes.error())
-            } else {
-              if ("txHash" in result) {
-                account?.updateDeployTx(result.txHash)
-              }
-              closePopupIfLastAction()
-              useAppState.setState({ isLoading: false })
-            }
-          }}
-          onReject={rejectAllActions}
-          selectedAccount={account}
+          selectedAccount={signerAccount}
         />
       )
 
@@ -220,110 +170,14 @@ export const ActionScreen: FC = () => {
               ({ data }) => data.actionHash === action.meta.hash,
             )
             await analytics.track("signedMessage", {
-              networkId: account?.networkId || "unknown",
+              networkId: selectedAccount?.networkId || "unknown",
             })
             closePopupIfLastAction()
             useAppState.setState({ isLoading: false })
           }}
           onReject={onReject}
-          selectedAccount={account}
+          selectedAccount={selectedAccount}
         />
-      )
-    case "DECLARE_CONTRACT_ACTION":
-      return (
-        <ApproveDeclareContractScreen
-          actionHash={action.meta.hash}
-          payload={action.payload}
-          onSubmit={async () => {
-            analytics.track("signedDeclareTransaction", {
-              networkId: account?.networkId || "unknown",
-            })
-            await approveAction(action)
-            useAppState.setState({ isLoading: true })
-            const result = await Promise.race([
-              waitForMessage(
-                "DECLARE_CONTRACT_ACTION_SUBMITTED",
-                ({ data }) => data.actionHash === action.meta.hash,
-              ),
-              waitForMessage(
-                "DECLARE_CONTRACT_ACTION_FAILED",
-                ({ data }) => data.actionHash === action.meta.hash,
-              ),
-            ])
-            // (await) blocking as the window may closes afterwards
-            await analytics.track("sentTransaction", {
-              success: !("error" in result),
-              networkId: account?.networkId || "unknown",
-            })
-            if ("error" in result) {
-              useAppState.setState({
-                error: `Sending transaction failed: ${result.error}`,
-                isLoading: false,
-              })
-              navigate(routes.error())
-            } else {
-              closePopupIfLastAction()
-              useAppState.setState({ isLoading: false })
-              navigate(
-                routes.settingsSmartContractDeclareOrDeploySuccess(
-                  "declare",
-                  action.payload.classHash,
-                ),
-              )
-            }
-          }}
-          onReject={rejectAllActions}
-          selectedAccount={account}
-        />
-      )
-    case "DEPLOY_CONTRACT_ACTION":
-      return (
-        <>
-          <ApproveDeployContractScreen
-            actionHash={action.meta.hash}
-            deployPayload={action.payload}
-            onSubmit={async () => {
-              analytics.track("signedDeployTransaction", {
-                networkId: account?.networkId || "unknown",
-              })
-              await approveAction(action)
-              useAppState.setState({ isLoading: true })
-              const result = await Promise.race([
-                waitForMessage(
-                  "DEPLOY_CONTRACT_ACTION_SUBMITTED",
-                  ({ data }) => data.actionHash === action.meta.hash,
-                ),
-                waitForMessage(
-                  "DEPLOY_CONTRACT_ACTION_FAILED",
-                  ({ data }) => data.actionHash === action.meta.hash,
-                ),
-              ])
-              // (await) blocking as the window may closes afterwards
-              await analytics.track("sentTransaction", {
-                success: !("error" in result),
-                networkId: account?.networkId || "unknown",
-              })
-              if ("error" in result) {
-                useAppState.setState({
-                  error: `Sending transaction failed: ${result.error}`,
-                  isLoading: false,
-                })
-                navigate(routes.error())
-              } else {
-                closePopupIfLastAction()
-                useAppState.setState({ isLoading: false })
-                navigate(
-                  routes.settingsSmartContractDeclareOrDeploySuccess(
-                    "deploy",
-                    result.deployedContractAddress,
-                  ),
-                )
-              }
-            }}
-            onReject={rejectAllActions}
-            selectedAccount={account}
-          />
-        </>
       )
 
     default:

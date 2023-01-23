@@ -89,9 +89,9 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
                 readonly
               />
               <InputText
-                placeholder="Base URL"
+                placeholder="Node URL"
                 type="text"
-                value={requestedNetwork.baseUrl}
+                value={requestedNetwork.nodeUrl}
                 readonly
               />
               {/*** Show Optional Fields only if the value is provided */}
@@ -100,22 +100,6 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
                   placeholder="Explorer URL"
                   type="text"
                   value={requestedNetwork.explorerUrl}
-                  readonly
-                />
-              )}
-              {requestedNetwork.blockExplorerUrl && (
-                <InputText
-                  placeholder="Explorer redirect URL"
-                  type="text"
-                  value={requestedNetwork.blockExplorerUrl}
-                  readonly
-                />
-              )}
-              {requestedNetwork.rpcUrl && (
-                <InputText
-                  placeholder="RPC URL"
-                  type="text"
-                  value={requestedNetwork.rpcUrl}
                   readonly
                 />
               )}

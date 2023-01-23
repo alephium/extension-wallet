@@ -4,9 +4,10 @@ import {
   DeclareContractPayload,
   UniversalDeployerContractPayload,
 } from "starknet"
+import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
 
 export interface TransactionsFeeEstimationProps {
-  transactions: Call | Call[]
+  transaction: ReviewTransactionResult | undefined
   defaultMaxFee?: BigNumber
   onChange?: (fee: BigNumber) => void
   onErrorChange?: (error: boolean) => void

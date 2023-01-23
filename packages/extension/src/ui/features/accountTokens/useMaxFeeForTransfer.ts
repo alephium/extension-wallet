@@ -3,7 +3,6 @@ import { Call, number, stark } from "starknet"
 import useSWR from "swr"
 
 import { getEstimatedFee } from "../../services/backgroundTransactions"
-import { getUint256CalldataFromBN } from "../../services/transactions"
 import { Account } from "../accounts/Account"
 import { getNetworkFeeToken } from "./tokens.state"
 
@@ -27,7 +26,7 @@ export const useMaxFeeEstimateForTransfer = (
     entrypoint: "transfer",
     calldata: compileCalldata({
       recipient: account.address,
-      amount: getUint256CalldataFromBN(balance),
+      amount: 'unknown',
     }),
   }
 
@@ -68,10 +67,7 @@ export const useMaxFeeEstimateForTransfer = (
   if (estimatedFee) {
     const { suggestedMaxFee, maxADFee } = estimatedFee
 
-    const totalMaxFee =
-      account.needsDeploy && maxADFee
-        ? number.toHex(number.toBN(maxADFee).add(number.toBN(suggestedMaxFee)))
-        : suggestedMaxFee
+    const totalMaxFee = suggestedMaxFee
 
     const maxFee = addOverheadToFee(totalMaxFee, 0.2)
 

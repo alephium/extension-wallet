@@ -31,11 +31,9 @@ import { initOnboarding } from "./onboarding"
 import { handlePreAuthorizationMessage } from "./preAuthorizationMessaging"
 import { handleRecoveryMessage } from "./recoveryMessaging"
 import { handleSessionMessage } from "./sessionMessaging"
-import { handleTokenMessaging } from "./tokenMessaging"
 import { initBadgeText } from "./transactions/badgeText"
 import { transactionTracker } from "./transactions/tracking"
 import { handleTransactionMessage } from "./transactions/transactionMessaging"
-import { handleUdcMessaging } from "./udcMessaging"
 import { Wallet, sessionStore } from "./wallet"
 
 browser.alarms.create("core:transactionTracker:history", {
@@ -86,7 +84,6 @@ const handlers = [
   handleRecoveryMessage,
   handleSessionMessage,
   handleTransactionMessage,
-  handleTokenMessaging,
   handleUdcMessaging,
 ] as Array<HandleMessage<MessageType>>
 
@@ -101,7 +98,6 @@ const safeMessages: MessageType["type"][] = [
   "EXECUTE_TRANSACTION",
   "OPEN_UI",
   "SIGN_MESSAGE",
-  "REQUEST_TOKEN",
   "REQUEST_ADD_CUSTOM_NETWORK",
   "REQUEST_SWITCH_CUSTOM_NETWORK",
   "REQUEST_DECLARE_CONTRACT",

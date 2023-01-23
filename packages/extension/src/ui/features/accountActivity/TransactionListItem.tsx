@@ -2,7 +2,6 @@ import { H6, P4 } from "@argent/ui"
 import { Flex } from "@chakra-ui/react"
 import { FC, ReactNode, useMemo } from "react"
 
-import { Network } from "../../../shared/network"
 import { CustomButtonCell } from "../../components/CustomButtonCell"
 import { PrettyAccountAddress } from "../accounts/PrettyAccountAddress"
 import {
@@ -24,7 +23,7 @@ import { TransferAccessory } from "./ui/TransferAccessory"
 
 export interface TransactionListItemProps {
   transactionTransformed: TransformedTransaction
-  network: Network
+  networkId: string
   highlighted?: boolean
   onClick?: () => void
   children?: ReactNode | ReactNode[]
@@ -32,7 +31,7 @@ export interface TransactionListItemProps {
 
 export const TransactionListItem: FC<TransactionListItemProps> = ({
   transactionTransformed,
-  network,
+  networkId,
   highlighted,
   children,
   ...props
@@ -58,7 +57,7 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
           {titleShowsTo ? "To: " : "From: "}
           <PrettyAccountAddress
             accountAddress={titleShowsTo ? toAddress : fromAddress}
-            networkId={network.id}
+            networkId={networkId}
             icon={false}
           />
         </>
@@ -82,7 +81,7 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
     isDeployContract,
     action,
     transactionTransformed,
-    network.id,
+    networkId,
   ])
 
   const icon = useMemo(() => {
@@ -92,7 +91,7 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
         <NFTImage
           contractAddress={contractAddress}
           tokenId={tokenId}
-          networkId={network.id}
+          networkId={networkId}
           display={"flex"}
           flexShrink={0}
           rounded={"lg"}
@@ -107,7 +106,7 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
       )
     }
     return <TransactionIcon transaction={transactionTransformed} size={9} />
-  }, [isNFT, isSwap, transactionTransformed, network.id])
+  }, [isNFT, isSwap, transactionTransformed, networkId])
 
   const accessory = useMemo(() => {
     if (isTransfer || isTokenMint || isTokenApprove) {

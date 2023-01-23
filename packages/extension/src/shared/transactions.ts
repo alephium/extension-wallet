@@ -1,5 +1,7 @@
+import { Destination, node } from "@alephium/web3"
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call, Status } from "starknet"
+import { ReviewTransactionResult } from "./actionQueue/types"
 
 import { WalletAccount } from "./wallet.model"
 
@@ -18,8 +20,6 @@ export const TRANSACTION_STATUSES_TO_TRACK: Status[] = [
 export interface TransactionMeta {
   title?: string
   subTitle?: string
-  isUpgrade?: boolean
-  isDeployAccount?: boolean
   transactions?: Call | Call[]
   type?: string // TODO: in future can be DECLARE | DEPLOY | CALL
 }
@@ -60,8 +60,7 @@ export const getInFlightTransactions = (
 ): Transaction[] =>
   transactions.filter(
     ({ status, meta }) =>
-      TRANSACTION_STATUSES_TO_TRACK.includes(status) ||
-      (meta?.isDeployAccount && status === "PENDING"),
+      TRANSACTION_STATUSES_TO_TRACK.includes(status)
   )
 
 export function nameTransaction(calls: Call | Call[]) {

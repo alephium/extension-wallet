@@ -32,18 +32,6 @@ export type UdcMessage =
       data: { actionHash: string; error?: string }
     }
   | {
-      type: "DEPLOY_CONTRACT_ACTION_SUBMITTED"
-      data: {
-        txHash: string
-        deployedContractAddress: string
-        actionHash: string
-      }
-    }
-  | {
-      type: "DEPLOY_CONTRACT_ACTION_FAILED"
-      data: { actionHash: string; error: string }
-    }
-  | {
       type: "FETCH_CONSTRUCTOR_PARAMS"
       data: { classHash: string; networkId: string }
     }

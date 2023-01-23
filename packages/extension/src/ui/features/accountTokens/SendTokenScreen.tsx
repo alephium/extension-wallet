@@ -1,3 +1,4 @@
+import { Destination } from "@alephium/web3"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
 import { utils } from "ethers"
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -9,6 +10,7 @@ import { Schema, object } from "yup"
 import { AddressBookContact } from "../../../shared/addressBook"
 import { inputAmountSchema, parseAmount } from "../../../shared/token/amount"
 import { prettifyCurrencyValue } from "../../../shared/token/price"
+import { dustALPHAmount } from "../../../shared/token/utils"
 import { AddContactBottomSheet } from "../../components/AddContactBottomSheet"
 import { Button, ButtonTransparent } from "../../components/Button"
 import Column, { ColumnCenter } from "../../components/Column"
@@ -33,7 +35,6 @@ import {
   normalizeAddress,
 } from "../../services/addresses"
 import {
-  getUint256CalldataFromBN,
   sendTransaction,
 } from "../../services/transactions"
 import { useOnClickOutside } from "../../services/useOnClickOutside"
@@ -385,15 +386,14 @@ export const SendTokenScreen: FC = () => {
           </ColumnCenter>
           <StyledForm
             onSubmit={handleSubmit(({ amount, recipient }) => {
+              const destination: Destination = {
+                address: recipient,
+                attoAlphAmount: tokenAddress === undefined ? BigInt(amount) : dustALPHAmount,
+                tokens: tokenAddress === undefined ? [] : [{ id: tokenAddress, amount: BigInt(amount) }]
+              }
               sendTransaction({
-                to: address,
-                method: "transfer",
-                calldata: {
-                  recipient,
-                  amount: getUint256CalldataFromBN(
-                    parseAmount(amount, decimals),
-                  ),
-                },
+                signerAddress: address,
+                destinations: [ destination ],
               })
               navigate(routes.accountTokens(), { replace: true })
             })}

@@ -19,31 +19,11 @@ export const networkSchema: Schema<Network> = object()
         message:
           "${path} must be hexadecimal string, uppercase alphanumeric or underscore, like 'SN_GOERLI'",
       }),
-    baseUrl: string()
+    nodeUrl: string()
       .required()
       .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
-    accountImplementation: string().optional().matches(REGEX_HEXSTRING),
-    accountClassHash: object({
-      argentAccount: string()
-        .label("Account class hash")
-        .required()
-        .matches(REGEX_HEXSTRING),
-      argentPluginAccount: string()
-        .label("Plugin account class hash")
-        .optional()
-        .matches(REGEX_HEXSTRING),
-    }).default(
-      undefined,
-    ) /** default(undefined) for an optional object with required children {@see https://github.com/jquense/yup/issues/772#issuecomment-743270211} */,
     explorerUrl: string()
       .optional()
       .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
-    blockExplorerUrl: string()
-      .optional()
-      .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
-    rpcUrl: string()
-      .optional()
-      .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
-    multicallAddress: string().optional().matches(REGEX_HEXSTRING),
     readonly: boolean().optional(),
   })

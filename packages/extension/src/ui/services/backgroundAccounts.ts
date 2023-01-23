@@ -8,7 +8,7 @@ import { walletStore } from "../../shared/wallet/walletStore"
 import { decryptFromBackground, generateEncryptedSecret } from "./crypto"
 
 export const createNewAccount = async (networkId: string) => {
-  sendMessage({ type: "NEW_ACCOUNT", data: networkId })
+  sendMessage({ type: "NEW_ACCOUNT", data: { networkId: networkId } })
   try {
     return await Promise.race([
       waitForMessage("NEW_ACCOUNT_RES"),
@@ -16,20 +16,6 @@ export const createNewAccount = async (networkId: string) => {
     ])
   } catch {
     throw Error("Could add new account")
-  }
-}
-
-export const deployNewAccount = async (account: BaseWalletAccount) => {
-  sendMessage({ type: "DEPLOY_ACCOUNT", data: account })
-  try {
-    await Promise.race([
-      waitForMessage("DEPLOY_ACCOUNT_RES"),
-      waitForMessage("DEPLOY_ACCOUNT_REJ").then(() => {
-        throw new Error("Rejected")
-      }),
-    ])
-  } catch {
-    throw Error("Could not deploy account")
   }
 }
 
@@ -98,23 +84,6 @@ export const upgradeAccount = async (
     ])
   } catch {
     throw Error("Could not upgrade account")
-  }
-}
-
-export const redeployAccount = async (data: BaseWalletAccount) => {
-  sendMessage({ type: "REDEPLOY_ACCOUNT", data })
-  try {
-    return await Promise.race([
-      waitForMessage(
-        "REDEPLOY_ACCOUNT_RES",
-        (message) => message.data.address === data.address,
-      ),
-      waitForMessage("REDEPLOY_ACCOUNT_REJ").then(() => {
-        throw new Error("Rejected")
-      }),
-    ])
-  } catch {
-    throw Error("Could not redeploy account")
   }
 }
 

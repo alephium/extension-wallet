@@ -44,8 +44,7 @@ describe("getNextPathIndex", () => {
   test("incrementing", () => {
     expect(
       getNextPathIndex(
-        ["m/44'/9004'/0'/0/0", "m/44'/9004'/0'/0/1", "m/44'/9004'/0'/0/2"],
-        baseDerivationPath,
+        [0, 1, 2],
       ),
     ).toBe(3)
   })
@@ -53,8 +52,7 @@ describe("getNextPathIndex", () => {
   test("fill incrementing gap", () => {
     expect(
       getNextPathIndex(
-        ["m/44'/9004'/0'/0/0", "m/44'/9004'/0'/0/1", "m/44'/9004'/0'/0/3"],
-        baseDerivationPath,
+        [0, 1, 3],
       ),
     ).toBe(2)
   })
@@ -62,8 +60,7 @@ describe("getNextPathIndex", () => {
   test("fill big gap", () => {
     expect(
       getNextPathIndex(
-        ["m/44'/9004'/0'/0/0", "m/44'/9004'/0'/0/4", "m/44'/9004'/0'/0/11"],
-        baseDerivationPath,
+        [0, 4, 11],
       ),
     ).toBe(1)
   })
@@ -71,8 +68,7 @@ describe("getNextPathIndex", () => {
   test("fill 0 gap", () => {
     expect(
       getNextPathIndex(
-        ["m/44'/9004'/0'/0/3", "m/44'/9004'/0'/0/1"],
-        baseDerivationPath,
+        [3, 1],
       ),
     ).toBe(0)
   })
@@ -80,11 +76,7 @@ describe("getNextPathIndex", () => {
   test("legacy gets ignored", () => {
     expect(
       getNextPathIndex(
-        [
-          "m/2645'/1195502025'/1148870696'/0'/0'/0",
-          "m/2645'/1195502025'/1148870696'/0'/0'/1",
-        ],
-        baseDerivationPath,
+        [1, 2],
       ),
     ).toBe(0)
   })
@@ -92,19 +84,12 @@ describe("getNextPathIndex", () => {
   test("can still add legacy paths to mixed array", () => {
     expect(
       getNextPathIndex(
-        [
-          "m/2645'/1195502025'/1148870696'/0'/0'/0",
-          "m/2645'/1195502025'/1148870696'/0'/0'/1",
-          "m/44'/9004'/0'/0/0",
-          "m/44'/9004'/0'/0/1",
-          "m/44'/9004'/0'/0/2",
-        ],
-        "m/2645'/1195502025'/1148870696'/0'/0'",
+        [0, 1, 3, 4]
       ),
     ).toBe(2)
   })
 
   test("empty array", () => {
-    expect(getNextPathIndex([], baseDerivationPath)).toBe(0)
+    expect(getNextPathIndex([])).toBe(0)
   })
 })

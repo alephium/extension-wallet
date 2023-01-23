@@ -6,7 +6,7 @@ export const getIsPlugin = async (
   pluginAccount: PluginAccount,
   pluginClassHash: string,
 ) => {
-  return await pluginAccount.isPlugin(pluginClassHash)
+  return await pluginAccount.isPlugin()
 }
 
 export const useIsPlugin = (

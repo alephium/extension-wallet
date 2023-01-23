@@ -24,11 +24,11 @@ export const mapWalletAccountsToAccounts = (
     (walletAccount) =>
       new Account({
         address: walletAccount.address,
-        network: walletAccount.network,
+        publicKey: walletAccount.signer.publicKey,
+        networkId: walletAccount.networkId,
         signer: walletAccount.signer,
         hidden: walletAccount.hidden,
         type: walletAccount.type,
-        needsDeploy: walletAccount.needsDeploy,
       }),
   )
 }

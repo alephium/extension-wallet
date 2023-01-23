@@ -16,11 +16,11 @@ const AccountAddress: FC<{ selectedAccount: Account }> = ({
     <AccountAddressField
       title="From"
       accountAddress={selectedAccount.address}
-      networkId={selectedAccount.network.id}
+      networkId={selectedAccount.networkId}
     />
     <Field>
       <FieldKey>Network</FieldKey>
-      <FieldValue>{selectedAccount.network.name}</FieldValue>
+      <FieldValue>{selectedAccount.networkName}</FieldValue>
     </Field>
   </FieldGroup>
 )

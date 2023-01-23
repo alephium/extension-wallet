@@ -16,31 +16,7 @@ export const useAccountStatus = (
   account: Account,
   activeAccount?: BaseWalletAccount,
 ) => {
-  const deployStatus = useTransactionStatus(
-    account.deployTransaction,
-    account.network.id,
-  )
-
-  useEffect(() => {
-    if (
-      (deployStatus === "SUCCESS" || deployStatus === "ERROR") &&
-      isFunction(account.completeDeployTx)
-    ) {
-      account.completeDeployTx()
-    }
-  }, [account, deployStatus])
-
   return useMemo(() => {
-    return getStatus(account, activeAccount, deployStatus === "SUCCESS")
-  }, [account, activeAccount, deployStatus])
-}
-
-export const useAccountIsDeployed = (
-  account: Account,
-  activeAccount?: BaseWalletAccount,
-) => {
-  const status = useAccountStatus(account, activeAccount)
-  const accountIsDeployed =
-    status.code !== "DEPLOYING" && status.code !== "ERROR"
-  return accountIsDeployed
+    return getStatus(account, activeAccount)
+  }, [account, activeAccount])
 }

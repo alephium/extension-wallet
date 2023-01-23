@@ -42,11 +42,11 @@ export const OnboardingStartScreen: FC = () => {
     <OnboardingScreen
       length={4}
       currentIndex={0}
-      title="Welcome to Argent X"
-      subtitle="Enjoy the security of Ethereum with the scale of StarkNet"
+      title="Welcome to Alephium"
+      subtitle="Accessible, Scalable and Secure DeFi"
     >
       <Row gap={"12px"} align="stretch">
-        <RectButton onClick={() => navigate(routes.onboardingDisclaimer())}>
+        <RectButton onClick={() => navigate(routes.onboardingPassword())}>
           <CreateWalletRectButtonIcon>
             <AccountBalanceWalletIcon />
           </CreateWalletRectButtonIcon>

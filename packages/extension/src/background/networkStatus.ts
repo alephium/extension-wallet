@@ -57,7 +57,7 @@ const getFeederGatewayNetworkStatus = async (
     // fetch https://alpha-mainnet.starknet.io/feeder_gateway/is_alive and check the response
     try {
       const response = await fetchWithTimeout(
-        urljoin(network.baseUrl, "feeder_gateway/is_alive"),
+        urljoin(network.nodeUrl, "feeder_gateway/is_alive"),
         { timeout: 5000, method: "GET" },
       )
 
@@ -74,7 +74,7 @@ const getGatewayNetworkStatus = async (
     // fetch https://alpha-mainnet.starknet.io/gateway/is_alive and check the response
     try {
       const response = await fetchWithTimeout(
-        urljoin(network.baseUrl, "gateway/is_alive"),
+        urljoin(network.nodeUrl, "gateway/is_alive"),
         { timeout: 5000, method: "GET" },
       )
 
@@ -91,7 +91,7 @@ export const getDevnetStatus = async (
     // fetch http://localhost:5050/is_alive and check the response
     try {
       const response = await fetchWithTimeout(
-        urljoin(network.baseUrl, "is_alive"),
+        urljoin(network.nodeUrl, "is_alive"),
         { timeout: 5000, method: "GET" },
       )
 

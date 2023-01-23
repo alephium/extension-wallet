@@ -71,7 +71,7 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
       </MenuButton>
       <Portal>
         <MenuList>
-          {allNetworks.map(({ id, name, baseUrl }) => {
+          {allNetworks.map(({ id, name, nodeUrl }) => {
             const isCurrent = id === currentNetwork.id
             return (
               <MenuItem
@@ -114,7 +114,7 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
                       }}
                       noOfLines={1}
                     >
-                      {baseUrl}
+                      {nodeUrl}
                     </L2>
                   </Flex>
                   <StatusIndicator

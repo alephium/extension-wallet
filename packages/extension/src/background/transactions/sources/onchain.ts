@@ -12,7 +12,7 @@ export async function getTransactionsUpdate(transactions: Transaction[]) {
   // TODO: we should add a cooldown when user run into 429 errors
   const fetchedTransactions = await Promise.allSettled(
     transactionsToCheck.map(async (transaction) => {
-      const provider = getProvider(transaction.account.network)
+      const provider = getProvider(transaction.account.networkId)
       const status = await provider.getTransactionStatus(transaction.hash)
       return {
         ...transaction,

@@ -50,7 +50,7 @@ export const AccountActivity: FC<AccountActivityProps> = ({
                   <TransactionListItem
                     key={hash}
                     transactionTransformed={transactionTransformed}
-                    network={account.network}
+                    networkId={account.networkId}
                     onClick={() => navigate(routes.transactionDetail(hash))}
                   >
                     {isRejected ? (
@@ -78,7 +78,7 @@ export const AccountActivity: FC<AccountActivityProps> = ({
                   <Fragment key={transactionHash}>
                     <TransactionListItem
                       transactionTransformed={explorerTransactionTransformed}
-                      network={account.network}
+                      networkId={account.networkId}
                       onClick={() =>
                         navigate(routes.transactionDetail(transactionHash))
                       }

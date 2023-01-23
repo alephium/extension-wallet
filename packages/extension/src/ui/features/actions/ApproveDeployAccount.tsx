@@ -36,14 +36,6 @@ export const ApproveDeployAccountScreen: FC<
       selectedAccount={selectedAccount}
       onSubmit={onSubmit}
       showHeader={false}
-      footer={
-        <AccountDeploymentFeeEstimation
-          onErrorChange={setDisableConfirm}
-          accountAddress={selectedAccount.address}
-          networkId={selectedAccount.networkId}
-          actionHash={actionHash}
-        />
-      }
       {...props}
     >
       <AccountAddress selectedAccount={selectedAccount} />

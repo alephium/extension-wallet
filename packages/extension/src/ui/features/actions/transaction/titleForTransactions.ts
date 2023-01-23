@@ -1,4 +1,5 @@
 import { Call } from "starknet"
+import { TransactionParams } from "../../../../shared/actionQueue/types"
 
 import { isErc20TransferCall } from "../../../../shared/call"
 import {
@@ -7,19 +8,16 @@ import {
 } from "../../../../shared/transactionReview.service"
 
 export const titleForTransactions = (
-  transactions: Call | Call[] = [],
-  transactionReview: ApiTransactionReviewResponse | undefined,
+  transaction: TransactionParams
 ) => {
-  const transactionsArray: Call[] = Array.isArray(transactions)
-    ? transactions
-    : [transactions]
-  const hasErc20Transfer = transactionsArray.some(isErc20TransferCall)
-  const hasSwap = getTransactionReviewHasSwap(transactionReview)
-  return hasErc20Transfer
-    ? "Review send"
-    : hasSwap
-    ? "Review trade"
-    : transactionsArray.length === 1
-    ? "Confirm transaction"
-    : "Confirm transactions"
+  switch (transaction.type) {
+    case 'TRANSFER':
+      return "Review transfer"
+    case 'DEPLOY_CONTRACT':
+      return "Review contract deploy"
+    case 'EXECUTE_SCRIPT':
+      return 'Review dapp transaction'
+    case 'UNSIGNED_TX':
+      return 'Review transaction'
+  }
 }

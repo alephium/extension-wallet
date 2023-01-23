@@ -1,6 +1,7 @@
 import { isArray } from "lodash-es"
 import { FC, useMemo } from "react"
 import { Call } from "starknet"
+import { ReviewTransactionResult, TransactionParams } from "../../../../shared/actionQueue/types"
 
 import { Token } from "../../../../shared/token/type"
 import {
@@ -15,42 +16,27 @@ import { TransactionsListSwap } from "./TransactionsListSwap"
 
 export interface ITransactionsList {
   networkId: string
-  transactions: Call | Call[]
-  transactionReview?: ApiTransactionReviewResponse
-  tokensByNetwork?: Token[]
+  transactionReview: ReviewTransactionResult
 }
 
 /** Renders one or more transactions with review if available */
 
 export const TransactionsList: FC<ITransactionsList> = ({
-  transactions,
-  transactionReview,
-  tokensByNetwork = [],
+  transactionReview
 }) => {
-  const transactionsArray: Call[] = useMemo(
-    () => (isArray(transactions) ? transactions : [transactions]),
-    [transactions],
-  )
   const { warn, reason } =
     getDisplayWarnAndReasonForTransactionReview(transactionReview)
-  const hasSwap = getTransactionReviewHasSwap(transactionReview)
   return (
     <>
       {warn && (
         <TransactionBanner
-          variant={transactionReview?.assessment}
+          variant={undefined}
           icon={WarningIcon}
           message={reason}
         />
-      )}
-      {hasSwap ? (
-        <TransactionsListSwap
-          transactionReview={transactionReview}
-          tokensByNetwork={tokensByNetwork}
-        />
-      ) : (
-        <TransactionActions transactions={transactionsArray} />
-      )}
+      )} : (
+        <TransactionActions transaction={transactionReview} />
+      )
     </>
   )
 }

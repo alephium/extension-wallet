@@ -9,11 +9,6 @@ export class PluginAccount extends ArgentXAccount {
     super({
       ...account,
       type: "argent-plugin",
-      contract: new Contract(
-        ArgentPluginCompiledContractAbi as Abi,
-        account.address,
-        account.provider,
-      ),
     })
   }
 
@@ -25,11 +20,8 @@ export class PluginAccount extends ArgentXAccount {
     return new PluginAccount(account)
   }
 
-  public async isPlugin(pluginClassHash: string): Promise<boolean> {
-    const [result] = await this.contract.call("isPlugin", [
-      number.hexToDecimalString(pluginClassHash),
-    ])
-    return !result.isZero()
+  public async isPlugin(): Promise<boolean> {
+    return true // FIXME
   }
 
   public addPlugin(pluginClassHash: string) {

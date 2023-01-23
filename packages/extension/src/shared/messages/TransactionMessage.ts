@@ -5,6 +5,10 @@ import type {
   UniversalDeployerContractPayload,
 } from "starknet"
 
+import {
+  ReviewTransactionResult,
+  TransactionParams,
+} from "../actionQueue/types"
 import { Transaction } from "../transactions"
 import { DeclareContract } from "../udc/type"
 import { BaseWalletAccount } from "../wallet.model"
@@ -24,22 +28,16 @@ export interface DeclareDeployEstimateFeeResponse
   maxADFee: string
 }
 
-export interface ExecuteTransactionRequest {
-  transactions: Call | Call[]
-  abis?: Abi[]
-  transactionsDetail?: InvocationsDetails
-}
-
 export type TransactionMessage =
   | {
       type: "EXECUTE_TRANSACTION"
-      data: ExecuteTransactionRequest
+      data: TransactionParams
     }
   | { type: "EXECUTE_TRANSACTION_RES"; data: { actionHash: string } }
   | { type: "TRANSACTION_UPDATES"; data: Transaction[] }
   | {
       type: "TRANSACTION_SUBMITTED"
-      data: { txHash: string; actionHash: string }
+      data: { result: ReviewTransactionResult["result"]; actionHash: string }
     }
   | {
       type: "TRANSACTION_FAILED"

@@ -2,6 +2,7 @@ import { L1, L2, P4, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { Collapse } from "@mui/material"
 import Tippy from "@tippyjs/react"
+import { BigNumber } from "ethers"
 import { FC, useEffect, useMemo, useState } from "react"
 import { number } from "starknet"
 
@@ -30,58 +31,10 @@ import { getParsedError } from "./utils"
 const { AlertIcon, ChevronDownIcon } = icons
 
 export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
-  accountAddress,
-  transactions,
-  actionHash,
-  onErrorChange,
-  networkId,
+  transaction,
 }) => {
-  const account = useAccount({ address: accountAddress, networkId })
-  if (!account) {
-    throw new Error("Account not found")
-  }
-
-  const [feeEstimateExpanded, setFeeEstimateExpanded] = useState(false)
-
-  const { feeTokenBalance } = useFeeTokenBalance(account)
-
-  const { fee, error } = useMaxFeeEstimation(transactions, actionHash)
-
-  const totalMaxFee = useMemo(() => {
-    if (account.needsDeploy && fee?.maxADFee) {
-      return number.toHex(
-        number.toBN(fee.maxADFee).add(number.toBN(fee.suggestedMaxFee)),
-      )
-    }
-    return fee?.suggestedMaxFee
-  }, [account.needsDeploy, fee?.maxADFee, fee?.suggestedMaxFee])
-
-  const enoughBalance = useMemo(
-    () => Boolean(totalMaxFee && feeTokenBalance?.gte(totalMaxFee)),
-    [feeTokenBalance, totalMaxFee],
-  )
-
-  const showFeeError = Boolean(fee && feeTokenBalance && !enoughBalance)
-  const showEstimateError = Boolean(error)
-  const showError = showFeeError || showEstimateError
-
-  const hasError = !fee || !feeTokenBalance || !enoughBalance || showError
-  useEffect(() => {
-    onErrorChange?.(hasError)
-    // only rerun when error changes
-  }, [hasError]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const parsedFeeEstimationError = showEstimateError && getParsedError(error)
-  const feeToken = useNetworkFeeToken(networkId)
-  const amountCurrencyValue = useTokenAmountToCurrencyValue(
-    feeToken,
-    fee?.amount,
-  )
-  const suggestedMaxFeeCurrencyValue = useTokenAmountToCurrencyValue(
-    feeToken,
-    fee?.suggestedMaxFee,
-  )
-
+  const fee = transaction !== undefined ? BigInt(transaction.result.gasAmount) * BigInt(transaction.result.gasPrice) : undefined
+  const enoughBalance = true
   const extensionInTab = useExtensionIsInTab()
 
   return (
@@ -103,7 +56,7 @@ export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
           <Tippy
             content={
               <Tooltip as="div">
-                {getTooltipText(fee?.suggestedMaxFee, feeTokenBalance)}
+                {getTooltipText(fee?.toString(), fee !== undefined ? BigNumber.from(fee) : undefined)} { /* TODO: show proper tips */ }
               </Tooltip>
             }
           >
@@ -120,55 +73,31 @@ export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
             alignItems="center"
             direction={extensionInTab ? "row" : "column-reverse"}
           >
-            {suggestedMaxFeeCurrencyValue !== undefined ? (
+            {(
               <L2 color="neutrals.300">
-                (Max {prettifyCurrencyValue(suggestedMaxFeeCurrencyValue)})
-              </L2>
-            ) : (
-              <L2 color="neutrals.300">
-                (Max &nbsp;
-                {feeToken ? (
-                  prettifyTokenAmount({
-                    amount: fee.suggestedMaxFee,
-                    decimals: feeToken.decimals,
-                    symbol: feeToken.symbol,
-                  })
-                ) : (
-                  <>{fee.suggestedMaxFee} Unknown</>
-                )}
-                )
+                (Max {prettifyCurrencyValue(fee.toString())})
               </L2>
             )}
 
             <Flex alignItems="center">
-              {amountCurrencyValue !== undefined ? (
+              {fee !== undefined ? (
                 <P4 fontWeight="bold">
-                  ≈ {prettifyCurrencyValue(amountCurrencyValue)}
+                  ≈ {prettifyCurrencyValue(fee.toString())}
                 </P4>
               ) : (
                 <P4 fontWeight="bold">
                   ≈{" "}
-                  {feeToken ? (
-                    prettifyTokenAmount({
-                      amount: fee.amount,
-                      decimals: feeToken.decimals,
-                      symbol: feeToken.symbol,
-                    })
-                  ) : (
-                    <>{fee.amount} Unknown</>
-                  )}
+                    <>{fee} Unknown</>
                 </P4>
               )}
             </Flex>
           </Flex>
-        ) : showEstimateError ? (
-          <FeeEstimationValue>Error</FeeEstimationValue>
         ) : (
           <LoadingInput />
         )}
       </Flex>
 
-      {showError && (
+      {/* {showError && (
         <Flex
           direction="column"
           backgroundColor="#330105"
@@ -232,7 +161,7 @@ export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
             )}
           </Collapse>
         </Flex>
-      )}
+      )} */}
     </Flex>
   )
 }

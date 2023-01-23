@@ -5,7 +5,6 @@ import useSWR from "swr"
 
 import { Network } from "./../../../shared/network/type"
 import parsedErc20Abi from "../../../abis/ERC20.json"
-import { getMulticallForNetwork } from "../../../shared/multicall"
 import { getTokenBalanceForAccount } from "../../../shared/token/getTokenBalance"
 import { Token } from "../../../shared/token/type"
 import { getFeeToken } from "../../../shared/token/utils"
@@ -67,51 +66,51 @@ export const toTokenView = ({
   }
 }
 
-export const fetchTokenDetails = async (
-  address: string,
-  account: Account,
-): Promise<Token> => {
-  const tokenContract = new Contract(
-    parsedErc20Abi as Abi,
-    address,
-    account.provider,
-  )
-  const [decimals, name, symbol] = await Promise.all([
-    tokenContract
-      .call("decimals")
-      .then((x) => number.toHex(x.decimals))
-      .catch(() => ""),
-    tokenContract
-      .call("name")
-      .then((x) => shortString.decodeShortString(number.toHex(x.name)))
-      .catch(() => ""),
-    tokenContract
-      .call("symbol")
-      .then((x) => shortString.decodeShortString(number.toHex(x.symbol)))
-      .catch(() => ""),
-  ])
-  const decimalsBigNumber = BigNumber.from(decimals)
-  return {
-    address,
-    name,
-    symbol,
-    networkId: account.networkId,
-    decimals: decimalsBigNumber.toNumber(),
-  }
-}
+// export const fetchTokenDetails = async (
+//   address: string,
+//   account: Account,
+// ): Promise<Token> => {
+//   const tokenContract = new Contract(
+//     parsedErc20Abi as Abi,
+//     address,
+//     account.provider,
+//   )
+//   const [decimals, name, symbol] = await Promise.all([
+//     tokenContract
+//       .call("decimals")
+//       .then((x) => number.toHex(x.decimals))
+//       .catch(() => ""),
+//     tokenContract
+//       .call("name")
+//       .then((x) => shortString.decodeShortString(number.toHex(x.name)))
+//       .catch(() => ""),
+//     tokenContract
+//       .call("symbol")
+//       .then((x) => shortString.decodeShortString(number.toHex(x.symbol)))
+//       .catch(() => ""),
+//   ])
+//   const decimalsBigNumber = BigNumber.from(decimals)
+//   return {
+//     address,
+//     name,
+//     symbol,
+//     networkId: account.networkId,
+//     decimals: decimalsBigNumber.toNumber(),
+//   }
+// }
 
-export const fetchTokenBalance = async (
-  address: string,
-  account: Account,
-): Promise<BigNumber> => {
-  const tokenContract = new Contract(
-    parsedErc20Abi as Abi,
-    address,
-    account.provider,
-  )
-  const result = await tokenContract.balanceOf(account.address)
-  return BigNumber.from(uint256.uint256ToBN(result.balance).toString())
-}
+// export const fetchTokenBalance = async (
+//   address: string,
+//   account: Account,
+// ): Promise<BigNumber> => {
+//   const tokenContract = new Contract(
+//     parsedErc20Abi as Abi,
+//     address,
+//     account.provider,
+//   )
+//   const result = await tokenContract.balanceOf(account.address)
+//   return BigNumber.from(uint256.uint256ToBN(result.balance).toString())
+// }
 
 export type BalancesMap = Record<string, BigNumber | undefined>
 
@@ -145,47 +144,6 @@ export const fetchFeeTokenBalance = async (
   }
   const balance = await getTokenBalanceForAccount(token.address, account)
   return BigNumber.from(balance)
-}
-
-export const fetchFeeTokenBalanceForAccounts = async (
-  accountAddresses: string[],
-  network: Network,
-) => {
-  const { multicallAddress } = network
-
-  if (!multicallAddress) {
-    throw new Error("Multicall contract is required")
-  }
-
-  const token = getFeeToken(network.id)
-
-  if (!token) {
-    throw new Error("Fee token not found")
-  }
-
-  const multicall = getMulticallForNetwork(network)
-
-  const response = await Promise.all(
-    accountAddresses.map((address) =>
-      multicall.call({
-        contractAddress: token.address,
-        entrypoint: "balanceOf",
-        calldata: [address],
-      }),
-    ),
-  )
-
-  return accountAddresses.reduce<Record<string, BigNumber>>((acc, addr, i) => {
-    const [res_low, res_high] = response[i]
-
-    const balance = BigNumber.from(
-      uint256.uint256ToBN({ low: res_low, high: res_high }).toString(),
-    )
-    return {
-      ...acc,
-      [addr]: balance,
-    }
-  }, {})
 }
 
 export const useFeeTokenBalance = (account?: Account) => {

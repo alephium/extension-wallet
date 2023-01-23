@@ -9,20 +9,16 @@ import { AccountStatus } from "../accounts/accounts.service"
 import { useSumTokenBalancesToCurrencyValue } from "./tokenPriceHooks"
 import { useTokensWithBalance } from "./tokens.state"
 
-const { DeployIcon } = icons
-
 interface AccountSubheaderProps {
   status: AccountStatus
   account: BaseWalletAccount
   accountName?: string
-  onRedeploy: () => void
 }
 
 export const AccountTokensHeader: FC<AccountSubheaderProps> = ({
   status,
   account,
-  accountName,
-  onRedeploy,
+  accountName
 }) => {
   const { tokenDetails } = useTokensWithBalance(account)
   const sumCurrencyValue = useSumTokenBalancesToCurrencyValue(tokenDetails)
@@ -39,9 +35,6 @@ export const AccountTokensHeader: FC<AccountSubheaderProps> = ({
       {status.code === "ERROR" && (
         <VStack spacing={2} pt={2}>
           <FieldError>{status.text}</FieldError>
-          <Button size="2xs" onClick={onRedeploy} leftIcon={<DeployIcon />}>
-            Redeploy
-          </Button>
         </VStack>
       )}
     </VStack>

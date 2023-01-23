@@ -33,7 +33,7 @@ export const AccountNetworkInfo = ({ account }: AccountNetworkInfoProps) => {
           Network
         </P4>
         <P4 fontWeight="bold" color="white">
-          {account.network.name}
+          {account.networkName}
         </P4>
       </Flex>
     </VStack>

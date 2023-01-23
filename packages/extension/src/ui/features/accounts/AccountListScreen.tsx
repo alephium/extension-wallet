@@ -25,7 +25,6 @@ import {
 } from "./accounts.state"
 import { DeprecatedAccountsWarning } from "./DeprecatedAccountsWarning"
 import { HiddenAccountsBar } from "./HiddenAccountsBar"
-import { usePartitionDeprecatedAccounts } from "./upgrade.service"
 import { useAddAccount } from "./useAddAccount"
 
 const { AddIcon } = icons
@@ -55,12 +54,8 @@ export const AccountListScreen: FC = () => {
   )
   const { isBackupRequired } = useBackupRequired()
   const currentNetwork = useCurrentNetwork()
-  const { addAccount, isDeploying } = useAddAccount()
+  const { addAccount } = useAddAccount()
 
-  const { data: partitionedAccounts } = usePartitionDeprecatedAccounts(
-    visibleAccounts,
-    currentNetwork,
-  )
   const hasHiddenAccounts = hiddenAccounts.length > 0
 
   const onClose = useCallback(async () => {
@@ -71,22 +66,15 @@ export const AccountListScreen: FC = () => {
     }
   }, [navigate, returnTo])
 
-  if (!partitionedAccounts) {
-    return <LoadingScreen />
-  }
-
-  const [deprecatedAccounts, newAccounts] = partitionedAccounts
-
   return (
     <>
       <NavigationContainer
-        leftButton={<BarCloseButton onClick={onClose} disabled={isDeploying} />}
+        leftButton={<BarCloseButton onClick={onClose} />}
         title={`${currentNetwork.name} accounts`}
         rightButton={
           <BarIconButton
             aria-label="Create new wallet"
             onClick={addAccount}
-            isLoading={isDeploying}
           >
             <AddIcon />
           </BarIconButton>
@@ -100,7 +88,7 @@ export const AccountListScreen: FC = () => {
               click below to add one.
             </Paragraph>
           )}
-          {newAccounts.map((account) => (
+          {visibleAccounts.map((account) => (
             <AccountListScreenItem
               key={account.address}
               account={account}
@@ -108,21 +96,6 @@ export const AccountListScreen: FC = () => {
               returnTo={returnTo}
             />
           ))}
-          {some(deprecatedAccounts) && (
-            <>
-              <DeprecatedAccountsWarning />
-              {deprecatedAccounts.map((account) => (
-                <AccountListScreenItem
-                  key={account.address}
-                  account={account}
-                  selectedAccount={selectedAccount}
-                  returnTo={returnTo}
-                  needsUpgrade
-                />
-              ))}
-            </>
-          )}
-          {isDeploying && <DimmingContainer />}
         </Flex>
       </NavigationContainer>
       {hasHiddenAccounts && <HiddenAccountsBar />}

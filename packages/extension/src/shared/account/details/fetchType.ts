@@ -2,7 +2,6 @@ import { flatten, groupBy, toPairs } from "lodash-es"
 import { Call, number } from "starknet"
 
 import { isEqualAddress } from "../../../ui/services/addresses"
-import { getMulticallForNetwork } from "../../multicall"
 import { getNetwork, getProvider } from "../../network"
 import { ArgentAccountType, WalletAccount } from "../../wallet.model"
 
@@ -33,33 +32,6 @@ export async function getAccountTypesFromChain(accounts: WalletAccount[]) {
         > => {
           const network = await getNetwork(networkId)
 
-          if (!network.accountClassHash?.argentPluginAccount) {
-            return calls.map((call) => ({
-              address: call.contractAddress,
-              type: "argent",
-            }))
-          }
-
-          if (network.multicallAddress) {
-            const multicall = getMulticallForNetwork(network)
-            const responses = await Promise.all(
-              calls.map((call) => multicall.call(call)),
-            )
-            const result = responses.map((response, i) => {
-              const call = calls[i]
-              const type: ArgentAccountType = isEqualAddress(
-                response[0],
-                network.accountClassHash?.argentPluginAccount || "0x0",
-              )
-                ? "argent-plugin"
-                : "argent"
-              return {
-                address: call.contractAddress,
-                type,
-              }
-            })
-            return result
-          }
           /** fallback to single calls */
           const provider = getProvider(network)
           const responses = await Promise.all(
@@ -70,10 +42,7 @@ export async function getAccountTypesFromChain(accounts: WalletAccount[]) {
           )
           return calls.map((call, i) => ({
             address: call.contractAddress,
-            type: isEqualAddress(
-              results[i],
-              network.accountClassHash?.argentPluginAccount || "0x0",
-            )
+            type: isEqualAddress(results[i], "0x0")
               ? "argent-plugin"
               : "argent",
           }))

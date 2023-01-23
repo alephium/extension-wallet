@@ -9,7 +9,7 @@ const getProviderForBaseUrl = memoize((baseUrl: string) => {
 })
 
 export function getProvider(network: Network) {
-  return getProviderForBaseUrl(network.baseUrl)
+  return getProviderForBaseUrl(network.nodeUrl)
 }
 
 const getProviderV4ForBaseUrl = memoize((baseUrl: string) => {
@@ -17,5 +17,5 @@ const getProviderV4ForBaseUrl = memoize((baseUrl: string) => {
 })
 
 export function getProviderv4(network: Network) {
-  return getProviderV4ForBaseUrl(network.baseUrl)
+  return getProviderV4ForBaseUrl(network.nodeUrl)
 }

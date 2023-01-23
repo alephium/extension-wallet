@@ -68,11 +68,11 @@ const SnackbarMessage: FC = () => {
         <SnackbarIconContainer>
           <ExtensionIcon fontSize="inherit" />
         </SnackbarIconContainer>
-        <span>Pin the Argent X extension for quick access</span>
+        <span>Pin the Alephium extension for quick access</span>
       </Row>
       <ArgentXButton>
         <StyledArgentXLogo />
-        <span>Argent X</span>
+        <span>Alephium</span>
         <StyledPushPinIcon fontSize="inherit" />
       </ArgentXButton>
     </SnackbarMessageContainer>
@@ -105,31 +105,31 @@ export const OnboardingFinishScreen: FC = () => {
         length={4}
         currentIndex={3}
         title="Your wallet is ready!"
-        subtitle="Follow us for product updates or if you have any questions"
+        subtitle="Join Alephium's community"
         icon={<StyledCheckCircleOutlineRoundedIcon fontSize="inherit" />}
       >
         <Row gap={"12px"} align="stretch">
           <RectButton
             as="a"
-            href="https://twitter.com/argenthq"
-            title="Follow Argent X on Twitter"
+            href="https://twitter.com/alephium"
+            title="Follow Alephium on Twitter"
             target="_blank"
           >
             <TwitterRectButtonIcon>
               <Twitter />
             </TwitterRectButtonIcon>
-            Follow Argent X on Twitter
+            Follow Alephium on Twitter
           </RectButton>
           <RectButton
             as="a"
-            href="https://discord.gg/T4PDFHxm6T"
-            title="Join the Argent X Discord"
+            href="https://discord.gg/JErgRBfRSB"
+            title="Join Alephium's Discord"
             target="_blank"
           >
             <DiscordRectButtonIcon>
               <DiscordIcon />
             </DiscordRectButtonIcon>
-            Join the Argent X Discord
+            Join Alephium's Discord
           </RectButton>
         </Row>
         <StyledOnboardingButton onClick={onFinishClick}>

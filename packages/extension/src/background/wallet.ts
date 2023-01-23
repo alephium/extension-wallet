@@ -1,3 +1,24 @@
+import {
+  ExplorerProvider,
+  NodeProvider,
+  SignDeployContractTxParams,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
+  SignMessageParams,
+  SignMessageResult,
+  SignTransferTxParams,
+  SignTransferTxResult,
+  SignUnsignedTxParams,
+  SignUnsignedTxResult,
+  SignerProvider,
+  addressFromPublicKey,
+  publicKeyFromPrivateKey,
+} from "@alephium/web3"
+import {
+  PrivateKeyWallet,
+  deriveHDWalletPrivateKey,
+} from "@alephium/web3-wallet"
 import { ethers } from "ethers"
 import { ProgressCallback } from "ethers/lib/utils"
 import { find, noop, throttle, union } from "lodash-es"
@@ -17,7 +38,6 @@ import browser from "webextension-polyfill"
 import { ArgentAccountType } from "./../shared/wallet.model"
 import { getAccountTypesFromChain } from "../shared/account/details/fetchType"
 import { withHiddenSelector } from "../shared/account/selectors"
-import { getMulticallForNetwork } from "../shared/multicall"
 import {
   Network,
   defaultNetwork,
@@ -45,7 +65,6 @@ import {
   getPathForIndex,
   getStarkPair,
 } from "./keys/keyDerivation"
-import { getNonce, increaseStoredNonce } from "./nonce"
 import backupSchema from "./schema/backup.schema"
 
 const { calculateContractAddressFromHash, getSelectorFromName } = hash
@@ -100,6 +119,22 @@ export class Wallet {
     private readonly loadContracts: LoadContracts,
     private readonly getNetwork: GetNetwork,
   ) {}
+  async signAndSubmitUnsignedTx(
+    account: WalletAccount,
+    params: SignUnsignedTxParams,
+  ): Promise<SignUnsignedTxResult> {
+    const signer = await this.getPrivateKeySigner(account)
+    return signer.signAndSubmitUnsignedTx(params)
+  }
+
+  async getPrivateKeySigner(account: WalletAccount): Promise<PrivateKeyWallet> {
+    const network = await this.getNetwork(account.networkId)
+    const nodeProvider = new NodeProvider(network.nodeUrl)
+    const privateKey = await this.getPrivateKeyByDerivationPath(
+      account.signer.derivationIndex,
+    )
+    return new PrivateKeyWallet(privateKey, nodeProvider)
+  }
 
   public async isInitialized(): Promise<boolean> {
     return Boolean(await this.store.get("backup"))
@@ -274,13 +309,11 @@ export class Wallet {
             accounts.push({
               address,
               networkId: network.id,
-              network,
               signer: {
                 type: "local_secret",
-                derivationPath: getPathForIndex(lastCheck, baseDerivationPath),
+                derivationIndex: lastCheck,
               },
               type: "argent",
-              needsDeploy: false, // Only deployed accounts will be recovered
             })
           }
 
@@ -363,10 +396,10 @@ export class Wallet {
     }
     const wallet = new ethers.Wallet(session?.secret)
 
-    if (!network?.accountClassHash) {
-      // silent fail if no account implementation is defined for this network
+    if (!network) {
       return
     }
+
     const accounts = await this.restoreAccountsFromWallet(
       wallet.privateKey,
       network,
@@ -382,44 +415,27 @@ export class Wallet {
       throw Error("no open session")
     }
 
-    const network = await this.getNetwork(networkId)
-
     const accounts = await this.walletStore.get(withHiddenSelector)
 
-    const currentPaths = accounts
-      .filter(
-        (account) =>
-          account.signer.type === "local_secret" &&
-          account.network.id === networkId,
-      )
-      .map((account) => account.signer.derivationPath)
+    const currentIndexes = accounts
+      .filter((account) => account.signer.type === "local_secret")
+      .map((account) => account.signer.derivationIndex)
 
-    const index = getNextPathIndex(currentPaths, baseDerivationPath)
+    const index = getNextPathIndex(currentIndexes)
 
-    const payload = await this.getDeployContractPayloadForAccountIndex(
-      index,
-      networkId,
-    )
-
-    const proxyClassHash = PROXY_CONTRACT_CLASS_HASHES[0]
-
-    const proxyAddress = calculateContractAddressFromHash(
-      payload.addressSalt,
-      proxyClassHash,
-      payload.constructorCalldata,
-      0,
-    )
+    const privateKey = deriveHDWalletPrivateKey(session.secret, index)
+    const publicKey = publicKeyFromPrivateKey(privateKey)
+    const newAddress = addressFromPublicKey(publicKey)
 
     const account: WalletAccount = {
-      network,
-      networkId: network.id,
-      address: proxyAddress,
+      address: newAddress,
+      networkId: networkId,
       signer: {
         type: "local_secret" as const,
-        derivationPath: getPathForIndex(index, baseDerivationPath),
+        publicKey: publicKey,
+        derivationIndex: index,
       },
       type: "argent",
-      needsDeploy: true,
     }
 
     await this.walletStore.push([account])
@@ -427,177 +443,6 @@ export class Wallet {
     await this.selectAccount(account)
 
     return account
-  }
-
-  public async deployAccount(
-    walletAccount: WalletAccount,
-    transactionDetails?: InvocationsDetails | undefined,
-  ): Promise<{ account: WalletAccount; txHash: string }> {
-    const starknetAccount = await this.getStarknetAccount(walletAccount)
-
-    if (!("deployAccount" in starknetAccount)) {
-      throw Error("Cannot deploy old accounts")
-    }
-
-    const deployAccountPayload = await this.getAccountDeploymentPayload(
-      walletAccount,
-    )
-
-    const { transaction_hash } = await starknetAccount.deployAccount(
-      deployAccountPayload,
-      transactionDetails,
-    )
-
-    await this.selectAccount(walletAccount)
-
-    return { account: walletAccount, txHash: transaction_hash }
-  }
-
-  public async getAccountDeploymentFee(
-    walletAccount: WalletAccount,
-  ): Promise<EstimateFee> {
-    const starknetAccount = await this.getStarknetAccount(walletAccount)
-
-    if (!("deployAccount" in starknetAccount)) {
-      throw Error("Cannot estimate fee to deploy old accounts")
-    }
-
-    const deployAccountPayload = await this.getAccountDeploymentPayload(
-      walletAccount,
-    )
-
-    return starknetAccount.estimateAccountDeployFee(deployAccountPayload)
-  }
-
-  public async redeployAccount(account: WalletAccount) {
-    if (!this.isSessionOpen()) {
-      throw Error("no open session")
-    }
-    const networkId = account.networkId
-    const network = await this.getNetwork(networkId)
-
-    const provider = getProvider(network)
-
-    const index = getIndexForPath(
-      account.signer.derivationPath,
-      baseDerivationPath,
-    )
-
-    const payload = await this.getDeployContractPayloadForAccountIndex(
-      index,
-      networkId,
-    )
-
-    const nonce = await getNonce(account, this)
-
-    const deployTransaction = await provider.deployAccountContract(payload, {
-      nonce,
-    })
-    await increaseStoredNonce(account)
-
-    return { account, txHash: deployTransaction.transaction_hash }
-  }
-  /** Get the Account Deployment Payload
-   * Use it in the deployAccount and getAccountDeploymentFee methods
-   * @param  {WalletAccount} walletAccount
-   */
-  public async getAccountDeploymentPayload(walletAccount: WalletAccount) {
-    const starkPair = await this.getKeyPairByDerivationPath(
-      walletAccount.signer.derivationPath,
-    )
-
-    const starkPub = ec.getStarkKey(starkPair)
-
-    const accountClassHash = await this.getAccountClassHashForNetwork(
-      walletAccount.network,
-      "argent",
-    )
-
-    const constructorCallData = {
-      implementation: accountClassHash,
-      selector: getSelectorFromName("initialize"),
-      calldata: stark.compileCalldata({ signer: starkPub, guardian: "0" }),
-    }
-
-    const deployAccountPayload = {
-      classHash: PROXY_CONTRACT_CLASS_HASHES[0],
-      contractAddress: walletAccount.address,
-      constructorCalldata: stark.compileCalldata(constructorCallData),
-      addressSalt: starkPub,
-    }
-
-    const calculatedAccountAddress = calculateContractAddressFromHash(
-      deployAccountPayload.addressSalt,
-      deployAccountPayload.classHash,
-      deployAccountPayload.constructorCalldata,
-      0,
-    )
-
-    if (isEqualAddress(walletAccount.address, calculatedAccountAddress)) {
-      return deployAccountPayload
-    }
-
-    console.warn("Calculated address does not match account address")
-
-    const oldCalldata = stark.compileCalldata({
-      ...constructorCallData,
-      implementation:
-        "0x1a7820094feaf82d53f53f214b81292d717e7bb9a92bb2488092cd306f3993f", // old implementation, ask @janek why
-    })
-
-    const oldCalculatedAddress = calculateContractAddressFromHash(
-      deployAccountPayload.addressSalt,
-      deployAccountPayload.classHash,
-      oldCalldata,
-      0,
-    )
-
-    if (isEqualAddress(oldCalculatedAddress, walletAccount.address)) {
-      console.warn("Address matches old implementation")
-      deployAccountPayload.constructorCalldata = oldCalldata
-    } else {
-      throw new Error("Calculated address does not match account address")
-    }
-
-    return deployAccountPayload
-  }
-
-  public async getDeployContractPayloadForAccountIndex(
-    index: number,
-    networkId: string,
-  ): Promise<Required<DeployAccountContractTransaction>> {
-    const hasSession = await this.isSessionOpen()
-    const session = await this.sessionStore.get()
-    const initialised = await this.isInitialized()
-
-    if (!initialised) {
-      throw Error("wallet is not initialized")
-    }
-    if (!hasSession || !session) {
-      throw Error("no open session")
-    }
-
-    const network = await this.getNetwork(networkId)
-    const starkPair = getStarkPair(index, session?.secret, baseDerivationPath)
-    const starkPub = ec.getStarkKey(starkPair)
-
-    const accountClassHash = await this.getAccountClassHashForNetwork(
-      network,
-      "argent",
-    )
-
-    const payload = {
-      classHash: accountClassHash,
-      constructorCalldata: stark.compileCalldata({
-        implementation: accountClassHash,
-        selector: getSelectorFromName("initialize"),
-        calldata: stark.compileCalldata({ signer: starkPub, guardian: "0" }),
-      }),
-      addressSalt: starkPub,
-      signature: starkPair.getPrivate(),
-    }
-
-    return payload
   }
 
   public async getAccount(selector: BaseWalletAccount): Promise<WalletAccount> {
@@ -610,53 +455,25 @@ export class Wallet {
     return hit
   }
 
+  public async getPrivateKeyByDerivationPath(derivationIndex: number) {
+    const session = await this.sessionStore.get()
+    if (!session?.secret) {
+      throw Error("session is not open")
+    }
+    return deriveHDWalletPrivateKey(session.secret, derivationIndex)
+  }
+
+  public async getPublicKeyByDerivationPath(derivationIndex: number) {
+    const privateKey = await this.getPrivateKeyByDerivationPath(derivationIndex)
+    return publicKeyFromPrivateKey(privateKey)
+  }
+
   public async getKeyPairByDerivationPath(derivationPath: string) {
     const session = await this.sessionStore.get()
     if (!session?.secret) {
       throw Error("session is not open")
     }
     return getStarkPair(derivationPath, session.secret)
-  }
-
-  public async getStarknetAccount(
-    selector: BaseWalletAccount,
-    useLatest = false,
-  ): Promise<Account | Accountv4> {
-    if (!(await this.isSessionOpen())) {
-      throw Error("no open session")
-    }
-    const account = await this.getAccount(selector)
-    if (!account) {
-      throw Error("account not found")
-    }
-
-    const keyPair = await this.getKeyPairByDerivationPath(
-      account.signer.derivationPath,
-    )
-
-    const provider = getProvider(
-      account.network && account.network.baseUrl
-        ? account.network
-        : await this.getNetwork(selector.networkId),
-    )
-
-    const providerV4 = getProviderv4(
-      account.network && account.network.baseUrl
-        ? account.network
-        : await this.getNetwork(selector.networkId),
-    )
-
-    if (account.needsDeploy || useLatest) {
-      return new Account(provider, account.address, keyPair)
-    }
-
-    const oldAccount = new Accountv4(providerV4, account.address, keyPair)
-
-    const isOldAccount = await this.isNonceManagedOnAccountContract(oldAccount)
-
-    return isOldAccount
-      ? oldAccount
-      : new Account(provider, account.address, keyPair)
   }
 
   public async isNonceManagedOnAccountContract(account: Accountv4) {
@@ -667,32 +484,6 @@ export class Wallet {
     } catch {
       return false
     }
-  }
-
-  public async getCurrentImplementation(
-    account: WalletAccount,
-  ): Promise<string> {
-    const multicall = getMulticallForNetwork(account.network)
-
-    const [implementation] = await multicall.call({
-      contractAddress: account.address,
-      entrypoint: "get_implementation",
-    })
-
-    return stark.makeAddress(number.toHex(number.toBN(implementation)))
-  }
-
-  public async getSelectedStarknetAccount(): Promise<Account | Accountv4> {
-    if (!this.isSessionOpen()) {
-      throw Error("no open session")
-    }
-
-    const account = await this.getSelectedAccount()
-    if (!account) {
-      throw new Error("no selected account")
-    }
-
-    return this.getStarknetAccount(account)
   }
 
   public async getSelectedAccount(): Promise<WalletAccount | undefined> {
@@ -762,12 +553,11 @@ export class Wallet {
       throw new Error("no selected account")
     }
 
-    const starkPair = getStarkPair(
-      account.signer.derivationPath,
+    const privateKey = deriveHDWalletPrivateKey(
       session.secret,
+      account.signer.derivationIndex,
     )
-
-    return starkPair.getPrivate().toString()
+    return privateKey
   }
 
   public static validateBackup(backupString: string): boolean {

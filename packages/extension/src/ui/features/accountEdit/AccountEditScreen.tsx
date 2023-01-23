@@ -12,7 +12,6 @@ import { useNavigate, useParams } from "react-router-dom"
 
 import { settingsStore } from "../../../shared/settings"
 import { useKeyValueStorage } from "../../../shared/storage/hooks"
-import { isDeprecated } from "../../../shared/wallet.service"
 import { AddressCopyButton } from "../../components/AddressCopyButton"
 import { routes, useReturnTo } from "../../routes"
 import { upgradeAccount } from "../../services/backgroundAccounts"
@@ -64,7 +63,7 @@ export const AccountEditScreen: FC = () => {
   )
 
   const showDelete =
-    account && (isDeprecated(account) || account.networkId === "localhost")
+    account && (account.networkId === "localhost")
 
   const handleHideOrDeleteAccount = async (account: Account) => {
     if (showDelete) {
@@ -77,7 +76,6 @@ export const AccountEditScreen: FC = () => {
   const canUpgradeToPluginAccount =
     experimentalPluginAccount &&
     account &&
-    currentNetwork.accountClassHash?.argentPluginAccount &&
     account.type !== "argent-plugin"
 
   const onChangeName = useCallback((name: string) => {

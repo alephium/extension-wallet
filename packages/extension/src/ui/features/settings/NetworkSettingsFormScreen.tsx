@@ -52,7 +52,7 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
 
   const defaultNetwork = useMemo<Network>(() => {
     if (props.mode === "add") {
-      return { id: "", name: "", chainId: "", baseUrl: "" }
+      return { id: "", name: "", chainId: "", nodeUrl: "" }
     }
     /** display selected block explorer url from settings for readonly network */
     if (

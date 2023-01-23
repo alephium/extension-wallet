@@ -33,7 +33,7 @@ export const useAccountTransactions: UseAccountTransactions = (account) => {
   )
 
   const pendingTransactions = sortedTransactions.filter(
-    ({ status, meta }) => status === "RECEIVED" && !meta?.isDeployAccount,
+    ({ status, meta }) => status === "RECEIVED",
   )
 
   return { transactions, pendingTransactions }

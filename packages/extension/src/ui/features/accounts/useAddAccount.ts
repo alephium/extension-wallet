@@ -9,28 +9,13 @@ import { createAccount } from "./accounts.service"
 export const useAddAccount = () => {
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
-  const [isDeploying, setIsDeploying] = useState(false)
-  const [deployFailed, setDeployFailed] = useState(false)
-
-  useEffect(() => {
-    // clear deploy status when network changes
-    setDeployFailed(false)
-  }, [switcherNetworkId])
 
   const addAccount = useCallback(async () => {
-    setIsDeploying(true)
-    setDeployFailed(false)
-    try {
-      const newAccount = await createAccount(switcherNetworkId)
-      // switch background wallet to the account that was selected
-      await selectAccount(newAccount)
-      navigate(await recover())
-    } catch {
-      setDeployFailed(true)
-    } finally {
-      setIsDeploying(false)
-    }
+    const newAccount = await createAccount(switcherNetworkId)
+    // switch background wallet to the account that was selected
+    await selectAccount(newAccount)
+    navigate(await recover())
   }, [navigate, switcherNetworkId])
 
-  return { addAccount, isDeploying, deployFailed }
+  return { addAccount }
 }

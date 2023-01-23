@@ -1,7 +1,7 @@
 import { Collapse } from "@mui/material"
 import Tippy from "@tippyjs/react"
 import { FC, useEffect, useMemo, useState } from "react"
-import { number } from "starknet"
+import { Call, number } from "starknet"
 
 import {
   prettifyCurrencyValue,
@@ -43,7 +43,7 @@ import { getParsedError, getTooltipText, useMaxFeeEstimation } from "./utils"
 
 export const CombinedFeeEstimation: FC<TransactionsFeeEstimationProps> = ({
   accountAddress,
-  transactions,
+  transaction,
   actionHash,
   onErrorChange,
   networkId,
@@ -58,25 +58,15 @@ export const CombinedFeeEstimation: FC<TransactionsFeeEstimationProps> = ({
 
   const { feeTokenBalance } = useFeeTokenBalance(account)
 
-  const { fee, error } = useMaxFeeEstimation(transactions, actionHash)
+  const { fee, error } = useMaxFeeEstimation({} as Call, actionHash)
 
   const totalFee = useMemo(() => {
-    if (account.needsDeploy && fee?.accountDeploymentFee) {
-      return number.toHex(
-        number.toBN(fee.accountDeploymentFee).add(number.toBN(fee.amount)),
-      )
-    }
     return fee?.amount
-  }, [account.needsDeploy, fee?.accountDeploymentFee, fee?.amount])
+  }, [fee?.accountDeploymentFee, fee?.amount])
 
   const totalMaxFee = useMemo(() => {
-    if (account.needsDeploy && fee?.maxADFee) {
-      return number.toHex(
-        number.toBN(fee.maxADFee).add(number.toBN(fee.suggestedMaxFee)),
-      )
-    }
     return fee?.suggestedMaxFee
-  }, [account.needsDeploy, fee?.maxADFee, fee?.suggestedMaxFee])
+  }, [fee?.maxADFee, fee?.suggestedMaxFee])
 
   const enoughBalance = useMemo(
     () => Boolean(totalMaxFee && feeTokenBalance?.gte(totalMaxFee)),
@@ -115,7 +105,7 @@ export const CombinedFeeEstimation: FC<TransactionsFeeEstimationProps> = ({
     totalMaxFee,
   )
 
-  const hasTransactions = typeof transactions !== undefined
+  const hasTransactions = typeof transaction !== undefined
 
   if (!hasTransactions) {
     return <></>

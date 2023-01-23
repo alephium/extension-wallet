@@ -6,7 +6,6 @@ import styled from "styled-components"
 import { Button } from "../../components/Button"
 import { IconBar } from "../../components/IconBar"
 import { RocketLaunchIcon } from "../../components/Icons/RocketLaunchIcon"
-import { deployNewAccount } from "../../services/backgroundAccounts"
 import { H2, P } from "../../theme/Typography"
 import {
   ConfirmPageProps,
@@ -76,69 +75,3 @@ const StyledStarknetIcon = styled(RocketLaunchIcon)`
   top: 60%;
   left: 32px;
 `
-
-type DeployAccountScreenProps = Omit<ConfirmPageProps, "onSubmit">
-
-export const DeployAccountScreen: FC<DeployAccountScreenProps> = ({
-  onReject,
-  ...props
-}) => {
-  const selectedAccount = useSelectedAccount()
-  const [placeholderHeight, setPlaceholderHeight] = useState(100)
-
-  if (!selectedAccount) {
-    return <></>
-  }
-
-  return (
-    <div {...props}>
-      <IconBarContainer>
-        <StyledIconBar close onClick={onReject} />
-        <StyledStarknetIcon />
-      </IconBarContainer>
-      <Container>
-        <HeaderText>Your wallet needs to be activated</HeaderText>
-        <StyledP>
-          In order to sign this transaction you need to first activate your
-          account on StarkNet
-        </StyledP>
-
-        <StyledPBold>
-          Activating an account involves a fee. This is not controlled by
-          ArgentX
-        </StyledPBold>
-
-        <LearnMoreLink
-          href="https://medium.com/starkware/starknet-alpha-0-10-0-923007290470"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Learn more about this change
-        </LearnMoreLink>
-
-        <Placeholder style={{ height: placeholderHeight }}>
-          <Measure
-            bounds
-            onResize={(contentRect) => {
-              const { height = 100 } = contentRect.bounds || {}
-              setPlaceholderHeight(height)
-            }}
-          >
-            {({ measureRef }) => (
-              <StickyGroup ref={measureRef}>
-                <PrimaryButton
-                  onClick={async () => {
-                    await deployNewAccount(selectedAccount)
-                  }}
-                  type="button"
-                >
-                  Activate Account
-                </PrimaryButton>
-              </StickyGroup>
-            )}
-          </Measure>
-        </Placeholder>
-      </Container>
-    </div>
-  )
-}

@@ -1,13 +1,9 @@
 import { getAccounts, removeAccount } from "../shared/account/store"
 import { AccountMessage } from "../shared/messages/AccountMessage"
-import { deployAccountAction } from "./accountDeploy"
-import { upgradeAccount } from "./accountUpgrade"
 import { sendMessageToUi } from "./activeTabs"
 import { analytics } from "./analytics"
 import { HandleMessage, UnhandledMessage } from "./background"
 import { encryptForUi } from "./crypto"
-import { tryToMintFeeToken } from "./devnet/mintFeeToken"
-import { addTransaction } from "./transactions/store"
 
 export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
   msg,
@@ -38,15 +34,13 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         throw Error("you need an open session")
       }
 
-      const network = msg.data
+      const { networkId } = msg.data
       try {
-        const account = await wallet.newAccount(network)
-
-        tryToMintFeeToken(account)
+        const account = await wallet.newAccount(networkId)
 
         analytics.track("createAccount", {
           status: "success",
-          networkId: network,
+          networkId: networkId,
         })
 
         const accounts = await getAccounts()
@@ -63,7 +57,7 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
 
         analytics.track("createAccount", {
           status: "failure",
-          networkId: network,
+          networkId: networkId,
           errorMessage: error,
         })
 
@@ -71,19 +65,6 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
           type: "NEW_ACCOUNT_REJ",
           data: { error },
         })
-      }
-    }
-
-    case "DEPLOY_ACCOUNT": {
-      try {
-        await deployAccountAction({
-          account: msg.data,
-          actionQueue,
-        })
-
-        return sendMessageToUi({ type: "DEPLOY_ACCOUNT_RES" })
-      } catch (e) {
-        return sendMessageToUi({ type: "DEPLOY_ACCOUNT_REJ" })
       }
     }
 
@@ -97,37 +78,9 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
 
     case "UPGRADE_ACCOUNT": {
       try {
-        await upgradeAccount({
-          account: msg.data.wallet,
-          wallet,
-          actionQueue,
-          targetImplementationType: msg.data.targetImplementationType,
-        })
         return sendMessageToUi({ type: "UPGRADE_ACCOUNT_RES" })
       } catch {
         return sendMessageToUi({ type: "UPGRADE_ACCOUNT_REJ" })
-      }
-    }
-
-    case "REDEPLOY_ACCOUNT": {
-      try {
-        const account = msg.data
-        const fullAccount = await wallet.getAccount(account)
-        const { txHash } = await wallet.redeployAccount(fullAccount)
-        addTransaction({
-          hash: txHash,
-          account: fullAccount,
-          meta: { title: "Redeploy wallet" },
-        })
-        return sendMessageToUi({
-          type: "REDEPLOY_ACCOUNT_RES",
-          data: {
-            txHash,
-            address: account.address,
-          },
-        })
-      } catch {
-        return sendMessageToUi({ type: "REDEPLOY_ACCOUNT_REJ" })
       }
     }
 
@@ -172,10 +125,6 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         type: "GET_ENCRYPTED_SEED_PHRASE_RES",
         data: { encryptedSeedPhrase },
       })
-    }
-
-    case "DEPLOY_ACCOUNT_ACTION_FAILED": {
-      return await actionQueue.remove(msg.data.actionHash)
     }
   }
 

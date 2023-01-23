@@ -2,10 +2,7 @@ import { getNetwork } from "../network"
 import { StoredWalletAccount, WalletAccount } from "../wallet.model"
 
 export function serialize(accounts: WalletAccount[]): StoredWalletAccount[] {
-  return accounts.map((account) => {
-    const { network, ...accountWithoutNetwork } = account
-    return accountWithoutNetwork
-  })
+  return accounts
 }
 
 export async function deserialize(

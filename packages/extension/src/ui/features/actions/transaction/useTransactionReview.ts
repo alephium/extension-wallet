@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { Call } from "starknet"
+import { TransactionParams } from "../../../../shared/actionQueue/types"
 
 import { ARGENT_TRANSACTION_REVIEW_API_ENABLED } from "../../../../shared/api/constants"
 import { argentApiNetworkForNetwork } from "../../../../shared/api/fetcher"
@@ -15,10 +16,11 @@ import {
 import { argentApiFetcher } from "../../../services/argentApiFetcher"
 import { useConditionallyEnabledSWR } from "../../../services/swr"
 import { Account } from "../../accounts/Account"
+import { useNetwork } from "../../networks/useNetworks"
 
 export interface IUseTransactionReview {
   account?: Account
-  transactions: Call | Call[]
+  transaction: TransactionParams
   actionHash: string
 }
 
@@ -36,32 +38,3 @@ export const useTransactionReviewEnabled = () => {
   )
 }
 
-export const useTransactionReview = ({
-  account,
-  transactions,
-  actionHash,
-}: IUseTransactionReview) => {
-  const transactionReviewEnabled = useTransactionReviewEnabled()
-  const transactionReviewFetcher = useCallback(async () => {
-    if (!account) {
-      return
-    }
-    const network = argentApiNetworkForNetwork(account.networkId)
-    if (!network) {
-      return
-    }
-    const accountAddress = account.address
-    return fetchTransactionReview({
-      network,
-      accountAddress,
-      transactions,
-      fetcher: argentApiFetcher,
-    })
-    // TODO: come back - dont rerender when fetcher reference changes
-  }, [account, transactions]) // eslint-disable-line react-hooks/exhaustive-deps
-  return useConditionallyEnabledSWR<ApiTransactionReviewResponse>(
-    Boolean(transactionReviewEnabled),
-    [actionHash, "transactionReview"],
-    transactionReviewFetcher,
-  )
-}

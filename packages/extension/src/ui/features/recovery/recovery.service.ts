@@ -1,7 +1,7 @@
 import { some } from "lodash-es"
 
 import { defaultNetwork } from "../../../shared/network"
-import { accountsEqual, isDeprecated } from "../../../shared/wallet.service"
+import { accountsEqual } from "../../../shared/wallet.service"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import {
@@ -47,12 +47,6 @@ export const recover = async ({
     setDefaultAccountNames(accounts)
     await selectAccount(selectedAccount)
     useAppState.setState({ switcherNetworkId: networkId })
-
-    // this needs to be after changing the state, otherwise the migration screen would deploy on the network that was selected before the switch
-    // shows deprecation screen depending on selected network
-    if (some(walletAccounts) && walletAccounts.every(isDeprecated)) {
-      return routes.migrationDisclaimer()
-    }
 
     if (showAccountList || !selectedAccount) {
       return routes.accounts()

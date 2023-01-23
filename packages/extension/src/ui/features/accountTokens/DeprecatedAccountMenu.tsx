@@ -4,7 +4,6 @@ import styled from "styled-components"
 
 import { settingsStore } from "../../../shared/settings"
 import { useKeyValueStorage } from "../../../shared/storage/hooks"
-import { isDeprecated } from "../../../shared/wallet.service"
 import { EditIcon } from "../../components/Icons/EditIcon"
 import { MoreVertSharp, VisibilityOff } from "../../components/Icons/MuiIcons"
 import { PluginIcon } from "../../components/Icons/PluginIcon"
@@ -81,107 +80,4 @@ export const IconWrapper = styled.div`
 
 interface AccountNameProps {
   onAccountNameEdit: () => void
-}
-
-export const DeprecatedAccountMenu: FC<AccountNameProps> = ({
-  onAccountNameEdit,
-}) => {
-  const [isMenuOpen, setMenuOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-  const currentNetwork = useCurrentNetwork()
-  const navigate = useNavigate()
-  const blockExplorerTitle = useBlockExplorerTitle()
-
-  const account = useSelectedAccount()
-  const experimentalPluginAccount = useKeyValueStorage(
-    settingsStore,
-    "experimentalPluginAccount",
-  )
-
-  useOnClickOutside(ref, () => setMenuOpen(false))
-
-  const handleEditClick = () => {
-    setMenuOpen(false)
-    onAccountNameEdit()
-  }
-
-  const showDelete =
-    account && (isDeprecated(account) || account.networkId === "localhost")
-
-  const handleHideOrDeleteAccount = async (account: Account) => {
-    if (showDelete) {
-      navigate(routes.accountDeleteConfirm(account.address))
-    } else {
-      navigate(routes.accountHideConfirm(account.address))
-    }
-  }
-
-  const canUpgradeToPluginAccount =
-    experimentalPluginAccount &&
-    account &&
-    currentNetwork.accountClassHash?.argentPluginAccount &&
-    account.type !== "argent-plugin"
-
-  return (
-    <MenuContainer ref={ref}>
-      <StyledMoreVert onClick={() => setMenuOpen(!isMenuOpen)} />
-      {isMenuOpen && (
-        <Menu>
-          <MenuItemWrapper
-            onClick={() =>
-              account &&
-              openBlockExplorerAddress(currentNetwork, account.address)
-            }
-          >
-            <MenuItem>
-              <ViewOnBlockExplorerIcon />
-              View on {blockExplorerTitle}
-            </MenuItem>
-          </MenuItemWrapper>
-          <Separator />
-          <MenuItemWrapper onClick={handleEditClick}>
-            <MenuItem>
-              <EditIcon /> Edit name
-            </MenuItem>
-          </MenuItemWrapper>
-          {account && (
-            <>
-              <Separator />
-              <MenuItemWrapper
-                onClick={() => handleHideOrDeleteAccount(account)}
-              >
-                <MenuItem>
-                  <IconWrapper>
-                    <VisibilityOff fontSize="inherit" htmlColor="white" />
-                  </IconWrapper>
-                  {showDelete ? "Delete" : "Hide"} account
-                </MenuItem>
-              </MenuItemWrapper>
-            </>
-          )}
-          {canUpgradeToPluginAccount && (
-            <>
-              <Separator />
-              <MenuItemWrapper
-                onClick={() => upgradeAccount(account, "argent-plugin")}
-              >
-                <MenuItem>
-                  <IconWrapper>
-                    <PluginIcon fontSize="inherit" />
-                  </IconWrapper>
-                  Use Plugins
-                </MenuItem>
-              </MenuItemWrapper>
-            </>
-          )}
-          <Separator />
-          <MenuItemWrapper onClick={() => navigate(routes.exportPrivateKey())}>
-            <MenuItem>
-              <WarningIcon /> Export private key
-            </MenuItem>
-          </MenuItemWrapper>
-        </Menu>
-      )}
-    </MenuContainer>
-  )
 }

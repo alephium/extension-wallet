@@ -9,13 +9,6 @@ export const baseDerivationPath = "m/44'/9004'/0'/0"
 export const hasNewDerivationPath = (derivationPath?: string): boolean =>
   Boolean(derivationPath?.startsWith(baseDerivationPath))
 
-export const isDeprecated = ({ signer, network }: WalletAccount): boolean => {
-  return (
-    Boolean(network.accountClassHash) &&
-    !hasNewDerivationPath(signer.derivationPath)
-  )
-}
-
 export const isEqualWalletAddress = (
   a: BaseWalletAccount,
   b: BaseWalletAccount,

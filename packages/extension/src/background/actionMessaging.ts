@@ -21,12 +21,16 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
     }
 
     case "APPROVE_ACTION": {
-      const { actionHash } = msg.data
+      const { actionHash, additionalData } = msg.data
       const action = await actionQueue.remove(actionHash)
       if (!action) {
         throw new Error("Action not found")
       }
-      const resultMessage = await handleActionApproval(action, background)
+      const resultMessage = await handleActionApproval(
+        action,
+        additionalData,
+        background,
+      )
 
       if (resultMessage) {
         respond(resultMessage)

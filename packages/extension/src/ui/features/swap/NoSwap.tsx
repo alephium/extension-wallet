@@ -16,7 +16,7 @@ export function NoSwap() {
         <SwapIcon />
       </Text>
       <H5 mt="10" textAlign="center">
-        Swaps are not available on this network
+        Swaps are not available for now
       </H5>
     </Flex>
   )

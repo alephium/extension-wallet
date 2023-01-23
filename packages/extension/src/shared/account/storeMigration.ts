@@ -40,7 +40,7 @@ async function checkAccountsForMigration(accounts: WalletAccount[]) {
         let needMigration = false
         try {
           const network = await getNetwork(
-            account.networkId || account.network?.id,
+            account.networkId || account.networkId,
           )
           if (!network) {
             throw new Error("Network not found")
@@ -48,14 +48,6 @@ async function checkAccountsForMigration(accounts: WalletAccount[]) {
 
           // migrations needed
           try {
-            if (account.network?.id) {
-              account.networkId = account.network.id
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              delete account.network
-
-              needMigration = true
-            }
             // migrate signer.type local_signer to local_secret
             if ((account.signer.type as any) !== "local_secret") {
               // currently there is just one type of signer
@@ -67,10 +59,7 @@ async function checkAccountsForMigration(accounts: WalletAccount[]) {
           }
 
           return {
-            account: {
-              ...account,
-              network,
-            },
+            account: account,
             needMigration,
           }
         } catch {

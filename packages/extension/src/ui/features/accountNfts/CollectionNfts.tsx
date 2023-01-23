@@ -18,113 +18,113 @@ interface LocationWithState extends Location {
   }
 }
 
-export const CollectionNfts: FC = () => {
-  const { contractAddress } = useParams<{ contractAddress: string }>()
-  const account = useSelectedAccount()
-  const navigate = useNavigate()
-  const { state } = useLocation() as LocationWithState
+// export const CollectionNfts: FC = () => {
+//   const { contractAddress } = useParams<{ contractAddress: string }>()
+//   const account = useSelectedAccount()
+//   const navigate = useNavigate()
+//   const { state } = useLocation() as LocationWithState
 
-  const navigateToSend = state?.navigateToSend || false
+//   const navigateToSend = state?.navigateToSend || false
 
-  const { collectible, error } = useCollection(contractAddress, account)
+//   const { collectible, error } = useCollection(contractAddress, account)
 
-  if (!contractAddress) {
-    return <></>
-  }
+//   if (!contractAddress) {
+//     return <></>
+//   }
 
-  if (error) {
-    return (
-      <NavigationContainer
-        leftButton={
-          <BarBackButton
-            onClick={() => navigate(routes.accountCollections())}
-          />
-        }
-      >
-        <H1 mt="4" textAlign="center">
-          Error loading
-        </H1>
-      </NavigationContainer>
-    )
-  }
+//   if (error) {
+//     return (
+//       <NavigationContainer
+//         leftButton={
+//           <BarBackButton
+//             onClick={() => navigate(routes.accountCollections())}
+//           />
+//         }
+//       >
+//         <H1 mt="4" textAlign="center">
+//           Error loading
+//         </H1>
+//       </NavigationContainer>
+//     )
+//   }
 
-  return (
-    <NavigationContainer
-      leftButton={
-        <BarBackButton onClick={() => navigate(routes.accountCollections())} />
-      }
-      scrollContent={
-        <>
-          <Image
-            w="28px"
-            h="28px"
-            src={collectible?.imageUri}
-            borderRadius="lg"
-          />
-          <H6>{collectible?.name}</H6>
-        </>
-      }
-    >
-      {collectible ? (
-        <>
-          <Flex
-            gap="2"
-            justifyContent="center"
-            direction="column"
-            alignItems="center"
-          >
-            <Image
-              w="64px"
-              h="64px"
-              src={collectible.imageUri}
-              backgroundColor={
-                !collectible.imageUri ? "neutrals.300" : "transparent"
-              }
-              borderRadius="lg"
-            />
-            <H4>{collectible?.name || "Loading..."}</H4>
-            <P4 color="neutrals.300">
-              Floor price:{" "}
-              {collectible.floorPrice ? (
-                <>{ethers.utils.formatEther(collectible.floorPrice)} ETH</>
-              ) : (
-                "-"
-              )}
-            </P4>
-          </Flex>
-          <SimpleGrid
-            gridTemplateColumns="repeat(auto-fill, 158px)"
-            gap="3"
-            mx="4"
-            py={6}
-          >
-            {collectible.nfts.map((nft) => (
-              <NftFigure
-                key={`${nft.contract_address}-${nft.token_id}`}
-                onClick={() =>
-                  navigate(
-                    navigateToSend
-                      ? routes.sendNft(nft.contract_address, nft.token_id)
-                      : routes.accountNft(nft.contract_address, nft.token_id),
-                  )
-                }
-              >
-                <NftItem
-                  thumbnailSrc={getNftPicture(nft) || ""}
-                  name={
-                    nft.name ||
-                    nft.contract.name_custom ||
-                    nft.contract.name ||
-                    "Untitled"
-                  }
-                />
-              </NftFigure>
-            ))}
-          </SimpleGrid>
-        </>
-      ) : (
-        <Spinner />
-      )}
-    </NavigationContainer>
-  )
-}
+//   return (
+//     <NavigationContainer
+//       leftButton={
+//         <BarBackButton onClick={() => navigate(routes.accountCollections())} />
+//       }
+//       scrollContent={
+//         <>
+//           <Image
+//             w="28px"
+//             h="28px"
+//             src={collectible?.imageUri}
+//             borderRadius="lg"
+//           />
+//           <H6>{collectible?.name}</H6>
+//         </>
+//       }
+//     >
+//       {collectible ? (
+//         <>
+//           <Flex
+//             gap="2"
+//             justifyContent="center"
+//             direction="column"
+//             alignItems="center"
+//           >
+//             <Image
+//               w="64px"
+//               h="64px"
+//               src={collectible.imageUri}
+//               backgroundColor={
+//                 !collectible.imageUri ? "neutrals.300" : "transparent"
+//               }
+//               borderRadius="lg"
+//             />
+//             <H4>{collectible?.name || "Loading..."}</H4>
+//             <P4 color="neutrals.300">
+//               Floor price:{" "}
+//               {collectible.floorPrice ? (
+//                 <>{ethers.utils.formatEther(collectible.floorPrice)} ETH</>
+//               ) : (
+//                 "-"
+//               )}
+//             </P4>
+//           </Flex>
+//           <SimpleGrid
+//             gridTemplateColumns="repeat(auto-fill, 158px)"
+//             gap="3"
+//             mx="4"
+//             py={6}
+//           >
+//             {collectible.nfts.map((nft) => (
+//               <NftFigure
+//                 key={`${nft.contract_address}-${nft.token_id}`}
+//                 onClick={() =>
+//                   navigate(
+//                     navigateToSend
+//                       ? routes.sendNft(nft.contract_address, nft.token_id)
+//                       : routes.accountNft(nft.contract_address, nft.token_id),
+//                   )
+//                 }
+//               >
+//                 <NftItem
+//                   thumbnailSrc={getNftPicture(nft) || ""}
+//                   name={
+//                     nft.name ||
+//                     nft.contract.name_custom ||
+//                     nft.contract.name ||
+//                     "Untitled"
+//                   }
+//                 />
+//               </NftFigure>
+//             ))}
+//           </SimpleGrid>
+//         </>
+//       ) : (
+//         <Spinner />
+//       )}
+//     </NavigationContainer>
+//   )
+// }

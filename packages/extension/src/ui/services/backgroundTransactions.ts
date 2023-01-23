@@ -1,11 +1,11 @@
 import { Call, UniversalDeployerContractPayload } from "starknet"
+import { TransactionParams } from "../../shared/actionQueue/types"
 
 import { sendMessage, waitForMessage } from "../../shared/messages"
-import { ExecuteTransactionRequest } from "../../shared/messages/TransactionMessage"
 import { DeclareContract } from "../../shared/udc/type"
 import { BaseWalletAccount } from "../../shared/wallet.model"
 
-export const executeTransaction = (data: ExecuteTransactionRequest) => {
+export const executeTransaction = (data: TransactionParams) => {
   return sendMessage({ type: "EXECUTE_TRANSACTION", data })
 }
 

@@ -71,10 +71,7 @@ export const getNetworkAccountImageUrl = ({
   return generateAvatarImage(accountName, { background })
 }
 
-const isAccountDeployed = (account: Account): boolean =>
-  !account.deployTransaction
-
-export type AccountStatusCode = "CONNECTED" | "DEFAULT" | "DEPLOYING" | "ERROR"
+export type AccountStatusCode = "CONNECTED" | "DEFAULT" | "ERROR"
 
 export interface AccountStatus {
   code: AccountStatusCode
@@ -84,11 +81,7 @@ export interface AccountStatus {
 export const getStatus = (
   account: Account,
   activeAccount?: BaseWalletAccount,
-  forceDeployed = false,
 ): AccountStatus => {
-  if (!isAccountDeployed(account) && !forceDeployed) {
-    return { code: "DEPLOYING", text: "Deploying..." }
-  }
   if (activeAccount && accountsEqual(account, activeAccount)) {
     return { code: "CONNECTED", text: "Active" }
   }

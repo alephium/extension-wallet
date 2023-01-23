@@ -9,17 +9,3 @@ export class NoMulticallAddressError extends Error {
     this.name = "NoMulticallAddressError"
   }
 }
-
-export const getMulticallForNetwork = memoize(
-  (network: Network) => {
-    const defaultMulticallAddress =
-      "0x05754af3760f3356da99aea5c3ec39ccac7783d925a19666ebbeca58ff0087f4"
-    const multicall = new Multicall(
-      getProvider(network),
-      network.multicallAddress ?? defaultMulticallAddress,
-    )
-    return multicall
-  },
-  ({ baseUrl, multicallAddress }) =>
-    [baseUrl, multicallAddress].filter(Boolean).join("-"),
-)

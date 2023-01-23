@@ -20,7 +20,7 @@ export const getPreDeployedAccount = async (
 ): Promise<AccountInterface | null> => {
   try {
     const preDeployedAccounts = await fetch(
-      urlJoin(network.baseUrl, "predeployed_accounts"),
+      urlJoin(network.nodeUrl, "predeployed_accounts"),
     ).then((x) => x.json() as Promise<PreDeployedAccount[]>)
 
     const preDeployedAccount = preDeployedAccounts[index]
@@ -36,28 +36,3 @@ export const getPreDeployedAccount = async (
     return null
   }
 }
-
-export const declareContracts = memoize(
-  async (
-    _network: Network,
-    deployAccount: AccountInterface,
-    _loadContracts: LoadContracts,
-  ) => {
-    const [proxyContract, accountContract] = await _loadContracts()
-    const proxy = await deployAccount.declare({
-      classHash: PROXY_CONTRACT_CLASS_HASHES[0],
-      contract: proxyContract,
-    })
-
-    const account = await deployAccount.declare({
-      classHash: ARGENT_ACCOUNT_CONTRACT_CLASS_HASHES[0],
-      contract: accountContract,
-    })
-
-    await deployAccount.waitForTransaction(account.transaction_hash, 1e3)
-    await deployAccount.waitForTransaction(proxy.transaction_hash, 1e3)
-
-    return { proxy, account }
-  },
-  (network) => `${network.baseUrl}`,
-)

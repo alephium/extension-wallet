@@ -83,7 +83,6 @@ export const AccountListScreenItem: FC<IAccountListScreenItem> = ({
         networkId={account.networkId}
         accountType={account.type}
         avatarOutlined={status.code === "CONNECTED"}
-        deploying={status.code === "DEPLOYING"}
         upgrade={needsUpgrade}
         connectedHost={isConnected ? originatingHost : undefined}
         pr={14}

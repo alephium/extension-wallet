@@ -1,3 +1,4 @@
+import { EnableOptionsBase, InteractiveSignerProvider } from "@alephium/web3"
 import type { AccountInterface, ProviderInterface } from "starknet"
 import type {
   AccountInterface as AccountInterface3,
@@ -44,10 +45,8 @@ export interface AddStarknetChainParameters {
   id: string
   chainId: string // A 0x-prefixed hexadecimal string
   chainName: string
-  baseUrl: string
-  rpcUrl?: string
-  blockExplorerUrl?: string
-  accountImplementation?: Network["accountClassHash"]
+  nodeUrl: string
+  explorerUrl?: string
 
   nativeCurrency?: {
     name: string
@@ -83,67 +82,27 @@ export type RpcMessage =
       result: never
     }
 
-type StarknetJsVersion = "v3" | "v4"
+export type EnableOptions = EnableOptionsBase & {
+  showModal?: boolean
+}
 
-interface IStarketWindowObject {
+export interface AlephiumWindowObject
+  extends InteractiveSignerProvider<EnableOptions> {
   id: string
   name: string
-  version: string
   icon: string
-  request: <T extends RpcMessage>(
-    call: Omit<T, "result">,
-  ) => Promise<T["result"]>
-  enable: (options?: {
-    starknetVersion?: StarknetJsVersion
-  }) => Promise<string[]>
-  isPreauthorized: () => Promise<boolean>
-  on: (
-    event: WalletEvents["type"],
-    handleEvent: WalletEvents["handler"],
-  ) => void
-  off: (
-    event: WalletEvents["type"],
-    handleEvent: WalletEvents["handler"],
-  ) => void
-  starknetJsVersion?: StarknetJsVersion
-  account?: AccountInterface | AccountInterface3
-  provider?: ProviderInterface | ProviderInterface3
-  selectedAddress?: string
-  chainId?: string
+  version: string
+
+  connectedAddress: string | undefined
+  connectedNetworkId: string | undefined
+  onDisconnected: (() => Promise<void>) | undefined
+
+  enable(options?: EnableOptions): Promise<string>
+  isPreauthorized(): Promise<boolean>
 }
-
-interface ConnectedStarketWindowObjectV3 extends IStarketWindowObject {
-  isConnected: true
-  starknetJsVersion: "v3"
-  account: AccountInterface3
-  provider: ProviderInterface3
-  selectedAddress: string
-  chainId: string
-}
-
-interface ConnectedStarketWindowObjectV4 extends IStarketWindowObject {
-  isConnected: true
-  starknetJsVersion: "v4"
-  account: AccountInterface
-  provider: ProviderInterface
-  selectedAddress: string
-  chainId: string
-}
-
-type ConnectedStarketWindowObject =
-  | ConnectedStarketWindowObjectV3
-  | ConnectedStarketWindowObjectV4
-
-interface DisconnectedStarketWindowObject extends IStarketWindowObject {
-  isConnected: false
-}
-
-export type StarknetWindowObject =
-  | ConnectedStarketWindowObject
-  | DisconnectedStarketWindowObject
 
 declare global {
   interface Window {
-    starknet?: StarknetWindowObject
+    alephium?: AlephiumWindowObject
   }
 }

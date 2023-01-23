@@ -2,10 +2,9 @@ import { assertNever } from "./../ui/services/assertNever"
 import type { WindowMessageType } from "../shared/messages"
 import { getProvider } from "../shared/network/provider"
 import { disconnectAccount } from "./account"
-import { ArgentXAccount } from "./ArgentXAccount"
+import { alephiumWindowObject, userEventHandlers } from "./alephiumWindowObject"
 import { sendMessage, waitForMessage } from "./messageActions"
 import { getIsPreauthorized } from "./messaging"
-import { starknetWindowObject, userEventHandlers } from "./starknetWindowObject"
 
 const INJECT_NAMES = ["starknet", "starknet_argentX"]
 
@@ -20,14 +19,14 @@ function attach() {
     try {
       // set read only property to window
       Object.defineProperty(window, name, {
-        value: starknetWindowObject,
+        value: alephiumWindowObject,
         writable: false,
       })
     } catch {
       // ignore
     }
     try {
-      ;(window as any)[name] = starknetWindowObject
+      ;(window as any)[name] = alephiumWindowObject
     } catch {
       // ignore
     }
@@ -47,13 +46,13 @@ document.addEventListener("readystatechange", () => attachHandler())
 window.addEventListener(
   "message",
   async ({ data }: MessageEvent<WindowMessageType>) => {
-    const { starknet } = window
-    if (!starknet) {
+    const { alephium } = window
+    if (!alephium) {
       return
     }
 
     if (
-      (starknet.account && data.type === "CONNECT_ACCOUNT_RES") ||
+      data.type === "CONNECT_ACCOUNT_RES" ||
       data.type === "APPROVE_REQUEST_SWITCH_CUSTOM_NETWORK"
     ) {
       const account =
@@ -83,38 +82,16 @@ window.addEventListener(
 
         if (
           account &&
-          (account.address !== starknet.selectedAddress ||
-            account.network.chainId !== starknet.chainId)
+          (account.address !== alephium.connectedAddress ||
+            account.networkId !== alephium.connectedNetworkId) &&
+          alephium.onDisconnected !== undefined
         ) {
-          const { address, network } = account
-
-          starknet.selectedAddress = address
-          starknet.chainId = network.chainId
-          starknet.provider = getProvider(network)
-          starknet.account = new ArgentXAccount(address, starknet.provider)
-          for (const userEvent of userEventHandlers) {
-            if (userEvent.type === "accountsChanged") {
-              userEvent.handler([address])
-            } else if (userEvent.type === "networkChanged") {
-              userEvent.handler(network.chainId)
-            } else {
-              assertNever(userEvent)
-            }
-          }
+          await alephium.onDisconnected()
         }
       }
     } else if (data.type === "DISCONNECT_ACCOUNT") {
-      starknet.selectedAddress = undefined
-      starknet.account = undefined
-      starknet.isConnected = false
-      for (const userEvent of userEventHandlers) {
-        if (userEvent.type === "accountsChanged") {
-          userEvent.handler([])
-        } else if (userEvent.type === "networkChanged") {
-          userEvent.handler(undefined)
-        } else {
-          assertNever(userEvent)
-        }
+      if (alephium.onDisconnected !== undefined) {
+        await alephium.onDisconnected()
       }
     }
   },

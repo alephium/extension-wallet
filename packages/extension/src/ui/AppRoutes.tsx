@@ -8,26 +8,21 @@ import { useAppState } from "./app.state"
 import { ResponsiveBox } from "./components/Responsive"
 import { TransactionDetailScreen } from "./features/accountActivity/TransactionDetailScreen"
 import { AccountEditScreen } from "./features/accountEdit/AccountEditScreen"
-import { CollectionNfts } from "./features/accountNfts/CollectionNfts"
-import { NftScreen } from "./features/accountNfts/NftScreen"
-import { SendNftScreen } from "./features/accountNfts/SendNftScreen"
+import { NoNft } from "./features/accountNfts/NftScreen"
 import { AddPluginScreen } from "./features/accountPlugins.tsx/AddPluginScreen"
 import { AccountListHiddenScreen } from "./features/accounts/AccountListHiddenScreen"
 import { AccountListScreen } from "./features/accounts/AccountListScreen"
 import { AccountScreen } from "./features/accounts/AccountScreen"
 import { HideOrDeleteAccountConfirmScreen } from "./features/accounts/HideOrDeleteAccountConfirmScreen"
 import { UpgradeScreen } from "./features/accounts/UpgradeScreen"
-import { UpgradeScreenV4 } from "./features/accounts/UpgradeScreenV4"
 import { ExportPrivateKeyScreen } from "./features/accountTokens/ExportPrivateKeyScreen"
 import { HideTokenScreen } from "./features/accountTokens/HideTokenScreen"
 import { SendTokenScreen } from "./features/accountTokens/SendTokenScreen"
 import { TokenScreen } from "./features/accountTokens/TokenScreen"
 import { useActions } from "./features/actions/actions.state"
 import { ActionScreen } from "./features/actions/ActionScreen"
-import { AddTokenScreen } from "./features/actions/AddTokenScreen"
 import { ErrorScreen } from "./features/actions/ErrorScreen"
 import { LoadingScreen } from "./features/actions/LoadingScreen"
-import { FundingBridgeScreen } from "./features/funding/FundingBridgeScreen"
 import { FundingProviderScreen } from "./features/funding/FundingProviderScreen"
 import { FundingQrCodeScreen } from "./features/funding/FundingQrCodeScreen"
 import { FundingScreen } from "./features/funding/FundingScreen"
@@ -65,6 +60,7 @@ import { SeedSettingsScreen } from "./features/settings/SeedSettingsScreen"
 import { SettingsPrivacyStatementScreen } from "./features/settings/SettingsPrivacyStatementScreen"
 import { SettingsScreen } from "./features/settings/SettingsScreen"
 import { SmartContractDevelopmentScreen } from "./features/settings/SmartContractDevelopmentScreen"
+import { NoSwap } from "./features/swap/NoSwap"
 import { ReviewFeedbackScreen } from "./features/userReview/ReviewFeedbackScreen"
 import { ReviewRatingScreen } from "./features/userReview/ReviewRatingScreen"
 import { routes } from "./routes"
@@ -113,12 +109,7 @@ const walletRoutes = (
     <Route
       presentation="modal"
       path={routes.accountNft.path}
-      element={<NftScreen />}
-    />
-    <Route
-      presentation="push"
-      path={routes.collectionNfts.path}
-      element={<CollectionNfts />}
+      element={<NoNft />}
     />
     <Route
       presentation="modal"
@@ -138,7 +129,7 @@ const walletRoutes = (
     <Route
       presentation="push"
       path={routes.swap.path}
-      element={<AccountScreen tab="swap" />}
+      element={<NoSwap />}
     />
     <Route
       presentation="push"
@@ -264,15 +255,6 @@ const walletRoutes = (
     />
     <Route path={routes.sendScreen.path} element={<SendScreen />} />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
-    <Route path={routes.sendNft.path} element={<SendNftScreen />} />
-    <Route
-      path={routes.networkUpgradeV4.path}
-      element={<UpgradeScreenV4 upgradeType={"network"} />}
-    />
-    <Route
-      path={routes.accountUpgradeV4.path}
-      element={<UpgradeScreenV4 upgradeType={"account"} />}
-    />
     <Route
       presentation="push"
       path={routes.accountsHidden.path}
@@ -282,11 +264,6 @@ const walletRoutes = (
       presentation={"modal"}
       path={routes.funding.path}
       element={<FundingScreen />}
-    />
-    <Route
-      presentation="push"
-      path={routes.fundingBridge.path}
-      element={<FundingBridgeScreen />}
     />
     <Route
       presentation="push"
@@ -307,7 +284,6 @@ const walletRoutes = (
       element={<SeedRecoverySetupScreen />}
     />
     <Route path={routes.setupRecovery.path} element={<RecoverySetupScreen />} />
-    <Route path={routes.newToken.path} element={<AddTokenScreen />} />
     <Route path={routes.token.path} element={<TokenScreen />} />
     <Route
       presentation="modal"

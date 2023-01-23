@@ -50,8 +50,7 @@ export const useTokenBalanceForAccount = (
         if (shouldReturnError) {
           return errorToMessage(
             error,
-            token.address,
-            account.network.multicallAddress,
+            token.address
           )
         } else {
           throw error
@@ -111,7 +110,6 @@ export interface TokenBalanceErrorMessage {
 const errorToMessage = (
   error: unknown,
   tokenAddress: string,
-  multicallAddress?: string,
 ): TokenBalanceErrorMessage => {
   const errorCode = get(error, "errorCode") as any
   const message = get(error, "message") as any
@@ -125,14 +123,6 @@ const errorToMessage = (
         return {
           message: "Token not found",
           description: `Token with address ${tokenAddress} not deployed on this network`,
-        }
-      } else if (
-        multicallAddress &&
-        isEqualAddress(contractAddress, multicallAddress)
-      ) {
-        return {
-          message: "No Multicall",
-          description: `Multicall contract with address ${multicallAddress} not deployed on this network`,
         }
       }
       return {
