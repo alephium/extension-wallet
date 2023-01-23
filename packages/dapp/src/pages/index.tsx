@@ -21,7 +21,11 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     ;(async () => {
-      const wallet = await silentConnectWallet()
+      const wallet = await silentConnectWallet(
+        () => {
+          return Promise.resolve(setConnected(false))
+        }
+      )
       setWallet(wallet)
     })()
   }, [])
