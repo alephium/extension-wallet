@@ -27,7 +27,7 @@ export const handlePreAuthorizationMessage: HandleMessage<PreAuthorisationMessag
       if (!isAuthorized) {
         await actionQueue.push({
           type: 'CONNECT_DAPP',
-          payload: { host: msg.data.host }
+          payload: { host: msg.data.host, group: msg.data.group }
         })
       }
 
@@ -44,7 +44,7 @@ export const handlePreAuthorizationMessage: HandleMessage<PreAuthorisationMessag
     case 'PREAUTHORIZE': {
       return actionQueue.push({
         type: 'CONNECT_DAPP',
-        payload: { host: msg.data }
+        payload: { host: msg.data.host, group: msg.data.group }
       })
     }
 

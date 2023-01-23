@@ -129,6 +129,7 @@ export interface AlephiumWindowObject extends InteractiveSignerProvider<EnableOp
   on: (event: EventType, handleEvent: EventHandler) => void
   off: (event: EventType, handleEvent: EventHandler) => void
 
+  currentNetwork?: string
   id: string
   name: string
   icon: string

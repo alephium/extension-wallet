@@ -6,15 +6,18 @@ export const silentConnectWallet = async () => {
   return windowAlephium
 }
 
-export const connectWallet = async (group?: number) => {
-  console.log("connectWallet", group)
+export const connectWallet = async (
+  onDisconnected: () => Promise<void>,
+  onNetworkChanged: (network: { networkName: string, networkId: number }) => Promise<void>,
+  group?: number
+) => {
   const windowAlephium = await connect({
     include: ['alephium']
   })
 
   await windowAlephium?.enable({
-    onDisconnected: () => Promise.resolve(),
-    onNetworkChanged: () => Promise.resolve(),
+    onDisconnected,
+    onNetworkChanged,
     chainGroup: group
   })
   return windowAlephium

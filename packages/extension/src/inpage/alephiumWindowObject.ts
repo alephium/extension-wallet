@@ -60,7 +60,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
   name = 'Alephium' as const
   icon = alephiumIcon
   defaultAddress = undefined
-  currentNetwork = defaultNetworks[0].id
+  currentNetwork = undefined as string | undefined
   isConnected = false
   disconnect = () => Promise.resolve() // TODO: FIXME
   enable = (_options?: EnableOptions): Promise<void> =>
@@ -80,6 +80,20 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
             publicKey,
             group: groupOfAddress(address)
           }
+          alephium.on('addressesChanged', (addresses: string[]) => {
+            if (addresses.length === 0) {
+              _options?.onDisconnected()
+            }
+          })
+
+          alephium.on('networkChanged', (network: Network) => {
+            _options?.onNetworkChanged({
+              networkId: defaultNetworks.findIndex((item) => item.name === network.name),
+              networkName: network.name
+            })
+            this.currentNetwork = network.name
+          })
+
           alephium.isConnected = true
           resolve()
         }

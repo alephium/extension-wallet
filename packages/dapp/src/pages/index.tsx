@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
+import { AlephiumWindowObject } from '@alephium/get-extension-wallet'
 
 import { connectWallet, silentConnectWallet } from '../services/wallet.service'
 import styles from '../styles/Home.module.css'
@@ -8,23 +9,35 @@ import styles from '../styles/Home.module.css'
 const Home: NextPage = () => {
   const [address, setAddress] = useState<string>()
   const [group, setGroup] = useState<number>()
+  const [network, setNetwork] = useState<string>()
   const [isConnected, setConnected] = useState(false)
+
+  const setWallet = (wallet?: AlephiumWindowObject) => {
+    setNetwork(wallet?.currentNetwork)
+    setAddress(wallet?.defaultAddress?.address)
+    setGroup(wallet?.defaultAddress?.group)
+    setConnected(!!wallet?.isConnected)
+  }
 
   useEffect(() => {
     ;(async () => {
       const wallet = await silentConnectWallet()
-      setAddress(wallet?.defaultAddress?.address)
-      setGroup(wallet?.defaultAddress?.group)
-      setConnected(!!wallet?.isConnected)
+      setWallet(wallet)
     })()
   }, [])
 
   const handleConnectClick = async (event: React.SyntheticEvent) => {
     event.preventDefault()
-    const wallet = await connectWallet(group)
-    setAddress(wallet?.defaultAddress?.address)
-    setGroup(wallet?.defaultAddress?.group)
-    setConnected(!!wallet?.isConnected)
+    const wallet = await connectWallet(
+      () => {
+        return Promise.resolve(setConnected(false))
+      },
+      (network: { networkName: string, networkId: number }) => {
+        return Promise.resolve(setNetwork(network.networkName))
+      },
+      group
+    )
+    setWallet(wallet)
   }
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -47,6 +60,13 @@ const Home: NextPage = () => {
             <h3 style={{ margin: 0 }}>
               Group: <code>{group}</code>
             </h3>
+            {
+              !!network && (
+                <h3 style={{ margin: 0 }}>
+                  Network: <code>{network}</code>
+                </h3>
+              )
+            }
           </>
         ) : (
           <>

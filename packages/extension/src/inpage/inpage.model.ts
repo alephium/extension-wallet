@@ -25,7 +25,7 @@ export interface AlephiumWindowObject extends InteractiveSignerProvider<EnableOp
   name: 'Alephium'
   icon: string
   isConnected: boolean
-  currentNetwork: string
+  currentNetwork?: string
 
   enable(options?: EnableOptions): Promise<void>
   isPreauthorized(): Promise<boolean>
