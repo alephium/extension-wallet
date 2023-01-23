@@ -1,4 +1,4 @@
-import { Account, InteractiveSignerProvider, EnableOptionsBase } from '@alephium/web3'
+import { Account, InteractiveSignerProvider, EnableOptionsBase, Address } from '@alephium/web3'
 
 import { Network } from '../shared/networks'
 
@@ -27,7 +27,7 @@ export interface AlephiumWindowObject extends InteractiveSignerProvider<EnableOp
   isConnected: boolean
   currentNetwork?: string
 
-  enable(options?: EnableOptions): Promise<void>
+  enable(options?: EnableOptions): Promise<Address>
   isPreauthorized(): Promise<boolean>
   on(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void
   off(event: WalletEvents['type'], handleEvent: WalletEvents['handler']): void

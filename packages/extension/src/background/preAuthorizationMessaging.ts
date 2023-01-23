@@ -13,7 +13,7 @@ export const handlePreAuthorizationMessage: HandleMessage<PreAuthorisationMessag
 }) => {
   switch (msg.type) {
     case 'CONNECT_DAPP': {
-      const { host, group } = msg.data
+      const { host, group, networkId } = msg.data
       const defaultAddress = await wallet.getAlephiumDefaultAddress(group)
       const isAuthorized = await isPreAuthorized(msg.data.host)
 
@@ -27,7 +27,7 @@ export const handlePreAuthorizationMessage: HandleMessage<PreAuthorisationMessag
       if (!isAuthorized) {
         await actionQueue.push({
           type: 'CONNECT_DAPP',
-          payload: { host: msg.data.host, group: msg.data.group }
+          payload: { host, group, networkId }
         })
       }
 
@@ -44,7 +44,7 @@ export const handlePreAuthorizationMessage: HandleMessage<PreAuthorisationMessag
     case 'PREAUTHORIZE': {
       return actionQueue.push({
         type: 'CONNECT_DAPP',
-        payload: { host: msg.data.host, group: msg.data.group }
+        payload: { host: msg.data.host, networkId: msg.data.networkId, group: msg.data.group }
       })
     }
 

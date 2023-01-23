@@ -2,13 +2,12 @@ import { connect, getAlephium } from '@alephium/get-extension-wallet'
 
 export const silentConnectWallet = async () => {
   const windowAlephium = await connect({ showList: false })
-  await windowAlephium?.enable()
+  await windowAlephium?.enable({ networkId: 'testnet' })
   return windowAlephium
 }
 
 export const connectWallet = async (
   onDisconnected: () => Promise<void>,
-  onNetworkChanged: (network: { networkName: string, networkId: number }) => Promise<void>,
   group?: number
 ) => {
   const windowAlephium = await connect({
@@ -17,7 +16,7 @@ export const connectWallet = async (
 
   await windowAlephium?.enable({
     onDisconnected,
-    onNetworkChanged,
+    networkId: 'testnet',
     chainGroup: group
   })
   return windowAlephium

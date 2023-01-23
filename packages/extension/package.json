@@ -67,8 +67,8 @@
   },
   "dependencies": {
     "@alephium/sdk": "0.3.0",
-    "@alephium/web3": "v0.3.0-rc.5",
-    "@alephium/web3-wallet": "v0.3.0-rc.5",
+    "@alephium/web3": "v0.3.0-rc.7",
+    "@alephium/web3-wallet": "v0.3.0-rc.7",
     "@extend-chrome/messages": "^1.2.2",
     "@google/model-viewer": "^1.11.1",
     "@mui/icons-material": "^5.3.1",

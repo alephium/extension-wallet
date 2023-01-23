@@ -63,7 +63,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
   currentNetwork = undefined as string | undefined
   isConnected = false
   disconnect = () => Promise.resolve() // TODO: FIXME
-  enable = (_options?: EnableOptions): Promise<void> =>
+  enable = (_options: EnableOptions): Promise<Address> =>
     new Promise((resolve) => {
       const handleMessage = ({ data }: MessageEvent<WindowMessageType>) => {
         const { alephiumProviders } = window
@@ -81,28 +81,21 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
             group: groupOfAddress(address)
           }
           alephium.on('addressesChanged', (addresses: string[]) => {
+            console.log("_options?", _options)
             if (addresses.length === 0) {
               _options?.onDisconnected()
             }
           })
 
-          alephium.on('networkChanged', (network: Network) => {
-            _options?.onNetworkChanged({
-              networkId: defaultNetworks.findIndex((item) => item.name === network.name),
-              networkName: network.name
-            })
-            this.currentNetwork = network.name
-          })
-
           alephium.isConnected = true
-          resolve()
+          resolve(address)
         }
       }
       window.addEventListener('message', handleMessage)
 
       sendMessage({
         type: 'CONNECT_DAPP',
-        data: { host: window.location.host, group: _options?.chainGroup }
+        data: { host: window.location.host, networkId: _options.networkId, group: _options?.chainGroup }
       })
     })
 

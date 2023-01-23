@@ -52,7 +52,7 @@ export const ActionScreen: FC = () => {
 
   switch (action.type) {
     case 'CONNECT_DAPP': {
-      return <ConnectDappScreen host={action.payload.host} group={action.payload.group} onReject={onReject} onSubmit={onSubmit} />
+      return <ConnectDappScreen host={action.payload.host} networkId={action.payload.networkId} group={action.payload.group} onReject={onReject} onSubmit={onSubmit} />
     }
 
     case 'REQUEST_ADD_CUSTOM_NETWORK':

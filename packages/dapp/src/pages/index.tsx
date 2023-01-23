@@ -32,9 +32,6 @@ const Home: NextPage = () => {
       () => {
         return Promise.resolve(setConnected(false))
       },
-      (network: { networkName: string, networkId: number }) => {
-        return Promise.resolve(setNetwork(network.networkName))
-      },
       group
     )
     setWallet(wallet)

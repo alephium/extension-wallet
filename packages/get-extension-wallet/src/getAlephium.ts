@@ -1,5 +1,11 @@
 import type {
   Account,
+  Address,
+  ExtSignDeployContractTxParams,
+  ExtSignExecuteScriptTxParams,
+  ExtSignMessageParams,
+  ExtSignTransferTxParams,
+  ExtSignUnsignedTxParams,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
@@ -139,13 +145,13 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
          * connecting a wallet successfully
          * @param options
          */
-        enable = async (options?: EnableOptions): Promise<void> => {
+        enable = async (options?: EnableOptions): Promise<Address> => {
           try {
             const wallet = await this.#connect({
               showList: options?.showModal
             })
             if (wallet) {
-              const result = await wallet.enable(options)
+              const result: Address = await wallet.enable(options)
               this.#refreshWalletProperties(wallet)
               return result
             }
@@ -162,12 +168,12 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
           return await method(currentWallet)
         }
 
-        signAndSubmitTransferTx = async (params: SignTransferTxParams): Promise<SignTransferTxResult> => {
+        signAndSubmitTransferTx = async (params: ExtSignTransferTxParams): Promise<SignTransferTxResult> => {
           return await this.#call('signAndSubmitTransferTx', (wallet) => wallet.signAndSubmitTransferTx(params))
         }
 
         signAndSubmitDeployContractTx = async (
-          params: SignDeployContractTxParams
+          params: ExtSignDeployContractTxParams
         ): Promise<SignDeployContractTxResult> => {
           return await this.#call('signAndSubmitDeployContractTx', (wallet) =>
             wallet.signAndSubmitDeployContractTx(params)
@@ -175,22 +181,22 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         }
 
         signAndSubmitExecuteScriptTx = async (
-          params: SignExecuteScriptTxParams
+          params: ExtSignExecuteScriptTxParams
         ): Promise<SignExecuteScriptTxResult> => {
           return await this.#call('signAndSubmitExecuteScriptTx', (wallet) =>
             wallet.signAndSubmitExecuteScriptTx(params)
           )
         }
 
-        signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
+        signUnsignedTx = async (params: ExtSignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
           return await this.#call('signUnsignedTx', (wallet) => wallet.signUnsignedTx(params))
         }
 
-        signAndSubmitUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
+        signAndSubmitUnsignedTx = async (params: ExtSignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
           return await this.#call('signAndSubmitUnsignedTx', (wallet) => wallet.signAndSubmitUnsignedTx(params))
         }
 
-        signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
+        signMessage = async (params: ExtSignMessageParams): Promise<SignMessageResult> => {
           return await this.#call('signMessage', (wallet) => wallet.signMessage(params))
         }
 

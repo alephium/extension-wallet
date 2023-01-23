@@ -1,3 +1,4 @@
+import type { Address } from '@alephium/web3'
 import type { AlephiumWindowObject, GetAlephiumWalletOptions } from './getAlephium'
 import { gaw } from './getAlephium'
 import type { DisconnectOptions, EnableOptions } from './types'
@@ -22,7 +23,7 @@ export type {
 export const getAlephium = (): AlephiumWindowObject => {
   const alephium = gaw.getAlephium()
 
-  alephium.enable = async (options?: EnableOptions): Promise<void> => {
+  alephium.enable = async (options?: EnableOptions): Promise<Address> => {
     const wallet = await connect({ showList: options?.showModal })
     return wallet?.enable(options)
   }

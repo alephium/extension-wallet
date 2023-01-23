@@ -1,4 +1,4 @@
-import type { Account, InteractiveSignerProvider, EnableOptionsBase } from '@alephium/web3'
+import type { Account, InteractiveSignerProvider, EnableOptionsBase, Address } from '@alephium/web3'
 
 export interface IStorageWrapper {
   set(value: string | null | undefined): boolean
@@ -124,7 +124,7 @@ export type EnableOptions = EnableOptionsBase & {
 
 export interface AlephiumWindowObject extends InteractiveSignerProvider<EnableOptions> {
   discriminator: string
-  enable: (options?: EnableOptions) => Promise<void>
+  enable: (options?: EnableOptions) => Promise<Address>
   isPreauthorized: () => Promise<boolean>
   on: (event: EventType, handleEvent: EventHandler) => void
   off: (event: EventType, handleEvent: EventHandler) => void

@@ -6,6 +6,7 @@ import { ConfirmPageProps, ConfirmScreen } from './ConfirmScreen'
 
 interface ConnectDappProps extends ConfirmPageProps {
   host: string,
+  networkId: string,
   group?: number
 }
 
@@ -15,10 +16,10 @@ const Code = styled.code`
   padding: 0 0.5em;
 `
 
-export const ConnectDappScreen: FC<ConnectDappProps> = ({ host, group, ...props }) => (
+export const ConnectDappScreen: FC<ConnectDappProps> = ({ host, group, networkId, ...props }) => (
   <ConfirmScreen title="Connect to dapp" confirmButtonText="Connect" {...props}>
     <P>
-      <Code>{host}</Code> wants to connect to your wallet{group ? ` on group ${group}` : ''}. If you allow this request the website will be able to read
+      <Code>{host}</Code> wants to connect to your wallet{group ? ` on group ${group}` : ''} on {networkId}. If you allow this request the website will be able to read
       your wallet addresses and request transactions, which you still need to sign.
     </P>
   </ConfirmScreen>
