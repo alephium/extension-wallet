@@ -84,7 +84,6 @@ const handlers = [
   handleRecoveryMessage,
   handleSessionMessage,
   handleTransactionMessage,
-  handleUdcMessaging,
 ] as Array<HandleMessage<MessageType>>
 
 getAccounts()

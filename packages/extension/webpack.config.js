@@ -130,7 +130,13 @@ module.exports = {
   ].filter(Boolean),
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
-    fallback: { buffer: require.resolve("buffer/") },
+    fallback: {
+      buffer: require.resolve("buffer/"),
+      fs: false,
+      crypto: require.resolve('crypto-browserify'),
+      stream: require.resolve('stream-browserify'),
+      path: require.resolve("path-browserify")
+    },
     alias: {
       "@mui/styled-engine": "@mui/styled-engine-sc",
     },
@@ -153,4 +159,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     sourceMapFilename: "../sourcemaps/[file].map",
   },
+  experiments: {
+    asyncWebAssembly: true
+  }
 }

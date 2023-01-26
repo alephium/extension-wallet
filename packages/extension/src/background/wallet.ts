@@ -56,10 +56,6 @@ import { accountsEqual, baseDerivationPath } from "../shared/wallet.service"
 import { isEqualAddress } from "../ui/services/addresses"
 import { LoadContracts } from "./accounts"
 import {
-  declareContracts,
-  getPreDeployedAccount,
-} from "./devnet/declareAccounts"
-import {
   getIndexForPath,
   getNextPathIndex,
   getPathForIndex,
@@ -118,7 +114,7 @@ export class Wallet {
     private readonly sessionStore: IObjectStorage<WalletSession | null>,
     private readonly loadContracts: LoadContracts,
     private readonly getNetwork: GetNetwork,
-  ) {}
+  ) { }
   async signAndSubmitUnsignedTx(
     account: WalletAccount,
     params: SignUnsignedTxParams,
@@ -226,28 +222,7 @@ export class Wallet {
     network: Network,
     accountType: ArgentAccountType,
   ): Promise<string> {
-    if (network.accountClassHash) {
-      if (
-        accountType === "argent-plugin" &&
-        network.accountClassHash.argentPluginAccount
-      ) {
-        return network.accountClassHash.argentPluginAccount
-      }
-      return network.accountClassHash.argentAccount
-    }
-
-    const deployerAccount = await getPreDeployedAccount(network)
-    if (deployerAccount) {
-      const { account } = await declareContracts(
-        network,
-        deployerAccount,
-        this.loadContracts,
-      )
-
-      return account.class_hash
-    }
-
-    return ARGENT_ACCOUNT_CONTRACT_CLASS_HASHES[0]
+    throw Error('Not Implemented')
   }
 
   private async restoreAccountsFromWallet(
@@ -261,9 +236,7 @@ export class Wallet {
 
     const accountClassHashes = union(
       ARGENT_ACCOUNT_CONTRACT_CLASS_HASHES,
-      network?.accountClassHash?.argentAccount
-        ? [network.accountClassHash.argentAccount]
-        : [],
+      []
     )
     const proxyClassHashes = PROXY_CONTRACT_CLASS_HASHES
 
@@ -311,6 +284,7 @@ export class Wallet {
               networkId: network.id,
               signer: {
                 type: "local_secret",
+                publicKey: '', // FIXME
                 derivationIndex: lastCheck,
               },
               type: "argent",

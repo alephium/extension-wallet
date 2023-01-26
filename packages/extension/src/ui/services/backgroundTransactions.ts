@@ -27,18 +27,7 @@ export const getEstimatedFee = async (call: Call | Call[]) => {
 export const getAccountDeploymentEstimatedFee = async (
   account?: BaseWalletAccount,
 ) => {
-  sendMessage({ type: "ESTIMATE_ACCOUNT_DEPLOYMENT_FEE", data: account })
-
-  const response = await Promise.race([
-    waitForMessage("ESTIMATE_ACCOUNT_DEPLOYMENT_FEE_RES"),
-    waitForMessage("ESTIMATE_ACCOUNT_DEPLOYMENT_FEE_REJ"),
-  ])
-
-  if ("error" in response) {
-    throw response.error
-  }
-
-  return response
+  throw Error('Not Implemented')
 }
 
 export const getDeclareContractEstimatedFee = async (data: DeclareContract) => {
@@ -75,7 +64,7 @@ export const getDeployContractEstimatedFee = async (
 
 // for debugging purposes
 try {
-  ;(window as any).downloadBackup = () => {
+  ; (window as any).downloadBackup = () => {
     sendMessage({ type: "DOWNLOAD_BACKUP_FILE" })
   }
 } catch {

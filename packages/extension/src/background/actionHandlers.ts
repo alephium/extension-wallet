@@ -80,8 +80,10 @@ export const handleActionApproval = async (
       return {
         type: "SIGNATURE_SUCCESS",
         data: {
-          r: r.toString(),
-          s: s.toString(),
+          //r: r.toString(),
+          //s: s.toString(),
+          r: '',
+          s: '',
           actionHash,
         },
       }

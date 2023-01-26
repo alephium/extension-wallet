@@ -1,4 +1,3 @@
-import { resetStoredNonce } from "../../nonce"
 import { TransactionUpdateListener } from "./type"
 
 export const checkResetStoredNonce: TransactionUpdateListener = async (
@@ -7,7 +6,7 @@ export const checkResetStoredNonce: TransactionUpdateListener = async (
   for (const transaction of transactions) {
     // on error remove stored (increased) nonce
     if (transaction.account && transaction.status === "REJECTED") {
-      await resetStoredNonce(transaction.account)
+      throw Error('Not Implemented')
     }
   }
 }

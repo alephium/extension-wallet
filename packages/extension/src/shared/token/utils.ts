@@ -22,4 +22,4 @@ export const getFeeToken = (networkId: string) =>
       symbol === "ETH" && network === networkId,
   )
 
-export const dustALPHAmount = 1000000000000000n
+export const dustALPHAmount = BigInt(1000000000000000)

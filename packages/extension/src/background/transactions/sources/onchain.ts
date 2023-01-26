@@ -1,3 +1,4 @@
+import { getNetwork } from "../../../shared/network"
 import { getProvider } from "../../../shared/network"
 import {
   Transaction,
@@ -12,7 +13,8 @@ export async function getTransactionsUpdate(transactions: Transaction[]) {
   // TODO: we should add a cooldown when user run into 429 errors
   const fetchedTransactions = await Promise.allSettled(
     transactionsToCheck.map(async (transaction) => {
-      const provider = getProvider(transaction.account.networkId)
+      const network = await getNetwork(transaction.account.networkId)
+      const provider = getProvider(network)
       const status = await provider.getTransactionStatus(transaction.hash)
       return {
         ...transaction,

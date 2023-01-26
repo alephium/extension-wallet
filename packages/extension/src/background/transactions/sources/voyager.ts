@@ -1,6 +1,6 @@
 import join from "url-join"
 
-import { Network } from "../../../shared/network"
+import { Network, getNetwork } from "../../../shared/network"
 import { Transaction, compareTransactions } from "../../../shared/transactions"
 import { WalletAccount } from "../../../shared/wallet.model"
 import { fetchWithTimeout } from "../../utils/fetchWithTimeout"
@@ -37,14 +37,19 @@ export async function getTransactionHistory(
   accountsToPopulate: WalletAccount[],
   metadataTransactions: Transaction[],
 ) {
-  const accountsWithHistory = accountsToPopulate.filter((account) =>
-    Boolean(account.network.explorerUrl),
+  const accountsWithHistory = await Promise.all(
+    accountsToPopulate.filter((account) =>
+      true  // FIXME
+      //Boolean(account.network.explorerUrl),
+    )
   )
   const transactionsPerAccount = await Promise.all(
     accountsWithHistory.map(async (account) => {
+      const network = await getNetwork(account.networkId)
+
       const voyagerTransactions = await fetchVoyagerTransactions(
         account.address,
-        account.network,
+        network,
       )
       return voyagerTransactions.map((transaction) =>
         mapVoyagerTransactionToTransaction(

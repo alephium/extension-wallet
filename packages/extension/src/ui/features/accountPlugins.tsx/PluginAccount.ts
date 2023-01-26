@@ -25,40 +25,17 @@ export class PluginAccount extends ArgentXAccount {
   }
 
   public addPlugin(pluginClassHash: string) {
-    return executeTransaction({
-      transactions: {
-        contractAddress: this.address,
-        entrypoint: "addPlugin",
-        calldata: [number.hexToDecimalString(pluginClassHash)],
-      },
-    })
+    throw Error('Not Implemented')
   }
 
   public removePlugin(pluginClassHash: string) {
-    return executeTransaction({
-      transactions: {
-        contractAddress: this.address,
-        entrypoint: "removePlugin",
-        calldata: [number.hexToDecimalString(pluginClassHash)],
-      },
-    })
+    throw Error('Not Implemented')
   }
 
   public async executeOnPlugin(
     pluginClassHash: string,
     call: Omit<Call, "contractAddress">,
   ) {
-    return executeTransaction({
-      transactions: {
-        contractAddress: this.address,
-        entrypoint: "executeOnPlugin",
-        calldata: [
-          pluginClassHash,
-          hash.getSelectorFromName(call.entrypoint),
-          call.calldata?.length ?? 0,
-          ...number.bigNumberishArrayToDecimalStringArray(call.calldata ?? []),
-        ],
-      },
-    })
+    throw Error('Not Implemented')
   }
 }
