@@ -1,3 +1,4 @@
+import { ExplorerProvider, NodeProvider } from "@alephium/web3"
 import urljoin from "url-join"
 
 import { Network, NetworkStatus } from "../shared/network"
@@ -19,125 +20,38 @@ const swr = createStaleWhileRevalidateCache({
   maxTimeToLive: 30 * 60e3, // 30 minutes
 })
 
-const getChecklyNetworkStatus = async (
-  network: Network,
-): Promise<NetworkStatus> =>
-  swr(`${network.id}-checkly-network-status`, async () => {
-    if (network.id !== "goerli-alpha") {
-      // checkly is only available on goerli-alpha
-      return "unknown"
-    }
-    try {
-      const response = await fetchWithTimeout(
-        `https://starknet-status.vercel.app/api/simple-status`,
-        { timeout: 8000, method: "GET" },
-      )
-      const { status }: { status: NetworkStatus } = await response.json()
-
-      return (response.status === 200 && status) || "error"
-    } catch {
-      return "error"
-    }
-  })
-
-function determineStatusByRequestStatusCode(statusCode: number): NetworkStatus {
-  if (statusCode === 200) {
-    return "ok"
-  }
-  if (statusCode === 429) {
-    return "degraded"
-  }
-  return "error"
-}
-
-const getFeederGatewayNetworkStatus = async (
-  network: Network,
-): Promise<NetworkStatus> =>
-  swr(`${network.id}-feeder-gateway-network-status`, async () => {
-    // fetch https://alpha-mainnet.starknet.io/feeder_gateway/is_alive and check the response
-    try {
-      const response = await fetchWithTimeout(
-        urljoin(network.nodeUrl, "feeder_gateway/is_alive"),
-        { timeout: 5000, method: "GET" },
-      )
-
-      return determineStatusByRequestStatusCode(response.status)
-    } catch {
-      return "error"
-    }
-  })
-
-const getGatewayNetworkStatus = async (
-  network: Network,
-): Promise<NetworkStatus> =>
-  swr(`${network.id}-gateway-network-status`, async () => {
-    // fetch https://alpha-mainnet.starknet.io/gateway/is_alive and check the response
-    try {
-      const response = await fetchWithTimeout(
-        urljoin(network.nodeUrl, "gateway/is_alive"),
-        { timeout: 5000, method: "GET" },
-      )
-
-      return determineStatusByRequestStatusCode(response.status)
-    } catch {
-      return "error"
-    }
-  })
-
-export const getDevnetStatus = async (
-  network: Network,
-): Promise<NetworkStatus> =>
-  swr(`${network.id}-devnet-network-status`, async () => {
-    // fetch http://localhost:5050/is_alive and check the response
-    try {
-      const response = await fetchWithTimeout(
-        urljoin(network.nodeUrl, "is_alive"),
-        { timeout: 5000, method: "GET" },
-      )
-
-      const status = determineStatusByRequestStatusCode(response.status)
-
-      return status
-    } catch {
-      return "error"
-    }
-  })
-
 export const getNetworkStatus = async (
   network: Network,
 ): Promise<NetworkStatus> => {
-  // return ok if all of the above are ok
-  // return degraded if any of the above are degraded
-  // return error if any of the above are error
-  // return unknown if all of the above are unknown
-
-  const isDevnet = await getDevnetStatus(network)
-  if (isDevnet === "ok") {
-    return isDevnet
-  }
-
-  const statuses = await Promise.all([
-    getChecklyNetworkStatus(network),
-    getFeederGatewayNetworkStatus(network),
-    getGatewayNetworkStatus(network),
-  ])
-
-  const degraded = statuses.some((s) => s === "degraded")
-  const error = statuses.some((s) => s === "error")
-  const unknown = statuses.every((s) => s === "unknown")
-
-  return unknown ? "unknown" : error ? "error" : degraded ? "degraded" : "ok"
+  return isNetworkHealthy(network).then(healthy => {
+    return { id: network.id, healthy }
+  })
 }
 
 export const getNetworkStatuses = async (
   networks: Network[],
 ): Promise<Partial<Record<Network["id"], NetworkStatus>>> => {
   const statuses = await Promise.all(
-    networks.map((network) => getNetworkStatus(network)),
+    networks.map(network => getNetworkStatus(network))
   )
 
   return networks.reduce(
     (acc, network, i) => ({ ...acc, [network.id]: statuses[i] }),
     {},
   )
+}
+
+export const isNetworkHealthy = async (network: Network): Promise<boolean> => {
+  const nodeProvider = new NodeProvider(network.nodeUrl)
+  const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+
+  try {
+    const nodeReleaseVersion = (await nodeProvider.infos.getInfosVersion()).version
+    const explorerReleaseVersion = (await explorerProvider.infos.getInfos()).releaseVersion
+
+    return !!nodeReleaseVersion && !!explorerReleaseVersion
+  } catch (exception) {
+    console.debug('Exception when checking network healthy', exception)
+    return false
+  }
 }

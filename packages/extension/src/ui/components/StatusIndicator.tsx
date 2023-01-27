@@ -14,18 +14,13 @@ interface StatusIndicatorProps {
 export function mapNetworkStatusToColor(
   status?: NetworkStatus,
 ): StatusIndicatorColor {
-  switch (status) {
-    case "error":
-      return "red"
-    case "degraded":
-      return "orange"
-    case "ok": // network status shows green by default and has no transparent state
-    case "unknown":
+  switch (status?.healthy) {
     case undefined:
       return "green"
-    default:
-      assertNever(status)
+    case true:
       return "green"
+    case false:
+      return "red"
   }
 }
 

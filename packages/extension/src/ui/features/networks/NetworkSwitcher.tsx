@@ -22,8 +22,6 @@ import { autoSelectAccountOnNetwork } from "../accounts/switchAccount"
 import { useNeedsToShowNetworkStatusWarning } from "./seenNetworkStatusWarning.state"
 import { useNetwork, useNetworkStatuses, useNetworks } from "./useNetworks"
 
-const valuesToShowNetwortWarning: Array<NetworkStatus> = ["degraded", "error"]
-
 interface NetworkSwitcherProps {
   disabled?: boolean
 }
@@ -41,7 +39,7 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
   useEffect(() => {
     if (
       currentNetworkStatus &&
-      valuesToShowNetwortWarning.includes(currentNetworkStatus) &&
+      !currentNetworkStatus.healthy &&
       needsToShowNetworkStatusWarning
     ) {
       navigate(routes.networkWarning(location.pathname))
