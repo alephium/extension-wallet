@@ -1,4 +1,4 @@
-import { Schema, boolean, object, string } from "yup"
+import { Schema, boolean, object, string, number } from "yup"
 
 import { Network } from "./type"
 
@@ -11,15 +11,11 @@ export const networkSchema: Schema<Network> = object()
   .shape({
     id: string().required().min(2).max(31),
     name: string().required().min(2).max(128),
-    chainId: string()
-      .required()
-      .min(2)
-      .max(31) // max 31 characters as required by starknet short strings
-      .matches(/^[a-zA-Z0-9_]+$/, {
-        message:
-          "${path} must be hexadecimal string, uppercase alphanumeric or underscore, like 'SN_GOERLI'",
-      }),
+    chainId: number().required(),
     nodeUrl: string()
+      .required()
+      .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
+    explorerApiUrl: string()
       .required()
       .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
     explorerUrl: string()

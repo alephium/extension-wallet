@@ -52,7 +52,7 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
 
   const defaultNetwork = useMemo<Network>(() => {
     if (props.mode === "add") {
-      return { id: "", name: "", chainId: "", nodeUrl: "" }
+      return { id: "", name: "", chainId: 0, explorerApiUrl: "", nodeUrl: "" }
     }
     /** display selected block explorer url from settings for readonly network */
     if (
@@ -141,85 +141,27 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
           <ControlledInputText
             autoComplete="off"
             control={control}
-            placeholder="Base URL"
-            name="baseUrl"
+            placeholder="Node URL"
+            name="nodeUrl"
             type="url"
             disabled={defaultNetwork.readonly}
           />
-          {/* collapseable area with some extra inputs */}
-          <ExtendableControl {...makeClickable(() => setExpanded((x) => !x))}>
-            <IconButton size={18}>
-              <ArrowBackIosNewIcon
-                style={{
-                  transition: "transform 0.2s ease-in-out",
-                  transform: expanded ? "rotate(-90deg)" : "rotate(-180deg)",
-                  height: 12,
-                  width: 12,
-                }}
-              />
-            </IconButton>
-            <A>Advanced settings</A>
-          </ExtendableControl>
-          <Collapse in={expanded} timeout="auto">
-            <Wrapper>
-              <ControlledInputText
-                autoComplete="off"
-                control={control}
-                placeholder="Explorer API URL"
-                name="explorerUrl"
-                type="url"
-                disabled={defaultNetwork.readonly}
-              />
-              <ControlledInputText
-                autoComplete="off"
-                control={control}
-                placeholder="Block explorer URL"
-                name="blockExplorerUrl"
-                type="url"
-                disabled={defaultNetwork.readonly}
-              />
-              <ControlledInputText
-                autoComplete="off"
-                control={control}
-                placeholder="Account implementation address"
-                name="accountImplementation"
-                type="text"
-                disabled={defaultNetwork.readonly}
-              />
-              <ControlledInputText
-                autoComplete="off"
-                control={control}
-                placeholder="Account class hash"
-                name="accountClassHash.argentAccount"
-                type="text"
-                disabled={defaultNetwork.readonly}
-              />
-              <ControlledInputText
-                autoComplete="off"
-                control={control}
-                placeholder="Plugin account class hash"
-                name="accountClassHash.argentPluginAccount"
-                type="text"
-                disabled={defaultNetwork.readonly}
-              />
-              <ControlledInputText
-                autoComplete="off"
-                control={control}
-                placeholder="RPC URL"
-                name="rpcUrl"
-                type="url"
-                disabled={defaultNetwork.readonly}
-              />
-              <ControlledInputText
-                autoComplete="off"
-                control={control}
-                placeholder="Multicall Address"
-                name="multicallAddress"
-                type="text"
-                disabled={defaultNetwork.readonly}
-              />
-            </Wrapper>
-          </Collapse>
+          <ControlledInputText
+            autoComplete="off"
+            control={control}
+            placeholder="Explorer API URL"
+            name="explorerApiUrl"
+            type="url"
+            disabled={defaultNetwork.readonly}
+          />
+          <ControlledInputText
+            autoComplete="off"
+            control={control}
+            placeholder="Explorer URL"
+            name="explorerUrl"
+            type="url"
+            disabled={defaultNetwork.readonly}
+          />
 
           {Object.keys(errors).length > 0 && (
             <FormError>

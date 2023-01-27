@@ -43,9 +43,10 @@ export interface WatchAssetParameters {
 
 export interface AddStarknetChainParameters {
   id: string
-  chainId: string // A 0x-prefixed hexadecimal string
+  chainId: number
   chainName: string
   nodeUrl: string
+  explorerApiUrl: string
   explorerUrl?: string
 
   nativeCurrency?: {

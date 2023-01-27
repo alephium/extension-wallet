@@ -14,6 +14,7 @@ export async function handleAddNetworkRequest(
       id: callParams.id,
       name: callParams.chainName,
       chainId: callParams.chainId,
+      explorerApiUrl: callParams.explorerApiUrl,
       nodeUrl: callParams.nodeUrl,
       explorerUrl: callParams.explorerUrl,
     },

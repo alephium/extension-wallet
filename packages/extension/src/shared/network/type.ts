@@ -1,8 +1,9 @@
 export interface Network {
   id: string
   name: string
-  chainId: string
+  chainId: number
   nodeUrl: string
+  explorerApiUrl: string
   explorerUrl?: string
   readonly?: boolean
 }

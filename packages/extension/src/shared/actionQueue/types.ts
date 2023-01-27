@@ -119,8 +119,9 @@ export type ActionItem =
       payload: {
         id: string
         name: string
-        chainId: string
+        chainId: number
         nodeUrl: string
+        explorerApiUrl: string
         explorerUrl?: string
       }
     }
@@ -129,8 +130,9 @@ export type ActionItem =
       payload: {
         id: string
         name: string
-        chainId: string
+        chainId: number
         nodeUrl: string
+        explorerApiUrl: string
         explorerUrl?: string
       }
     }

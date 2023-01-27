@@ -35,7 +35,7 @@ export async function getNetwork(networkId: string) {
   return network
 }
 
-export async function getNetworkByChainId(chainId: string) {
+export async function getNetworkByChainId(chainId: number) {
   const [network] = await getNetworks(networkSelectorByChainId(chainId))
   return network
 }
