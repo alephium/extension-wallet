@@ -26,7 +26,7 @@ function attach() {
       // ignore
     }
     try {
-      ;(window as any)[name] = alephiumWindowObject
+      ; (window as any)[name] = alephiumWindowObject
     } catch {
       // ignore
     }

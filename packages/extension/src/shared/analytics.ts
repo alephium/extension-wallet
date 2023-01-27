@@ -155,7 +155,7 @@ const defaultPayload = {
   context: {
     ip: "0.0.0.0",
     app: {
-      name: "Argent X",
+      name: "Argent ALPH",
       version: VERSION,
     },
     library: {

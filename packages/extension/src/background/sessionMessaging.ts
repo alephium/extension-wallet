@@ -20,11 +20,10 @@ export const handleSessionMessage: HandleMessage<SessionMessage> = async ({
       }
       const { plaintext } = await compactDecrypt(body, privateKey)
       const sessionPassword = encode.arrayBufferToString(plaintext)
-      const result = await wallet.startSession(sessionPassword, (percent) => {
-        respond({ type: "LOADING_PROGRESS", data: percent })
-      })
+      const result = await wallet.startAlephiumSession(sessionPassword)
+
       if (result) {
-        const selectedAccount = await wallet.getSelectedAccount()
+        const selectedAccount = await wallet.getAlephiumSelectedAddress()
         return respond({
           type: "START_SESSION_RES",
           data: selectedAccount,

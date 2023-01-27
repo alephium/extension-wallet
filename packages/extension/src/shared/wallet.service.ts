@@ -14,10 +14,7 @@ export const isEqualWalletAddress = (
   b: BaseWalletAccount,
 ) => {
   try {
-    return isEqualAddress(
-      a.address.toLowerCase(),
-      b.address.toLocaleLowerCase(),
-    )
+    return a.address.toLowerCase() === b.address.toLocaleLowerCase()
   } catch (e) {
     console.error("~ isEqualWalletAddress", e)
     return false

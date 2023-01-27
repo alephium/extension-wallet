@@ -36,7 +36,7 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
 
       const { networkId } = msg.data
       try {
-        const account = await wallet.newAccount(networkId)
+        const account = await wallet.newAlephiumAccount(networkId)
 
         analytics.track("createAccount", {
           status: "success",

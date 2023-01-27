@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/chrome-manifest.json",
-  "name": "Argent X",
+  "name": "Argent ALPH",
   "description": "The security of Ethereum with the scale of StarkNet",
   "version": "5.2.0",
   "manifest_version": 2,
@@ -10,7 +10,7 @@
       "48": "assets/logo.png",
       "128": "assets/logo.png"
     },
-    "default_title": "Argent X",
+    "default_title": "Argent ALPH",
     "default_popup": "index.html"
   },
   "permissions": [

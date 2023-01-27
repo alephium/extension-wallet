@@ -7,7 +7,7 @@ import {
 } from "starknet"
 import * as yup from "yup"
 
-export const normalizeAddress = (address: string) => getChecksumAddress(address)
+export const normalizeAddress = (address: string) => address
 
 export const formatTruncatedAddress = (address: string) => {
   const normalized = normalizeAddress(address)

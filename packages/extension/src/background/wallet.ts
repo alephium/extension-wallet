@@ -1,4 +1,13 @@
 import {
+  TOTAL_NUMBER_OF_GROUPS,
+  deriveNewAddressData,
+  getStorage,
+  walletGenerate,
+  walletImport,
+  walletOpen
+} from '@alephium/sdk'
+
+import {
   ExplorerProvider,
   NodeProvider,
   SignDeployContractTxParams,
@@ -14,6 +23,7 @@ import {
   SignerProvider,
   addressFromPublicKey,
   publicKeyFromPrivateKey,
+  groupOfAddress,
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
@@ -21,7 +31,7 @@ import {
 } from "@alephium/web3-wallet"
 import { ethers } from "ethers"
 import { ProgressCallback } from "ethers/lib/utils"
-import { find, noop, throttle, union } from "lodash-es"
+import { find, noop, throttle, union, range } from "lodash-es"
 import {
   Account,
   DeployAccountContractTransaction,
@@ -84,8 +94,12 @@ export const ARGENT_ACCOUNT_CONTRACT_CLASS_HASHES = [
   "0x7e28fb0161d10d1cf7fe1f13e7ca57bce062731a3bd04494dfd2d0412699727",
 ]
 
+const AlephiumStorage = getStorage()
+const WalletName = 'alephium-extension-wallet'
+
 export interface WalletSession {
-  secret: string
+  secret: string     // NOTE: mnemonic for ALPH
+  seed?: Buffer
   password: string
 }
 
@@ -133,7 +147,13 @@ export class Wallet {
   }
 
   public async isInitialized(): Promise<boolean> {
-    return Boolean(await this.store.get("backup"))
+    try {
+      AlephiumStorage.load(WalletName)
+    } catch {
+      return false
+    }
+
+    return true
   }
 
   public async isSessionOpen(): Promise<boolean> {
@@ -181,15 +201,14 @@ export class Wallet {
     if ((await this.isInitialized()) || session) {
       throw new Error("Wallet is already initialized")
     }
-    const ethersWallet = ethers.Wallet.fromMnemonic(seedPhrase)
-    const encryptedBackup = await ethersWallet.encrypt(newPassword, {
-      scrypt: { N: SCRYPT_N },
-    })
 
-    await this.importBackup(encryptedBackup)
-    await this.setSession(ethersWallet.privateKey, newPassword)
-
-    await this.discoverAccounts()
+    try {
+      const wallet = walletImport(seedPhrase)
+      AlephiumStorage.save(WalletName, wallet.encrypt(newPassword))
+      this.setSession(wallet.mnemonic, newPassword, wallet.seed)
+    } catch {
+      throw Error('Restore seedphrase failed')
+    }
   }
 
   public async discoverAccounts() {
@@ -307,6 +326,35 @@ export class Wallet {
     }
   }
 
+  public async startAlephiumSession(password: string): Promise<boolean> {
+    const session = await this.sessionStore.get()
+    if (session) {
+      return true
+    }
+
+    let walletEncrypted
+    try {
+      walletEncrypted = AlephiumStorage.load(WalletName)
+    } catch {
+      walletEncrypted = undefined
+    }
+
+    try {
+      if (!walletEncrypted) {
+        const wallet = walletGenerate()
+        AlephiumStorage.save(WalletName, wallet.encrypt(password))
+        this.setSession(wallet.mnemonic, password, wallet.seed)
+      } else {
+        const wallet = walletOpen(password, walletEncrypted)
+        this.setSession(wallet.mnemonic, password, wallet.seed)
+      }
+
+      return true
+    } catch {
+      return false
+    }
+  }
+
   public async startSession(
     password: string,
     progressCallback?: ProgressCallback,
@@ -396,7 +444,6 @@ export class Wallet {
       .map((account) => account.signer.derivationIndex)
 
     const index = getNextPathIndex(currentIndexes)
-
     const privateKey = deriveHDWalletPrivateKey(session.secret, index)
     const publicKey = publicKeyFromPrivateKey(privateKey)
     const newAddress = addressFromPublicKey(publicKey)
@@ -417,6 +464,63 @@ export class Wallet {
     await this.selectAccount(account)
 
     return account
+  }
+
+  deriveWalletAccount(networkId: string, seed: Buffer, forGroup?: number | undefined, addressIndex?: number | undefined, skipAddressIndexes?: number[]): WalletAccount {
+    const addressAndKeys = deriveNewAddressData(seed, forGroup, addressIndex, skipAddressIndexes)
+    return {
+      address: addressAndKeys.address,
+      networkId: networkId,
+      signer: {
+        type: "local_secret" as const,
+        publicKey: addressAndKeys.publicKey,
+        derivationIndex: addressAndKeys.addressIndex,
+      },
+      type: "argent",
+    }
+  }
+
+  public async newAlephiumAccount(networkId: string, group?: number): Promise<WalletAccount> {
+    const session = await this.sessionStore.get()
+    if (!this.isSessionOpen() || !session) {
+      throw Error("no open session")
+    }
+
+    if (!session?.seed) {
+      throw Error("no seed")
+    } else {
+      // do not store at the moment, but use public key and private key to sign
+      // store later
+      const accounts = await this.walletStore.get()
+      group = group || group === 0 ? ~~group : undefined
+
+      let newAndDefaultAddress
+      if (accounts) {
+        group = group || group === 0 ? ~~group : undefined
+        const skipIndexes = accounts.map((account) => account.signer.derivationIndex)
+        newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, undefined, skipIndexes)
+        await this.walletStore.push([newAndDefaultAddress])
+      } else {
+        if (group === undefined) {
+          const seed = session.seed
+          const skipIndexes: number[] = []
+          const newAddresses = range(TOTAL_NUMBER_OF_GROUPS).map((group) => {
+            const address = this.deriveWalletAccount(networkId, seed, group, undefined, skipIndexes)
+            skipIndexes.push(address.signer.derivationIndex)
+            return address
+          })
+          newAndDefaultAddress = newAddresses[0]
+          await this.walletStore.push(newAddresses)
+        } else {
+          newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, 0)
+          await this.walletStore.push([newAndDefaultAddress])
+        }
+      }
+
+      await this.store.set("selected", newAndDefaultAddress)
+
+      return newAndDefaultAddress
+    }
   }
 
   public async getAccount(selector: BaseWalletAccount): Promise<WalletAccount> {
@@ -476,6 +580,30 @@ export class Wallet {
       accountsEqual(selectedAccount, account),
     )
     return account ?? defaultAccount
+  }
+
+  matchGroup(address: string, group?: number): boolean {
+    return !group || groupOfAddress(address) === group
+  }
+
+  public async getAlephiumSelectedAddress(group?: number): Promise<WalletAccount | undefined> {
+    const accounts = await this.walletStore.get()
+    const selectedAccount = await this.store.get("selected")
+
+    if (selectedAccount && this.matchGroup(selectedAccount.address, group)) {
+      const account = find(accounts, (account) =>
+        accountsEqual(selectedAccount, account),
+      )
+
+      return account
+    } else {
+      const result = accounts.find((account) => this.matchGroup(account.address, group))
+      if (result) {
+        await this.store.set("selected", result)
+      }
+
+      return result
+    }
   }
 
   public async selectAccount(accountIdentifier?: BaseWalletAccount) {
@@ -543,8 +671,8 @@ export class Wallet {
     }
   }
 
-  private async setSession(secret: string, password: string) {
-    await this.sessionStore.set({ secret, password })
+  private async setSession(secret: string, password: string, seed?: Buffer) {
+    await this.sessionStore.set({ secret, seed, password })
 
     browser.alarms.onAlarm.addListener(async (alarm) => {
       if (alarm.name === "session_timeout") {

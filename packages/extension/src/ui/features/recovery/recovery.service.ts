@@ -1,7 +1,7 @@
 import { some } from "lodash-es"
 
 import { defaultNetwork } from "../../../shared/network"
-import { accountsEqual } from "../../../shared/wallet.service"
+import { accountsEqual, isEqualWalletAddress } from "../../../shared/wallet.service"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import {
@@ -30,18 +30,15 @@ export const recover = async ({
 
     const allAccounts = await getAccounts(true)
     const walletAccounts = accountsOnNetwork(allAccounts, networkId)
-
     const selectedWalletAccount = walletAccounts.find(
       (account) =>
-        lastSelectedAccount && accountsEqual(account, lastSelectedAccount),
+        lastSelectedAccount && accountsEqual(account, lastSelectedAccount)
     )
-
     const firstUnhiddenAccount = walletAccounts.find((wa) => !wa.hidden)
 
     const selectedAccount = !selectedWalletAccount?.hidden
       ? selectedWalletAccount
       : firstUnhiddenAccount
-
     const accounts = mapWalletAccountsToAccounts(walletAccounts)
 
     setDefaultAccountNames(accounts)
