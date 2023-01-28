@@ -11,7 +11,7 @@ export const useSeedRecovery = create<State>(() => ({}))
 export const validateSeedPhrase = (seedPhrase: string): boolean => {
   const words = wordlists.en.split(seedPhrase.trim())
   // check seed phrase has correct number of words
-  if (words.length !== 12) {
+  if (words.length !== 24) {
     return false
   }
   // check every word is in the wordlist

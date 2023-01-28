@@ -46,7 +46,7 @@ export const OnboardingRestoreSeed: FC = () => {
       length={4}
       currentIndex={1}
       title={"Restore accounts"}
-      subtitle="Enter each of the 12 words from your recovery phrase separated by a
+      subtitle="Enter each of the 24 words from your recovery phrase separated by a
       space"
     >
       <SeedInput

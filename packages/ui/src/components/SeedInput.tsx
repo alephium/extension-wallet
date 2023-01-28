@@ -25,7 +25,7 @@ const WORDLIST_LENGTH = 2048
 const JUNK_MULTIPLIER = 12
 
 export const SeedInput: FC<SeedInputProps> = ({
-  length = 12,
+  length = 24,
   onChange,
   ...rest
 }) => {
