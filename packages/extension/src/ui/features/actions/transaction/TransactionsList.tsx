@@ -28,15 +28,15 @@ export const TransactionsList: FC<ITransactionsList> = ({
     getDisplayWarnAndReasonForTransactionReview(transactionReview)
   return (
     <>
-      {warn && (
+      {warn ? (
         <TransactionBanner
           variant={undefined}
           icon={WarningIcon}
           message={reason}
         />
-      )} : (
+      ) : (
         <TransactionActions transaction={transactionReview} />
-      )
+      )}
     </>
   )
 }

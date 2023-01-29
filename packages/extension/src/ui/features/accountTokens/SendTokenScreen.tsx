@@ -1,4 +1,5 @@
-import { Destination } from "@alephium/web3"
+import { convertAlphToSet } from "@alephium/sdk"
+import { ALPH_TOKEN_ID, Destination } from "@alephium/web3"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
 import { utils } from "ethers"
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -35,7 +36,7 @@ import {
   normalizeAddress,
 } from "../../services/addresses"
 import {
-  sendTransaction,
+  sendTransferTransaction,
 } from "../../services/transactions"
 import { useOnClickOutside } from "../../services/useOnClickOutside"
 import { H3, H5 } from "../../theme/Typography"
@@ -118,7 +119,7 @@ const ButtonSpacer = styled.div`
   flex: 1;
 `
 
-export const AtTheRateWrapper = styled(StyledMaxButton)<{ active?: boolean }>`
+export const AtTheRateWrapper = styled(StyledMaxButton) <{ active?: boolean }>`
   padding: 6px;
 
   background-color: ${({ theme, active }) => active && theme.white};
@@ -250,12 +251,7 @@ export const SendTokenScreen: FC = () => {
 
   const token = tokenDetails.find(({ address }) => address === tokenAddress)
   const currencyValue = useTokenUnitAmountToCurrencyValue(token, inputAmount)
-
-  const {
-    maxFee,
-    error: maxFeeError,
-    loading: maxFeeLoading,
-  } = useMaxFeeEstimateForTransfer(token?.address, token?.balance, account)
+  const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
 
   const setMaxInputAmount = useCallback(
     (token: TokenDetailsWithBalance, maxFee?: string) => {
@@ -290,7 +286,7 @@ export const SendTokenScreen: FC = () => {
 
   const addressBook = useAddressBook(account?.networkId || currentNetworkId)
 
-  const validateStarknetAddress = useCallback(
+  const validateAddress = useCallback(
     (addr: string) => isValidAddress(addr),
     [],
   )
@@ -366,6 +362,10 @@ export const SendTokenScreen: FC = () => {
     (submitCount > 0 && !isDirty) ||
     isInputAmountGtBalance // Balance: 1234, maxInput: 1231, , maxFee: 3, updatedInput: 1233
 
+  const isAlphToken = (tokenAddress: string | undefined): boolean => {
+    return tokenAddress?.slice(2) === ALPH_TOKEN_ID || tokenAddress === undefined
+  }
+
   return (
     <>
       <AddContactBottomSheet
@@ -386,16 +386,29 @@ export const SendTokenScreen: FC = () => {
           </ColumnCenter>
           <StyledForm
             onSubmit={handleSubmit(({ amount, recipient }) => {
-              const destination: Destination = {
-                address: recipient,
-                attoAlphAmount: tokenAddress === undefined ? BigInt(amount) : dustALPHAmount,
-                tokens: tokenAddress === undefined ? [] : [{ id: tokenAddress, amount: BigInt(amount) }]
+              if (account) {
+                let destination: Destination
+                if (tokenAddress?.slice(2) === ALPH_TOKEN_ID || tokenAddress === undefined) {
+                  destination = {
+                    address: recipient,
+                    attoAlphAmount: convertAlphToSet(amount),
+                    tokens: []
+                  }
+                } else {
+                  destination = {
+                    address: recipient,
+                    attoAlphAmount: dustALPHAmount,
+                    tokens: [{ id: tokenAddress, amount: BigInt(amount) }]
+                  }
+                }
+
+                sendTransferTransaction({
+                  signerAddress: account?.address,
+                  destinations: [destination],
+                })
+
+                navigate(routes.accountTokens(), { replace: true })
               }
-              sendTransaction({
-                signerAddress: address,
-                destinations: [ destination ],
-              })
-              navigate(routes.accountTokens(), { replace: true })
             })}
           >
             <Column gap="12px">
@@ -425,7 +438,7 @@ export const SendTokenScreen: FC = () => {
                       <>
                         <InputTokenSymbol>{token.symbol}</InputTokenSymbol>
                         <StyledMaxButton type="button" onClick={handleMaxClick}>
-                          {maxFeeLoading ? <Spinner size={18} /> : "MAX"}
+                          {"MAX"}
                         </StyledMaxButton>
                       </>
                     )}
@@ -434,13 +447,6 @@ export const SendTokenScreen: FC = () => {
                 {inputAmount && isInputAmountGtBalance && (
                   <FormError>Insufficient balance</FormError>
                 )}
-                {maxFeeError ? (
-                  maxFeeError.message ? (
-                    <FormError>{maxFeeError.message}</FormError>
-                  ) : (
-                    <FormError>Unable to estimate fee</FormError>
-                  )
-                ) : undefined}
                 {errors.amount ? (
                   errors.amount.message ? (
                     <FormError>{errors.amount.message}</FormError>
@@ -493,9 +499,8 @@ export const SendTokenScreen: FC = () => {
                         paddingRight: "50px",
                         borderRadius: addressBookOpen ? "8px 8px 0 0" : "8px",
                       }}
-                      onlyAddressHex
                       onChange={(e) => {
-                        if (validateStarknetAddress(e.target.value)) {
+                        if (validateAddress(e.target.value)) {
                           const account = addressBook.contacts.find((c) =>
                             isEqualAddress(c.address, e.target.value),
                           )

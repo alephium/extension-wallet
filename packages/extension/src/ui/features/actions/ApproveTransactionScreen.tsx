@@ -101,12 +101,12 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
       {buildResult === undefined ?
         (<></>) // TODO: show pending status
-      : (
-        <TransactionsList
-          networkId={networkId}
-          transactionReview={buildResult}
-        />
-      )}
+        : (
+          <TransactionsList
+            networkId={networkId}
+            transactionReview={buildResult}
+          />
+        )}
       <AccountNetworkInfo account={selectedAccount} />
     </ConfirmScreen>
   )

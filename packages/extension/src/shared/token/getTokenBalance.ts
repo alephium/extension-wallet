@@ -13,8 +13,10 @@ export const getTokenBalanceForAccount = async (
   const network = await getNetwork(account.networkId)
   /** fallback to single call */
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+  const normalizedTokenAddress = tokenAddress.startsWith('0x') ? tokenAddress.slice(2) : tokenAddress
+
   let result: AddressBalance
-  if (ALPH_TOKEN_ID === tokenAddress.slice(2)) {
+  if (ALPH_TOKEN_ID === normalizedTokenAddress) {
     result = await explorerProvider.addresses.getAddressesAddressBalance(account.address)
   } else {
     result = await explorerProvider.addresses.getAddressesAddressTokensTokenIdBalance(account.address, tokenAddress)

@@ -1,3 +1,4 @@
+import { convertSetToAlph } from "@alephium/sdk"
 import { L1, L2, P4, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { Collapse } from "@mui/material"
@@ -31,11 +32,15 @@ import { getParsedError } from "./utils"
 const { AlertIcon, ChevronDownIcon } = icons
 
 export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
+  accountAddress,
+  networkId,
   transaction,
 }) => {
-  const fee = transaction !== undefined ? BigInt(transaction.result.gasAmount) * BigInt(transaction.result.gasPrice) : undefined
+  const fee = transaction && BigInt(transaction.result.gasAmount) * BigInt(transaction.result.gasPrice)
   const enoughBalance = true
   const extensionInTab = useExtensionIsInTab()
+  const account = useAccount({ address: accountAddress, networkId })
+  const { feeTokenBalance } = useFeeTokenBalance(account)
 
   return (
     <Flex direction="column" gap="1">
@@ -56,7 +61,7 @@ export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
           <Tippy
             content={
               <Tooltip as="div">
-                {getTooltipText(fee?.toString(), fee !== undefined ? BigNumber.from(fee) : undefined)} { /* TODO: show proper tips */ }
+                {getTooltipText(fee?.toString(), feeTokenBalance)}
               </Tooltip>
             }
           >
@@ -75,19 +80,19 @@ export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
           >
             {(
               <L2 color="neutrals.300">
-                (Max {prettifyCurrencyValue(fee.toString())})
+                (Max {prettifyCurrencyValue(convertSetToAlph(fee), "ALPH")})
               </L2>
             )}
 
             <Flex alignItems="center">
               {fee !== undefined ? (
                 <P4 fontWeight="bold">
-                  ≈ {prettifyCurrencyValue(fee.toString())}
+                  ≈ {prettifyCurrencyValue(convertSetToAlph(fee), "ALPH")}
                 </P4>
               ) : (
                 <P4 fontWeight="bold">
                   ≈{" "}
-                    <>{fee} Unknown</>
+                  <>{fee} Unknown</>
                 </P4>
               )}
             </Flex>
@@ -96,72 +101,6 @@ export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
           <LoadingInput />
         )}
       </Flex>
-
-      {/* {showError && (
-        <Flex
-          direction="column"
-          backgroundColor="#330105"
-          boxShadow="menu"
-          py="3.5"
-          px="3.5"
-          borderRadius="xl"
-        >
-          <Flex justifyContent="space-between" alignItems="center">
-            <Flex gap="1" align="center">
-              <Text color="errorText">
-                <AlertIcon />
-              </Text>
-              <L1 color="errorText">
-                {showFeeError
-                  ? "Not enough funds to cover for fees"
-                  : "Transaction failure predicted"}
-              </L1>
-            </Flex>
-            {!showFeeError && (
-              <ExtendableControl
-                {...makeClickable(() => setFeeEstimateExpanded((x) => !x), {
-                  label: "Show error details",
-                })}
-              >
-                <Text color="errorText">
-                  <ChevronDownIcon
-                    style={{
-                      transition: "transform 0.2s ease-in-out",
-                      transform: feeEstimateExpanded
-                        ? "rotate(-180deg)"
-                        : "rotate(0deg)",
-                    }}
-                    height="14px"
-                    width="16px"
-                  />
-                </Text>
-              </ExtendableControl>
-            )}
-          </Flex>
-
-          <Collapse
-            in={feeEstimateExpanded}
-            timeout="auto"
-            style={{
-              maxHeight: "80vh",
-              overflow: "auto",
-            }}
-          >
-            {parsedFeeEstimationError && (
-              <CopyTooltip
-                copyValue={parsedFeeEstimationError}
-                message="Copied"
-              >
-                <P4 color="errorText" pt="3">
-                  <pre style={{ whiteSpace: "pre-wrap" }}>
-                    {parsedFeeEstimationError}
-                  </pre>
-                </P4>
-              </CopyTooltip>
-            )}
-          </Collapse>
-        </Flex>
-      )} */}
     </Flex>
   )
 }

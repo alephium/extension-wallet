@@ -30,7 +30,7 @@ const networkIdSelector = memoize(
 
 const feeTokenSelector = memoize(
   (networkId: string) => (token: Token) =>
-    token.networkId === networkId && token.symbol === "ETH",
+    token.networkId === networkId && token.symbol === "ALPH",
 )
 
 export const getNetworkFeeToken = async (networkId: string) => {

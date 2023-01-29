@@ -10,11 +10,9 @@ import * as yup from "yup"
 export const normalizeAddress = (address: string) => address
 
 export const formatTruncatedAddress = (address: string) => {
-  const normalized = normalizeAddress(address)
-  const hex = normalized.slice(0, 2)
-  const start = normalized.slice(2, 6)
-  const end = normalized.slice(-4)
-  return `${hex}${start}…${end}`
+  const start = address.slice(0, 6)
+  const end = address.slice(-6)
+  return `${start} ... ${end}`
 }
 
 export const formatFullAddress = (address: string) => {
@@ -35,32 +33,14 @@ const isChecksumAddress = (address: string) => {
 export const addressSchema = yup
   .string()
   .trim()
-  .required("Address is required")
+  .required('Address is required')
   .test((address, ctx) => {
     if (!address) {
-      return ctx.createError({ message: "Address is required" })
+      return ctx.createError({ message: 'Address is required' })
     }
-    try {
-      if (!/^0x[0-9a-fA-F]+$/.test(address)) {
-        return ctx.createError({ message: "Address should be hexadecimal" })
-      }
 
-      if (!/^0x[0-9a-fA-F]{63,64}$/.test(address)) {
-        return ctx.createError({
-          message: "Address should be between 63 and 64 characters long",
-        })
-      }
-
-      const parsedAddress = validateAndParseAddress(address)
-      if (number.toBN(parsedAddress).eq(constants.ZERO)) {
-        return ctx.createError({ message: "Zero address not allowed" })
-      }
-
-      if (isChecksumAddress(address) && !validateChecksumAddress(address)) {
-        return ctx.createError({ message: "Invalid checksum address" })
-      }
-    } catch {
-      return ctx.createError({ message: "Invalid address" })
+    if (!/^[1-9A-HJ-NP-Za-km-z]+$/.test(address)) {
+      return ctx.createError({ message: 'Invalid Address' })
     }
 
     return true
@@ -71,7 +51,11 @@ export const isValidAddress = (address: string) =>
 
 export const isEqualAddress = (a: string, b: string) => {
   try {
-    return number.hexToDecimalString(a) === number.hexToDecimalString(b)
+    if (a === b) {
+      return true
+    } else {
+      return number.hexToDecimalString(a) === number.hexToDecimalString(b)
+    }
   } catch {
     // ignore parsing error
   }

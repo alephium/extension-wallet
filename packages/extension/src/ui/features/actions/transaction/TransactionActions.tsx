@@ -1,3 +1,4 @@
+import { convertSetToAlph } from "@alephium/sdk"
 import { Destination } from "@alephium/web3"
 import { CopyTooltip, P4 } from "@argent/ui"
 import {
@@ -18,8 +19,8 @@ import { formatTruncatedAddress } from "../../../services/addresses"
 
 
 export interface TransactionActionRow {
-    key: string
-    value: string
+  key: string
+  value: string
 }
 export interface TransactionAction {
   header: TransactionActionRow
@@ -28,8 +29,8 @@ export interface TransactionAction {
 
 
 function getTokensFromDestination(destination: Destination): TransactionActionRow[] {
-  return [{key: 'ALPH', value: destination.attoAlphAmount.toString()},
-    ...(destination.tokens ?? []).map(token => ({key: token.id, value: token.amount.toString()}))]
+  return [{ key: 'ALPH', value: convertSetToAlph(destination.attoAlphAmount) },
+    ...(destination.tokens ?? []).map(token => ({ key: token.id, value: token.amount.toString() }))]
 }
 
 export function extractActions(transaction: ReviewTransactionResult): TransactionAction[] {
@@ -66,7 +67,7 @@ export interface TransactionActionsProps {
 export const TransactionActions: FC<TransactionActionsProps> = ({
   transaction
 }) => {
-  const transactions = extractActions(transaction)
+  const transactionActions = extractActions(transaction)
   return (
     <Box borderRadius="xl">
       <Box backgroundColor="neutrals.700" px="3" py="2.5" borderTopRadius="xl">
@@ -80,13 +81,13 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
         pt="3.5"
         borderBottomRadius="xl"
       >
-        {transactions.map((transaction, txIndex) => (
+        {transactionActions.map((transactionAction, txIndex) => (
           <AccordionItem
             key={txIndex}
             border="none"
             color="white"
             isDisabled={
-              transaction.details.length === 0
+              transactionAction.details.length === 0
             }
           >
             {({ isDisabled, isExpanded }) => (
@@ -98,13 +99,13 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                     justifyContent="space-between"
                     outline="none"
                     px="3"
-                    pb={txIndex !== transactions.length - 1 ? "3" : "3.5"}
+                    pb={txIndex !== transactionActions.length - 1 ? "3" : "3.5"}
                     _expanded={{
                       backgroundColor: "neutrals.700",
                       pb: "3.5",
                     }}
                     disabled={
-                      transaction.details.length === 0
+                      transactionAction.details.length === 0
                     }
                     _disabled={{
                       cursor: "auto",
@@ -113,37 +114,38 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                     _hover={{
                       backgroundColor: isDisabled ? "" : "neutrals.700",
                       borderBottomRadius:
-                        txIndex === transactions.length - 1 && !isExpanded
+                        txIndex === transactionActions.length - 1 && !isExpanded
                           ? "xl"
                           : "0",
                     }}
                   >
                     <P4 fontWeight="bold">
-                      {entryPointToHumanReadable(transaction.header.key)}
+                      {entryPointToHumanReadable(transactionAction.header.key)}
                     </P4>
                     <P4 color="neutrals.400" fontWeight="bold">
-                      {formatTruncatedAddress(transaction.header.value)}
+                      {formatTruncatedAddress(transactionAction.header.value)}
                     </P4>
                   </AccordionButton>
                 </h2>
                 <AccordionPanel
                   backgroundColor="neutrals.700"
                   borderBottomRadius={
-                    txIndex === transactions.length - 1 ? "xl" : "0"
+                    txIndex === transactionActions.length - 1 ? "xl" : "0"
                   }
                   px="3"
                   pb="0"
                 >
                   <Divider color="black" opacity="1" />
+
                   <Flex flexDirection="column" gap="12px" py="3.5">
-                    {transaction.details.map((detail, cdIndex) => (
+                    {transactionAction.details.map((detail, cdIndex) => (
                       <Flex
                         key={cdIndex}
                         justifyContent="space-between"
                         gap="2"
                       >
                         <P4 color="neutrals.300" fontWeight="bold">
-                          detail.key
+                          {detail.key}
                         </P4>
                         <P4
                           color="neutrals.400"

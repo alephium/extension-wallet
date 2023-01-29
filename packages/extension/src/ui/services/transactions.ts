@@ -2,7 +2,7 @@ import { SignTransferTxParams } from "@alephium/web3"
 
 import { executeTransaction } from "./backgroundTransactions"
 
-export const sendTransaction = (data: SignTransferTxParams) => {
+export const sendTransferTransaction = (data: SignTransferTxParams) => {
   executeTransaction({
     type: "TRANSFER",
     params: data,

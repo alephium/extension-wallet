@@ -129,7 +129,7 @@ export const OnboardingFinishScreen: FC = () => {
             <DiscordRectButtonIcon>
               <DiscordIcon />
             </DiscordRectButtonIcon>
-            Join Alephium's Discord
+            Join Alephium&apos;s Discord
           </RectButton>
         </Row>
         <StyledOnboardingButton onClick={onFinishClick}>

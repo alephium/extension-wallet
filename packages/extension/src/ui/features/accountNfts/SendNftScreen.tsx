@@ -26,7 +26,7 @@ import {
   normalizeAddress,
 } from "../../services/addresses"
 import {
-  sendTransaction,
+  sendTransferTransaction,
 } from "../../services/transactions"
 import { useOnClickOutside } from "../../services/useOnClickOutside"
 import { H3, H5 } from "../../theme/Typography"
