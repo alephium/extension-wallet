@@ -98,7 +98,7 @@ export const routes = {
   funding: route("/funding"),
   fundingBridge: route("/funding/bridge"),
   exportPrivateKey: route("/export-private-key"),
-  fundingQrCode: route("/funding/qr-code"),
+  fundingQrCode: route((address: string) => `/funding/qr-code/${address}`, `/funding/qr-code/:address`),
   fundingProvider: route("/funding/provider"),
   token: route(
     (tokenAddress: string) => `/tokens/${tokenAddress}`,

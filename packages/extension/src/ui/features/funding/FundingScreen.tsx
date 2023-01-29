@@ -74,7 +74,7 @@ export const FundingScreen: FC = () => {
               hideArrow
             />
           )}
-          <Link to={routes.fundingQrCode()}>
+          <Link to={routes.fundingQrCode('undefined')}>
             <Option
               title="From another StarkNet account"
               icon={<StarkNetSvg />}

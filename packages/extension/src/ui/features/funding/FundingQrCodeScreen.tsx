@@ -7,7 +7,7 @@ import { AccountAddress, AccountName } from "../../components/Address"
 import { CopyIconButton } from "../../components/CopyIconButton"
 import { PageWrapper } from "../../components/Page"
 import { routes } from "../../routes"
-import { formatFullAddress, normalizeAddress } from "../../services/addresses"
+import { formatFullAddress, formatTruncatedAddress, normalizeAddress } from "../../services/addresses"
 import { usePageTracking } from "../../services/analytics"
 import {
   getAccountName,
@@ -87,7 +87,7 @@ export const FundingQrCodeScreen: FC = () => {
               ref={setAddressRef}
               aria-label="Full account address"
             >
-              {formatFullAddress(account.address)}
+              {formatTruncatedAddress(account.address)}
             </AccountAddress>
             <StyledCopyIconButton size="s" copyValue={copyAccountAddress}>
               Copy address

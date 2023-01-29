@@ -50,7 +50,7 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
   ])
 
   const onAddFunds = useCallback(() => {
-    navigate(routes.funding())
+    navigate(routes.fundingQrCode('undefined'))
   }, [navigate])
 
   const onPlugins = useCallback(() => {
