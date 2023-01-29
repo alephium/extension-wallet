@@ -137,13 +137,17 @@ export class Wallet {
     return signer.signAndSubmitUnsignedTx(params)
   }
 
-  async getPrivateKeySigner(account: WalletAccount): Promise<PrivateKeyWallet> {
+  public async getPrivateKeySigner(account: WalletAccount): Promise<PrivateKeyWallet> {
+    const session = await this.sessionStore.get()
+    if (!this.isSessionOpen() || !session?.seed) {
+      throw new Error("No seed")
+    }
+
     const network = await this.getNetwork(account.networkId)
     const nodeProvider = new NodeProvider(network.nodeUrl)
-    const privateKey = await this.getPrivateKeyByDerivationPath(
-      account.signer.derivationIndex,
-    )
-    return new PrivateKeyWallet(privateKey, nodeProvider)
+    const group = groupOfAddress(account.address)
+    const addressAndKeys = deriveNewAddressData(session.seed, group, account.signer.derivationIndex)
+    return new PrivateKeyWallet(addressAndKeys.privateKey, nodeProvider)
   }
 
   public async isInitialized(): Promise<boolean> {
