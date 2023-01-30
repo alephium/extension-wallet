@@ -103,7 +103,9 @@ export type ActionItem =
   | {
       type: "CONNECT_DAPP"
       payload: {
-        host: string
+        host: string,
+        networkId?: string,
+        group?: number
       }
     }
   | {

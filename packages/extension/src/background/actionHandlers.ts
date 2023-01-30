@@ -1,3 +1,4 @@
+import { groupOfAddress } from "@alephium/web3"
 import { getAccounts } from "../shared/account/store"
 import {
   ActionItem,
@@ -24,8 +25,8 @@ export const handleActionApproval = async (
 
   switch (action.type) {
     case "CONNECT_DAPP": {
-      const { host } = action.payload
-      const selectedAccount = await wallet.getSelectedAccount()
+      const { host, group } = action.payload
+      const selectedAccount = await wallet.getAlephiumSelectedAddress(group)
 
       if (!selectedAccount) {
         openUi()

@@ -1,0 +1,3 @@
+TxScript Transfer(shinyTokenId: ByteVec, to: Address, amount: U256) {
+  ShinyToken(shinyTokenId).transfer(to, amount)
+}

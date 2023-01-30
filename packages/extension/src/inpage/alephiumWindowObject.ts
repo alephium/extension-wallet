@@ -18,9 +18,10 @@ const VERSION = `${process.env.VERSION}`
 
 export const userEventHandlers: WalletEvents[] = []
 
-async function executeAlephiumTransaction(params: TransactionParams) {
-  await executeTransaction(params)
-  const { actionHash } = await waitForMessage("EXECUTE_TRANSACTION_RES", 1000)
+async function executeAlephiumTransaction(data: TransactionParams) {
+  sendMessage({ type: 'EXECUTE_TRANSACTION', data })
+  const { actionHash } = await waitForMessage('EXECUTE_TRANSACTION_RES', 1000)
+
   sendMessage({ type: "OPEN_UI" })
 
   const result = await Promise.race([
@@ -73,7 +74,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
     ])
     sendMessage({
       type: "CONNECT_DAPP",
-      data: { host: window.location.host },
+      data: { host: window.location.host, networkId: options.networkId, group: options?.chainGroup },
     })
     const walletAccount = await walletAccountP
 
@@ -156,7 +157,11 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
   }
 
   getSelectedAddress(): Promise<string> {
-    throw Error('Please use `enable` to select address')
+    if (this.connectedAddress) {
+      return Promise.resolve(this.connectedAddress)
+    } else {
+      throw Error("No selected address")
+    }
   }
 
   // No need to do anything

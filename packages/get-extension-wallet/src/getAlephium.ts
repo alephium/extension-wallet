@@ -128,8 +128,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         id = 'disconnected'
         name = 'Disconnected'
         icon = ''
-        defaultAddress?: Account = undefined
-        isConnected = false
+        connectedAddress?: string = undefined
         disconnect = () => Promise.resolve() // TODO: FIXME
         /**
          * stores pre-enabled wallet `on` calls' listeners
@@ -248,7 +247,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         }
 
         getSelectedAddress = async () => {
-          return Promise.resolve(this.defaultAddress.address)
+          return Promise.resolve(this.connectedAddress)
         }
 
         #connect = (options?: GetAlephiumWalletOptions) =>
@@ -278,8 +277,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
 
         #refreshWalletProperties = (wallet: AlephiumWindowObject | undefined) => {
           if (!wallet) return
-          this.defaultAddress = wallet.defaultAddress
-          this.isConnected = wallet.isConnected
+          this.connectedAddress = wallet.connectedAddress
         }
       })()
     )

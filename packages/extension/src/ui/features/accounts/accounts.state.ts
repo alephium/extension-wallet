@@ -87,6 +87,7 @@ export const useAccount = (
     if (!account) {
       return undefined
     }
+
     return accounts.find((a) => account && accountsEqual(a, account))
   }, [accounts, account])
 }

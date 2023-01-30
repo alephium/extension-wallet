@@ -2,22 +2,25 @@ import { SessionAccount, createSession } from "@argent/x-sessions"
 import { FC, useEffect, useState } from "react"
 import { Abi, AccountInterface, Contract, ec } from "starknet"
 import { hash } from "starknet5"
+import { getAlephium } from '@alephium/get-extension-wallet'
+import shinyToken from '../../artifacts/shiny-token.ral.json'
 
 import Erc20Abi from "../../abi/ERC20.json"
 import { truncateAddress, truncateHex } from "../services/address.service"
 import {
   getErc20TokenAddress,
+  getTokens,
   mintToken,
   parseInputAmountToUint256,
   transfer,
 } from "../services/token.service"
 import {
-  addToken,
-  declare,
+  //  addToken,
+  //  declare,
   getExplorerBaseUrl,
   networkId,
   signMessage,
-  waitForTransaction,
+  //  waitForTransaction,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
 
@@ -41,9 +44,8 @@ const readFileAsString = (file: File): Promise<string> => {
 }
 
 export const TokenDapp: FC<{
-  showSession: null | boolean
-  account: AccountInterface
-}> = ({ showSession, account }) => {
+  address: string
+}> = ({ address }) => {
   const [mintAmount, setMintAmount] = useState("10")
   const [transferTo, setTransferTo] = useState("")
   const [transferAmount, setTransferAmount] = useState("1")
@@ -55,47 +57,37 @@ export const TokenDapp: FC<{
   const [addTokenError, setAddTokenError] = useState("")
   const [classHash, setClassHash] = useState("")
   const [contract, setContract] = useState<string | undefined>()
+  const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
 
-  const [sessionSigner] = useState(genKeyPair())
-  const [sessionAccount, setSessionAccount] = useState<
-    SessionAccount | undefined
-  >()
+  const alephium = getAlephium()
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus)
 
   useEffect(() => {
-    ;(async () => {
-      if (lastTransactionHash && transactionStatus === "pending") {
-        setTransactionError("")
-        try {
-          await waitForTransaction(lastTransactionHash)
-          setTransactionStatus("success")
-        } catch (error: any) {
-          setTransactionStatus("failure")
-          let message = error ? `${error}` : "No further details"
-          if (error?.response) {
-            message = JSON.stringify(error.response, null, 2)
-          }
-          setTransactionError(message)
-        }
-      }
-    })()
-  }, [transactionStatus, lastTransactionHash])
-
-  const network = networkId()
-  if (network !== "goerli-alpha" && network !== "mainnet-alpha") {
-    return (
-      <>
-        <p>
-          There is no demo token for this network, but you can deploy one and
-          add its address to this file:
-        </p>
-        <div>
-          <pre>packages/dapp/src/token.service.ts</pre>
-        </div>
-      </>
+    getTokens(address).then(tokenAddresses =>
+      setTokenAddresses(tokenAddresses)
     )
-  }
+  }, [address])
+  //  useEffect(() => {
+  //    ; (async () => {
+  //      if (lastTransactionHash && transactionStatus === "pending") {
+  //        setTransactionError("")
+  //        try {
+  //          await waitForTransaction(lastTransactionHash)
+  //          setTransactionStatus("success")
+  //        } catch (error: any) {
+  //          setTransactionStatus("failure")
+  //          let message = error ? `${error}` : "No further details"
+  //          if (error?.response) {
+  //            message = JSON.stringify(error.response, null, 2)
+  //          }
+  //          setTransactionError(message)
+  //        }
+  //      }
+  //    })()
+  //  }, [transactionStatus, lastTransactionHash])
+  //
+  const network = networkId()
 
   const handleMintSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -106,7 +98,7 @@ export const TokenDapp: FC<{
       const result = await mintToken(mintAmount, network)
       console.log(result)
 
-      setLastTransactionHash(result.transaction_hash)
+      setLastTransactionHash(result.txId)
       setTransactionStatus("pending")
     } catch (e) {
       console.error(e)
@@ -148,80 +140,6 @@ export const TokenDapp: FC<{
     }
   }
 
-  const handleOpenSessionSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const signedSession = await createSession(
-      {
-        key: getStarkKey(sessionSigner),
-        expires: Math.floor((Date.now() + 1000 * 60 * 60 * 24) / 1000), // 1 day in seconds
-        policies: [
-          {
-            contractAddress: getErc20TokenAddress(network),
-            selector: "transfer",
-          },
-        ],
-      },
-      account,
-    )
-
-    setSessionAccount(
-      new SessionAccount(
-        account,
-        account.address,
-        sessionSigner,
-        signedSession,
-      ),
-    )
-  }
-
-  const handleSessionTransactionSubmit = async (e: React.FormEvent) => {
-    try {
-      e.preventDefault()
-      if (!sessionAccount) {
-        throw new Error("No open session")
-      }
-      const erc20Contract = new Contract(
-        Erc20Abi as Abi,
-        getErc20TokenAddress(network),
-        sessionAccount,
-      )
-
-      const result = await erc20Contract.transfer(
-        account.address,
-        parseInputAmountToUint256("0.000000001"),
-      )
-      console.log(result)
-
-      setLastTransactionHash(result.transaction_hash)
-      setTransactionStatus("pending")
-    } catch (e) {
-      console.error(e)
-      setTransactionStatus("idle")
-    }
-  }
-
-  const handleDeclare = async (e: React.FormEvent) => {
-    try {
-      e.preventDefault()
-      if (!contract) {
-        throw new Error("No contract")
-      }
-      if (!classHash) {
-        throw new Error("No class hash")
-      }
-      const result = await declare(contract, classHash)
-      console.log(result)
-
-      setLastTransactionHash(result.transaction_hash)
-      setTransactionStatus("pending")
-    } catch (e) {
-      console.error(e)
-      setTransactionStatus("idle")
-    }
-  }
-
-  const tokenAddress = getErc20TokenAddress(network as any)
-
   return (
     <>
       <h3 style={{ margin: 0 }}>
@@ -256,7 +174,6 @@ export const TokenDapp: FC<{
 
           <label htmlFor="mint-amount">Amount</label>
           <input
-            disabled
             type="text"
             id="mint-amount"
             name="fname"
@@ -264,7 +181,7 @@ export const TokenDapp: FC<{
             onChange={(e) => setMintAmount(e.target.value)}
           />
 
-          <input type="submit" disabled={true} value="Not possible with ETH!" />
+          <input type="submit" />
         </form>
 
         <form onSubmit={handleTransferSubmit}>
@@ -329,99 +246,16 @@ export const TokenDapp: FC<{
           />
         </form>
       </div>
-      {showSession && (
-        <div className="columns">
-          <form onSubmit={handleOpenSessionSubmit}>
-            <h2 className={styles.title}>Sessions</h2>
 
-            <p>
-              Random session signer:{" "}
-              <code>{truncateHex(getStarkKey(sessionSigner))}</code>
-            </p>
-
-            <input
-              type="submit"
-              value="Open session"
-              disabled={Boolean(sessionAccount)}
-            />
-          </form>
-          <form onSubmit={handleSessionTransactionSubmit}>
-            <h2 className={styles.title}>Open session</h2>
-
-            <p>Send some ETH to yourself using the session!</p>
-
-            <input
-              type="submit"
-              value="Use session"
-              disabled={Boolean(!sessionAccount) || buttonsDisabled}
-            />
-          </form>
-        </div>
-      )}
-
-      <div className="columns">
-        <form onSubmit={handleDeclare}>
-          <h2 className={styles.title}>Declare</h2>
-
-          <label htmlFor="contract">Compiled Cairo contract to declare:</label>
-          <input
-            id="contract"
-            name="contract"
-            type="file"
-            onChange={async (e) => {
-              if (e.target.files) {
-                const file = e.target.files[0]
-                const fileAsString = await readFileAsString(file)
-                setContract(fileAsString)
-
-                const classHash = hash.computeContractClassHash(fileAsString)
-                setClassHash(classHash)
-              }
-            }}
-          />
-
-          <label htmlFor="classHash">ClassHash:</label>
-          <input
-            id="classHash"
-            name="classHash"
-            type="text"
-            onChange={(e) => {
-              setClassHash(e.target.value)
-            }}
-            value={classHash}
-          />
-
-          <input type="submit" value="Declare" disabled={!classHash} />
-        </form>
-      </div>
       <h3 style={{ margin: 0 }}>
-        ETH token address
-        <button
-          className="flat"
-          style={{ marginLeft: ".6em" }}
-          onClick={async () => {
-            try {
-              await addToken(tokenAddress)
-              setAddTokenError("")
-            } catch (error: any) {
-              setAddTokenError(error.message)
-            }
-          }}
-        >
-          Add to wallet
-        </button>
-        <br />
-        <code>
-          <a
-            target="_blank"
-            href={`${getExplorerBaseUrl()}/contract/${tokenAddress}`}
-            rel="noreferrer"
-          >
-            {truncateAddress(tokenAddress)}
-          </a>
-        </code>
+        {
+          tokenAddresses.length > 0 ? tokenAddresses.map((tokenAddress, index) =>
+            <div key={index}>{tokenAddress}</div>
+          ) : "no token addresses"
+        }
       </h3>
       <span className="error-message">{addTokenError}</span>
     </>
   )
+  return (<div>Token App</div>)
 }

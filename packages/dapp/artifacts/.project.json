@@ -1,0 +1,26 @@
+{
+  "compilerOptionsUsed": {
+    "ignoreUnusedConstantsWarnings": false,
+    "ignoreUnusedVariablesWarnings": false,
+    "ignoreUnusedFieldsWarnings": false,
+    "ignoreUnusedPrivateFunctionsWarnings": false,
+    "ignoreUpdateFieldsCheckWarnings": false,
+    "ignoreCheckExternalCallerWarnings": false
+  },
+  "infos": {
+    "ShinyToken": {
+      "sourceFile": "shiny-token.ral",
+      "sourceCodeHash": "801b7954ee412c9d6fafdbc123eebb924834307e6d68eeca4561f8cc120b102a",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "eb751581aa1fc6da7377f792446d49817a6627c1c41b30d1f83cb6ebb57492fa",
+      "warnings": []
+    },
+    "Transfer": {
+      "sourceFile": "transfer.ral",
+      "sourceCodeHash": "26eb748259ea4fd35370665079a4e953cd049c24b42f07fce73253478a949f2b",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    }
+  }
+}

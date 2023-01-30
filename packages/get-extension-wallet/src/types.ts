@@ -123,18 +123,16 @@ export type EnableOptions = EnableOptionsBase & {
 }
 
 export interface AlephiumWindowObject extends InteractiveSignerProvider<EnableOptions> {
-  discriminator: string
   enable: (options?: EnableOptions) => Promise<Address>
   isPreauthorized: () => Promise<boolean>
   on: (event: EventType, handleEvent: EventHandler) => void
   off: (event: EventType, handleEvent: EventHandler) => void
 
-  currentNetwork?: string
   id: string
   name: string
   icon: string
-  isConnected: boolean
-  defaultAddress?: Account
+  connectedAddress?: string
+  connectedNetworkId?: string
 }
 
 export type WalletProvider = {
@@ -142,8 +140,8 @@ export type WalletProvider = {
   name: string
   icon: string
   downloads:
-    | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
-    | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
+  | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
+  | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
 }
 
 declare global {
