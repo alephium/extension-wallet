@@ -72,7 +72,7 @@ export const SeedPhrase: FC<SeedPhraseProps> = ({ seedPhrase }) =>
     </SeedPhraseGrid>
   ) : (
     <SeedPhraseGrid>
-      {[...Array(12)].map((_, index) => (
+      {[...Array(24)].map((_, index) => (
         <LoadingSeedWordBadge key={index} animationDelay={(index % 3) * 200} />
       ))}
     </SeedPhraseGrid>

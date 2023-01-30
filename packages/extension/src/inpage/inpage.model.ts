@@ -104,6 +104,7 @@ export interface AlephiumWindowObject
 
 declare global {
   interface Window {
-    alephium?: AlephiumWindowObject
+    // Inspired by EIP-5749: https://eips.ethereum.org/EIPS/eip-5749
+    alephiumProviders?: Record<string, AlephiumWindowObject>
   }
 }

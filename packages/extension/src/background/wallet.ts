@@ -186,18 +186,12 @@ export class Wallet {
 
   public async getSeedPhrase(): Promise<string> {
     const session = await this.sessionStore.get()
-    const backup = await this.store.get("backup")
 
-    if (!(await this.isSessionOpen()) || !session || !backup) {
+    if (!(await this.isSessionOpen()) || !session) {
       throw new Error("Session is not open")
     }
 
-    const wallet = await ethers.Wallet.fromEncryptedJson(
-      backup,
-      session.password,
-    )
-
-    return wallet.mnemonic.phrase
+    return session.secret
   }
 
   public async restoreSeedPhrase(seedPhrase: string, newPassword: string) {

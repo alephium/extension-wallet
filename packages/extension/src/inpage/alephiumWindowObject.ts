@@ -12,6 +12,7 @@ import { getIsPreauthorized } from "./messaging"
 import { ExplorerProvider, node, NodeProvider, SignDeployContractTxParams, SignDeployContractTxResult, SignExecuteScriptTxParams, SignExecuteScriptTxResult, SignMessageParams, SignMessageResult, SignTransferTxParams, SignTransferTxResult, SignUnsignedTxParams, SignUnsignedTxResult, TransactionBuilder } from "@alephium/web3"
 import { TransactionParams } from "../shared/actionQueue/types"
 import { executeTransaction } from "../ui/services/backgroundTransactions"
+import { getNetwork } from "../shared/network"
 
 const VERSION = `${process.env.VERSION}`
 
@@ -82,16 +83,22 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
     if (walletAccount === "USER_ABORTED") {
       throw Error("User aborted")
     }
-    const { alephium } = window
+    const { alephiumProviders } = window
+    const alephium = alephiumProviders?.alephium
     if (!alephium) {
-      throw Error("No starknet object detected")
+      throw Error("No alephium object detected")
     }
 
     this.connectedAddress = walletAccount.address
     this.connectedNetworkId = options.networkId
-    this.onDisconnected = options.onDisconnected
+    this.nodeProvider = new NodeProvider(walletAccount.network.nodeUrl)
+    if (walletAccount.network.explorerApiUrl) {
+      this.explorerProvider = new ExplorerProvider(walletAccount.network.explorerApiUrl)
+    }
+
     return walletAccount.address
   }
+
   isPreauthorized = async () => {
     return getIsPreauthorized()
   }

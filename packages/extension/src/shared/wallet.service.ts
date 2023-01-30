@@ -1,5 +1,6 @@
+import { getNetwork, Network } from "./network"
 import { isEqualAddress } from "../ui/services/addresses"
-import { BaseWalletAccount, WalletAccount } from "./wallet.model"
+import { BaseWalletAccount, WalletAccount, WalletAccountWithNetwork } from "./wallet.model"
 
 // from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2645.md
 // m / purpose' / layer' / application' / eth_address_1' / eth_address_2' / index
@@ -32,3 +33,11 @@ export const accountsEqual = (a: BaseWalletAccount, b: BaseWalletAccount) => {
 
 export const getAccountIdentifier = (account: BaseWalletAccount) =>
   `${account.networkId}::${account.address}`
+
+export async function withNetwork(account: WalletAccount): Promise<WalletAccountWithNetwork> {
+  const network = await getNetwork(account.networkId)
+  return Promise.resolve({
+    network,
+    ...account
+  })
+}

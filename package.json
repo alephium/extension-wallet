@@ -5,6 +5,7 @@
   "repository": "github:argentlabs/argent-x",
   "homepage": "https://github.com/argentlabs/argent-x/#readme",
   "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
     "bundlewatch": "^0.3.3",
     "husky": "^8.0.0",
     "import-sort-style-module": "^6.0.0",
@@ -27,7 +28,7 @@
     "dev": "lerna run dev --parallel",
     "dev:ui": "lerna run dev:ui --parallel",
     "build-storybook": "lerna run build-storybook --",
-    "clean": "rm -rf packages/extension/dist packages/get-starket/dist",
+    "clean": "rm -rf packages/extension/dist packages/get-extension-wallet/dist packages/dapp/dist packages/extension/node_modules packages/get-extension-wallet/node_modules packages/dapp/node_modules",
     "build": "lerna run build --stream",
     "build:sourcemaps": "GEN_SOURCE_MAPS=true lerna run build",
     "lint": "lerna run lint --stream",

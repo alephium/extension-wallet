@@ -5,20 +5,24 @@ import { disconnectAccount } from "./account"
 import { alephiumWindowObject, userEventHandlers } from "./alephiumWindowObject"
 import { sendMessage, waitForMessage } from "./messageActions"
 import { getIsPreauthorized } from "./messaging"
+import { isPlainObject } from "lodash-es"
 
-const INJECT_NAMES = ["starknet", "starknet_argentX"]
+const INJECT_NAMES = ["alephium"]
 
 function attach() {
+  window.alephiumProviders =
+    window.alephiumProviders && isPlainObject(window.alephiumProviders) ? window.alephiumProviders : {}
+
   INJECT_NAMES.forEach((name) => {
     // we need 2 different try catch blocks because we want to execute both even if one of them fails
     try {
-      delete (window as any)[name]
+      delete (window.alephiumProviders as any)[name]
     } catch (e) {
       // ignore
     }
     try {
       // set read only property to window
-      Object.defineProperty(window, name, {
+      Object.defineProperty(window.alephiumProviders, name, {
         value: alephiumWindowObject,
         writable: false,
       })
@@ -26,7 +30,7 @@ function attach() {
       // ignore
     }
     try {
-      ; (window as any)[name] = alephiumWindowObject
+      ; (window.alephiumProviders as any)[name] = alephiumWindowObject
     } catch {
       // ignore
     }
@@ -46,7 +50,9 @@ document.addEventListener("readystatechange", () => attachHandler())
 window.addEventListener(
   "message",
   async ({ data }: MessageEvent<WindowMessageType>) => {
-    const { alephium } = window
+    const { alephiumProviders } = window
+    const alephium = alephiumProviders?.alephium
+
     if (!alephium) {
       return
     }

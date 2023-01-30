@@ -7,7 +7,7 @@ import {
 import { MessageType } from "../shared/messages"
 import { addNetwork, getNetworks } from "../shared/network"
 import { preAuthorize } from "../shared/preAuthorizations"
-import { isEqualWalletAddress } from "../shared/wallet.service"
+import { isEqualWalletAddress, withNetwork } from "../shared/wallet.service"
 import { assertNever } from "../ui/services/assertNever"
 import { analytics } from "./analytics"
 import { BackgroundService } from "./background"
@@ -39,7 +39,8 @@ export const handleActionApproval = async (
 
       await preAuthorize(selectedAccount, host)
 
-      return { type: "CONNECT_DAPP_RES", data: selectedAccount }
+      const walletAccountWithNetwork = await withNetwork(selectedAccount)
+      return { type: "CONNECT_DAPP_RES", data: walletAccountWithNetwork }
     }
 
     case "TRANSACTION": {

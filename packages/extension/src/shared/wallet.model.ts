@@ -1,4 +1,4 @@
-import { Network } from "./network"
+import { getNetwork, Network } from "./network"
 
 export type ArgentAccountType = "argent" | "argent-plugin"
 export interface WalletAccountSigner {
@@ -20,5 +20,7 @@ export interface WalletAccount extends BaseWalletAccount, WithSigner {
   type: ArgentAccountType
   hidden?: boolean
 }
+
+export type WalletAccountWithNetwork = Omit<WalletAccount, 'networkId'> & { network: Network }
 
 export type StoredWalletAccount = Omit<WalletAccount, "network">
