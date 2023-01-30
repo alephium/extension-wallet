@@ -9,7 +9,7 @@ import { routes } from "../../routes"
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenListItemVariant } from "./TokenListItem"
 import { TokenListItemContainer } from "./TokenListItemContainer"
-import { useTokensInNetwork } from "./tokens.state"
+import { useTokensInNetwork, useTokens } from "./tokens.state"
 
 interface TokenListProps {
   tokenList?: Token[]
@@ -28,12 +28,11 @@ export const TokenList: FC<TokenListProps> = ({
 }) => {
   const navigate = useNavigate()
   const account = useSelectedAccount()
-  const { switcherNetworkId } = useAppState()
-  const tokensInNetwork = useTokensInNetwork(switcherNetworkId)
+  const tokensForAccount = useTokens(account)
   if (!account) {
     return null
   }
-  const tokens = tokenList || tokensInNetwork
+  const tokens = tokenList || tokensForAccount
   return (
     <ErrorBoundary
       fallback={

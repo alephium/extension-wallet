@@ -1,7 +1,9 @@
+import { ExplorerProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
 import useSWR from "swr"
+import { getNetwork } from "../../../shared/network"
 
 import { useArrayStorage } from "../../../shared/storage/hooks"
 import { tokenStore } from "../../../shared/token/storage"
@@ -68,17 +70,7 @@ export const useTokensWithBalance = (
   const selectedAccount = useAccount(account)
   const { pendingTransactions } = useAccountTransactions(account)
   const pendingTransactionsLengthRef = useRef(pendingTransactions.length)
-
-  const networkId = useMemo(() => {
-    return selectedAccount?.networkId ?? ""
-  }, [selectedAccount?.networkId])
-
-  const tokensInNetwork = useTokensInNetwork(networkId)
-
-  const tokenAddresses = useMemo(
-    () => tokensInNetwork.map((t) => t.address),
-    [tokensInNetwork],
-  )
+  const tokensForAccount = useTokens(selectedAccount)
 
   const {
     data,
@@ -97,11 +89,14 @@ export const useTokensWithBalance = (
       }
 
       const balances = await fetchAllTokensBalance(
-        tokensInNetwork.map((t) => t.address),
+        tokensForAccount.map((t) => t.address),
         selectedAccount,
       )
 
-      return balances
+      return {
+        tokensForAccount,
+        balances
+      }
     },
     {
       refreshInterval: 30000,
@@ -132,21 +127,16 @@ export const useTokensWithBalance = (
     pendingTransactionsLengthRef.current = pendingTransactions.length
   }, [mutate, pendingTransactions.length])
 
-  // refetch balances on token edit (token was added or removed)
-  useEffect(() => {
-    mutate()
-  }, [mutate, tokenAddresses])
-
   const tokenDetails = useMemo(() => {
-    return tokensInNetwork
+    return (data?.tokensForAccount || [])
       .map((token) => ({
         ...token,
-        balance: data?.[token.address] ?? BigNumber.from(0),
+        balance: data?.balances[token.address] ?? BigNumber.from(0),
       }))
       .filter(
         (token) => token.showAlways || (token.balance && token.balance.gt(0)),
       )
-  }, [tokensInNetwork, data])
+  }, [tokensForAccount, data])
 
   return {
     tokenDetails,
@@ -154,4 +144,64 @@ export const useTokensWithBalance = (
     isValidating,
     error,
   }
+}
+
+export const useTokens = (
+  account?: BaseWalletAccount,
+): Token[] => {
+  const selectedAccount = useAccount(account)
+
+  const networkId = useMemo(() => {
+    return selectedAccount?.networkId ?? ""
+  }, [selectedAccount?.networkId])
+
+  const defaultTokensInNetwork = useTokensInNetwork(networkId)
+
+  const {
+    data
+  } = useSWR(
+    // skip if no account selected
+    selectedAccount && [
+      getAccountIdentifier(selectedAccount),
+      "accountTokens",
+    ],
+    async () => {
+      if (!selectedAccount) {
+        return
+      }
+
+      const allTokens: Token[] = defaultTokensInNetwork
+      const network = await getNetwork(selectedAccount.networkId)
+      const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+      const addressTokens: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
+
+      for (const addressToken of addressTokens) {
+        // TODO: name, symbol and decimals fetch from token registry
+        const token = {
+          address: addressToken,
+          networkId: networkId,
+          name: addressToken.slice(0, 5),
+          symbol: "",
+          decimals: 0
+        }
+
+        if (allTokens.findIndex((t) => t.address == addressToken) === -1) {
+          allTokens.push(token)
+        }
+      }
+
+      return allTokens
+    },
+    {
+      refreshInterval: 30000,
+      shouldRetryOnError: (error) => {
+        const errorCode = error?.status || error?.errorCode
+        const suppressError =
+          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
+        return suppressError
+      },
+    },
+  )
+
+  return data || []
 }

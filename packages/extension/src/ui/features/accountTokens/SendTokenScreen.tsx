@@ -11,7 +11,7 @@ import { Schema, object } from "yup"
 import { AddressBookContact } from "../../../shared/addressBook"
 import { inputAmountSchema, parseAmount } from "../../../shared/token/amount"
 import { prettifyCurrencyValue } from "../../../shared/token/price"
-import { dustALPHAmount } from "../../../shared/token/utils"
+import { dustALPHAmount, minimumALPHAmount } from "../../../shared/token/utils"
 import { AddContactBottomSheet } from "../../components/AddContactBottomSheet"
 import { Button, ButtonTransparent } from "../../components/Button"
 import Column, { ColumnCenter } from "../../components/Column"
@@ -252,6 +252,7 @@ export const SendTokenScreen: FC = () => {
   const token = tokenDetails.find(({ address }) => address === tokenAddress)
   const currencyValue = useTokenUnitAmountToCurrencyValue(token, inputAmount)
   const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
+  const standardFee = "2000000000000000"  // FIXME: Should estimate, hardcoded to 0.002 ALPH for now
 
   const setMaxInputAmount = useCallback(
     (token: TokenDetailsWithBalance, maxFee?: string) => {
@@ -391,13 +392,13 @@ export const SendTokenScreen: FC = () => {
                 if (tokenAddress?.slice(2) === ALPH_TOKEN_ID || tokenAddress === undefined) {
                   destination = {
                     address: recipient,
-                    attoAlphAmount: convertAlphToSet(amount),
+                    attoAlphAmount: convertAlphToSet(amount) + BigInt(standardFee),
                     tokens: []
                   }
                 } else {
                   destination = {
                     address: recipient,
-                    attoAlphAmount: dustALPHAmount,
+                    attoAlphAmount: minimumALPHAmount(1) + BigInt(standardFee),
                     tokens: [{ id: tokenAddress, amount: BigInt(amount) }]
                   }
                 }

@@ -30,3 +30,7 @@ export const getFeeToken = (networkId: string) =>
   )
 
 export const dustALPHAmount = BigInt(1000000000000000)
+
+export const minimumALPHAmount = (tokenNums: number) => {
+  return dustALPHAmount + BigInt(tokenNums * 100 * 1000000000)
+}
