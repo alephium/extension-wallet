@@ -13,6 +13,7 @@ import {
   mintToken,
   parseInputAmountToUint256,
   transfer,
+  transferMintedToken
 } from "../services/token.service"
 import {
   //  addToken,
@@ -23,6 +24,7 @@ import {
   //  waitForTransaction,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
+import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3 } from "@alephium/web3"
 
 const { genKeyPair, getStarkKey } = ec
 
@@ -58,6 +60,7 @@ export const TokenDapp: FC<{
   const [classHash, setClassHash] = useState("")
   const [contract, setContract] = useState<string | undefined>()
   const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
+  const [mintedToken, setMintedToken] = useState<string | undefined>()
 
   const alephium = getAlephium()
 
@@ -68,25 +71,44 @@ export const TokenDapp: FC<{
       setTokenAddresses(tokenAddresses)
     )
   }, [address])
-  //  useEffect(() => {
-  //    ; (async () => {
-  //      if (lastTransactionHash && transactionStatus === "pending") {
-  //        setTransactionError("")
-  //        try {
-  //          await waitForTransaction(lastTransactionHash)
-  //          setTransactionStatus("success")
-  //        } catch (error: any) {
-  //          setTransactionStatus("failure")
-  //          let message = error ? `${error}` : "No further details"
-  //          if (error?.response) {
-  //            message = JSON.stringify(error.response, null, 2)
-  //          }
-  //          setTransactionError(message)
-  //        }
-  //      }
-  //    })()
-  //  }, [transactionStatus, lastTransactionHash])
-  //
+
+  useEffect(() => {
+    ; (async () => {
+      if (lastTransactionHash && transactionStatus === "pending") {
+        setTransactionError("")
+
+        if (alephium?.nodeProvider) {
+          web3.setCurrentNodeProvider(alephium.nodeProvider)
+          const subscriptionOptions: SubscribeOptions<TxStatus> = {
+            pollingInterval: 3000,
+            messageCallback: async (status: TxStatus): Promise<void> => {
+              if (status.type === 'Confirmed' || status.type === 'TxNotFound') {
+                await new Promise(r => setTimeout(r, 3000));
+              }
+              setTransactionStatus("success")
+            },
+            errorCallback: (error: any, subscription): Promise<void> => {
+              console.log(error)
+              setTransactionStatus("failure")
+              let message = error ? `${error}` : "No further details"
+              if (error?.response) {
+                message = JSON.stringify(error.response, null, 2)
+              }
+              setTransactionError(message)
+
+              subscription.unsubscribe()
+              return Promise.resolve()
+            }
+          }
+
+          subscribeToTxStatus(subscriptionOptions, lastTransactionHash)
+        } else {
+          throw Error("Alephium object is not initialized")
+        }
+      }
+    })()
+  }, [transactionStatus, lastTransactionHash])
+
   const network = networkId()
 
   const handleMintSubmit = async (e: React.FormEvent) => {
@@ -98,6 +120,7 @@ export const TokenDapp: FC<{
       const result = await mintToken(mintAmount, network)
       console.log(result)
 
+      setMintedToken(result.contractAddress)
       setLastTransactionHash(result.txId)
       setTransactionStatus("pending")
     } catch (e) {
@@ -117,6 +140,28 @@ export const TokenDapp: FC<{
 
       setLastTransactionHash(result.transaction_hash)
       setTransactionStatus("pending")
+    } catch (e) {
+      console.error(e)
+      setTransactionStatus("idle")
+    }
+  }
+
+  const handleTransferMintedTokenSubmit = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault()
+      if (mintedToken) {
+        setTransactionStatus("approve")
+
+        console.log("transfer", { transferTo, transferAmount, mintedToken })
+
+        const result = await transferMintedToken(transferAmount, mintedToken)
+        console.log(result)
+
+        setLastTransactionHash(result.txId)
+        setTransactionStatus("pending")
+      } else {
+        throw Error("No minted token")
+      }
     } catch (e) {
       console.error(e)
       setTransactionStatus("idle")
@@ -169,44 +214,54 @@ export const TokenDapp: FC<{
         </h3>
       )}
       <div className="columns">
-        <form onSubmit={handleMintSubmit}>
-          <h2 className={styles.title}>Mint token</h2>
+        {
+          (mintedToken && alephium?.connectedAddress) ? (
+            <form onSubmit={handleTransferMintedTokenSubmit}>
+              <h2 className={styles.title}>Transfer all minted token</h2>
+              <label htmlFor="token-address">Token Address</label>
+              <p>{mintedToken}</p>
 
-          <label htmlFor="mint-amount">Amount</label>
-          <input
-            type="text"
-            id="mint-amount"
-            name="fname"
-            value={mintAmount}
-            onChange={(e) => setMintAmount(e.target.value)}
-          />
+              <label htmlFor="transfer-to">To</label>
+              <input
+                type="text"
+                id="transfer-to"
+                name="fname"
+                disabled
+                value={alephium.connectedAddress}
+                onChange={(e) => setTransferTo(e.target.value)}
+              />
 
-          <input type="submit" />
-        </form>
+              <label htmlFor="transfer-amount">Amount</label>
+              <input
+                type="text"
+                id="transfer-amount"
+                name="fname"
+                disabled
+                value={mintAmount}
+                onChange={(e) => setTransferAmount(e.target.value)}
+              />
+              <br />
+              <input type="submit" disabled={buttonsDisabled} value="Transfer" />
+            </form>
 
-        <form onSubmit={handleTransferSubmit}>
-          <h2 className={styles.title}>Transfer token</h2>
+          ) : (
+            <form onSubmit={handleMintSubmit}>
+              <h2 className={styles.title}>Mint token</h2>
 
-          <label htmlFor="transfer-to">To</label>
-          <input
-            type="text"
-            id="transfer-to"
-            name="fname"
-            value={transferTo}
-            onChange={(e) => setTransferTo(e.target.value)}
-          />
+              <label htmlFor="mint-amount">Amount</label>
+              <input
+                type="text"
+                id="mint-amount"
+                name="fname"
+                value={mintAmount}
+                onChange={(e) => setMintAmount(e.target.value)}
+              />
 
-          <label htmlFor="transfer-amount">Amount</label>
-          <input
-            type="text"
-            id="transfer-amount"
-            name="fname"
-            value={transferAmount}
-            onChange={(e) => setTransferAmount(e.target.value)}
-          />
-          <br />
-          <input type="submit" disabled={buttonsDisabled} value="Transfer" />
-        </form>
+              <input type="submit" />
+            </form>
+
+          )
+        }
       </div>
       <div className="columns">
         <form onSubmit={handleSignSubmit}>

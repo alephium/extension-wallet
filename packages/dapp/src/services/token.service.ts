@@ -3,7 +3,9 @@ import { getStarknet } from "@argent/get-starknet"
 import { utils } from "ethers"
 import { Abi, Contract, number, uint256 } from "starknet"
 import * as web3 from '@alephium/web3'
+import { binToHex, contractIdFromAddress } from '@alephium/web3'
 import shinyToken from '../../artifacts/shiny-token.ral.json'
+import transferToken from '../../artifacts/transfer.ral.json'
 
 import Erc20Abi from "../../abi/ERC20.json"
 
@@ -62,6 +64,27 @@ export const mintToken = async (
   return txResult
 }
 
+export const transferMintedToken = async (
+  amount: string,
+  tokenAddress: string
+): Promise<web3.SignExecuteScriptTxResult> => {
+  const alephium = getAlephium()
+  if (!alephium.connectedAddress || !alephium.connectedNetworkId) {
+    throw Error("alephium object not initialized")
+  }
+
+  const script = web3.Script.fromJson(transferToken)
+  return await script.execute(
+    alephium,
+    {
+      initialFields: {
+        shinyTokenId: binToHex(contractIdFromAddress(tokenAddress)),
+        to: alephium.connectedAddress,
+        amount: BigInt(amount)
+      }
+    }
+  )
+}
 export const transfer = async (
   transferTo: string,
   transferAmount: string,

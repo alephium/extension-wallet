@@ -5,16 +5,19 @@ const extensionId = document
   ?.getAttribute("data-extension-id")
 
 export function sendMessage(msg: MessageType): void {
-  return window.postMessage({ ...msg, extensionId }, window.location.origin)
+  // `bigint` can not be serialized by `window.postMessage`
+  const stringified = JSON.stringify(msg)
+  const parsed = JSON.parse(stringified)
+  return window.postMessage({ ...parsed, extensionId }, window.location.origin)
 }
 
 export function waitForMessage<
   K extends MessageType["type"],
   T extends { type: K } & MessageType,
->(
-  type: K,
-  timeout: number,
-  predicate: (x: T) => boolean = () => true,
+  >(
+    type: K,
+    timeout: number,
+    predicate: (x: T) => boolean = () => true,
 ): Promise<T extends { data: infer S } ? S : undefined> {
   return new Promise((resolve, reject) => {
     const pid = setTimeout(() => reject(new Error("Timeout")), timeout)
