@@ -126,32 +126,40 @@ export const ActionScreen: FC = () => {
             analytics.track("signedTransaction", {
               networkId: selectedAccount?.networkId || "unknown",
             })
-            await approveAction(action, builtTransaction)
-            useAppState.setState({ isLoading: true })
-            const result = await Promise.race([
-              waitForMessage(
-                "TRANSACTION_SUBMITTED",
-                ({ data }) => data.actionHash === action.meta.hash,
-              ),
-              waitForMessage(
-                "TRANSACTION_FAILED",
-                ({ data }) => data.actionHash === action.meta.hash,
-              ),
-            ])
-            // (await) blocking as the window may closes afterwards
-            await analytics.track("sentTransaction", {
-              success: !("error" in result),
-              networkId: selectedAccount?.networkId || "unknown",
-            })
-            if ("error" in result) {
+            if (!builtTransaction || "error" in builtTransaction) {
               useAppState.setState({
-                error: `Sending transaction failed: ${result.error}`,
+                error: `Build transaction failed: ${builtTransaction?.error || "unknown"}`,
                 isLoading: false,
               })
               navigate(routes.error())
             } else {
-              closePopupIfLastAction()
-              useAppState.setState({ isLoading: false })
+              await approveAction(action, builtTransaction)
+              useAppState.setState({ isLoading: true })
+              const result = await Promise.race([
+                waitForMessage(
+                  "TRANSACTION_SUBMITTED",
+                  ({ data }) => data.actionHash === action.meta.hash,
+                ),
+                waitForMessage(
+                  "TRANSACTION_FAILED",
+                  ({ data }) => data.actionHash === action.meta.hash,
+                ),
+              ])
+              // (await) blocking as the window may closes afterwards
+              await analytics.track("sentTransaction", {
+                success: !("error" in result),
+                networkId: selectedAccount?.networkId || "unknown",
+              })
+              if ("error" in result) {
+                useAppState.setState({
+                  error: `Sending transaction failed: ${result.error}`,
+                  isLoading: false,
+                })
+                navigate(routes.error())
+              } else {
+                closePopupIfLastAction()
+                useAppState.setState({ isLoading: false })
+              }
             }
           }}
           onReject={onReject}

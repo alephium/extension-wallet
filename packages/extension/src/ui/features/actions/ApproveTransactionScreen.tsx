@@ -23,7 +23,7 @@ export interface ApproveTransactionScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
   actionHash: string
   transaction: TransactionParams
-  onSubmit: (result: ReviewTransactionResult | undefined) => void
+  onSubmit: (result: ReviewTransactionResult | { error: string } | undefined) => void
 }
 
 async function buildTransaction(nodeUrl: string, account: Account, transaction: TransactionParams): Promise<ReviewTransactionResult> {
@@ -52,7 +52,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     networkId: selectedAccount?.networkId || "unknown",
   })
   const [disableConfirm, setDisableConfirm] = useState(true)
-  const [buildResult, setBuildResult] = useState<ReviewTransactionResult>()
+  const [buildResult, setBuildResult] = useState<ReviewTransactionResult | { error: string } | undefined>()
   const { id: networkId, nodeUrl } = useNetwork(selectedAccount?.networkId ?? "unknown")
 
   // TODO: handle error
@@ -62,9 +62,15 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         return
       }
 
-      const buildResult = await buildTransaction(nodeUrl, selectedAccount, transaction)
-      setBuildResult(buildResult)
+      try {
+        const buildResult = await buildTransaction(nodeUrl, selectedAccount, transaction)
+        setBuildResult(buildResult)
+      } catch (e: any) {
+        console.error("Error building transaction", e)
+        setBuildResult({ error: e.toString() })
+      }
     }
+
     build()
   }, [nodeUrl, selectedAccount, transaction])
 
@@ -84,13 +90,15 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       showHeader={true}
       footer={
         (
-          <FeeEstimation
-            onErrorChange={setDisableConfirm}
-            accountAddress={selectedAccount.address}
-            networkId={selectedAccount.networkId}
-            transaction={buildResult}
-            actionHash={actionHash}
-          />
+          buildResult && !("error" in buildResult) && (
+            < FeeEstimation
+              onErrorChange={setDisableConfirm}
+              accountAddress={selectedAccount.address}
+              networkId={selectedAccount.networkId}
+              transaction={buildResult}
+              actionHash={actionHash}
+            />
+          )
         )
       }
       {...props}
@@ -99,15 +107,15 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         transaction={transaction}
       />
 
-      {buildResult === undefined ?
-        (<></>) // TODO: show pending status
-        : (
+      {
+        buildResult && !("error" in buildResult) && (
           <TransactionsList
             networkId={networkId}
             transactionReview={buildResult}
           />
-        )}
+        )
+      }
       <AccountNetworkInfo account={selectedAccount} />
-    </ConfirmScreen>
+    </ConfirmScreen >
   )
 }

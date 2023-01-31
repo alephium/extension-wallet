@@ -242,7 +242,7 @@ export const TokenDapp: FC<{
         {
           tokenBalances.length > 0 ? (
             <>
-              <label>Token Balances</label>
+              <label>Token Balances ({tokenBalances.length} tokens in total)</label>
               <div className="columns">
                 <Select
                   value={selectedTokenBalance}
@@ -293,7 +293,7 @@ export const TokenDapp: FC<{
                 onChange={(e) => setTransferAmount(e.target.value)}
               />
               <br />
-              <input type="submit" disabled={buttonsDisabled} value="Transfer" />
+              <input type="submit" disabled={buttonsDisabled} value="Withdraw" />
             </form>
 
           ) : (

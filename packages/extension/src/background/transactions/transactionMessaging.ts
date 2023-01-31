@@ -2,6 +2,7 @@ import { Account, TransactionBulk, number, stark } from "starknet"
 
 import { TransactionMessage } from "../../shared/messages/TransactionMessage"
 import { HandleMessage, UnhandledMessage } from "../background"
+import { openUi } from "../openUi"
 import { argentMaxFee } from "../utils/argentMaxFee"
 
 export const handleTransactionMessage: HandleMessage<
@@ -13,6 +14,9 @@ export const handleTransactionMessage: HandleMessage<
         type: "TRANSACTION",
         payload: msg.data,
       })
+
+      openUi()
+
       return respond({
         type: "EXECUTE_TRANSACTION_RES",
         data: { actionHash: meta.hash },
