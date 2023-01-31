@@ -70,15 +70,18 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
         () => "USER_ABORTED" as const,
       ),
     ])
+
     sendMessage({
       type: "CONNECT_DAPP",
       data: { host: window.location.host, networkId: options.networkId, group: options?.chainGroup },
     })
+
     const walletAccount = await walletAccountP
 
     if (!walletAccount) {
       throw Error("No wallet account (should not be possible)")
     }
+
     if (walletAccount === "USER_ABORTED") {
       throw Error("User aborted")
     }
@@ -151,7 +154,37 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
   }
 
   signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
-    throw Error('Coming soon')
+    sendMessage({ type: "SIGN_MESSAGE", data: params })
+    const { actionHash } = await waitForMessage("SIGN_MESSAGE_RES", 1000)
+
+    sendMessage({ type: "OPEN_UI" })
+
+    const result = await Promise.race([
+      waitForMessage(
+        "SIGNATURE_SUCCESS",
+        11 * 60 * 1000,
+        (x) => x.data.actionHash === actionHash,
+      ),
+      waitForMessage(
+        "SIGNATURE_FAILURE",
+        10 * 60 * 1000,
+        (x) => x.data.actionHash === actionHash,
+      )
+        .then(() => "error" as const)
+        .catch(() => {
+          sendMessage({ type: "SIGNATURE_FAILURE", data: { actionHash } })
+          return "timeout" as const
+        }),
+    ])
+
+    if (result === "error") {
+      throw Error("User abort")
+    }
+    if (result === "timeout") {
+      throw Error("User action timed out")
+    }
+
+    return result
   }
 
   getSelectedAddress(): Promise<string> {

@@ -1,11 +1,9 @@
+import { SignMessageParams } from "@alephium/web3"
 import { FC } from "react"
-import type { typedData } from "starknet"
 import styled from "styled-components"
 
 import { usePageTracking } from "../../services/analytics"
 import { P } from "../../theme/Typography"
-import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { useFeeTokenBalance } from "../accountTokens/tokens.service"
 import {
   ConfirmPageProps,
   DeprecatedConfirmScreen,
@@ -13,8 +11,8 @@ import {
 
 interface ApproveSignatureScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
-  dataToSign: typedData.TypedData
-  onSubmit: (data: typedData.TypedData) => void
+  dataToSign: SignMessageParams
+  onSubmit: (data: SignMessageParams) => void
 }
 
 export const Pre = styled.pre`
@@ -33,9 +31,6 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
   ...props
 }) => {
   usePageTracking("signMessage")
-
-  const { feeTokenBalance } = useFeeTokenBalance(selectedAccount)
-  const { pendingTransactions = [] } = useAccountTransactions(selectedAccount)
 
   return (
     <DeprecatedConfirmScreen

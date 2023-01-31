@@ -73,19 +73,17 @@ export const handleActionApproval = async (
     }
 
     case "SIGN": {
-      const typedData = action.payload
-      if (!(await wallet.isSessionOpen())) {
-        throw Error("you need an open session")
-      }
       const account = await wallet.getSelectedAccount()
+      if (!account) {
+        throw Error("No selected account")
+      }
+
+      const result = await wallet.signMessage(account, action.payload)
 
       return {
         type: "SIGNATURE_SUCCESS",
         data: {
-          //r: r.toString(),
-          //s: s.toString(),
-          r: '',
-          s: '',
+          signature: result.signature,
           actionHash,
         },
       }

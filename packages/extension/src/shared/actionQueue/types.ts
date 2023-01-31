@@ -114,7 +114,7 @@ export type ActionItem =
     }
   | {
       type: "SIGN"
-      payload: typedData.TypedData
+      payload: SignMessageParams
     }
   | {
       type: "REQUEST_ADD_CUSTOM_NETWORK"

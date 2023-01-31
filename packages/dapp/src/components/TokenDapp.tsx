@@ -27,7 +27,7 @@ export const TokenDapp: FC<{
   const [transferTo, setTransferTo] = useState("")
   const [transferAmount, setTransferAmount] = useState("")
   const [shortText, setShortText] = useState("")
-  const [lastSig, setLastSig] = useState<string[]>([])
+  const [lastSig, setLastSig] = useState<string>()
   const [lastTransactionHash, setLastTransactionHash] = useState("")
   const [transactionStatus, setTransactionStatus] = useState<Status>("idle")
   const [transactionError, setTransactionError] = useState("")
@@ -198,7 +198,7 @@ export const TokenDapp: FC<{
       const result = await signMessage(shortText)
       console.log(result)
 
-      setLastSig(result)
+      setLastSig(result.signature)
       setTransactionStatus("success")
     } catch (e) {
       console.error(e)
@@ -351,7 +351,7 @@ export const TokenDapp: FC<{
         <form onSubmit={handleSignSubmit}>
           <h2 className={styles.title}>Sign Message</h2>
 
-          <label htmlFor="mint-amount">Short Text</label>
+          <label htmlFor="short-text">Short Text</label>
           <input
             type="text"
             id="short-text"
@@ -366,21 +366,12 @@ export const TokenDapp: FC<{
           <h2 className={styles.title}>Sign results</h2>
 
           {/* Label and textarea for value r */}
-          <label htmlFor="r">r</label>
+          <label htmlFor="r">Signature</label>
           <textarea
             className={styles.textarea}
-            id="r"
-            name="r"
-            value={lastSig[0]}
-            readOnly
-          />
-          {/* Label and textarea for value s */}
-          <label htmlFor="s">s</label>
-          <textarea
-            className={styles.textarea}
-            id="s"
-            name="s"
-            value={lastSig[1]}
+            id="signature"
+            name="signature"
+            value={lastSig}
             readOnly
           />
         </form>

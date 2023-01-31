@@ -137,6 +137,14 @@ export class Wallet {
     return signer.signAndSubmitUnsignedTx(params)
   }
 
+  public async signMessage(
+    account: WalletAccount,
+    params: SignMessageParams
+  ): Promise<SignMessageResult> {
+    const signer = await this.getPrivateKeySigner(account)
+    return signer.signMessage(params)
+  }
+
   public async getPrivateKeySigner(account: WalletAccount): Promise<PrivateKeyWallet> {
     const session = await this.sessionStore.get()
     if (!this.isSessionOpen() || !session?.seed) {
