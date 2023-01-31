@@ -1,75 +1,64 @@
-import { SessionAccount, createSession } from "@argent/x-sessions"
 import { FC, useEffect, useState } from "react"
-import { Abi, AccountInterface, Contract, ec } from "starknet"
-import { hash } from "starknet5"
+import { convertSetToAlph } from "@alephium/sdk"
+import Select from 'react-select';
 import { getAlephium } from '@alephium/get-extension-wallet'
-import shinyToken from '../../artifacts/shiny-token.ral.json'
-
-import Erc20Abi from "../../abi/ERC20.json"
-import { truncateAddress, truncateHex } from "../services/address.service"
 import {
-  getErc20TokenAddress,
-  getTokens,
+  getAlphBalance,
+  getTokenBalances,
   mintToken,
-  parseInputAmountToUint256,
-  transfer,
-  transferMintedToken
+  TokenBalance,
+  transferToken,
+  withdrawMintedToken
 } from "../services/token.service"
 import {
-  //  addToken,
-  //  declare,
   getExplorerBaseUrl,
   networkId,
   signMessage,
-  //  waitForTransaction,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
 import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3 } from "@alephium/web3"
 
-const { genKeyPair, getStarkKey } = ec
-
 type Status = "idle" | "approve" | "pending" | "success" | "failure"
-
-const readFileAsString = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (reader.result) {
-        return resolve(reader.result?.toString())
-      }
-      return reject(new Error("Could not read file"))
-    }
-    reader.onerror = reject
-    reader.onabort = reject.bind(null, new Error("User aborted"))
-    reader.readAsText(file)
-  })
-}
 
 export const TokenDapp: FC<{
   address: string
 }> = ({ address }) => {
   const [mintAmount, setMintAmount] = useState("10")
   const [transferTo, setTransferTo] = useState("")
-  const [transferAmount, setTransferAmount] = useState("1")
+  const [transferAmount, setTransferAmount] = useState("")
   const [shortText, setShortText] = useState("")
   const [lastSig, setLastSig] = useState<string[]>([])
   const [lastTransactionHash, setLastTransactionHash] = useState("")
   const [transactionStatus, setTransactionStatus] = useState<Status>("idle")
   const [transactionError, setTransactionError] = useState("")
-  const [addTokenError, setAddTokenError] = useState("")
-  const [classHash, setClassHash] = useState("")
-  const [contract, setContract] = useState<string | undefined>()
-  const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
+  const [transferTokenAddress, setTransferTokenAddress] = useState("")
+  const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>([])
+  const [alphBalance, setAlphBalance] = useState<{ balance: string, lockedBalance: string } | undefined>()
   const [mintedToken, setMintedToken] = useState<string | undefined>()
+  const [transferingMintedToken, setTransferingMintedToken] = useState<boolean>(false)
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState<{ value: TokenBalance, label: string } | undefined>()
 
   const alephium = getAlephium()
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus)
 
+  const resetMintToken = () => {
+    setMintedToken(undefined)
+    setMintAmount("10")
+    setTransferingMintedToken(false)
+  }
+
   useEffect(() => {
-    getTokens(address).then(tokenAddresses =>
-      setTokenAddresses(tokenAddresses)
-    )
+    getTokenBalances(address).then(tokenBalances => {
+      if (tokenBalances.length > 0) {
+        setSelectedTokenBalance({ value: tokenBalances[0], label: tokenBalances[0].id })
+      }
+      setTokenBalances(tokenBalances)
+    })
+
+    getAlphBalance(address).then(alphBalance => {
+      setAlphBalance(alphBalance)
+    })
   }, [address])
 
   useEffect(() => {
@@ -78,14 +67,47 @@ export const TokenDapp: FC<{
         setTransactionError("")
 
         if (alephium?.nodeProvider) {
+          let subscription: TxStatusSubscription | undefined = undefined
+          let txNotFoundRetryNums = 0
           web3.setCurrentNodeProvider(alephium.nodeProvider)
+
           const subscriptionOptions: SubscribeOptions<TxStatus> = {
             pollingInterval: 3000,
             messageCallback: async (status: TxStatus): Promise<void> => {
-              if (status.type === 'Confirmed' || status.type === 'TxNotFound') {
-                await new Promise(r => setTimeout(r, 3000));
+              switch (status.type) {
+                case "Confirmed": {
+                  console.log(`Transaction ${lastTransactionHash} is confirmed`)
+                  setTransactionStatus("success")
+
+                  if (transferingMintedToken) {
+                    console.log("reset mint token")
+                    resetMintToken()
+                  }
+
+                  subscription?.unsubscribe()
+                  break
+                }
+
+                case "TxNotFound": {
+                  console.log(`Transaction ${lastTransactionHash} is not found`)
+                  if (txNotFoundRetryNums > 3) {
+                    setTransactionStatus("failure")
+                    setTransactionError(`Transaction ${lastTransactionHash} not found`)
+                    subscription?.unsubscribe()
+                  } else {
+                    await new Promise(r => setTimeout(r, 3000));
+                  }
+
+                  txNotFoundRetryNums += 1
+                  break
+                }
+
+                case "MemPooled": {
+                  console.log(`Transaction ${lastTransactionHash} is in mempool`)
+                  setTransactionStatus("pending")
+                  break
+                }
               }
-              setTransactionStatus("success")
             },
             errorCallback: (error: any, subscription): Promise<void> => {
               console.log(error)
@@ -101,7 +123,7 @@ export const TokenDapp: FC<{
             }
           }
 
-          subscribeToTxStatus(subscriptionOptions, lastTransactionHash)
+          subscription = subscribeToTxStatus(subscriptionOptions, lastTransactionHash)
         } else {
           throw Error("Alephium object is not initialized")
         }
@@ -135,10 +157,10 @@ export const TokenDapp: FC<{
       setTransactionStatus("approve")
 
       console.log("transfer", { transferTo, transferAmount })
-      const result = await transfer(transferTo, transferAmount, network)
+      const result = await transferToken(transferTokenAddress, transferTo, transferAmount, network)
       console.log(result)
 
-      setLastTransactionHash(result.transaction_hash)
+      setLastTransactionHash(result.txId)
       setTransactionStatus("pending")
     } catch (e) {
       console.error(e)
@@ -146,19 +168,18 @@ export const TokenDapp: FC<{
     }
   }
 
-  const handleTransferMintedTokenSubmit = async (e: React.FormEvent) => {
+  const handleWithdrawMintedTokenSubmit = async (e: React.FormEvent) => {
     try {
       e.preventDefault()
       if (mintedToken) {
         setTransactionStatus("approve")
-
         console.log("transfer", { transferTo, transferAmount, mintedToken })
 
-        const result = await transferMintedToken(transferAmount, mintedToken)
-        console.log(result)
+        const result = await withdrawMintedToken(mintAmount, mintedToken)
 
         setLastTransactionHash(result.txId)
         setTransactionStatus("pending")
+        setTransferingMintedToken(true)
       } else {
         throw Error("No minted token")
       }
@@ -199,7 +220,7 @@ export const TokenDapp: FC<{
             rel="noreferrer"
             style={{ color: "blue", margin: "0 0 1em" }}
           >
-            <code>{truncateHex(lastTransactionHash)}</code>
+            <code>{lastTransactionHash}</code>
           </a>
         </h3>
       )}
@@ -213,11 +234,42 @@ export const TokenDapp: FC<{
           />
         </h3>
       )}
+
+      <h3 style={{ margin: 0 }}>
+        ALPH Balance: <code>{alphBalance?.balance && convertSetToAlph(alphBalance.balance)}</code>
+      </h3>
+      <h3 style={{ margin: 0 }}>
+        {
+          tokenBalances.length > 0 ? (
+            <>
+              <label>Token Balances</label>
+              <div className="columns">
+                <Select
+                  value={selectedTokenBalance}
+                  onChange={
+                    (selected) => {
+                      setSelectedTokenBalance(selected)
+                    }
+                  }
+                  options={
+                    tokenBalances.map((tokenBalance, index) => {
+                      return { value: tokenBalance, label: tokenBalance.id }
+                    })
+                  }
+                />
+                <code>{selectedTokenBalance?.value.balance.balance.toString()}</code>
+              </div>
+            </>
+          ) : <div>No tokens</div>
+        }
+
+      </h3>
+
       <div className="columns">
         {
           (mintedToken && alephium?.connectedAddress) ? (
-            <form onSubmit={handleTransferMintedTokenSubmit}>
-              <h2 className={styles.title}>Transfer all minted token</h2>
+            <form onSubmit={handleWithdrawMintedTokenSubmit}>
+              <h2 className={styles.title}>Withdraw all minted token</h2>
               <label htmlFor="token-address">Token Address</label>
               <p>{mintedToken}</p>
 
@@ -233,7 +285,7 @@ export const TokenDapp: FC<{
 
               <label htmlFor="transfer-amount">Amount</label>
               <input
-                type="text"
+                type="number"
                 id="transfer-amount"
                 name="fname"
                 disabled
@@ -250,7 +302,7 @@ export const TokenDapp: FC<{
 
               <label htmlFor="mint-amount">Amount</label>
               <input
-                type="text"
+                type="number"
                 id="mint-amount"
                 name="fname"
                 value={mintAmount}
@@ -262,6 +314,38 @@ export const TokenDapp: FC<{
 
           )
         }
+        <form onSubmit={handleTransferSubmit}>
+          <h2 className={styles.title}>Transfer token</h2>
+
+          <label htmlFor="transfer-token-address">Token Address</label>
+          <input
+            type="text"
+            id="transfer-to"
+            name="fname"
+            value={transferTokenAddress}
+            onChange={(e) => setTransferTokenAddress(e.target.value)}
+          />
+
+          <label htmlFor="transfer-to">To</label>
+          <input
+            type="text"
+            id="transfer-to"
+            name="fname"
+            value={transferTo}
+            onChange={(e) => setTransferTo(e.target.value)}
+          />
+
+          <label htmlFor="transfer-amount">Amount</label>
+          <input
+            type="number"
+            id="transfer-amount"
+            name="fname"
+            value={transferAmount}
+            onChange={(e) => setTransferAmount(e.target.value)}
+          />
+          <br />
+          <input type="submit" disabled={buttonsDisabled} value="Transfer" />
+        </form>
       </div>
       <div className="columns">
         <form onSubmit={handleSignSubmit}>
@@ -301,15 +385,6 @@ export const TokenDapp: FC<{
           />
         </form>
       </div>
-
-      <h3 style={{ margin: 0 }}>
-        {
-          tokenAddresses.length > 0 ? tokenAddresses.map((tokenAddress, index) =>
-            <div key={index}>{tokenAddress}</div>
-          ) : "no token addresses"
-        }
-      </h3>
-      <span className="error-message">{addTokenError}</span>
     </>
   )
   return (<div>Token App</div>)
