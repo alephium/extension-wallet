@@ -32,10 +32,6 @@ export const checkTransactionHash = (
     if (!transactionHash) {
       throw Error("transactionHash not defined")
     }
-    const bn = number.toBN(transactionHash)
-    if (bn.lte(constants.ZERO)) {
-      throw Error("transactionHash needs to be >0")
-    }
     return true
   } catch {
     return false

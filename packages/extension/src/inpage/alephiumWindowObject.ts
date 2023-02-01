@@ -22,6 +22,8 @@ async function executeAlephiumTransaction(data: TransactionParams) {
   sendMessage({ type: 'EXECUTE_TRANSACTION', data })
   const { actionHash } = await waitForMessage('EXECUTE_TRANSACTION_RES', 1000)
 
+  sendMessage({ type: "OPEN_UI" })
+
   const result = await Promise.race([
     waitForMessage(
       "TRANSACTION_SUBMITTED",

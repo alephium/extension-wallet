@@ -1,3 +1,4 @@
+import { ExplorerProvider } from "@alephium/web3"
 import { getNetwork } from "../../../shared/network"
 import { getProvider } from "../../../shared/network"
 import {
@@ -11,17 +12,15 @@ export async function getTransactionsUpdate(transactions: Transaction[]) {
 
   // as this function tends to run into 429 errors, we'll simply keep the old status when it fails
   // TODO: we should add a cooldown when user run into 429 errors
-  const fetchedTransactions = await Promise.allSettled(
+  const fetchedTransactions: PromiseSettledResult<Transaction>[] = await Promise.allSettled(
     transactionsToCheck.map(async (transaction) => {
       const network = await getNetwork(transaction.account.networkId)
-      const provider = getProvider(network)
-      const status = await provider.getTransactionStatus(transaction.hash)
-      return {
-        ...transaction,
-        status: status.tx_status,
-        failureReason: status.tx_failure_reason,
-      }
-    }),
+      const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+      const updatedTransaction = await explorerProvider.transactions.getTransactionsTransactionHash(transaction.hash)
+
+      const status = updatedTransaction.type === "UnconfirmedTransaction" ? "PENDING" : "ACCEPTED_ON_L1"
+      return { ...transaction, status }
+    })
   )
 
   const updatedTransactions = fetchedTransactions.reduce<Transaction[]>(
@@ -34,5 +33,5 @@ export async function getTransactionsUpdate(transactions: Transaction[]) {
     [],
   )
 
-  return getTransactionsStatusUpdate(transactions, updatedTransactions) // filter out transactions that have not changed
+  return getTransactionsStatusUpdate(transactions, updatedTransactions)
 }

@@ -15,8 +15,6 @@ export const handleTransactionMessage: HandleMessage<
         payload: msg.data,
       })
 
-      openUi()
-
       return respond({
         type: "EXECUTE_TRANSACTION_RES",
         data: { actionHash: meta.hash },

@@ -1,10 +1,12 @@
+import { ExplorerProvider } from "@alephium/web3"
 import join from "url-join"
 
 import { Network, getNetwork } from "../../../shared/network"
 import { Transaction, compareTransactions } from "../../../shared/transactions"
 import { WalletAccount } from "../../../shared/wallet.model"
 import { fetchWithTimeout } from "../../utils/fetchWithTimeout"
-import { mapVoyagerTransactionToTransaction } from "../transformers"
+import { mapAlephiumTransactionToTransaction } from "../transformers"
+import { Transaction as AlephiumTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 export interface VoyagerTransaction {
   blockId: string
@@ -37,22 +39,16 @@ export async function getTransactionHistory(
   accountsToPopulate: WalletAccount[],
   metadataTransactions: Transaction[],
 ) {
-  const accountsWithHistory = await Promise.all(
-    accountsToPopulate.filter((account) =>
-      true  // FIXME
-      //Boolean(account.network.explorerUrl),
-    )
-  )
   const transactionsPerAccount = await Promise.all(
-    accountsWithHistory.map(async (account) => {
+    accountsToPopulate.map(async (account) => {
       const network = await getNetwork(account.networkId)
+      const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
 
-      const voyagerTransactions = await fetchVoyagerTransactions(
-        account.address,
-        network,
-      )
-      return voyagerTransactions.map((transaction) =>
-        mapVoyagerTransactionToTransaction(
+      // confirmed txs
+      const transactions: AlephiumTransaction[] = await explorerProvider.addresses.getAddressesAddressTransactions(account.address)
+
+      return transactions.map((transaction) =>
+        mapAlephiumTransactionToTransaction(
           transaction,
           account,
           metadataTransactions.find((tx) =>
