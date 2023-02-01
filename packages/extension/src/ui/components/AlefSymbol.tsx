@@ -37,6 +37,7 @@ export default AlefSymbol
 const AlephSymbolSVGStyled = styled(AlephSymbolSVG) <{ color?: string }>`
   width: 1em;
   height: 1em;
+  display: inline;
 
   > * {
     fill: ${({ color }) => color} !important;

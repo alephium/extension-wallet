@@ -2,7 +2,6 @@ import { FC, ReactNode, useMemo } from "react"
 
 import { assertNever } from "../../services/assertNever"
 import { AccountActivityContainer } from "../accountActivity/AccountActivityContainer"
-import AccountTransactionList from "../accountActivity/AccountTransactionList"
 import { AccountCollections } from "../accountNfts/AccountCollections"
 import { AccountTokens } from "../accountTokens/AccountTokens"
 import { StatusMessageFullScreenContainer } from "../statusMessage/StatusMessageFullScreen"
