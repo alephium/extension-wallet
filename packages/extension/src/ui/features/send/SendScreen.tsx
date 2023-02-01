@@ -125,21 +125,6 @@ export const SendScreen: FC = () => {
           </StyledInput>
         </SearchBox>
 
-        <TabGroup>
-          <Tab
-            active={selectedTab === "tokens"}
-            onClick={() => setSelectedTab("tokens")}
-          >
-            Tokens
-          </Tab>
-          <Tab
-            active={selectedTab === "nfts"}
-            onClick={() => setSelectedTab("nfts")}
-          >
-            NFTs
-          </Tab>
-        </TabGroup>
-
         <TabView>
           <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>
             {selectedTab === "tokens" && (
@@ -151,15 +136,6 @@ export const SendScreen: FC = () => {
                   showNewTokenButton
                 />
               </CellStack>
-            )}
-
-            {selectedTab === "nfts" && (
-              <StyledAccountCollections
-                account={account}
-                withHeader={false}
-                customList={customCollectiblesList}
-                navigateToSend
-              />
             )}
           </Suspense>
         </TabView>
