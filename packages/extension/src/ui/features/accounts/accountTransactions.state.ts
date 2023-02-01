@@ -1,10 +1,12 @@
+import { ExplorerProvider } from "@alephium/web3"
 import { memoize } from "lodash-es"
-import { useMemo } from "react"
-
+import { useEffect, useMemo, useState } from "react"
+import { Transaction as AlephiumTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { transactionsStore } from "../../../background/transactions/store"
+import { getNetwork } from "../../../shared/network"
 import { useArrayStorage } from "../../../shared/storage/hooks"
 import { Transaction } from "../../../shared/transactions"
-import { BaseWalletAccount } from "../../../shared/wallet.model"
+import { BaseWalletAccount, WalletAccount } from "../../../shared/wallet.model"
 import {
   accountsEqual,
   getAccountIdentifier,
@@ -37,4 +39,24 @@ export const useAccountTransactions: UseAccountTransactions = (account) => {
   )
 
   return { transactions, pendingTransactions }
+}
+
+export const useAccountTransactionsAlph = (account: WalletAccount) => {
+  const [transactions, setTransactions] = useState<AlephiumTransaction[]>([])
+
+  useEffect(() => {
+    const getTransactions = async () => {
+      const txs = await getAccountTransactions(account)
+      txs && setTransactions(txs)
+    }
+    getTransactions()
+  }, [account, setTransactions])
+
+  return transactions
+}
+
+const getAccountTransactions = async (account: WalletAccount) => {
+  const network = await getNetwork(account.networkId)
+  const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+  return await explorerProvider.addresses.getAddressesAddressTransactions(account.address)
 }

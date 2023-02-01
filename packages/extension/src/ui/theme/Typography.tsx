@@ -108,6 +108,22 @@ const anchorCss = css`
   }
 `
 
+export const SectionTitle = styled.h2`
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 20px;
+  margin: 10px 16px 15px 16px;
+  color: ${({ theme }) => theme.text1};
+`
+
+export const DividerTitle = styled.h3`
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 20px;
+  margin: 10px 16px;
+  color: ${({ theme }) => theme.text2};
+`
+
 export const A = styled.a`
   ${anchorCss}
 `

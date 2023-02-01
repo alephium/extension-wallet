@@ -9,7 +9,7 @@ import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { useAppState } from "../../app.state"
 import { openBlockExplorerTransaction } from "../../services/blockExplorer.service"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { useTokensInNetwork } from "../accountTokens/tokens.state"
+import { useTokensWithBalance } from "../accountTokens/tokens.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { TransactionListItem } from "./TransactionListItem"
 import { transformTransaction } from "./transform"
@@ -24,12 +24,13 @@ export const PendingTransactionsContainer: FC<
   const network = useCurrentNetwork()
   const { pendingTransactions } = useAccountTransactions(account)
   const { switcherNetworkId } = useAppState()
-  const tokensByNetwork = useTokensInNetwork(switcherNetworkId)
+  const tokensByNetwork = useTokensWithBalance(account)
+
   return (
     <PendingTransactions
       pendingTransactions={pendingTransactions}
       network={network}
-      tokensByNetwork={tokensByNetwork}
+      tokensByNetwork={tokensByNetwork.tokenDetails}
       accountAddress={account.address}
     />
   )

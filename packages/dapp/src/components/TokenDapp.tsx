@@ -236,7 +236,7 @@ export const TokenDapp: FC<{
       )}
 
       <h3 style={{ margin: 0 }}>
-        ALPH Balance: <code>{alphBalance?.balance && convertSetToAlph(alphBalance.balance)}</code>
+        ALPH Balance: <code>{alphBalance?.balance && convertSetToAlph(BigInt(alphBalance.balance))} ALPH</code>
       </h3>
       <h3 style={{ margin: 0 }}>
         {
@@ -248,11 +248,11 @@ export const TokenDapp: FC<{
                   value={selectedTokenBalance}
                   onChange={
                     (selected) => {
-                      setSelectedTokenBalance(selected)
+                      selected && setSelectedTokenBalance(selected)
                     }
                   }
                   options={
-                    tokenBalances.map((tokenBalance, index) => {
+                    tokenBalances.map((tokenBalance) => {
                       return { value: tokenBalance, label: tokenBalance.id }
                     })
                   }

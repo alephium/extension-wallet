@@ -2,6 +2,7 @@ import { CellStack, H4, SpacerCell } from "@argent/ui"
 import { Center, Skeleton } from "@chakra-ui/react"
 import { get } from "lodash-es"
 import { FC, Suspense, useCallback, useMemo } from "react"
+import { transaction } from "starknet"
 
 import { IExplorerTransaction } from "../../../shared/explorer/type"
 import { useAppState } from "../../app.state"
@@ -11,8 +12,9 @@ import { formatDate } from "../../services/dates"
 import { useAspectContractAddresses } from "../accountNfts/aspect.service"
 import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { useTokensInNetwork } from "../accountTokens/tokens.state"
+import { useTokensWithBalance } from "../accountTokens/tokens.state"
 import { AccountActivity } from "./AccountActivity"
+import AccountTransactionList from "./AccountTransactionList"
 import { PendingTransactionsContainer } from "./PendingTransactions"
 import { isVoyagerTransaction } from "./transform/is"
 import { ActivityTransaction } from "./useActivity"
@@ -59,7 +61,7 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
   account,
 }) => {
   const { switcherNetworkId } = useAppState()
-  const tokensByNetwork = useTokensInNetwork(switcherNetworkId)
+  const tokensByNetwork = useTokensWithBalance(account)
   const { data: nftContractAddresses } = useAspectContractAddresses()
   const { data, setSize } = useArgentExplorerAccountTransactionsInfinite(
     {
@@ -84,6 +86,7 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
     isEmpty || (data && data[data.length - 1]?.length < PAGE_SIZE)
 
   const { transactions } = useAccountTransactions(account)
+
   const voyagerTransactions = useMemo(() => {
     // RECEIVED transactions are already shown as pending
     return transactions.filter(
@@ -91,6 +94,7 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
         transaction.status !== "RECEIVED",
     )
   }, [transactions])
+
   const mergedTransactions = useMemo(() => {
     if (!explorerTransactions) {
       return {
@@ -108,9 +112,9 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
       // TODO: remove this when after backend update
       const isUdcTransaction =
         get(voyagerTransaction, "meta.transactions.entrypoint") ===
-          "deployContract" ||
+        "deployContract" ||
         get(voyagerTransaction, "meta.transactions.entrypoint") ===
-          "declareContract"
+        "declareContract"
 
       if (!isUdcTransaction && explorerTransaction) {
         if (!explorerTransaction.timestamp) {
@@ -202,13 +206,6 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
   }, [isReachingEnd, setSize])
 
   return (
-    <AccountActivity
-      activity={mergedActivity}
-      loadMoreHashes={loadMoreHashes}
-      account={account}
-      tokensByNetwork={tokensByNetwork}
-      nftContractAddresses={nftContractAddresses}
-      onLoadMore={onLoadMore}
-    />
+    <AccountTransactionList account={account} />
   )
 }
