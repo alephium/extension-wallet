@@ -5,15 +5,16 @@ import { SignMessageResult } from '@alephium/web3'
 
 import { Network } from "./token.service"
 
-export const silentConnectWallet = async (onDisconnected: () => Promise<void>) => {
+export const silentConnectWallet = async (
+  onDisconnected: () => Promise<void>
+) => {
   const windowAlephium = await connect({ showList: false })
-  await windowAlephium?.enable({ onDisconnected, networkId: 'devnet' })
+  await windowAlephium?.enable({ onDisconnected, networkId: 'localhost', chainGroup: 0 })
   return windowAlephium
 }
 
 export const connectWallet = async (
-  onDisconnected: () => Promise<void>,
-  group?: number
+  onDisconnected: () => Promise<void>
 ) => {
   const windowAlephium = await connect({
     include: ['alephium']
@@ -21,8 +22,8 @@ export const connectWallet = async (
 
   await windowAlephium?.enable({
     onDisconnected,
-    networkId: 'devnet',
-    chainGroup: group
+    networkId: 'localhost',
+    chainGroup: 0
   })
 
   return windowAlephium

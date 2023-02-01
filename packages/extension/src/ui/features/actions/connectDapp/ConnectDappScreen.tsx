@@ -1,3 +1,4 @@
+import { groupOfAddress } from "@alephium/web3"
 import { FC, useCallback, useMemo, useState } from "react"
 import styled from "styled-components"
 
@@ -16,8 +17,9 @@ import {
   getAccountName,
   useAccountMetadata,
 } from "../../accounts/accountMetadata.state"
-import { useAccounts, useSelectedAccount } from "../../accounts/accounts.state"
+import { useAccounts, useAccountsOnNetwork, useSelectedAccount } from "../../accounts/accounts.state"
 import { AccountSelect } from "../../accounts/AccountSelect"
+import { useCurrentNetwork } from "../../networks/useNetworks"
 import {
   ConfirmPageProps,
   DeprecatedConfirmScreen,
@@ -29,6 +31,8 @@ interface ConnectDappProps extends Omit<ConfirmPageProps, "onSubmit"> {
   onConnect: (selectedAccount: Account) => void
   onDisconnect: (selectedAccount: Account) => void
   host: string
+  networkId?: string,
+  group?: number
 }
 
 export interface IConnectDappAccountSelect {
@@ -171,23 +175,45 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   onDisconnect: onDisconnectProp,
   onReject: onRejectProp,
   host,
+  networkId,
+  group,
   ...rest
 }) => {
-  const initiallySelectedAccount = useSelectedAccount()
-  const visibleAccounts = useAccounts()
+  let initiallySelectedAccount = useSelectedAccount()
+  const currentNetwork = useCurrentNetwork()
+  const visibleAccounts = useAccountsOnNetwork({
+    networkId: networkId || currentNetwork.id,
+    showHidden: false
+  })
+
+  const visibleAccountsForGroup = group === undefined ? visibleAccounts : visibleAccounts.filter((account) => {
+    return groupOfAddress(account.address) === group
+  })
+
+  if (visibleAccountsForGroup.length > 0) {
+    if (!initiallySelectedAccount) {
+      initiallySelectedAccount = visibleAccountsForGroup[0]
+    }
+
+    if (group !== undefined && groupOfAddress(initiallySelectedAccount.address) !== group) {
+      initiallySelectedAccount = visibleAccountsForGroup[0]
+    }
+  }
+
   const [connectedAccount, setConnectedAccount] = useState<
     BaseWalletAccount | undefined
   >(initiallySelectedAccount)
+
   const isConnected = useIsPreauthorized(host, initiallySelectedAccount)
 
   const selectedAccount = useMemo(() => {
     if (connectedAccount) {
-      const account = visibleAccounts.find((account) =>
+      const account = visibleAccountsForGroup.find((account) =>
         accountsEqual(account, connectedAccount),
       )
       return account
     }
-  }, [visibleAccounts, connectedAccount])
+  }, [visibleAccountsForGroup, connectedAccount])
 
   const onSelectedAccountChange = useCallback((account: BaseWalletAccount) => {
     setConnectedAccount(account)
@@ -215,34 +241,42 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
         <DappIconContainer>
           <DappIcon host={host} />
         </DappIconContainer>
-        <Title>Connect to {dappDisplayAttributes?.title}</Title>
+        <Title>Connect to {dappDisplayAttributes?.title}{networkId ? ` for ${networkId}` : ""}</Title>
         <Host>{host}</Host>
       </ColumnCenter>
       <HR />
-      <SmallText>Select the account to connect:</SmallText>
-      <SelectContainer>
-        <ConnectDappAccountSelect
-          accounts={visibleAccounts}
-          selectedAccount={connectedAccount}
-          onSelectedAccountChange={onSelectedAccountChange}
-          host={host}
-        />
-        {isConnected && (
-          <ConnectedStatusWrapper>
-            <ConnectedIcon />
-            <span> This account is already connected</span>
-          </ConnectedStatusWrapper>
-        )}
-      </SelectContainer>
-      <HR />
-      <SmallText>This dapp will be able to:</SmallText>
-      <List>
-        <Bullet>Read your wallet address</Bullet>
-        <Bullet>Request transactions</Bullet>{" "}
-        <SmallGreyText>
-          You will still need to sign any new transaction
-        </SmallGreyText>
-      </List>
+      {
+        visibleAccountsForGroup.length > 0 ? (
+          <>
+            <SmallText>Select the account{group !== undefined ? ` from group ${group}` : ""} to connect:</SmallText>
+            <SelectContainer>
+              <ConnectDappAccountSelect
+                accounts={visibleAccountsForGroup}
+                selectedAccount={connectedAccount}
+                onSelectedAccountChange={onSelectedAccountChange}
+                host={host}
+              />
+              {isConnected && (
+                <ConnectedStatusWrapper>
+                  <ConnectedIcon />
+                  <span> This account is already connected</span>
+                </ConnectedStatusWrapper>
+              )}
+            </SelectContainer>
+            <HR />
+            <SmallText>This dapp will be able to:</SmallText>
+            <List>
+              <Bullet>Read your wallet address</Bullet>
+              <Bullet>Request transactions</Bullet>{" "}
+              <SmallGreyText>
+                You will still need to sign any new transaction
+              </SmallGreyText>
+            </List>
+          </>
+        ) : (
+          <SmallGreyText>No accounts{group !== undefined ? ` for group ${group}` : ""}, please create the account first</SmallGreyText>
+        )
+      }
     </DeprecatedConfirmScreen>
   )
 }

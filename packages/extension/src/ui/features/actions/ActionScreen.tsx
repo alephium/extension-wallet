@@ -77,6 +77,8 @@ export const ActionScreen: FC = () => {
       return (
         <ConnectDappScreen
           host={action.payload.host}
+          networkId={action.payload.networkId}
+          group={action.payload.group}
           onConnect={async (selectedAccount: Account) => {
             useAppState.setState({ isLoading: true })
             selectAccount(selectedAccount)
