@@ -34,6 +34,12 @@ export default {
         ...(config.resolve?.alias || {}),
         "@mui/styled-engine": "@mui/styled-engine-sc",
       },
+      fallback: {
+        fs: false,
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        path: require.resolve("path-browserify")
+      }
     }
 
     /**

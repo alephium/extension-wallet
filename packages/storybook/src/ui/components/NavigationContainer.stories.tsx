@@ -12,8 +12,8 @@ const Template: ComponentStory<typeof NavigationContainer> = (props) => (
   <NavigationContainer {...props}></NavigationContainer>
 )
 
-export const Default = Template.bind({})
-Default.args = {
-  title: "Title in here",
-  leftButton: <BarBackButton onClick={onClick} />,
-}
+//export const Default = Template.bind({})
+//Default.args = {
+//  title: "Title in here",
+//  leftButton: <BarBackButton onClick={onClick} />,
+//}

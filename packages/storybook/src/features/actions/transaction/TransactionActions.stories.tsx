@@ -12,7 +12,7 @@ const Template: ComponentStory<typeof TransactionActions> = (props) => (
   <TransactionActions {...props} />
 )
 
-export const FrensLand = Template.bind({})
-FrensLand.args = {
-  transactions: frenslandCalls,
-}
+//export const FrensLand = Template.bind({})
+//FrensLand.args = {
+//  transactions: frenslandCalls,
+//}

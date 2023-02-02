@@ -28,59 +28,59 @@ const Template: ComponentStory<typeof TransactionsList> = (props) => (
   <TransactionsList {...props} tokensByNetwork={tokensByNetwork} />
 )
 
-export const Erc20Transfer = Template.bind({})
-Erc20Transfer.args = {
-  transactions: erc20Transfer,
-  transactionReview: erc20TransferResponse as ApiTransactionReviewResponse,
-}
-
-export const Erc20TransferIsTokenAddress = Template.bind({})
-Erc20TransferIsTokenAddress.args = {
-  transactions: erc20TransferIsTokenAddress,
-  transactionReview:
-    erc20TransferIsTokenAddressResponse as ApiTransactionReviewResponse,
-}
-
-export const Erc20TransferWarn = Template.bind({})
-Erc20TransferWarn.args = {
-  transactions: erc20Transfer,
-  transactionReview: erc20TransferWarnResponse as ApiTransactionReviewResponse,
-}
-
-export const MySwapApproveAndSwap = Template.bind({})
-MySwapApproveAndSwap.args = {
-  transactions: mySwapApproveAndSwap,
-  transactionReview:
-    mySwapApproveAndSwapResponse as ApiTransactionReviewResponse,
-}
-
-export const JediSwapMint = Template.bind({})
-JediSwapMint.args = {
-  transactions: jediSwapMint,
-  transactionReview: jediSwapMintResponse as ApiTransactionReviewResponse,
-}
-
-export const JediSwapApproveAndSwapWarn = Template.bind({})
-JediSwapApproveAndSwapWarn.args = {
-  transactions: jediSwapApproveAndSwapWarn,
-  transactionReview:
-    jediSwapApproveAndSwapWarnResponse as ApiTransactionReviewResponse,
-}
-
-export const JediSwapApproveAndSwapNoReview = Template.bind({})
-JediSwapApproveAndSwapNoReview.args = {
-  transactions: jediSwapApproveAndSwapWarn,
-}
-
-export const NftTransfer = Template.bind({})
-NftTransfer.args = {
-  transactions: nftTransfer,
-  transactionReview: nftTransferResponse as ApiTransactionReviewResponse,
-}
-
-export const AccountUpgradeUnknownImplementation = Template.bind({})
-AccountUpgradeUnknownImplementation.args = {
-  transactions: accountUpgradeUnknownImplementation,
-  transactionReview:
-    accountUpgradeUnknownImplementationResponse as ApiTransactionReviewResponse,
-}
+//export const Erc20Transfer = Template.bind({})
+//Erc20Transfer.args = {
+//  transactions: erc20Transfer,
+//  transactionReview: erc20TransferResponse as ApiTransactionReviewResponse,
+//}
+//
+//export const Erc20TransferIsTokenAddress = Template.bind({})
+//Erc20TransferIsTokenAddress.args = {
+//  transactions: erc20TransferIsTokenAddress,
+//  transactionReview:
+//    erc20TransferIsTokenAddressResponse as ApiTransactionReviewResponse,
+//}
+//
+//export const Erc20TransferWarn = Template.bind({})
+//Erc20TransferWarn.args = {
+//  transactions: erc20Transfer,
+//  transactionReview: erc20TransferWarnResponse as ApiTransactionReviewResponse,
+//}
+//
+//export const MySwapApproveAndSwap = Template.bind({})
+//MySwapApproveAndSwap.args = {
+//  transactions: mySwapApproveAndSwap,
+//  transactionReview:
+//    mySwapApproveAndSwapResponse as ApiTransactionReviewResponse,
+//}
+//
+//export const JediSwapMint = Template.bind({})
+//JediSwapMint.args = {
+//  transactions: jediSwapMint,
+//  transactionReview: jediSwapMintResponse as ApiTransactionReviewResponse,
+//}
+//
+//export const JediSwapApproveAndSwapWarn = Template.bind({})
+//JediSwapApproveAndSwapWarn.args = {
+//  transactions: jediSwapApproveAndSwapWarn,
+//  transactionReview:
+//    jediSwapApproveAndSwapWarnResponse as ApiTransactionReviewResponse,
+//}
+//
+//export const JediSwapApproveAndSwapNoReview = Template.bind({})
+//JediSwapApproveAndSwapNoReview.args = {
+//  transactions: jediSwapApproveAndSwapWarn,
+//}
+//
+//export const NftTransfer = Template.bind({})
+//NftTransfer.args = {
+//  transactions: nftTransfer,
+//  transactionReview: nftTransferResponse as ApiTransactionReviewResponse,
+//}
+//
+//export const AccountUpgradeUnknownImplementation = Template.bind({})
+//AccountUpgradeUnknownImplementation.args = {
+//  transactions: accountUpgradeUnknownImplementation,
+//  transactionReview:
+//    accountUpgradeUnknownImplementationResponse as ApiTransactionReviewResponse,
+//}
