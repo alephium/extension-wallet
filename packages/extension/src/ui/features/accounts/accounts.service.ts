@@ -9,12 +9,12 @@ import { Account } from "./Account"
 
 const { toBN } = number
 
-export const createAccount = async (networkId: string, password?: string) => {
+export const createAccount = async (networkId: string, password?: string, group?: number) => {
   if (password) {
     await startSession(password)
   }
 
-  return Account.create(networkId)
+  return Account.create(networkId, group)
 }
 
 const argentColorsArray = [

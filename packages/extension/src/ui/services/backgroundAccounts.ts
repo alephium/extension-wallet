@@ -7,8 +7,8 @@ import {
 import { walletStore } from "../../shared/wallet/walletStore"
 import { decryptFromBackground, generateEncryptedSecret } from "./crypto"
 
-export const createNewAccount = async (networkId: string) => {
-  sendMessage({ type: "NEW_ACCOUNT", data: { networkId: networkId } })
+export const createNewAccount = async (networkId: string, group?: number) => {
+  sendMessage({ type: "NEW_ACCOUNT", data: { networkId: networkId, group: group ? group.toString() : undefined } })
   try {
     return await Promise.race([
       waitForMessage("NEW_ACCOUNT_RES"),

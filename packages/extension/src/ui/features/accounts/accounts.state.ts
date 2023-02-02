@@ -5,7 +5,7 @@ import {
   withHiddenSelector,
   withoutHiddenSelector,
 } from "../../../shared/account/selectors"
-import { accountStore } from "../../../shared/account/store"
+import { accountStore, addAccounts } from "../../../shared/account/store"
 import { defaultNetwork } from "../../../shared/network"
 import {
   useArrayStorage,
@@ -16,6 +16,7 @@ import { accountsEqual } from "../../../shared/wallet.service"
 import { walletStore } from "../../../shared/wallet/walletStore"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { Account } from "./Account"
+import { useAddAccount } from "./useAddAccount"
 
 export const mapWalletAccountsToAccounts = (
   walletAccounts: WalletAccount[],
@@ -39,6 +40,11 @@ export const useAccounts = ({
 } = {}) => {
   const network = useCurrentNetwork()
   const accounts = useArrayStorage(accountStore)
+  const { addAccount } = useAddAccount()
+
+  if (accounts.length === 0) {
+    addAccount()
+  }
 
   const filteredAccounts = useMemo(
     () =>

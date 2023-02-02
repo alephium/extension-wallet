@@ -72,6 +72,7 @@ import {
   getStarkPair,
 } from "./keys/keyDerivation"
 import backupSchema from "./schema/backup.schema"
+import { account } from '../../e2e/apis/account'
 
 const { calculateContractAddressFromHash, getSelectorFromName } = hash
 
@@ -498,18 +499,18 @@ export class Wallet {
       // do not store at the moment, but use public key and private key to sign
       // store later
       const accounts = await this.walletStore.get()
+      const accountsForNetwork = accounts.filter((account) => account.networkId === networkId)
+
       group = group || group === 0 ? ~~group : undefined
+      const skipIndexes = accounts.map((account) => account.signer.derivationIndex)
 
       let newAndDefaultAddress
-      if (accounts) {
-        group = group || group === 0 ? ~~group : undefined
-        const skipIndexes = accounts.map((account) => account.signer.derivationIndex)
+      if (accountsForNetwork.length > 0) {
         newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, undefined, skipIndexes)
         await this.walletStore.push([newAndDefaultAddress])
       } else {
         if (group === undefined) {
           const seed = session.seed
-          const skipIndexes: number[] = []
           const newAddresses = range(TOTAL_NUMBER_OF_GROUPS).map((group) => {
             const address = this.deriveWalletAccount(networkId, seed, group, undefined, skipIndexes)
             skipIndexes.push(address.signer.derivationIndex)
@@ -518,7 +519,7 @@ export class Wallet {
           newAndDefaultAddress = newAddresses[0]
           await this.walletStore.push(newAddresses)
         } else {
-          newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, 0)
+          newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, 0, skipIndexes)
           await this.walletStore.push([newAndDefaultAddress])
         }
       }

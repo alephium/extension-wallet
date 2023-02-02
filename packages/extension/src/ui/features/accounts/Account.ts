@@ -51,8 +51,8 @@ export class Account {
     this.type = type
   }
 
-  public static async create(networkId: string): Promise<Account> {
-    const result = await createNewAccount(networkId)
+  public static async create(networkId: string, group?: number): Promise<Account> {
+    const result = await createNewAccount(networkId, group)
     if (result === "error") {
       throw new Error(result)
     }

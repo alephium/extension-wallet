@@ -5,7 +5,7 @@ import {
 } from "../wallet.model"
 
 export type AccountMessage =
-  | { type: "NEW_ACCOUNT"; data: { networkId: string; group?: number } }
+  | { type: "NEW_ACCOUNT"; data: { networkId: string; group?: string } }
   | {
       type: "NEW_ACCOUNT_RES"
       data: {

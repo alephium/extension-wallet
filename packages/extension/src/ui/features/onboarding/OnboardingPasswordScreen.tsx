@@ -54,7 +54,7 @@ export const OnboardingPasswordScreen: FC<NewWalletScreenProps> = ({
   const password = watch("password")
 
   const handleDeploy = useCallback(
-    async (password?: string) => {
+    async (password?: string, group?: number) => {
       if (!password) {
         return
       }
@@ -66,7 +66,7 @@ export const OnboardingPasswordScreen: FC<NewWalletScreenProps> = ({
         setIsDeploying(true)
         setDeployFailed(false)
         try {
-          const newAccount = await createAccount(switcherNetworkId, password)
+          const newAccount = await createAccount(switcherNetworkId, password, group)
           selectAccount(newAccount)
           analytics.track("createWallet", {
             status: "success",

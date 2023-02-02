@@ -37,10 +37,10 @@ export const MigrationDisclaimerScreen: FC = () => {
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
 
-  const handleAddAccount = async () => {
+  const handleAddAccount = async (group?: number) => {
     useAppState.setState({ isLoading: true })
     try {
-      const newAccount = await createAccount(switcherNetworkId)
+      const newAccount = await createAccount(switcherNetworkId, undefined, group)
       selectAccount(newAccount)
       navigate(await recover())
     } catch (error: any) {
@@ -75,7 +75,7 @@ export const MigrationDisclaimerScreen: FC = () => {
         </a>
       </P>
       <ButtonSpacer />
-      <Button onClick={handleAddAccount}>Create new account</Button>
+      <Button onClick={() => handleAddAccount()}>Create new account</Button>
     </Container>
   )
 }

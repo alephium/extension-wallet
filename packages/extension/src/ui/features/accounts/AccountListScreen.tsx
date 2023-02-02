@@ -74,7 +74,7 @@ export const AccountListScreen: FC = () => {
         rightButton={
           <BarIconButton
             aria-label="Create new wallet"
-            onClick={addAccount}
+            onClick={() => addAccount()} // Add group selector
           >
             <AddIcon />
           </BarIconButton>
