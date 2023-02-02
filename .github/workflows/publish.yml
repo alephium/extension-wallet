@@ -1,0 +1,49 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the version
+        id: get_version
+        run: |
+          version=$(echo ${GITHUB_REF/refs\/tags\//} | cut -c 2-)
+          echo ::set-output name=VERSION::$version
+        shell: bash
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+      - name: Publish get-extension-wallet package to npm
+        run: |
+          yarn
+          yarn run build
+          pushd packages/get-extension-wallet
+          npm publish --access=public
+          popd
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Zip the extension wallet
+        run: |
+          pushd packages/extension
+          cp -r dist alephium-extension-wallet
+          zip -r alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip alephium-extension-wallet
+          sha256sum "alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip" > "alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip.checksum"
+          popd
+      - name: Publish the zipped extension wallet
+        uses: softprops/action-gh-release@v0.1.14
+        with:
+          files: |
+            packages/extension/alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip
+            packages/extension/alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip.checksum

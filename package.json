@@ -1,9 +1,9 @@
 {
-  "version": "0.1.0",
+  "version": "0.5.0-rc0",
   "private": true,
-  "name": "argent-x",
-  "repository": "github:argentlabs/argent-x",
-  "homepage": "https://github.com/argentlabs/argent-x/#readme",
+  "name": "alephium-browser-extension-wallet",
+  "repository": "github:alephium/extension-wallet",
+  "homepage": "https://github.com/alephium/extension-wallet/blob/master/Readme.md",
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "bundlewatch": "^0.3.3",

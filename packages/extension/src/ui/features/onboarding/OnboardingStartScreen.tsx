@@ -43,7 +43,7 @@ export const OnboardingStartScreen: FC = () => {
       length={4}
       currentIndex={0}
       title="Welcome to Alephium"
-      subtitle="Accessible, Scalable and Secure DeFi"
+      subtitle="A New Paradigm"
     >
       <Row gap={"12px"} align="stretch">
         <RectButton onClick={() => navigate(routes.onboardingPassword())}>
