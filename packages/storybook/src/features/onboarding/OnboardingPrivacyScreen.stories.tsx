@@ -1,4 +1,4 @@
-import { OnboardingPrivacyStatementScreen } from "@argent-x/extension/src/ui/features/onboarding/OnboardingPrivacyStatementScreen"
+import { OnboardingPrivacyStatementScreen } from "@alephium/extension/src/ui/features/onboarding/OnboardingPrivacyStatementScreen"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

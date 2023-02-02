@@ -1,4 +1,4 @@
-import { ReviewFeedbackScreen } from "@argent-x/extension/src/ui/features/userReview/ReviewFeedbackScreen"
+import { ReviewFeedbackScreen } from "@alephium/extension/src/ui/features/userReview/ReviewFeedbackScreen"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

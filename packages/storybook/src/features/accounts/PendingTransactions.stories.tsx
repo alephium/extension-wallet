@@ -1,5 +1,5 @@
-import { Transaction } from "@argent-x/extension/src/shared/transactions"
-import { PendingTransactions } from "@argent-x/extension/src/ui/features/accountActivity/PendingTransactions"
+import { Transaction } from "@alephium/extension/src/shared/transactions"
+import { PendingTransactions } from "@alephium/extension/src/ui/features/accountActivity/PendingTransactions"
 import { CellStack } from "@argent/ui"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"

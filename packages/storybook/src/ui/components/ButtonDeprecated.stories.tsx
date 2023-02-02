@@ -1,4 +1,4 @@
-import { Button } from "@argent-x/extension/src/ui/components/Button"
+import { Button } from "@alephium/extension/src/ui/components/Button"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 export default {

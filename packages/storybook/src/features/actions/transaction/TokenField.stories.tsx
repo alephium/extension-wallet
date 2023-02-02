@@ -1,5 +1,5 @@
-import { FieldGroup } from "@argent-x/extension/src/ui/components/Fields"
-import { TokenField } from "@argent-x/extension/src/ui/features/actions/transaction/fields/TokenField"
+import { FieldGroup } from "@alephium/extension/src/ui/components/Fields"
+import { TokenField } from "@alephium/extension/src/ui/features/actions/transaction/fields/TokenField"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 import { tokensByNetwork } from "../../../tokensByNetwork"

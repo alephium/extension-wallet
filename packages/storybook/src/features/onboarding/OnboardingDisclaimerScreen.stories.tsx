@@ -1,4 +1,4 @@
-import { OnboardingDisclaimerScreen } from "@argent-x/extension/src/ui/features/onboarding/OnboardingDisclaimerScreen"
+import { OnboardingDisclaimerScreen } from "@alephium/extension/src/ui/features/onboarding/OnboardingDisclaimerScreen"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

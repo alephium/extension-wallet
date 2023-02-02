@@ -1,4 +1,4 @@
-import { OnboardingRestoreSeed } from "@argent-x/extension/src/ui/features/onboarding/OnboardingRestoreSeed"
+import { OnboardingRestoreSeed } from "@alephium/extension/src/ui/features/onboarding/OnboardingRestoreSeed"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

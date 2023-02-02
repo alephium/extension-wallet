@@ -1,4 +1,4 @@
-import { AccountListItem } from "@argent-x/extension/src/ui/features/accounts/AccountListItem"
+import { AccountListItem } from "@alephium/extension/src/ui/features/accounts/AccountListItem"
 import { Flex } from "@chakra-ui/layout"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 

@@ -1,4 +1,4 @@
-import { CopyIconButton } from "@argent-x/extension/src/ui/components/CopyIconButton"
+import { CopyIconButton } from "@alephium/extension/src/ui/components/CopyIconButton"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 export default {

@@ -1,5 +1,5 @@
-import { IStatusMessage } from "@argent-x/extension/src/shared/statusMessage/types"
-import { StatusMessageFullScreen } from "@argent-x/extension/src/ui/features/statusMessage/StatusMessageFullScreen"
+import { IStatusMessage } from "@alephium/extension/src/shared/statusMessage/types"
+import { StatusMessageFullScreen } from "@alephium/extension/src/ui/features/statusMessage/StatusMessageFullScreen"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 import statusMessages from "./__fixtures__/status-messages.json"

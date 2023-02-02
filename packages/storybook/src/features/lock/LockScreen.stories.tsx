@@ -1,4 +1,4 @@
-import { LockScreen } from "@argent-x/extension/src/ui/features/lock/LockScreen"
+import { LockScreen } from "@alephium/extension/src/ui/features/lock/LockScreen"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

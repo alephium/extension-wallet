@@ -1,4 +1,4 @@
-import { ArrowBackIcon } from "@argent-x/extension/src/ui/components/Icons/MuiIcons"
+import { ArrowBackIcon } from "@alephium/extension/src/ui/components/Icons/MuiIcons"
 import { Button } from "@argent/ui"
 import { theme } from "@argent/ui"
 import { getThemingArgTypes } from "@chakra-ui/storybook-addon"

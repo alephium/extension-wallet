@@ -1,4 +1,4 @@
-import { AlertDialog } from "@argent-x/extension/src/ui/components/AlertDialog"
+import { AlertDialog } from "@alephium/extension/src/ui/components/AlertDialog"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import styled from "styled-components"
 

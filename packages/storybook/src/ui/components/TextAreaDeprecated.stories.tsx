@@ -1,4 +1,4 @@
-import { TextArea } from "@argent-x/extension/src/ui/components/InputText"
+import { TextArea } from "@alephium/extension/src/ui/components/InputText"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 export default {

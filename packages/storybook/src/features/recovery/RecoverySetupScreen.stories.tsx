@@ -1,4 +1,4 @@
-import { RecoverySetupScreen } from "@argent-x/extension/src/ui/features/recovery/RecoverySetupScreen"
+import { RecoverySetupScreen } from "@alephium/extension/src/ui/features/recovery/RecoverySetupScreen"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

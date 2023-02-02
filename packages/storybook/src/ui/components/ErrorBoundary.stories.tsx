@@ -1,4 +1,4 @@
-import ErrorBoundaryFallbackWithCopyError from "@argent-x/extension/src/ui/components/ErrorBoundaryFallbackWithCopyError"
+import ErrorBoundaryFallbackWithCopyError from "@alephium/extension/src/ui/components/ErrorBoundaryFallbackWithCopyError"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 export default {

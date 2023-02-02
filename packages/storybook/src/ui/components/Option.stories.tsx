@@ -1,5 +1,5 @@
-import { Option } from "@argent-x/extension/src/ui/components/Options"
-import CardSvg from "@argent-x/extension/src/ui/features/funding/card.svg"
+import { Option } from "@alephium/extension/src/ui/components/Options"
+import CardSvg from "@alephium/extension/src/ui/features/funding/card.svg"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 export default {

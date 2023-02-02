@@ -1,5 +1,5 @@
-import { ApiTransactionReviewResponse } from "@argent-x/extension/src/shared/transactionReview.service"
-import { TransactionsList } from "@argent-x/extension/src/ui/features/actions/transaction/TransactionsList"
+import { ApiTransactionReviewResponse } from "@alephium/extension/src/shared/transactionReview.service"
+import { TransactionsList } from "@alephium/extension/src/ui/features/actions/transaction/TransactionsList"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 import { tokensByNetwork } from "../../../tokensByNetwork"

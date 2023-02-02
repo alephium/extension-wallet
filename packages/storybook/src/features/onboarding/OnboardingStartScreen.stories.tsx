@@ -1,4 +1,4 @@
-import { OnboardingStartScreen } from "@argent-x/extension/src/ui/features/onboarding/OnboardingStartScreen"
+import { OnboardingStartScreen } from "@alephium/extension/src/ui/features/onboarding/OnboardingStartScreen"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

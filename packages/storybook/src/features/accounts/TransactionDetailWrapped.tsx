@@ -1,11 +1,11 @@
 import {
   TransactionDetail,
   TransactionDetailProps,
-} from "@argent-x/extension/src/ui/features/accountActivity/TransactionDetail"
+} from "@alephium/extension/src/ui/features/accountActivity/TransactionDetail"
 import {
   transformExplorerTransaction,
   transformTransaction,
-} from "@argent-x/extension/src/ui/features/accountActivity/transform"
+} from "@alephium/extension/src/ui/features/accountActivity/transform"
 import { FC } from "react"
 
 interface ITransactionDetailWrapped

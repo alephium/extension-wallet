@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-import { Button } from "@argent-x/extension/src/ui/components/Button"
-import Column from "@argent-x/extension/src/ui/components/Column"
-import { StyledControlledInput } from "@argent-x/extension/src/ui/components/InputText"
+import { Button } from "@alephium/extension/src/ui/components/Button"
+import Column from "@alephium/extension/src/ui/components/Column"
+import { StyledControlledInput } from "@alephium/extension/src/ui/components/InputText"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { useCallback } from "react"
 import { useForm } from "react-hook-form"

@@ -1,6 +1,6 @@
-import { IExplorerTransaction } from "@argent-x/extension/src/shared/explorer/type"
-import { defaultNetwork } from "@argent-x/extension/src/shared/network"
-import { TransactionDetail } from "@argent-x/extension/src/ui/features/accountActivity/TransactionDetail"
+import { IExplorerTransaction } from "@alephium/extension/src/shared/explorer/type"
+import { defaultNetwork } from "@alephium/extension/src/shared/network"
+import { TransactionDetail } from "@alephium/extension/src/ui/features/accountActivity/TransactionDetail"
 import {
   accountCreated,
   accountUpgrade,
@@ -18,7 +18,7 @@ import {
   erc20Transfer,
   erc721MintAspect,
   erc721Transfer,
-} from "@argent-x/extension/src/ui/features/accountActivity/transform/explorerTransaction/__test__/__fixtures__/explorer-transactions/goerli-alpha"
+} from "@alephium/extension/src/ui/features/accountActivity/transform/explorerTransaction/__test__/__fixtures__/explorer-transactions/goerli-alpha"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

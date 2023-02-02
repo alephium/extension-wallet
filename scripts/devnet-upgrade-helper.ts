@@ -1,5 +1,5 @@
-import { declareUpgradeContract } from "@argent-x/extension/e2e/apis/declareUpgradeContract"
-import { mintDevnetEthToAccount } from "@argent-x/extension/e2e/apis/sendDevnetEthToAccount"
+import { declareUpgradeContract } from "@alephium/extension/e2e/apis/declareUpgradeContract"
+import { mintDevnetEthToAccount } from "@alephium/extension/e2e/apis/sendDevnetEthToAccount"
 import { validateAndParseAddress } from "starknet"
 
 import prompt from "./utils/prompt"

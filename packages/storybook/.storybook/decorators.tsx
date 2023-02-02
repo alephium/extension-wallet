@@ -1,5 +1,5 @@
-import { chromeStorageMock } from "@argent-x/extension/src/shared/storage/__test__/chrome-storage.mock"
-import { ThemeProvider, muiTheme } from "@argent-x/extension/src/ui/theme"
+import { chromeStorageMock } from "@alephium/extension/src/shared/storage/__test__/chrome-storage.mock"
+import { ThemeProvider, muiTheme } from "@alephium/extension/src/ui/theme"
 import { ThemeProvider as ArgentTheme } from "@argent/ui"
 import { useColorMode } from "@chakra-ui/react"
 import { ThemeProvider as MuiThemeProvider } from "@mui/material"

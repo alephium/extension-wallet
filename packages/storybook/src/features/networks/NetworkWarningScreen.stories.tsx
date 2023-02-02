@@ -1,4 +1,4 @@
-import { NetworkWarningScreen } from "@argent-x/extension/src/ui/features/networks/NetworkWarningScreen"
+import { NetworkWarningScreen } from "@alephium/extension/src/ui/features/networks/NetworkWarningScreen"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

@@ -1,5 +1,5 @@
-import { AccountListItemProps } from "@argent-x/extension/src/ui/features/accounts/AccountListItem"
-import { AccountSelect } from "@argent-x/extension/src/ui/features/accounts/AccountSelect"
+import { AccountListItemProps } from "@alephium/extension/src/ui/features/accounts/AccountListItem"
+import { AccountSelect } from "@alephium/extension/src/ui/features/accounts/AccountSelect"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 export default {

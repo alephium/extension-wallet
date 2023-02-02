@@ -1,6 +1,6 @@
-import { knownDapps } from "@argent-x/extension/src/shared/knownDapps"
-import { FieldGroup } from "@argent-x/extension/src/ui/components/Fields"
-import { DappContractField } from "@argent-x/extension/src/ui/features/actions/transaction/fields/DappContractField"
+import { knownDapps } from "@alephium/extension/src/shared/knownDapps"
+import { FieldGroup } from "@alephium/extension/src/ui/components/Fields"
+import { DappContractField } from "@alephium/extension/src/ui/features/actions/transaction/fields/DappContractField"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 export default {

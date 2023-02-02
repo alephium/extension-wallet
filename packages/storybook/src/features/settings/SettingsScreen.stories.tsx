@@ -1,4 +1,4 @@
-import { SettingsScreen } from "@argent-x/extension/src/ui/features/settings/SettingsScreen"
+import { SettingsScreen } from "@alephium/extension/src/ui/features/settings/SettingsScreen"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

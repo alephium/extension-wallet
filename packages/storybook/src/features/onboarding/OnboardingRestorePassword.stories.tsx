@@ -1,4 +1,4 @@
-import { OnboardingRestorePassword } from "@argent-x/extension/src/ui/features/onboarding/OnboardingRestorePassword"
+import { OnboardingRestorePassword } from "@alephium/extension/src/ui/features/onboarding/OnboardingRestorePassword"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { MemoryRouter } from "react-router-dom"
 

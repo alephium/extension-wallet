@@ -1,4 +1,4 @@
-import { DappIcon } from "@argent-x/extension/src/ui/features/actions/connectDapp/DappIcon"
+import { DappIcon } from "@alephium/extension/src/ui/features/actions/connectDapp/DappIcon"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 
 export default {
