@@ -44,19 +44,46 @@ export function extractActions(transaction: ReviewTransactionResult): Transactio
       })
     case 'DEPLOY_CONTRACT':
       return [{
-        header: { key: 'Deploy contract', value: transaction.result.contractAddress },
-        details: []
+        header: { key: 'Deploy contract', value: formatTruncatedAddress(transaction.result.contractAddress) },
+        details: [
+          {
+            key: 'Contract bytecode',
+            value: transaction.params.bytecode
+          },
+          {
+            key: 'Group',
+            value: `${transaction.result.fromGroup} -> ${transaction.result.toGroup}`
+          },
+        ]
       }]
     case 'EXECUTE_SCRIPT':
       return [{
-        header: { key: 'Call contract', value: 'add soon' },
-        details: []
-      }] // TODO: extract detailed actions
+        header: { key: 'Execute transaction script', value: '' },
+        details: [
+          {
+            key: 'Script bytecode',
+            value: transaction.params.bytecode
+          },
+          {
+            key: 'Group',
+            value: `${transaction.result.fromGroup} -> ${transaction.result.toGroup}`
+          }
+        ]
+      }]
     case 'UNSIGNED_TX':
       return [{
-        header: { key: 'Raw transaction', value: 'add soon' },
-        details: []
-      }] // TODO: extract detailed actions
+        header: { key: 'Sign raw transaction', value: '' },
+        details: [
+          {
+            key: 'Unsigned Tx',
+            value: transaction.params.unsignedTx
+          },
+          {
+            key: 'Group',
+            value: `${transaction.result.fromGroup} -> ${transaction.result.toGroup}`
+          }
+        ]
+      }]
   }
 }
 
@@ -122,9 +149,13 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                     <P4 fontWeight="bold">
                       {entryPointToHumanReadable(transactionAction.header.key)}
                     </P4>
-                    <P4 color="neutrals.400" fontWeight="bold">
-                      {formatTruncatedAddress(transactionAction.header.value)}
-                    </P4>
+                    {
+                      transactionAction.header.value && (
+                        <P4 color="neutrals.400" fontWeight="bold">
+                          {transactionAction.header.value}
+                        </P4>
+                      )
+                    }
                   </AccordionButton>
                 </h2>
                 <AccordionPanel
