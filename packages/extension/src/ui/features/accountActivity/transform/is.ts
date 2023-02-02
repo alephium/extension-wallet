@@ -23,6 +23,16 @@ export const isTokenTransferTransaction = (
   )
 }
 
+export const isAlphTransferTransaction = (
+  transaction: TransformedTransaction,
+): transaction is TokenTransferTransaction => {
+  const { entity, action } = transaction
+  return (
+    entity === "ALPH" &&
+    (action === "MOVE" || action === "RECEIVE" || action === "TRANSFER")
+  )
+}
+
 export const isTokenApproveTransaction = (
   transaction: TransformedTransaction,
 ): transaction is TokenApproveTransaction => {

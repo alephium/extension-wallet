@@ -9,6 +9,7 @@ export type TransformedTransactionAction =
   | "TRANSFER"
   | "SEND"
   | "RECEIVE"
+  | "MOVE"
   | "SWAP"
   | "BUY"
   | "APPROVE"
@@ -20,6 +21,7 @@ export type TransformedTransactionEntity =
   | "ACCOUNT"
   | "DAPP"
   | "TOKEN"
+  | "ALPH"
   | "NFT"
   | "CONTRACT"
 
@@ -32,6 +34,14 @@ export interface BaseTransformedTransaction {
   actualFee?: string
   dappContractAddress?: string
   dapp?: Omit<KnownDapp, "contracts">
+}
+
+export interface AlphTransferTransaction extends BaseTransformedTransaction {
+  action: "MOVE" | "SEND" | "RECEIVE"
+  entity: "ALPH"
+  amount: string
+  fromAddress?: string
+  toAddress?: string
 }
 
 export interface TokenTransferTransaction extends BaseTransformedTransaction {

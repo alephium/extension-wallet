@@ -45,6 +45,7 @@ export const AccountActivity: FC<AccountActivityProps> = ({
                 tokensByNetwork,
                 nftContractAddresses,
               })
+
               if (transactionTransformed) {
                 return (
                   <TransactionListItem

@@ -38,7 +38,7 @@ export function extractActions(transaction: ReviewTransactionResult): Transactio
     case 'TRANSFER':
       return transaction.params.destinations.map((destination) => {
         return {
-          header: { key: 'Transfer', value: destination.address },
+          header: { key: 'Transfer', value: formatTruncatedAddress(destination.address) },
           details: getTokensFromDestination(destination)
         }
       })

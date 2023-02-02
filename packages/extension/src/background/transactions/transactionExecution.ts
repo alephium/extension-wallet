@@ -53,7 +53,10 @@ export const executeTransactionAction = async (
   })
 
   if (account !== undefined) {
-    addTransaction({ account: account, hash: transaction.result.txId })
+    addTransaction({
+      account: account,
+      hash: transaction.result.txId
+    })
   }
 }
 

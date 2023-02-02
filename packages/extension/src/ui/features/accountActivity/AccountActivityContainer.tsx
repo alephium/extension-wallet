@@ -12,7 +12,7 @@ import { formatDate } from "../../services/dates"
 import { useAspectContractAddresses } from "../accountNfts/aspect.service"
 import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { useTokensWithBalance } from "../accountTokens/tokens.state"
+import { useTokens, useTokensWithBalance } from "../accountTokens/tokens.state"
 import { AccountActivity } from "./AccountActivity"
 import AccountTransactionList from "./AccountTransactionList"
 import { PendingTransactionsContainer } from "./PendingTransactions"
@@ -23,8 +23,6 @@ import { useArgentExplorerAccountTransactionsInfinite } from "./useArgentExplore
 export interface AccountActivityContainerProps {
   account: Account
 }
-
-const PAGE_SIZE = 10
 
 export const AccountActivityContainer: FC<AccountActivityContainerProps> = ({
   account,
@@ -60,34 +58,9 @@ export const AccountActivityContainer: FC<AccountActivityContainerProps> = ({
 export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
   account,
 }) => {
-  const { switcherNetworkId } = useAppState()
-  const tokensByNetwork = useTokensWithBalance(account)
-  const { data: nftContractAddresses } = useAspectContractAddresses()
-  const { data, setSize } = useArgentExplorerAccountTransactionsInfinite(
-    {
-      accountAddress: account.address,
-      network: switcherNetworkId,
-      pageSize: PAGE_SIZE,
-    },
-    {
-      suspense: true,
-    },
-  )
-
-  const explorerTransactions = useMemo(() => {
-    if (!data) {
-      return
-    }
-    return data.flat()
-  }, [data])
-
-  const isEmpty = data?.[0]?.length === 0
-  const isReachingEnd =
-    isEmpty || (data && data[data.length - 1]?.length < PAGE_SIZE)
-
   const { transactions } = useAccountTransactions(account)
-
-  const voyagerTransactions = useMemo(() => {
+  const tokens = useTokens(account)
+  const confirmedTransactions = useMemo(() => {
     // RECEIVED transactions are already shown as pending
     return transactions.filter(
       (transaction) =>
@@ -95,117 +68,45 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
     )
   }, [transactions])
 
-  const mergedTransactions = useMemo(() => {
-    if (!explorerTransactions) {
-      return {
-        transactions: voyagerTransactions,
+  const activity: Record<
+    string,
+    Array<ActivityTransaction | IExplorerTransaction>
+  > = {}
+  for (const transaction of confirmedTransactions) {
+    const date = formatDate(transaction.timestamp)
+    const dateLabel = date.toString()
+    activity[dateLabel] ||= []
+    if (isVoyagerTransaction(transaction)) {
+      const { hash, meta, inputs, outputs, status } = transaction
+      const isRejected = status === "REJECTED"
+      const activityTransaction: ActivityTransaction = {
+        hash,
+        date,
+        inputs,
+        outputs,
+        meta,
+        isRejected,
       }
+      activity[dateLabel].push(activityTransaction)
+    } else {
+      activity[dateLabel].push(transaction)
     }
-    const matchedHashes: string[] = []
-
-    const mergedTransactions = voyagerTransactions.map((voyagerTransaction) => {
-      const explorerTransaction = explorerTransactions.find(
-        (explorerTransaction) =>
-          explorerTransaction.transactionHash === voyagerTransaction.hash,
-      )
-
-      // TODO: remove this when after backend update
-      const isUdcTransaction =
-        get(voyagerTransaction, "meta.transactions.entrypoint") ===
-        "deployContract" ||
-        get(voyagerTransaction, "meta.transactions.entrypoint") ===
-        "declareContract"
-
-      if (!isUdcTransaction && explorerTransaction) {
-        if (!explorerTransaction.timestamp) {
-          explorerTransaction.timestamp = voyagerTransaction.timestamp
-        }
-        matchedHashes.push(voyagerTransaction.hash)
-        return explorerTransaction
-      }
-      if (isUdcTransaction) {
-        matchedHashes.push(voyagerTransaction.hash)
-      }
-      return voyagerTransaction
-    })
-
-    const unmatchedExplorerTransactions = explorerTransactions.filter(
-      (explorerTransaction) =>
-        !matchedHashes.includes(explorerTransaction.transactionHash),
-    )
-
-    const transactionsWithoutTimestamp = []
-    for (const transaction of unmatchedExplorerTransactions) {
-      if (transaction.timestamp) {
-        mergedTransactions.push(transaction)
-      } else {
-        transactionsWithoutTimestamp.push(transaction)
-      }
-    }
-
-    const sortedTransactions = mergedTransactions.sort(
-      (a, b) => b.timestamp - a.timestamp,
-    )
-
-    return {
-      transactions: sortedTransactions,
-      transactionsWithoutTimestamp,
-    }
-  }, [explorerTransactions, voyagerTransactions])
-
-  const { mergedActivity, loadMoreHashes } = useMemo(() => {
-    const mergedActivity: Record<
-      string,
-      Array<ActivityTransaction | IExplorerTransaction>
-    > = {}
-    const { transactions, transactionsWithoutTimestamp } = mergedTransactions
-    let lastExplorerTransactionHash
-    for (const transaction of transactions) {
-      const date = new Date(transaction.timestamp * 1000).toISOString()
-      const dateLabel = formatDate(date)
-      mergedActivity[dateLabel] ||= []
-      if (isVoyagerTransaction(transaction)) {
-        const { hash, meta, status } = transaction
-        const isRejected = status === "REJECTED"
-        const activityTransaction: ActivityTransaction = {
-          hash,
-          date,
-          meta,
-          isRejected,
-        }
-        mergedActivity[dateLabel].push(activityTransaction)
-      } else {
-        mergedActivity[dateLabel].push(transaction)
-        lastExplorerTransactionHash = transaction.transactionHash
-      }
-    }
-
-    const loadMoreHashes = []
-
-    if (lastExplorerTransactionHash) {
-      loadMoreHashes.push(lastExplorerTransactionHash)
-    }
-
-    if (transactionsWithoutTimestamp && transactionsWithoutTimestamp.length) {
-      mergedActivity["Unknown date"] = transactionsWithoutTimestamp
-      loadMoreHashes.push(
-        transactionsWithoutTimestamp[transactionsWithoutTimestamp.length - 1]
-          .transactionHash,
-      )
-    }
-    return {
-      mergedActivity,
-      loadMoreHashes,
-    }
-  }, [mergedTransactions])
-
-  const onLoadMore = useCallback(() => {
-    if (!isReachingEnd) {
-      setSize((size) => size + 1)
-    }
-  }, [isReachingEnd, setSize])
+  }
 
   return (
+    // Design 1
+    /*
     <AccountTransactionList account={account} />
+    */
+
+    // Design 2
+    <AccountActivity
+      activity={activity}
+      loadMoreHashes={[]}
+      account={account}
+      tokensByNetwork={tokens}
+      nftContractAddresses={[]}
+      onLoadMore={() => { return }}
+    />
   )
 }

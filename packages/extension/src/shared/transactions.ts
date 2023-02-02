@@ -2,7 +2,7 @@ import { Destination, MIN_UTXO_SET_AMOUNT, node } from "@alephium/web3"
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call, Status } from "starknet"
 import { ReviewTransactionResult } from "./actionQueue/types"
-
+import { Input, Output } from '@alephium/sdk/api/explorer'
 
 import { WalletAccount } from "./wallet.model"
 
@@ -27,6 +27,8 @@ export interface TransactionMeta {
 
 export interface TransactionBase {
   hash: string
+  inputs?: Input[]
+  outputs?: Output[]
   account: {
     networkId: string
   }

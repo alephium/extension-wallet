@@ -5,6 +5,7 @@ import { FC, ReactNode, useMemo } from "react"
 import { CustomButtonCell } from "../../components/CustomButtonCell"
 import { PrettyAccountAddress } from "../accounts/PrettyAccountAddress"
 import {
+  isAlphTransferTransaction,
   isDeclareContractTransaction,
   isDeployContractTransaction,
   isNFTTransaction,
@@ -40,6 +41,7 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
   const isNFT = isNFTTransaction(transactionTransformed)
   const isNFTTransfer = isNFTTransferTransaction(transactionTransformed)
   const isTransfer = isTokenTransferTransaction(transactionTransformed)
+  const isAlphTransfer = isAlphTransferTransaction(transactionTransformed)
   const isSwap = isSwapTransaction(transactionTransformed)
   const isTokenMint = isTokenMintTransaction(transactionTransformed)
   const isTokenApprove = isTokenApproveTransaction(transactionTransformed)
@@ -47,10 +49,10 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
   const isDeployContract = isDeployContractTransaction(transactionTransformed)
 
   const subtitle = useMemo(() => {
-    if (isTransfer || isNFTTransfer) {
+    if (isTransfer || isNFTTransfer || isAlphTransfer) {
       const titleShowsTo =
         (isTransfer || isNFTTransfer) &&
-        (action === "SEND" || action === "TRANSFER")
+        (action === "SEND" || action === "TRANSFER" || action === "MOVE" || action === "RECEIVE")
       const { toAddress, fromAddress } = transactionTransformed
       return (
         <>

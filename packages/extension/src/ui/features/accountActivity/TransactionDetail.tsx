@@ -303,7 +303,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
               </TitleAddress>
             </TitleAddressContainer>
           )}
-          <Date>{date ? formatDateTime(date) : "Unknown date"}</Date>
+          <Date>{date ? date : "Unknown date"}</Date>
         </>
       }
     >

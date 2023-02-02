@@ -25,7 +25,7 @@ const mainTransformers = [
   deployContractTransformer,
   nftTransferTransformer,
   tokenMintTransformer,
-  tokenTransferTransformer,
+  tokenTransferTransformer
 ]
 
 /** all are executed */
