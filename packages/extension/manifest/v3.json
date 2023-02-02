@@ -1,16 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/chrome-manifest.json",
-  "name": "Argent ALPH",
-  "description": "The security of Ethereum with the scale of StarkNet",
+  "name": "Alephium",
+  "description": "Alephium extension wallet",
   "version": "5.2.0",
   "manifest_version": 3,
   "action": {
     "default_icon": {
-      "16": "assets/logo.png",
-      "48": "assets/logo.png",
-      "128": "assets/logo.png"
+      "16": "assets/favicon-16.png",
+      "48": "assets/favicon-48.png",
+      "128": "assets/favicon-128.png"
     },
-    "default_title": "Argent ALPH",
+    "default_title": "Alephium",
     "default_popup": "index.html"
   },
   "permissions": [
@@ -22,9 +22,9 @@
     "http://localhost/*"
   ],
   "icons": {
-    "16": "assets/logo.png",
-    "48": "assets/logo.png",
-    "128": "assets/logo.png"
+    "16": "assets/favicon-16.png",
+    "48": "assets/favicon-48.png",
+    "128": "assets/favicon-128.png"
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
