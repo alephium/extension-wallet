@@ -8,7 +8,6 @@ import { FC, Suspense, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import styled from "styled-components"
 
-import { useAppState } from "../../app.state"
 import { SearchIcon } from "../../components/Icons/SearchIcon"
 import {
   ControlledInputType,
@@ -22,7 +21,7 @@ import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenList } from "../accountTokens/TokenList"
 import {
   TokenDetailsWithBalance,
-  useTokensInNetwork,
+  useTokens,
 } from "../accountTokens/tokens.state"
 
 const SearchBox = styled.form`
@@ -87,8 +86,7 @@ export const SendScreen: FC = () => {
 
   const currentQueryValue = watch().query
 
-  const { switcherNetworkId } = useAppState()
-  const tokensInNetwork = useTokensInNetwork(switcherNetworkId)
+  const tokensInNetwork = useTokens(account)
 
   const tokenList = useCustomTokenList(tokensInNetwork, currentQueryValue)
 
