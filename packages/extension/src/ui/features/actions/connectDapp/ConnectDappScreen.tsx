@@ -28,8 +28,8 @@ import { DappIcon } from "./DappIcon"
 import { useDappDisplayAttributes } from "./useDappDisplayAttributes"
 
 interface ConnectDappProps extends Omit<ConfirmPageProps, "onSubmit"> {
-  onConnect: (selectedAccount: Account) => void
-  onDisconnect: (selectedAccount: Account) => void
+  onConnect: (selectedAccount?: Account) => void
+  onDisconnect: (selectedAccount?: Account) => void
   host: string
   networkId?: string,
   group?: number
@@ -220,11 +220,11 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   }, [])
 
   const onConnect = useCallback(() => {
-    selectedAccount && onConnectProp(selectedAccount)
+    onConnectProp(selectedAccount)
   }, [onConnectProp, selectedAccount])
 
   const onDisconnect = useCallback(() => {
-    selectedAccount && onDisconnectProp(selectedAccount)
+    onDisconnectProp(selectedAccount)
   }, [onDisconnectProp, selectedAccount])
 
   const dappDisplayAttributes = useDappDisplayAttributes(host)

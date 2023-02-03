@@ -63,7 +63,7 @@ export const AccountEditScreen: FC = () => {
   )
 
   const showDelete =
-    account && (account.networkId === "localhost")
+    account && (account.networkId === "devnet")
 
   const handleHideOrDeleteAccount = async (account: Account) => {
     if (showDelete) {

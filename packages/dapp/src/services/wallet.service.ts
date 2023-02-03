@@ -9,7 +9,7 @@ export const silentConnectWallet = async (
   onDisconnected: () => Promise<void>
 ) => {
   const windowAlephium = await connect({ showList: false })
-  await windowAlephium?.enable({ onDisconnected, networkId: 'localhost', chainGroup: 0 })
+  await windowAlephium?.enable({ onDisconnected, networkId: 'devnet', chainGroup: 0 })
   return windowAlephium
 }
 
@@ -22,7 +22,7 @@ export const connectWallet = async (
 
   await windowAlephium?.enable({
     onDisconnected,
-    networkId: 'localhost',
+    networkId: 'devnet',
     chainGroup: 0
   })
 

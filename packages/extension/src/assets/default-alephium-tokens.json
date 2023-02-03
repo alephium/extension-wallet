@@ -4,7 +4,7 @@
     "name": "ALPH",
     "symbol": "ALPH",
     "decimals": "18",
-    "network": "localhost",
+    "network": "devnet",
     "image": "https://raw.githubusercontent.com/alephium/alephium-brand-guide/a4680dc86d6061a8d08468ebb42d659ab74db64a/logos/light/Logo-Icon.svg",
     "showAlways": true
   },

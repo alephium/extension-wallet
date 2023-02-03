@@ -66,7 +66,7 @@ const Home: NextPage = () => {
         {isConnected ? (
           <>
             <h3 style={{ margin: 0 }}>
-              Wallet address: <code>{address && address}</code>
+              Wallet address: <code>{address}</code>
             </h3>
             <h3 style={{ margin: 0 }}>
               Network: <code>{network}</code>

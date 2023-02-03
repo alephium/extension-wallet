@@ -79,18 +79,22 @@ export const ActionScreen: FC = () => {
           host={action.payload.host}
           networkId={action.payload.networkId}
           group={action.payload.group}
-          onConnect={async (selectedAccount: Account) => {
-            useAppState.setState({ isLoading: true })
-            selectAccount(selectedAccount)
-            // continue with approval with selected account
-            await approveAction(action)
-            await waitForMessage("CONNECT_DAPP_RES")
-            useAppState.setState({ isLoading: false })
+          onConnect={async (selectedAccount?: Account) => {
+            if (selectedAccount) {
+              useAppState.setState({ isLoading: true })
+              selectAccount(selectedAccount)
+              // continue with approval with selected account
+              await approveAction(action)
+              await waitForMessage("CONNECT_DAPP_RES")
+              useAppState.setState({ isLoading: false })
+            }
             closePopupIfLastAction()
           }}
-          onDisconnect={async (selectedAccount: Account) => {
-            await removePreAuthorization(action.payload.host, selectedAccount)
-            await rejectAction(action.meta.hash)
+          onDisconnect={async (selectedAccount?: Account) => {
+            if (selectedAccount) {
+              await removePreAuthorization(action.payload.host, selectedAccount)
+              await rejectAction(action.meta.hash)
+            }
             closePopupIfLastAction()
           }}
           onReject={onReject}

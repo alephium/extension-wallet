@@ -40,7 +40,7 @@
     "name": "Ether",
     "symbol": "ETH",
     "decimals": "18",
-    "network": "localhost",
+    "network": "devnet",
     "image": "https://dv3jj1unlp2jl.cloudfront.net/128/color/eth.png",
     "showAlways": true
   },

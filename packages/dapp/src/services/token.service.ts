@@ -17,7 +17,7 @@ export const erc20TokenAddressByNetwork = {
 }
 
 export type PublicNetwork = keyof typeof erc20TokenAddressByNetwork
-export type Network = PublicNetwork | "localhost"
+export type Network = PublicNetwork | "devnet"
 
 export type TokenBalance = {
   id: string

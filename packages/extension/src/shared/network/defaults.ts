@@ -2,11 +2,11 @@ import { Network } from "./type"
 
 const DEV_ONLY_NETWORKS: Network[] = [
   {
-    id: 'localhost',
+    id: 'devnet',
     nodeUrl: 'http://127.0.0.1:22973',
     explorerApiUrl: 'http://localhost:9090',
     explorerUrl: 'http://localhost:3000',
-    name: 'Localhost',
+    name: 'Devnet',
     chainId: 2
   }
 ]
@@ -30,13 +30,13 @@ export const defaultNetworks: Network[] = [
     chainId: 1
   },
   {
-    id: 'localhost',
+    id: 'devnet',
     nodeUrl: 'http://127.0.0.1:22973',
     explorerApiUrl: 'http://localhost:9090',
     explorerUrl: 'http://localhost:3000',
-    name: 'Localhost',
+    name: 'Devnet',
     chainId: 2
   }
 ]
 
-export const defaultNetwork = defaultNetworks[1]
+export const defaultNetwork = defaultNetworks[2]

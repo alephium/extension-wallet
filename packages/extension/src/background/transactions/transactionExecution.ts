@@ -66,8 +66,8 @@ export const calculateEstimateFeeFromL1Gas = async (
 ): Promise<EstimateFee> => {
   const fallbackPrice = number.toBN(10e14)
   try {
-    if (account.networkId === "localhost") {
-      console.log("Using fallback gas price for localhost")
+    if (account.networkId === "devnet") {
+      console.log("Using fallback gas price for devnet")
       return {
         overall_fee: fallbackPrice,
         suggestedMaxFee: stark.estimatedFeeToMaxFee(fallbackPrice),

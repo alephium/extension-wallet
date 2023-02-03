@@ -227,7 +227,7 @@ export class Wallet {
 
     const networks = defaultNetworks
       .map((network) => network.id)
-      .filter((networkId) => networkId !== "localhost")
+      .filter((networkId) => networkId !== "devnet")
     const accountsResults = await Promise.all(
       networks.map(async (networkId) => {
         const network = await this.getNetwork(networkId)

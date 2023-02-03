@@ -7,7 +7,7 @@ import {
 } from "../src/shared/network"
 
 const defaultLocalhostNetwork = defaultNetworks.find(
-  ({ id }) => id === "localhost",
+  ({ id }) => id === "devnet",
 )
 
 describe("networkSchema", () => {
