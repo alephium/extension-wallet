@@ -3,7 +3,7 @@
   "version": "5.2.0",
   "private": true,
   "devDependencies": {
-    "@alephium/extension": "^0.5.0-rc.1",
+    "@alephium/extension": "^0.5.0-rc.2",
     "@argent/ui": "^5.2.0",
     "@babel/core": "^7.18.5",
     "@chakra-ui/storybook-addon": "^4.0.12",

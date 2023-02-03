@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"@alephium/cli@v0.3.0-rc.7":
-  version "0.3.0-rc.7"
-  resolved "https://registry.npmjs.org/@alephium/cli/-/cli-0.3.0-rc.7.tgz"
-  integrity sha512-anngUxSEVr9S8Xf3tyAN+4tV1V4zAlnwnBE7352FPdvlXs0F6Z/iVyWzvoVTWqOWDy10FUzoGI81jJFe8x2o8g==
+"@alephium/cli@v0.3.0-rc.8":
+  version "0.3.0-rc.8"
+  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-0.3.0-rc.8.tgz#48395fcd43abc579cd40a46a14455251af7a901b"
+  integrity sha512-O+PZFM5nNFQX5+cUdmGQuPXj4w+9XyFvw8xK05mDkGkPJvdvHP1NShMSzNud/xp9WlApwAB8ZJTVMKu3QjU/vg==
   dependencies:
-    "@alephium/web3" "^0.3.0-rc.7"
-    "@alephium/web3-wallet" "^0.3.0-rc.7"
+    "@alephium/web3" "^0.3.0-rc.8"
+    "@alephium/web3-wallet" "^0.3.0-rc.8"
     commander "^9.4.0"
     cross-fetch "^3.1.5"
     crypto-js "^4.1.1"
@@ -29,12 +29,12 @@
     crypto-js "^4.1.1"
     elliptic "^6.5.4"
 
-"@alephium/web3-wallet@^0.3.0-rc.7", "@alephium/web3-wallet@v0.3.0-rc.7":
-  version "0.3.0-rc.7"
-  resolved "https://registry.npmjs.org/@alephium/web3-wallet/-/web3-wallet-0.3.0-rc.7.tgz"
-  integrity sha512-e+Y8xGkP/LeSltFdBn8m+KZ0ONkeIRJP7p8Z99cNktL7mafPvOXYqVYv0w+V4BegNotjAhoKugKHPJ61a6CIaQ==
+"@alephium/web3-wallet@^0.3.0-rc.8", "@alephium/web3-wallet@v0.3.0-rc.8":
+  version "0.3.0-rc.8"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.3.0-rc.8.tgz#0decfed421fb45fbf437bbe5298dae65726403da"
+  integrity sha512-SwXom5couvhXL3ADStzJdbRXHdzJeAoBkkYws42DK+BeUbykR/Km7i1lQOLjRW3dIjqRh04JJTPcApVJ7w9z8g==
   dependencies:
-    "@alephium/web3" "^0.3.0-rc.7"
+    "@alephium/web3" "^0.3.0-rc.8"
     "@types/node" "16.7.8"
     bip32 "3.1.0"
     bip39 "3.0.4"
@@ -42,10 +42,10 @@
     fs-extra "10.0.1"
     tiny-secp256k1 "2.2.1"
 
-"@alephium/web3@^0.3.0-rc.7", "@alephium/web3@v0.3.0-rc.7":
-  version "0.3.0-rc.7"
-  resolved "https://registry.npmjs.org/@alephium/web3/-/web3-0.3.0-rc.7.tgz"
-  integrity sha512-3DoB+ey9kbFfC94mxItIdUKLqVY4xTUMDOsoI/a7QY7eOKUBKceMTRkGVEtU90AKv1rOjMPKOt6aekKdazeijA==
+"@alephium/web3@^0.3.0-rc.8", "@alephium/web3@v0.3.0-rc.8":
+  version "0.3.0-rc.8"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.3.0-rc.8.tgz#378fd3f9af7e1cf4054177da5cd37377b5bdc94d"
+  integrity sha512-fDFsPK52btpiLVGRGVSXNPhgO4JnJOyIjg3Nf1ycy2guTC0e6afOzpWtAgy75nsFZ5CgGrSgVNXyJx0hKjfqLg==
   dependencies:
     base-x "4.0.0"
     blakejs "1.2.1"
