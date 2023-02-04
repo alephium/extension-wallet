@@ -23,9 +23,9 @@ export const defaultNetworks: Network[] = [
   },
   {
     id: 'testnet',
-    nodeUrl: 'https://wallet.testnet.alephium.org',
-    explorerApiUrl: 'https://backend.testnet.alephium.org',
-    explorerUrl: 'https://explorer.testnet.alephium.org',
+    nodeUrl: 'https://wallet-v16.testnet.alephium.org',
+    explorerApiUrl: 'https://backend-v112.testnet.alephium.org',
+    explorerUrl: 'https://explorer-v112.testnet.alephium.org',
     name: 'Testnet',
     chainId: 1
   },

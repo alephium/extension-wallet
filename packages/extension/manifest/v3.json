@@ -19,7 +19,11 @@
     "tabs",
     "storage",
     "notifications",
-    "http://localhost/*"
+    "http://localhost/*",
+    "https://wallet-v16.testnet.alephium.org/*",
+    "https://backend-v112.testnet.alephium.org/*",
+    "https://wallet.mainnet.alephium.org/*",
+    "https://backend.mainnet.alephium.org/*"
   ],
   "icons": {
     "16": "assets/favicon-16.png",

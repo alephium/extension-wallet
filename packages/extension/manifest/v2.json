@@ -25,7 +25,11 @@
     "https://alpha-mainnet.starknet.io/*",
     "https://external.integration.starknet.io/*",
     "https://healthcheck.argent.xyz/*",
-    "https://cloud.argent-api.com/*"
+    "https://cloud.argent-api.com/*",
+    "https://wallet-v16.testnet.alephium.org/*",
+    "https://backend-v112.testnet.alephium.org/*",
+    "https://wallet.mainnet.alephium.org/*",
+    "https://backend.mainnet.alephium.org/*"
   ],
   "content_security_policy": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
   "icons": {
