@@ -1,3 +1,4 @@
+import { groupOfAddress } from "@alephium/web3"
 import { Button, FieldError, H2, icons } from "@argent/ui"
 import { VStack } from "@chakra-ui/react"
 import { FC } from "react"
@@ -32,6 +33,7 @@ export const AccountTokensHeader: FC<AccountSubheaderProps> = ({
         <H2>{accountName}</H2>
       )}
       <AddressCopyButton address={accountAddress} />
+      <div>Group: {groupOfAddress(accountAddress)}</div>
       {status.code === "ERROR" && (
         <VStack spacing={2} pt={2}>
           <FieldError>{status.text}</FieldError>
