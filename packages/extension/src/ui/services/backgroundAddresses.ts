@@ -1,4 +1,4 @@
-import { AddressAndPublicKey } from '../../shared/addresses'
+import { Address, AddressAndPublicKey } from '../../shared/addresses'
 import { sendMessage, waitForMessage } from '../../shared/messages'
 import { decryptFromBackground, generateEncryptedSecret } from './crypto'
 
@@ -12,6 +12,11 @@ export const connectAddress = (address: AddressAndPublicKey) => {
 export const createAddress = async (group?: number) => {
   sendMessage({ type: 'NEW_ADDRESS', data: group })
   return await Promise.race([waitForMessage('NEW_ADDRESS_RES'), waitForMessage('NEW_ADDRESS_REJ')])
+}
+
+export const addLedgerAddress = async (address: Address) => {
+  sendMessage({ type: 'NEW_LEDGER_ADDRESS', data: address })
+  return await Promise.race([waitForMessage('NEW_LEDGER_ADDRESS_RES'), waitForMessage('NEW_LEDGER_ADDRESS_REJ')])
 }
 
 export const deleteAddress = async (address: string) => {

@@ -1,12 +1,15 @@
 import { AddressBalance } from '@alephium/sdk/api/explorer'
 
-import { AddressAndPublicKey } from '../addresses'
+import { Address, AddressAndPublicKey } from '../addresses'
 import { AddressToken } from '../tokens'
 
 export type AddressMessage =
   | { type: 'NEW_ADDRESS'; data?: number }
   | { type: 'NEW_ADDRESS_RES'; data: AddressAndPublicKey }
   | { type: 'NEW_ADDRESS_REJ'; data: { error: string } }
+  | { type: 'NEW_LEDGER_ADDRESS'; data: Address }
+  | { type: 'NEW_LEDGER_ADDRESS_RES' }
+  | { type: 'NEW_LEDGER_ADDRESS_REJ'; data: { error: string } }
   | { type: 'LEDGER_ADDRESS_RES'; data: AddressAndPublicKey }
   | { type: 'LEDGER_ADDRESS_REJ'; data: { error: string } }
   | { type: 'LEDGER_ADDRESS_RES_FORWARD'; data: AddressAndPublicKey }

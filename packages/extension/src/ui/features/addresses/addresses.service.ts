@@ -1,5 +1,5 @@
 import { Address, AddressAndPublicKey } from '../../../shared/addresses'
-import { createAddress } from '../../services/backgroundAddresses'
+import { addLedgerAddress, createAddress } from '../../services/backgroundAddresses'
 import { startSession } from '../../services/backgroundSessions'
 import LedgerApp from '@alephium/ledger-app'
 import Transport from "@ledgerhq/hw-transport"
@@ -17,6 +17,15 @@ export const deployAddress = async (group?: number, password?: string) => {
   }
 
   return toAddress(result)
+}
+
+export const deployLedgerAddress = async (address: Address) => {
+  const result = await addLedgerAddress(address)
+  if (result !== undefined) {
+    throw new Error(result.error)
+  }
+
+  return
 }
 
 export const toAddress = (addressAndPublicKey: AddressAndPublicKey) => {

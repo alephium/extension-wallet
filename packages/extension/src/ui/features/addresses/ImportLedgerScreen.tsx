@@ -19,6 +19,7 @@ import { recover } from '../recovery/recovery.service'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
 import { useAddresses } from './addresses.state'
 import { useAddressMetadata } from './addressMetadata.state'
+import { deployLedgerAddress } from './addresses.service'
 
 function initLedgerWindowListener(): Promise<Address> {
   return new Promise((resolve)=>{
@@ -60,6 +61,7 @@ const ImportLedgerScreen = () => {
       openConnectLedger(parseInt(group ?? '0'))
       const newAddress = await initLedgerWindowListener()
       console.log(`===== ${JSON.stringify(newAddress)}`)
+      await deployLedgerAddress(newAddress)
       addAddress(newAddress)
       connectAddress({
         address: newAddress.hash,

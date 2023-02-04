@@ -11,7 +11,7 @@ import { ExplorerProvider, NodeProvider, web3, groupOfAddress } from '@alephium/
 import { PrivateKeyWallet } from '@alephium/web3-wallet'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { find, range } from 'lodash-es'
-import { AddressAndPublicKey } from '../shared/addresses'
+import { Address, AddressAndPublicKey } from '../shared/addresses'
 
 import { Network } from '../shared/networks'
 import type { IStorage } from './storage'
@@ -226,6 +226,12 @@ export class Wallet {
 
       return newAndDefaultAddress
     }
+  }
+
+  public async addLedgerAddress(address: AddressAndPublicKey): Promise<void> {
+    const addresses = await this.store.getItem('addresses') ?? []
+    await this.store.setItem('addresses', [...addresses, address])
+    await this.store.setItem('defaultAddress', address)
   }
 
   matchGroup(address: string, group?: number): boolean {

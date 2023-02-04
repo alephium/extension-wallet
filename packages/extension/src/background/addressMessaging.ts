@@ -48,19 +48,25 @@ export const handleAddressMessage: HandleMessage<AddressMessage> = async ({
       }
     }
 
-    case 'LEDGER_ADDRESS_RES': {
-      console.log(`=========== ${JSON.stringify(msg.data)}`)
-      return sendToTabAndUi({
-        type: 'LEDGER_ADDRESS_RES_FORWARD',
-        data: msg.data
-      })
-    }
+    case 'NEW_LEDGER_ADDRESS': {
+      if (!wallet.isSessionOpen()) {
+        throw Error('you need an open session')
+      }
 
-    case 'LEDGER_ADDRESS_REJ': {
-      return sendToTabAndUi({
-        type: 'LEDGER_ADDRESS_REJ_FORWARD',
-        data: msg.data
-      })
+      try {
+        const address = msg.data
+        await wallet.addLedgerAddress({address: address.hash, publicKey: address.publicKey, addressIndex: address.index})
+        return sendToTabAndUi({
+          type: 'NEW_LEDGER_ADDRESS_RES'
+        })
+      } catch (error: unknown) {
+        return sendToTabAndUi({
+          type: 'NEW_LEDGER_ADDRESS_REJ',
+          data: {
+            error: `add ledger address failed, ${error}`
+          }
+        })
+      }
     }
 
     case 'GET_DEFAULT_ADDRESS': {

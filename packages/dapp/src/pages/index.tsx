@@ -14,20 +14,20 @@ const Home: NextPage = () => {
     ;(async () => {
       const wallet = await silentConnectWallet()
       setAddress(wallet?.defaultAddress?.address)
-      setGroup(wallet?.defaultAddress?.group)
+      setGroup(wallet?.defaultAddress?.group ?? group)
       setConnected(!!wallet?.isConnected)
     })()
   }, [])
 
-  const handleConnectClick = async (group) => {
+  const handleConnectClick = async () => {
     const wallet = await connectWallet(group)
     setAddress(wallet?.defaultAddress?.address)
-    setGroup(wallet?.defaultAddress?.group)
+    setGroup(wallet?.defaultAddress?.group ?? group)
     setConnected(!!wallet?.isConnected)
   }
 
-  const handleChange = (event) => {
-    setGroup(event.target.value);
+  const handleChange = () => {
+    // setGroup(event.target.value);
   }
 
   return (
