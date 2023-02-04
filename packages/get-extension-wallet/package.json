@@ -1,6 +1,6 @@
 {
   "name": "@alephium/get-extension-wallet",
-  "version": "0.5.0-rc.2",
+  "version": "0.5.0-rc.3",
   "main": "dist/",
   "browser": {
     "crypto": false

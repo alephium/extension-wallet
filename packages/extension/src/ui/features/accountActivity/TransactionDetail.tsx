@@ -27,6 +27,7 @@ import { formatTruncatedAddress } from "../../services/addresses"
 import {
   openBlockExplorerAddress,
   openBlockExplorerTransaction,
+  openExplorerTransaction,
 } from "../../services/blockExplorer.service"
 import { formatDateTime } from "../../services/dates"
 import { PrettyAccountAddress } from "../accounts/PrettyAccountAddress"
@@ -422,7 +423,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
         <FieldGroup>
           <Field
             clickable
-            onClick={() => openBlockExplorerTransaction(hash, network)}
+            onClick={() => network.explorerUrl && openExplorerTransaction(network.explorerUrl, hash)}
           >
             <FieldKey>Transaction ID</FieldKey>
             <FieldValue>

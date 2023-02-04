@@ -7,10 +7,10 @@ import { Token } from "../../../shared/token/type"
 import { Transaction } from "../../../shared/transactions"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { useAppState } from "../../app.state"
-import { openBlockExplorerTransaction } from "../../services/blockExplorer.service"
+import { openBlockExplorerTransaction, openExplorerTransaction } from "../../services/blockExplorer.service"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { useTokensWithBalance } from "../accountTokens/tokens.state"
-import { useCurrentNetwork } from "../networks/useNetworks"
+import { useCurrentNetwork, useNetwork } from "../networks/useNetworks"
 import { TransactionListItem } from "./TransactionListItem"
 import { transformTransaction } from "./transform"
 
@@ -85,7 +85,7 @@ export const PendingTransactions: FC<PendingTransactionsProps> = ({
               key={hash}
               transactionTransformed={transactionTransformed}
               networkId={network.id}
-              onClick={() => openBlockExplorerTransaction(hash, network)}
+              onClick={() => network.explorerUrl && openExplorerTransaction(network.explorerUrl, hash)}
             />
           )
         }

@@ -48,9 +48,12 @@ export const AccountTokens: FC<AccountTokensProps> = ({ account }) => {
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>
+    // Disable review
+    /*
     if (!userHasReviewed && transactionsBeforeReview === 0) {
       timeoutId = setTimeout(() => navigate(routes.userReview()), 1000)
     }
+    */
     return () => timeoutId && clearTimeout(timeoutId)
   }, [navigate, transactionsBeforeReview, userHasReviewed])
 

@@ -68,12 +68,13 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
     )
   }, [transactions])
 
+  console.log("confirmedTransactions", confirmedTransactions)
   const activity: Record<
     string,
     Array<ActivityTransaction | IExplorerTransaction>
   > = {}
   for (const transaction of confirmedTransactions) {
-    const date = formatDate(transaction.timestamp)
+    const date = formatDate(new Date(transaction.timestamp))
     const dateLabel = date.toString()
     activity[dateLabel] ||= []
     if (isVoyagerTransaction(transaction)) {

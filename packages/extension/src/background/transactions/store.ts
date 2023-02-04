@@ -16,8 +16,6 @@ export const transactionsStore = new ArrayStorage<Transaction>([], {
   compare: compareTransactions,
 })
 
-const timestampInSeconds = (): number => Math.floor(Date.now() / 1000)
-
 export const addTransaction = async (transaction: TransactionRequest) => {
   // sanity checks
   if (!checkTransactionHash(transaction.hash)) {
@@ -26,7 +24,7 @@ export const addTransaction = async (transaction: TransactionRequest) => {
 
   const newTransaction = {
     status: "RECEIVED" as const,
-    timestamp: timestampInSeconds(),
+    timestamp: Date.now(),
     ...transaction,
   }
 
