@@ -29,6 +29,19 @@
     crypto-js "^4.1.1"
     elliptic "^6.5.4"
 
+"@alephium/web3-test@v0.3.0-rc.8":
+  version "0.3.0-rc.8"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-0.3.0-rc.8.tgz#f4a02eb89160e98da2c9188e4db0d20419533878"
+  integrity sha512-Xaj2xXGydUmj7mW3fjB+87BLtYkX4sLBz8VnmwRVVIxq1ShiCDpGi20id89M20ZHJVelT+SKkC2MHH8zU4P05w==
+  dependencies:
+    "@alephium/web3" "^0.3.0-rc.8"
+    "@alephium/web3-wallet" "^0.3.0-rc.8"
+    "@types/node" "16.7.8"
+    bip32 "2.0.6"
+    bip39 "3.0.4"
+    buffer "^6.0.3"
+    fs-extra "10.0.1"
+
 "@alephium/web3-wallet@^0.3.0-rc.8", "@alephium/web3-wallet@v0.3.0-rc.8":
   version "0.3.0-rc.8"
   resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.3.0-rc.8.tgz#0decfed421fb45fbf437bbe5298dae65726403da"
@@ -9514,19 +9527,7 @@ binjumper@^0.1.4:
   resolved "https://registry.npmjs.org/binjumper/-/binjumper-0.1.4.tgz"
   integrity sha512-Gdxhj+U295tIM6cO4bJO1jsvSjBVHNpj2o/OwW7pqDEtaqF6KdOxjtbo93jMMKAkP7+u09+bV8DhSqjIv4qR3w==
 
-bip32@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.npmjs.org/bip32/-/bip32-3.1.0.tgz"
-  integrity sha512-eoeajYEzJ4d6yyVtby8C+XkCeKItiC4Mx56a0M9VaqTMC73SWOm4xVZG7SaR8e/yp4eSyky2XcBpH3DApPdu7Q==
-  dependencies:
-    bs58check "^2.1.1"
-    create-hash "^1.2.0"
-    create-hmac "^1.1.7"
-    ripemd160 "^2.0.2"
-    typeforce "^1.11.5"
-    wif "^2.0.6"
-
-bip32@^2.0.6:
+bip32@2.0.6, bip32@^2.0.6:
   version "2.0.6"
   resolved "https://registry.npmjs.org/bip32/-/bip32-2.0.6.tgz"
   integrity sha512-HpV5OMLLGTjSVblmrtYRfFFKuQB+GArM0+XP8HGWfJ5vxYBqo+DesvJwOdC2WJ3bCkZShGf0QIfoIpeomVzVdA==
@@ -9536,6 +9537,18 @@ bip32@^2.0.6:
     create-hash "^1.2.0"
     create-hmac "^1.1.7"
     tiny-secp256k1 "^1.1.3"
+    typeforce "^1.11.5"
+    wif "^2.0.6"
+
+bip32@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/bip32/-/bip32-3.1.0.tgz"
+  integrity sha512-eoeajYEzJ4d6yyVtby8C+XkCeKItiC4Mx56a0M9VaqTMC73SWOm4xVZG7SaR8e/yp4eSyky2XcBpH3DApPdu7Q==
+  dependencies:
+    bs58check "^2.1.1"
+    create-hash "^1.2.0"
+    create-hmac "^1.1.7"
+    ripemd160 "^2.0.2"
     typeforce "^1.11.5"
     wif "^2.0.6"
 

@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
 import { AccountAddress, AccountName } from "../../components/Address"
+import { IconButton } from "../../components/Button"
 import { CopyIconButton } from "../../components/CopyIconButton"
+import { CheckCircleIcon, AddRoundedIcon } from "../../components/Icons/MuiIcons"
 import { PageWrapper } from "../../components/Page"
 import { routes } from "../../routes"
 import { formatFullAddress, formatTruncatedAddress, normalizeAddress } from "../../services/addresses"
@@ -15,6 +17,9 @@ import {
 } from "../accounts/accountMetadata.state"
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { QrCode } from "./QrCode"
+import { testNodeWallet } from '@alephium/web3-test'
+import { web3 } from "@alephium/web3"
+import { defaultNetworks } from "../../../shared/network"
 
 const Container = styled.div`
   padding: 0 20px;
@@ -22,6 +27,11 @@ const Container = styled.div`
 `
 
 const StyledCopyIconButton = styled(CopyIconButton)`
+  margin-top: 16px;
+  width: auto;
+`
+
+const StyledIconButton = styled(IconButton)`
   margin-top: 16px;
   width: auto;
 `
@@ -70,6 +80,18 @@ export const FundingQrCodeScreen: FC = () => {
     },
     [onCopyAddress, onSelectAddress],
   )
+ 
+  const onRequestToken = useCallback(async () => {
+    if (account?.networkId === 'testnet') {
+      // TODO: improve UX based on response
+      fetch('https://faucet.testnet.alephium.org/send', { method: 'POST', body: account?.address })
+    } else if (account?.networkId === 'devnet') {
+      web3.setCurrentNodeProvider(defaultNetworks[2]['nodeUrl'])
+      const wallet = await testNodeWallet()
+      const signerAddress = await wallet.getSelectedAddress()
+      wallet.signAndSubmitTransferTx({ signerAddress: signerAddress, destinations: [{ address: account.address, attoAlphAmount: BigInt(1e21) }] })
+    }
+  }, [])
 
   return (
     <NavigationContainer
@@ -92,6 +114,19 @@ export const FundingQrCodeScreen: FC = () => {
             <StyledCopyIconButton size="s" copyValue={copyAccountAddress}>
               Copy address
             </StyledCopyIconButton>
+            {account.networkId !== 'mainnet' &&
+              <div>
+                <StyledIconButton
+                  size="s"
+                  icon={<AddRoundedIcon fontSize="inherit" />}
+                  clickedIcon={<CheckCircleIcon fontSize="inherit" />}
+                  clickedTimeout={5 * 60 * 1000}
+                  onClick={onRequestToken}
+                >
+                  Request $ALPH
+                </StyledIconButton>
+              </div>
+            }
           </Container>
         )}
       </PageWrapper>
