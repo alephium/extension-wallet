@@ -1,3 +1,4 @@
+import { groupOfAddress } from "@alephium/web3"
 import { H6, L2, P4, icons, typographyStyles } from "@argent/ui"
 import { Circle, Flex, Image, Text, Tooltip, chakra } from "@chakra-ui/react"
 import { ComponentProps, FC } from "react"
@@ -149,7 +150,7 @@ export const AccountListItem: FC<AccountListItemProps> = ({
             <P4 fontWeight={"semibold"}>
               {formatTruncatedAddress(accountAddress)}
             </P4>
-            {networkName && <P4 noOfLines={1}>{networkName}</P4>}
+            <P4 noOfLines={1}>[Group: {groupOfAddress(accountAddress)}]</P4>
           </Flex>
         </Flex>
         <Flex direction={"column"}>

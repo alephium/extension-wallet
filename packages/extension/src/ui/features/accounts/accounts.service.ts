@@ -29,7 +29,7 @@ const argentColorsArray = [
 ]
 
 export const getColor = (name: string) => {
-  const hash = ethers.utils.id(name).slice(-2)
+  const hash = ethers.utils.sha512(Buffer.from(name)).slice(-2)
   const index = parseInt(hash, 16) % argentColorsArray.length
   return argentColorsArray[index]
 }
@@ -65,8 +65,7 @@ export const getNetworkAccountImageUrl = ({
   accountAddress: string
   backgroundColor?: string
 }) => {
-  const unpaddedAddress = stripAddressZeroPadding(accountAddress)
-  const accountIdentifier = `${networkId}::${unpaddedAddress}`
+  const accountIdentifier = `${networkId}::${accountAddress}`
   const background = backgroundColor || getColor(accountIdentifier)
   return generateAvatarImage(accountName, { background })
 }
