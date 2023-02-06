@@ -26,6 +26,7 @@ import {
 import { DeprecatedAccountsWarning } from "./DeprecatedAccountsWarning"
 import { HiddenAccountsBar } from "./HiddenAccountsBar"
 import { useAddAccount } from "./useAddAccount"
+import { routes } from "../../routes"
 
 const { AddIcon } = icons
 
@@ -54,7 +55,6 @@ export const AccountListScreen: FC = () => {
   )
   const { isBackupRequired } = useBackupRequired()
   const currentNetwork = useCurrentNetwork()
-  const { addAccount } = useAddAccount()
 
   const hasHiddenAccounts = hiddenAccounts.length > 0
 
@@ -74,7 +74,7 @@ export const AccountListScreen: FC = () => {
         rightButton={
           <BarIconButton
             aria-label="Create new wallet"
-            onClick={() => addAccount()} // Add group selector
+            onClick={() => navigate(routes.addAccount())} // Add group selector
           >
             <AddIcon />
           </BarIconButton>

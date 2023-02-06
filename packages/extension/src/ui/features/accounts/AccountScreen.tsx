@@ -8,9 +8,10 @@ import { StatusMessageFullScreenContainer } from "../statusMessage/StatusMessage
 import { useShouldShowFullScreenStatusMessage } from "../statusMessage/useShouldShowFullScreenStatusMessage"
 import { NoSwap } from "../swap/NoSwap"
 import { AccountContainer } from "./AccountContainer"
-import { useSelectedAccount } from "./accounts.state"
+import { useAccount, useSelectedAccount } from "./accounts.state"
 import { AccountScreenEmpty } from "./AccountScreenEmpty"
 import { useAddAccount } from "./useAddAccount"
+import { walletStore } from "../../../shared/wallet/walletStore"
 
 interface AccountScreenProps {
   tab: "tokens" | "collections" | "activity"

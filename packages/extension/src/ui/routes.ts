@@ -95,6 +95,7 @@ export const routes = {
     "/accounts/:accountAddress",
   ),
   addAccount: route("/accounts/new"),
+  addAlephiumAccount: route("/accounts/new/alephium"),
   funding: route("/funding"),
   fundingBridge: route("/funding/bridge"),
   exportPrivateKey: route("/export-private-key"),
