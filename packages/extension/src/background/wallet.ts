@@ -1,5 +1,4 @@
 import {
-  TOTAL_NUMBER_OF_GROUPS,
   deriveNewAddressData,
   getStorage,
   walletGenerate,
@@ -502,26 +501,15 @@ export class Wallet {
       const accountsForNetwork = accounts.filter((account) => account.networkId === networkId)
 
       group = group || group === 0 ? ~~group : undefined
-      const skipIndexes = accounts.map((account) => account.signer.derivationIndex)
+      const skipIndexes = accountsForNetwork.map((account) => account.signer.derivationIndex)
 
       let newAndDefaultAddress
       if (accountsForNetwork.length > 0) {
         newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, undefined, skipIndexes)
         await this.walletStore.push([newAndDefaultAddress])
       } else {
-        if (group === undefined) {
-          const seed = session.seed
-          const newAddresses = range(TOTAL_NUMBER_OF_GROUPS).map((group) => {
-            const address = this.deriveWalletAccount(networkId, seed, group, undefined, skipIndexes)
-            skipIndexes.push(address.signer.derivationIndex)
-            return address
-          })
-          newAndDefaultAddress = newAddresses[0]
-          await this.walletStore.push(newAddresses)
-        } else {
-          newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, 0, skipIndexes)
-          await this.walletStore.push([newAndDefaultAddress])
-        }
+        newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, 0, skipIndexes)
+        await this.walletStore.push([newAndDefaultAddress])
       }
 
       await this.store.set("selected", newAndDefaultAddress)
