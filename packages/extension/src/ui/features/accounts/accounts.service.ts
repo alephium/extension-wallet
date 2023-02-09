@@ -29,7 +29,7 @@ const argentColorsArray = [
 ]
 
 export const getColor = (name: string) => {
-  const hash = ethers.utils.sha512(Buffer.from(name)).slice(-2)
+  const hash = ethers.utils.id(name).slice(-2)
   const index = parseInt(hash, 16) % argentColorsArray.length
   return argentColorsArray[index]
 }
