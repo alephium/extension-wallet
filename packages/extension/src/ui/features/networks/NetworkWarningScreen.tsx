@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom"
 
 import { routes, useReturnTo } from "../../routes"
 import { useNeedsToShowNetworkStatusWarning } from "./seenNetworkStatusWarning.state"
+import { useCurrentNetwork } from "./useNetworks"
 
 const { NetworkIcon } = icons
 
 export const NetworkWarningScreen: FC = () => {
   const navigate = useNavigate()
   const returnTo = useReturnTo()
+  const network = useCurrentNetwork()
   const [, updateNeedsToShowNetworkStatusWarning] =
     useNeedsToShowNetworkStatusWarning()
 
@@ -35,8 +37,7 @@ export const NetworkWarningScreen: FC = () => {
           Network issues
         </H3>
         <P3 color="neutrals.100">
-          StarkNet is in Alpha and is experiencing degraded network performance.
-          Your transactions may fail.
+          There are connectivity issues for Alephium explorer or full node at the moment on {network.name}
         </P3>
       </Center>
       <Button
