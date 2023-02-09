@@ -7,7 +7,7 @@ import {
   TransactionRequest,
   compareTransactions,
 } from "../../shared/transactions"
-import { runAddedOrUpdatedHandlers, runChangedStatusHandlers } from "./onupdate"
+import { runAddedHandlers, runChangedStatusHandlers } from "./onupdate"
 import { checkTransactionHash } from "./transactionExecution"
 
 export const transactionsStore = new ArrayStorage<Transaction>([], {
@@ -50,19 +50,25 @@ const equalTransactionWithStatus = (
 }
 
 transactionsStore.subscribe((_, changeSet) => {
+  const findOldTransaction = (hash: string) => changeSet.oldValue?.find(
+    (oldTransaction) => oldTransaction.hash === hash,
+  )
+
   /** note this includes where all transactions are initially loaded in the store */
-  const addedOrUpdatedTransactions = differenceWith(
-    changeSet.newValue ?? [],
-    changeSet.oldValue ?? [],
-    equalTransactionWithStatus,
+  const newTransactions = changeSet.newValue?.flatMap(
+    (newTransaction) => {
+      const oldTransaction = findOldTransaction(newTransaction.hash)
+      if (!oldTransaction) {
+        return newTransaction
+      }
+      return []
+    },
   )
 
   /** transactions which already existed in the store, and have now changed status */
   const changedStatusTransactions = changeSet.newValue?.flatMap(
     (newTransaction) => {
-      const oldTransaction = changeSet.oldValue?.find(
-        (oldTransaction) => oldTransaction.hash === newTransaction.hash,
-      )
+      const oldTransaction = findOldTransaction(newTransaction.hash)
       if (oldTransaction && oldTransaction.status !== newTransaction.status) {
         return newTransaction
       }
@@ -70,8 +76,8 @@ transactionsStore.subscribe((_, changeSet) => {
     },
   )
 
-  if (addedOrUpdatedTransactions.length > 0) {
-    runAddedOrUpdatedHandlers(addedOrUpdatedTransactions)
+  if (newTransactions && newTransactions.length > 0) {
+    runAddedHandlers(newTransactions)
   }
 
   if (changedStatusTransactions && changedStatusTransactions.length > 0) {

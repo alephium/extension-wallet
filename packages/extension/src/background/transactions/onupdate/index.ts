@@ -5,18 +5,15 @@ import { notifyAboutCompletedTransactions } from "./notifications"
 import { TransactionUpdateListener } from "./type"
 import { handleUpgradeTransaction } from "./upgrade"
 
-const addedOrUpdatedHandlers: TransactionUpdateListener[] = [
-  handleUpgradeTransaction,
-  handleDeployAccountTransaction,
-  handleDeclareContractTransaction,
-  checkResetStoredNonce,
+const addedHandlers: TransactionUpdateListener[] = [
+  notifyAboutCompletedTransactions
 ]
 
-export const runAddedOrUpdatedHandlers: TransactionUpdateListener = async (
+export const runAddedHandlers: TransactionUpdateListener = async (
   updates,
 ) => {
   await Promise.allSettled(
-    addedOrUpdatedHandlers.map((handler) => handler(updates)),
+    addedHandlers.map((handler) => handler(updates)),
   )
 }
 
