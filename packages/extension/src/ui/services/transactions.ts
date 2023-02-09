@@ -1,4 +1,4 @@
-import { SignTransferTxParams } from "@alephium/web3"
+import { SignTransferTxParams, SignUnsignedTxParams } from "@alephium/web3"
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { TransactionWithAddress } from '../../shared/alephium-transactions'
 
@@ -8,6 +8,14 @@ import { formatDate } from './dates'
 export const sendTransferTransaction = (data: SignTransferTxParams) => {
   executeTransaction({
     type: "TRANSFER",
+    params: data,
+    salt: Math.random().toString()
+  })
+}
+
+export const sendUnsignedTxTransaction = (data: SignUnsignedTxParams) => {
+  executeTransaction({
+    type: "UNSIGNED_TX",
     params: data,
     salt: Math.random().toString()
   })

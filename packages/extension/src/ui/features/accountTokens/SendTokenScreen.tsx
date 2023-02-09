@@ -1,5 +1,6 @@
 import { convertAlphToSet } from "@alephium/sdk"
-import { ALPH_TOKEN_ID, Destination } from "@alephium/web3"
+import { ALPH_TOKEN_ID, Destination, NodeProvider } from "@alephium/web3"
+import { BuildSweepAddressTransactionsResult } from "@alephium/web3/dist/src/api/api-alephium"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
 import { utils } from "ethers"
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -11,7 +12,7 @@ import { Schema, object } from "yup"
 import { AddressBookContact } from "../../../shared/addressBook"
 import { inputAmountSchema, parseAmount } from "../../../shared/token/amount"
 import { prettifyCurrencyValue } from "../../../shared/token/price"
-import { dustALPHAmount, minimumALPHAmount } from "../../../shared/token/utils"
+import { minimumALPHAmount } from "../../../shared/token/utils"
 import { AddContactBottomSheet } from "../../components/AddContactBottomSheet"
 import { Button, ButtonTransparent } from "../../components/Button"
 import Column, { ColumnCenter } from "../../components/Column"
@@ -24,7 +25,6 @@ import {
   StyledControlledTextArea,
 } from "../../components/InputText"
 import Row, { RowBetween } from "../../components/Row"
-import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
 import { makeClickable } from "../../services/a11y"
 import { useAddressBook } from "../../services/addressBook"
@@ -36,7 +36,7 @@ import {
   normalizeAddress,
 } from "../../services/addresses"
 import {
-  sendTransferTransaction,
+  sendTransferTransaction, sendUnsignedTxTransaction,
 } from "../../services/transactions"
 import { useOnClickOutside } from "../../services/useOnClickOutside"
 import { H3, H5 } from "../../theme/Typography"
@@ -60,7 +60,6 @@ import {
   useNetworkFeeToken,
   useTokensWithBalance,
 } from "./tokens.state"
-import { useMaxFeeEstimateForTransfer } from "./useMaxFeeForTransfer"
 
 export const BalanceText = styled.div`
   font-weight: 600;
@@ -193,6 +192,16 @@ export const SaveAddressButton = styled(ButtonTransparent)`
   }
 `
 
+const WarningContainer = styled.div`
+  margin-top: 15px;
+  border: 1px solid ${({ theme }) => theme.red1};
+  padding: 9px 13px 8px;
+  overflow-wrap: break-word;
+  font-size: 16px;
+  line-height: 120%;
+  border-radius: 4px;
+`
+
 export interface SendInput {
   recipient: string
   amount: string
@@ -211,6 +220,7 @@ export const SendTokenScreen: FC = () => {
   const resolver = useYupValidationResolver(SendSchema)
   const feeToken = useNetworkFeeToken(account?.networkId)
   const [maxClicked, setMaxClicked] = useState(false)
+  const [txsNumber, setTxsNumber] = useState(1)
   const [addressBookRecipient, setAddressBookRecipient] = useState<
     Account | AddressBookContact
   >()
@@ -227,7 +237,7 @@ export const SendTokenScreen: FC = () => {
     [accountNames, addressBookRecipient],
   )
 
-  const { id: currentNetworkId } = useCurrentNetwork()
+  const { id: currentNetworkId, nodeUrl } = useCurrentNetwork()
 
   const {
     handleSubmit,
@@ -264,7 +274,7 @@ export const SendTokenScreen: FC = () => {
 
         const maxAmount =
           account?.networkId ===
-              "devnet" /** FIXME: workaround for localhost fee estimate with devnet 0.3.4 */
+          "devnet" /** FIXME: workaround for localhost fee estimate with devnet 0.3.4 */
             ? balanceBn.sub(maxFee).sub(100000000000000)
             : balanceBn.sub(maxFee)
 
@@ -295,6 +305,14 @@ export const SendTokenScreen: FC = () => {
   const validRecipientAddress =
     inputRecipient && !getFieldState("recipient").error
 
+  const isAlphToken = (tokenAddress: string | undefined): boolean => {
+    return tokenAddress?.slice(2) === ALPH_TOKEN_ID || tokenAddress === undefined
+  }
+
+  const isSweepingAllAsset = (tokenAddress: string | undefined): boolean => {
+    return maxClicked && isAlphToken(tokenAddress)
+  }
+
   const recipientInAddressBook = useMemo(
     () =>
       // Check if inputRecipient is in Contacts or userAccounts
@@ -302,6 +320,23 @@ export const SendTokenScreen: FC = () => {
         isEqualAddress(acc.address, inputRecipient),
       ),
     [addressBook.contacts, addressBook.userAccounts, inputRecipient],
+  )
+
+  const sweepTransaction: Promise<BuildSweepAddressTransactionsResult | undefined> = useMemo(
+    async () => {
+      let result = undefined
+      if (account && maxClicked && isAlphToken(tokenAddress) && validateAddress(inputRecipient)) {
+        const nodeProvider = new NodeProvider(nodeUrl)
+        result = await nodeProvider.transactions.postTransactionsSweepAddressBuild({
+          fromPublicKey: account.publicKey,
+          toAddress: inputRecipient
+        })
+        setTxsNumber(result.unsignedTxs.length)
+      }
+
+      return result
+    },
+    [nodeUrl, account, maxClicked, tokenAddress, inputRecipient, validateAddress],
   )
 
   const showSaveAddressButton = validRecipientAddress && !recipientInAddressBook
@@ -363,10 +398,6 @@ export const SendTokenScreen: FC = () => {
     (submitCount > 0 && !isDirty) ||
     isInputAmountGtBalance // Balance: 1234, maxInput: 1231, , maxFee: 3, updatedInput: 1233
 
-  const isAlphToken = (tokenAddress: string | undefined): boolean => {
-    return tokenAddress?.slice(2) === ALPH_TOKEN_ID || tokenAddress === undefined
-  }
-
   return (
     <>
       <AddContactBottomSheet
@@ -386,27 +417,39 @@ export const SendTokenScreen: FC = () => {
             <BalanceText>{`${balance} ${symbol}`}</BalanceText>
           </ColumnCenter>
           <StyledForm
-            onSubmit={handleSubmit(({ amount, recipient }) => {
+            onSubmit={handleSubmit(async ({ amount, recipient }) => {
               if (account) {
-                let destination: Destination
-                if (tokenAddress?.slice(2) === ALPH_TOKEN_ID || tokenAddress === undefined) {
-                  destination = {
-                    address: recipient,
-                    attoAlphAmount: convertAlphToSet(amount) + BigInt(standardFee),
-                    tokens: []
+                if (isSweepingAllAsset(tokenAddress)) {
+                  const sweepResult = await sweepTransaction
+                  if (sweepResult) {
+                    sweepResult.unsignedTxs.map((sweepUnsignedTx) => {
+                      sendUnsignedTxTransaction({
+                        signerAddress: account.address,
+                        unsignedTx: sweepUnsignedTx.unsignedTx
+                      })
+                    })
                   }
                 } else {
-                  destination = {
-                    address: recipient,
-                    attoAlphAmount: minimumALPHAmount(1) + BigInt(standardFee),
-                    tokens: [{ id: tokenAddress, amount: BigInt(amount) }]
+                  let destination: Destination
+                  if (isAlphToken(tokenAddress)) {
+                    destination = {
+                      address: recipient,
+                      attoAlphAmount: convertAlphToSet(amount) + BigInt(standardFee),
+                      tokens: []
+                    }
+                  } else {
+                    destination = {
+                      address: recipient,
+                      attoAlphAmount: minimumALPHAmount(1) + BigInt(standardFee),
+                      tokens: [{ id: tokenAddress as string, amount: BigInt(amount) }]
+                    }
                   }
-                }
 
-                sendTransferTransaction({
-                  signerAddress: account?.address,
-                  destinations: [destination],
-                })
+                  sendTransferTransaction({
+                    signerAddress: account.address,
+                    destinations: [destination],
+                  })
+                }
 
                 navigate(routes.accountTokens(), { replace: true })
               }
@@ -552,6 +595,14 @@ export const SendTokenScreen: FC = () => {
                   </div>
                 )}
               </div>
+              {
+                isSweepingAllAsset(tokenAddress) ? (
+                  <WarningContainer>
+                    Warning: This will sweep all assets to the recipient, including all the tokens.
+                    {txsNumber > 1 ? `Due to the number of UTXOs, you need to sign ${txsNumber} transactions` : ""}
+                  </WarningContainer>
+                ) : <></>
+              }
             </Column>
             <ButtonSpacer />
             <Button disabled={disableSubmit} type="submit">
