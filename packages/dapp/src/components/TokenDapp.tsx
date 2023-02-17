@@ -378,5 +378,4 @@ export const TokenDapp: FC<{
       </div>
     </>
   )
-  return (<div>Token App</div>)
 }

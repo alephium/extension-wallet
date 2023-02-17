@@ -9,3 +9,5 @@ export type PreAuthorisationMessage =
       type: "REJECT_PREAUTHORIZATION"
       data: { host: string; actionHash: string }
     }
+  | { type: "REMOVE_PREAUTHORIZATION"; data: string }
+  | { type: "REMOVE_PREAUTHORIZATION_RES" }

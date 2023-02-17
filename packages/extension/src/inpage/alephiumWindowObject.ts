@@ -1,18 +1,25 @@
-import { assertNever } from "../ui/services/assertNever"
-import { getProvider } from "../shared/network/provider"
 import type {
-  AccountChangeEventHandler,
   AlephiumWindowObject,
   EnableOptions,
-  NetworkChangeEventHandler,
   WalletEvents,
 } from "./inpage.model"
 import { sendMessage, waitForMessage } from "./messageActions"
-import { getIsPreauthorized } from "./messaging"
-import { ExplorerProvider, node, NodeProvider, SignDeployContractTxParams, SignDeployContractTxResult, SignExecuteScriptTxParams, SignExecuteScriptTxResult, SignMessageParams, SignMessageResult, SignTransferTxParams, SignTransferTxResult, SignUnsignedTxParams, SignUnsignedTxResult, TransactionBuilder } from "@alephium/web3"
+import { getIsPreauthorized, removePreAuthorization } from "./messaging"
+import {
+  ExplorerProvider,
+  NodeProvider,
+  SignDeployContractTxParams,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxParams,
+  SignExecuteScriptTxResult,
+  SignMessageParams,
+  SignMessageResult,
+  SignTransferTxParams,
+  SignTransferTxResult,
+  SignUnsignedTxParams,
+  SignUnsignedTxResult
+} from "@alephium/web3"
 import { TransactionParams } from "../shared/actionQueue/types"
-import { executeTransaction } from "../ui/services/backgroundTransactions"
-import { getNetwork } from "../shared/network"
 
 const VERSION = `${process.env.VERSION}`
 
@@ -151,7 +158,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
     return { ...result, signature: 'Unsupported' }
   }
 
-  signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
+  signUnsignedTx = async (_params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
     throw Error('Coming soon')
   }
 
@@ -197,8 +204,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class implements 
     }
   }
 
-  // No need to do anything
   disconnect(): Promise<void> {
-    return Promise.resolve()
+    return removePreAuthorization()
   }
 })()

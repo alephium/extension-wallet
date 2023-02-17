@@ -128,6 +128,7 @@ export interface AlephiumWindowObject extends InteractiveSignerProvider<EnableOp
   on: (event: EventType, handleEvent: EventHandler) => void
   off: (event: EventType, handleEvent: EventHandler) => void
 
+  disconnect: () => Promise<void>
   id: string
   name: string
   icon: string

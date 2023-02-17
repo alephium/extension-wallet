@@ -1,18 +1,10 @@
-import { supportsSessions } from "@argent/x-sessions"
 import type { NextPage } from "next"
 import Head from "next/head"
 import { useEffect, useState } from "react"
-import { AccountInterface } from "starknet"
-import { AlephiumWindowObject } from '@alephium/get-extension-wallet'
-
 import { TokenDapp } from "../components/TokenDapp"
-import { truncateAddress } from "../services/address.service"
 import {
-  //  addWalletChangeListener,
-  //  chainId,
   connectWallet,
-  networkId,
-  //  removeWalletChangeListener,
+  disconnectWallet,
   silentConnectWallet,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
@@ -36,12 +28,7 @@ const Home: NextPage = () => {
 
       ; (async () => {
         await handler()
-        //addWalletChangeListener(handler)
       })()
-
-    return () => {
-      //removeWalletChangeListener(handler)
-    }
   }, [])
 
   const handleConnectClick = async () => {
@@ -55,6 +42,13 @@ const Home: NextPage = () => {
     setConnected(!!wallet?.connectedNetworkId)
   }
 
+  const handleDisconnectClick = async () => {
+    await disconnectWallet()
+    setAddress(undefined)
+    setNetwork(undefined)
+    setConnected(false)
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -65,6 +59,9 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         {isConnected ? (
           <>
+            <button className={styles.connect} onClick={handleDisconnectClick}>
+              Disconnect
+            </button>
             <h3 style={{ margin: 0 }}>
               Wallet address: <code>{address}</code>
             </h3>

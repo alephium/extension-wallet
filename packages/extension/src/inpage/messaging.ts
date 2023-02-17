@@ -15,6 +15,18 @@ export const getIsPreauthorized = async () => {
   return false
 }
 
+export const removePreAuthorization = async () => {
+  try {
+    sendMessage({
+      type: "REMOVE_PREAUTHORIZATION",
+      data: window.location.host,
+    })
+    await waitForMessage("REMOVE_PREAUTHORIZATION_RES", 1000)
+  } catch (e) {
+    console.error("Remove pre authorization failed", e)
+  }
+}
+
 export const getNetwork = async (networkId: string) => {
   try {
     sendMessage({

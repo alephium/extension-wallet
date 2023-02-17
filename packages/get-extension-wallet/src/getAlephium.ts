@@ -129,7 +129,11 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         name = 'Disconnected'
         icon = ''
         connectedAddress?: string = undefined
-        disconnect = () => Promise.resolve() // TODO: FIXME
+        disconnect = () => {
+          if (self.#walletObjRef.current) {
+            return self.#walletObjRef.current.disconnect()
+          }
+        }
         /**
          * stores pre-enabled wallet `on` calls' listeners
          * @private

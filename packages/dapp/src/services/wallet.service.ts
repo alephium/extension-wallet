@@ -13,6 +13,12 @@ export const silentConnectWallet = async (
   return windowAlephium
 }
 
+export const disconnectWallet = () => {
+  const alephium = getAlephium()
+  return alephium?.disconnect()
+}
+
+
 export const connectWallet = async (
   onDisconnected: () => Promise<void>
 ) => {

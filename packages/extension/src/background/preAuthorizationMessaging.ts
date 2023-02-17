@@ -1,7 +1,7 @@
 import { difference } from "lodash-es"
 
 import { PreAuthorisationMessage } from "../shared/messages/PreAuthorisationMessage"
-import { isPreAuthorized, preAuthorizeStore } from "../shared/preAuthorizations"
+import { isPreAuthorized, preAuthorizeStore, removePreAuthorization } from "../shared/preAuthorizations"
 import { withNetwork } from "../shared/wallet.service"
 import { addTab, sendMessageToHost } from "./activeTabs"
 import { UnhandledMessage } from "./background"
@@ -64,6 +64,11 @@ export const handlePreAuthorizationMessage: HandleMessage<
 
       const valid = await isPreAuthorized(selectedAccount, msg.data)
       return respond({ type: "IS_PREAUTHORIZED_RES", data: valid })
+    }
+
+    case "REMOVE_PREAUTHORIZATION": {
+      await removePreAuthorization(msg.data)
+      return respond({ type: "REMOVE_PREAUTHORIZATION_RES" })
     }
   }
 
