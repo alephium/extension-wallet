@@ -2,18 +2,19 @@
 # yarn lockfile v1
 
 
-"@alephium/cli@v0.3.0-rc.8":
-  version "0.3.0-rc.8"
-  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-0.3.0-rc.8.tgz#48395fcd43abc579cd40a46a14455251af7a901b"
-  integrity sha512-O+PZFM5nNFQX5+cUdmGQuPXj4w+9XyFvw8xK05mDkGkPJvdvHP1NShMSzNud/xp9WlApwAB8ZJTVMKu3QjU/vg==
+"@alephium/cli@v0.5.0-rc.7":
+  version "0.5.0-rc.7"
+  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-0.5.0-rc.7.tgz#bb7db65555919b2ea4f7c137d93cc9964c22dbe7"
+  integrity sha512-UaJjLiGJuztotxH5SS0qBBcqWZa+AI6ZWPgEU8xp9aDOZfSSOscQwioFLyJkbPIFOjDzaPPk/ZSe6q2aqgOPCA==
   dependencies:
-    "@alephium/web3" "^0.3.0-rc.8"
-    "@alephium/web3-wallet" "^0.3.0-rc.8"
+    "@alephium/web3" "0.5.0-rc.7"
+    "@alephium/web3-wallet" "0.5.0-rc.7"
     commander "^9.4.0"
     cross-fetch "^3.1.5"
     crypto-js "^4.1.1"
     fs-extra "^10.0.1"
     jest "^28.1.0"
+    prettier "^2.3.1"
 
 "@alephium/sdk@0.3.0":
   version "0.3.0"
@@ -29,25 +30,25 @@
     crypto-js "^4.1.1"
     elliptic "^6.5.4"
 
-"@alephium/web3-test@v0.3.0-rc.8":
-  version "0.3.0-rc.8"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-0.3.0-rc.8.tgz#f4a02eb89160e98da2c9188e4db0d20419533878"
-  integrity sha512-Xaj2xXGydUmj7mW3fjB+87BLtYkX4sLBz8VnmwRVVIxq1ShiCDpGi20id89M20ZHJVelT+SKkC2MHH8zU4P05w==
+"@alephium/web3-test@v0.5.0-rc.7":
+  version "0.5.0-rc.7"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-0.5.0-rc.7.tgz#8ca49f31238f22945941c96be5700601e271430a"
+  integrity sha512-IqXHvwsVQk60xouzsgwfDqPUm7ed5Knafd3U9yw5gzoDH43GGUVhtcOJz2Fw4413354GZebx2xisz+mbxyzV6w==
   dependencies:
-    "@alephium/web3" "^0.3.0-rc.8"
-    "@alephium/web3-wallet" "^0.3.0-rc.8"
+    "@alephium/web3" "0.5.0-rc.7"
+    "@alephium/web3-wallet" "0.5.0-rc.7"
     "@types/node" "16.7.8"
     bip32 "2.0.6"
     bip39 "3.0.4"
     buffer "^6.0.3"
     fs-extra "10.0.1"
 
-"@alephium/web3-wallet@^0.3.0-rc.8", "@alephium/web3-wallet@v0.3.0-rc.8":
-  version "0.3.0-rc.8"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.3.0-rc.8.tgz#0decfed421fb45fbf437bbe5298dae65726403da"
-  integrity sha512-SwXom5couvhXL3ADStzJdbRXHdzJeAoBkkYws42DK+BeUbykR/Km7i1lQOLjRW3dIjqRh04JJTPcApVJ7w9z8g==
+"@alephium/web3-wallet@0.5.0-rc.7", "@alephium/web3-wallet@v0.5.0-rc.7":
+  version "0.5.0-rc.7"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.5.0-rc.7.tgz#0dac850541a438642afe030cca5b4d4b58995c77"
+  integrity sha512-GeyZ2BevAG84hqEgDR1SFas8HJq2fHUSZcLToZc/sRorRVWfG2V/m3DsX1uNSzZcfGLLELE0pobRCO/iaqvYhQ==
   dependencies:
-    "@alephium/web3" "^0.3.0-rc.8"
+    "@alephium/web3" "0.5.0-rc.7"
     "@types/node" "16.7.8"
     bip32 "3.1.0"
     bip39 "3.0.4"
@@ -55,10 +56,10 @@
     fs-extra "10.0.1"
     tiny-secp256k1 "2.2.1"
 
-"@alephium/web3@^0.3.0-rc.8", "@alephium/web3@v0.3.0-rc.8":
-  version "0.3.0-rc.8"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.3.0-rc.8.tgz#378fd3f9af7e1cf4054177da5cd37377b5bdc94d"
-  integrity sha512-fDFsPK52btpiLVGRGVSXNPhgO4JnJOyIjg3Nf1ycy2guTC0e6afOzpWtAgy75nsFZ5CgGrSgVNXyJx0hKjfqLg==
+"@alephium/web3@0.5.0-rc.7", "@alephium/web3@v0.5.0-rc.7":
+  version "0.5.0-rc.7"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.5.0-rc.7.tgz#e176c2aeed2fa2538b2a7141448de43c1ea88ee6"
+  integrity sha512-bS/pUQJWPgQw+jVI7XuLc922kI8uIk/4yl54JqpiwrXLvVKyA/XK3ujLchz5NPtU6bRd51uw+PR0cKzAO8Ua+w==
   dependencies:
     base-x "4.0.0"
     blakejs "1.2.1"
@@ -20209,6 +20210,11 @@ prettier@>=2, prettier@^2.0.5, prettier@^2.6.1, prettier@^2.7.1:
   version "2.3.0"
   resolved "https://registry.npmjs.org/prettier/-/prettier-2.3.0.tgz"
   integrity sha512-kXtO4s0Lz/DW/IJ9QdWhAf7/NmPWQXkFr/r/WkR3vyI+0v8amTDxiaQSLzs8NBlytfLWX/7uQUMIW677yLKl4w==
+
+prettier@^2.3.1:
+  version "2.8.4"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.4.tgz#34dd2595629bfbb79d344ac4a91ff948694463c3"
+  integrity sha512-vIS4Rlc2FNh0BySk3Wkd6xmwxB0FpOndW5fisM5H8hsZSxU2VWVB5CWIkIjWvrHjIhxk2g3bfMKM87zNTrZddw==
 
 pretty-bytes@^5.1.0, pretty-bytes@^5.3.0, pretty-bytes@^5.4.1:
   version "5.6.0"
