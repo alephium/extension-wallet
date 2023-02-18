@@ -43,7 +43,7 @@ export const useAccounts = ({
   const { addAccount } = useAddAccount()
 
   if (accounts.length === 0) {
-    addAccount()
+    addAccount('default') // Q: is this necessary?
   }
 
   const filteredAccounts = useMemo(

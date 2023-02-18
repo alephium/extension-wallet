@@ -1,5 +1,4 @@
 import {
-  deriveNewAddressData,
   getStorage,
   walletGenerate,
   walletImport,
@@ -24,6 +23,7 @@ import {
   publicKeyFromPrivateKey,
   groupOfAddress,
   KeyType,
+  binToHex,
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
@@ -155,9 +155,8 @@ export class Wallet {
 
     const network = await this.getNetwork(account.networkId)
     const nodeProvider = new NodeProvider(network.nodeUrl)
-    const group = groupOfAddress(account.address)
-    const addressAndKeys = deriveNewAddressData(session.seed, group, account.signer.derivationIndex)
-    return new PrivateKeyWallet(addressAndKeys.privateKey, account.signer.keyType, nodeProvider)
+    const privateKey = deriveHDWalletPrivateKey(binToHex(session.seed), account.signer.keyType, account.signer.derivationIndex)
+    return new PrivateKeyWallet(privateKey, account.signer.keyType, nodeProvider)
   }
 
   public async isInitialized(): Promise<boolean> {

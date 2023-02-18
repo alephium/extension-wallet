@@ -1,15 +1,15 @@
 import { Network } from "./type"
 
-const DEV_ONLY_NETWORKS: Network[] = [
-  {
-    id: 'devnet',
-    nodeUrl: 'http://127.0.0.1:22973',
-    explorerApiUrl: 'http://localhost:9090',
-    explorerUrl: 'http://localhost:23000',
-    name: 'Devnet',
-    chainId: 2
-  }
-]
+const DEVNET = {
+  id: 'devnet',
+  nodeUrl: 'http://127.0.0.1:22973',
+  explorerApiUrl: 'http://localhost:9090',
+  explorerUrl: 'http://localhost:23000',
+  name: 'Devnet',
+  chainId: 2
+}
+
+const DEV_ONLY_NETWORKS: Network[] = [ DEVNET ]
 
 export const defaultNetworks: Network[] = [
   {
@@ -29,14 +29,7 @@ export const defaultNetworks: Network[] = [
     name: 'Testnet',
     chainId: 1
   },
-  {
-    id: 'devnet',
-    nodeUrl: 'http://127.0.0.1:22973',
-    explorerApiUrl: 'http://localhost:9090',
-    explorerUrl: 'http://localhost:3000',
-    name: 'Devnet',
-    chainId: 2
-  }
+  DEVNET
 ]
 
 export const defaultNetwork = defaultNetworks[2]

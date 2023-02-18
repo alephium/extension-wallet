@@ -3,7 +3,7 @@ import { getStarknet } from "@argent/get-starknet"
 import { utils } from "ethers"
 import { Abi, Contract, number, uint256 } from "starknet"
 import * as web3 from '@alephium/web3'
-import { binToHex, contractIdFromAddress } from '@alephium/web3'
+import { binToHex, contractIdFromAddress, DUST_AMOUNT } from '@alephium/web3'
 import { ShinyToken, Transfer } from '../../artifacts/ts'
 
 import Erc20Abi from "../../abi/ERC20.json"
@@ -134,7 +134,7 @@ export const transferToken = async (
     signerAddress: alephium.connectedAccount.address,
     destinations: [{
       address: transferTo,
-      attoAlphAmount: BigInt(10000000000000000),
+      attoAlphAmount: DUST_AMOUNT,
       tokens: [{
         id: tokenAddress,
         amount: BigInt(transferAmount)

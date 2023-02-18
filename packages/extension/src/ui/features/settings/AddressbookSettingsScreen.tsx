@@ -95,9 +95,9 @@ export const AddressbookSettingsScreen: FC = () => {
                 return (
                   <AccountListItem
                     key={contact.id}
-                    accountType="argent"
                     accountAddress={contact.address}
                     networkId={contact.networkId}
+                    keyType={contact.keyType}
                     accountName={contact.name}
                     networkName={networkName}
                     outlined

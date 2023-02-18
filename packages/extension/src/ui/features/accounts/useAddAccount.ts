@@ -11,8 +11,8 @@ export const useAddAccount = () => {
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
 
-  const addAccount = useCallback(async (keyType?: KeyType, group?: number) => {
-    const newAccount = await createAccount(switcherNetworkId, keyType ?? 'default', undefined, group)
+  const addAccount = useCallback(async (keyType: KeyType, group?: number) => {
+    const newAccount = await createAccount(switcherNetworkId, keyType, undefined, group)
     // switch background wallet to the account that was selected
     await selectAccount(newAccount)
     navigate(await recover())

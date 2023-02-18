@@ -18,8 +18,8 @@ export interface AccountListItemProps extends CustomButtonCellProps {
   accountName: string
   accountAddress: string
   networkId: string
+  keyType: KeyType
   networkName?: string
-  keyType?: KeyType
   deploying?: boolean
   upgrade?: boolean
   connectedHost?: string
