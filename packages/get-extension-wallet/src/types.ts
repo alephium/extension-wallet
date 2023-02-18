@@ -1,4 +1,9 @@
-import type { Account, InteractiveSignerProvider, EnableOptionsBase, Address } from '@alephium/web3'
+import {
+  Account,
+  Address,
+  EnableOptionsBase,
+  InteractiveSignerProvider,
+} from "@alephium/web3"
 
 export interface IStorageWrapper {
   set(value: string | null | undefined): boolean
@@ -7,7 +12,7 @@ export interface IStorageWrapper {
 }
 
 export type ModalOptions = {
-  theme?: 'light' | 'dark'
+  theme?: "light" | "dark"
 }
 
 export type DisconnectOptions = {
@@ -21,7 +26,7 @@ export type DisconnectOptions = {
   clearDefaultWallet?: boolean
 }
 
-export type Order = string[] | 'community' | 'random' | null | undefined
+export type Order = string[] | "community" | "random" | null | undefined
 
 export type GetAlephiumWalletOptions = {
   /**
@@ -91,7 +96,9 @@ export interface IGetAlephiumWallet {
    * Once connected to a wallet, clients can retrieve the wallet's
    * `AlephiumWindowObject` instance by calling `getAlephium()`
    */
-  connect(options?: GetAlephiumWalletOptions): Promise<AlephiumWindowObject | undefined>
+  connect(
+    options?: GetAlephiumWalletOptions,
+  ): Promise<AlephiumWindowObject | undefined>
 
   /**
    * disconnect from a wallet
@@ -104,7 +111,7 @@ export interface IGetAlephiumWallet {
    * @param options see `connect` `options` for `order`, `include` & `exclude`
    */
   getInstalledWallets(
-    options?: Omit<GetAlephiumWalletOptions, 'showList' | 'modalOptions'>
+    options?: Omit<GetAlephiumWalletOptions, "showList" | "modalOptions">,
   ): Promise<AlephiumWindowObject[]>
 
   /**
@@ -114,7 +121,7 @@ export interface IGetAlephiumWallet {
   getAlephium(): AlephiumWindowObject
 }
 
-export type EventType = 'addressesChanged' | 'networkChanged'
+export type EventType = "addressesChanged" | "networkChanged"
 
 export type EventHandler = (data: any) => Promise<void> | void
 
@@ -122,8 +129,7 @@ export type EnableOptions = EnableOptionsBase & {
   showModal?: boolean
 }
 
-export interface AlephiumWindowObject extends InteractiveSignerProvider<EnableOptions> {
-  enable: (options?: EnableOptions) => Promise<Address>
+export abstract class AlephiumWindowObject extends InteractiveSignerProvider<EnableOptions> {
   isPreauthorized: () => Promise<boolean>
   on: (event: EventType, handleEvent: EventHandler) => void
   off: (event: EventType, handleEvent: EventHandler) => void
@@ -132,7 +138,7 @@ export interface AlephiumWindowObject extends InteractiveSignerProvider<EnableOp
   id: string
   name: string
   icon: string
-  connectedAddress?: string
+  connectedAccount?: Account
   connectedNetworkId?: string
 }
 
@@ -141,8 +147,8 @@ export type WalletProvider = {
   name: string
   icon: string
   downloads:
-  | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
-  | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
+    | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
+    | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
 }
 
 declare global {

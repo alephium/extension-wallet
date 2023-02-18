@@ -1,3 +1,4 @@
+import { KeyType } from "@alephium/web3"
 import { Abi, Contract, ProviderInterface, number, stark } from "starknet"
 
 import ArgentCompiledContractAbi from "../../../abis/ArgentAccount.json"
@@ -51,8 +52,8 @@ export class Account {
     this.type = type
   }
 
-  public static async create(networkId: string, group?: number): Promise<Account> {
-    const result = await createNewAccount(networkId, group)
+  public static async create(networkId: string, keyType: KeyType, group?: number): Promise<Account> {
+    const result = await createNewAccount(networkId, keyType, group)
     if (result === "error") {
       throw new Error(result)
     }

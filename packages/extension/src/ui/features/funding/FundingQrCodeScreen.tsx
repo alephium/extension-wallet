@@ -88,7 +88,7 @@ export const FundingQrCodeScreen: FC = () => {
     } else if (account?.networkId === 'devnet') {
       web3.setCurrentNodeProvider(defaultNetworks[2]['nodeUrl'])
       const wallet = await testNodeWallet()
-      const signerAddress = await wallet.getSelectedAddress()
+      const signerAddress = await (await wallet.getSelectedAccount()).address
       wallet.signAndSubmitTransferTx({ signerAddress: signerAddress, destinations: [{ address: account.address, attoAlphAmount: BigInt(1e21) }] })
     }
   }, [])

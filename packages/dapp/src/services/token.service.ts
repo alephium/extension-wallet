@@ -88,7 +88,7 @@ export const mintToken = async (
   network?: string
 ): Promise<web3.SignDeployContractTxResult> => {
   const alephium = getAlephium()
-  if (!alephium.connectedAddress || !alephium.connectedNetworkId) {
+  if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
     throw Error("alephium object not initialized")
   }
 
@@ -104,7 +104,7 @@ export const withdrawMintedToken = async (
   tokenAddress: string
 ): Promise<web3.SignExecuteScriptTxResult> => {
   const alephium = getAlephium()
-  if (!alephium.connectedAddress || !alephium.connectedNetworkId) {
+  if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
     throw Error("alephium object not initialized")
   }
 
@@ -113,7 +113,7 @@ export const withdrawMintedToken = async (
     {
       initialFields: {
         shinyTokenId: binToHex(contractIdFromAddress(tokenAddress)),
-        to: alephium.connectedAddress,
+        to: alephium.connectedAccount.address,
         amount: BigInt(amount)
       }
     }
@@ -126,12 +126,12 @@ export const transferToken = async (
   network?: string
 ): Promise<web3.SignTransferTxResult> => {
   const alephium = getAlephium()
-  if (!alephium.connectedAddress || !alephium.connectedNetworkId) {
+  if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
     throw Error("alephium object not initialized")
   }
 
   return await alephium.signAndSubmitTransferTx({
-    signerAddress: alephium.connectedAddress,
+    signerAddress: alephium.connectedAccount.address,
     destinations: [{
       address: transferTo,
       attoAlphAmount: BigInt(10000000000000000),

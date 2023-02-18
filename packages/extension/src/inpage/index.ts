@@ -88,7 +88,7 @@ window.addEventListener(
 
         if (
           account &&
-          (account.address !== alephium.connectedAddress ||
+          (account.address !== alephium.connectedAccount?.address ||
             account.networkId !== alephium.connectedNetworkId) &&
           alephium.onDisconnected !== undefined
         ) {

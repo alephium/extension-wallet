@@ -1,3 +1,4 @@
+import { KeyType } from "@alephium/web3"
 import * as yup from "yup"
 
 import { addressSchema } from "./../../ui/services/addresses"
@@ -11,6 +12,7 @@ export const addressBookContactNoIdSchema: yup.Schema<AddressBookContactNoId> =
       name: yup.string().required("Contact Name is required"),
       networkId: yup.string().required("Contact Network is required"),
       address: addressSchema,
+      keyType: yup.mixed<KeyType>().oneOf(['default', 'bip340-schnorr']).required("Contact Key Type is required")
     })
 
 export const addressBookContactSchema: yup.Schema<AddressBookContact> = yup
@@ -21,4 +23,5 @@ export const addressBookContactSchema: yup.Schema<AddressBookContact> = yup
     name: yup.string().required("Contact Name is required"),
     networkId: yup.string().required("Contact Network is required"),
     address: addressSchema,
+    keyType: yup.mixed<KeyType>().oneOf(['default', 'bip340-schnorr']).required("Contact Key Type is required")
   })

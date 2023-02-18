@@ -22,7 +22,7 @@ export interface ApproveTransactionScreenProps
 }
 
 async function buildTransaction(nodeUrl: string, account: Account, transaction: TransactionParams): Promise<ReviewTransactionResult> {
-  const builder = TransactionBuilder.create(nodeUrl)
+  const builder = TransactionBuilder.from(nodeUrl)
   switch (transaction.type) {
     case 'TRANSFER':
       return { type: transaction.type, params: transaction.params, result: await builder.buildTransferTx(transaction.params, account.publicKey) }

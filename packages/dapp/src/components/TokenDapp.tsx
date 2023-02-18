@@ -267,7 +267,7 @@ export const TokenDapp: FC<{
 
       <div className="columns">
         {
-          (mintedToken && alephium?.connectedAddress) ? (
+          (mintedToken && alephium?.connectedAccount) ? (
             <form onSubmit={handleWithdrawMintedTokenSubmit}>
               <h2 className={styles.title}>Withdraw all minted token</h2>
               <label htmlFor="token-address">Token Address</label>
@@ -279,7 +279,7 @@ export const TokenDapp: FC<{
                 id="transfer-to"
                 name="fname"
                 disabled
-                value={alephium.connectedAddress}
+                value={alephium.connectedAccount.address}
                 onChange={(e) => setTransferTo(e.target.value)}
               />
 

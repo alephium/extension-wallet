@@ -1,3 +1,4 @@
+import { KeyType } from "@alephium/web3"
 import { ethers } from "ethers"
 import { number } from "starknet"
 
@@ -9,12 +10,12 @@ import { Account } from "./Account"
 
 const { toBN } = number
 
-export const createAccount = async (networkId: string, password?: string, group?: number) => {
+export const createAccount = async (networkId: string, keyType: KeyType, password?: string, group?: number) => {
   if (password) {
     await startSession(password)
   }
 
-  return Account.create(networkId, group)
+  return Account.create(networkId, keyType, group)
 }
 
 const argentColorsArray = [

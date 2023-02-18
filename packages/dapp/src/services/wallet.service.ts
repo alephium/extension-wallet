@@ -50,12 +50,12 @@ export const getExplorerBaseUrl = (): string | undefined => {
 
 export const signMessage = async (message: string): Promise<SignMessageResult> => {
   const alephium = getAlephium()
-  if (!alephium.connectedAddress || !alephium.connectedNetworkId) {
+  if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
     throw Error("alephium object not initialized")
   }
 
   return await alephium.signMessage({
-    signerAddress: alephium.connectedAddress,
+    signerAddress: alephium.connectedAccount.address,
     networkId: alephium.connectedNetworkId,
     message
   })

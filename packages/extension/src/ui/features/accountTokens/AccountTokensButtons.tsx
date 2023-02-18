@@ -93,11 +93,6 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
           </Button>
         )}
       </SimpleGrid>
-      {account?.type === "argent-plugin" && (
-        <Button onClick={onPlugins} colorScheme={"tertiary"} size="sm">
-          <PluginIcon />
-        </Button>
-      )}
     </Flex>
   )
 }
