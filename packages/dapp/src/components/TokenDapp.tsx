@@ -317,7 +317,7 @@ export const TokenDapp: FC<{
         <form onSubmit={handleTransferSubmit}>
           <h2 className={styles.title}>Transfer token</h2>
 
-          <label htmlFor="transfer-token-address">Token Address</label>
+          <label htmlFor="transfer-token-address">Token Id</label>
           <input
             type="text"
             id="transfer-to"

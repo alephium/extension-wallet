@@ -5,7 +5,7 @@ const DEV_ONLY_NETWORKS: Network[] = [
     id: 'devnet',
     nodeUrl: 'http://127.0.0.1:22973',
     explorerApiUrl: 'http://localhost:9090',
-    explorerUrl: 'http://localhost:3000',
+    explorerUrl: 'http://localhost:23000',
     name: 'Devnet',
     chainId: 2
   }

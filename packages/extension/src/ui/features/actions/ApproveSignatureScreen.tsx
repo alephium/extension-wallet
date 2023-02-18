@@ -8,6 +8,8 @@ import {
   ConfirmPageProps,
   DeprecatedConfirmScreen,
 } from "./DeprecatedConfirmScreen"
+import { Field, FieldGroup, FieldKey, FieldValue, SectionHeader } from "../../components/Fields"
+import { AccountAddressField } from "./transaction/fields/AccountAddressField"
 
 interface ApproveSignatureScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
@@ -41,8 +43,23 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
       }}
       {...props}
     >
-      <P>A dapp wants you to sign this message:</P>
-      <Pre>{JSON.stringify(dataToSign, null, 2)}</Pre>
+      { selectedAccount &&
+        <FieldGroup>
+          <AccountAddressField
+            title="Signer"
+            accountAddress={selectedAccount.address}
+            networkId={selectedAccount.networkId}
+          />
+          <Field>
+            <FieldKey>Network</FieldKey>
+            <FieldValue>{selectedAccount.networkName}</FieldValue>
+          </Field>
+          <SectionHeader>Message</SectionHeader>
+          <Field>
+            <P>{dataToSign.message}</P>
+          </Field>
+        </FieldGroup>
+      }
     </DeprecatedConfirmScreen>
   )
 }

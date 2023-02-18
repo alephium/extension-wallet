@@ -148,9 +148,8 @@ export const AccountListItem: FC<AccountListItemProps> = ({
           </Flex>
           <Flex gap={2} color={"neutrals.300"}>
             <P4 fontWeight={"semibold"}>
-              {formatTruncatedAddress(accountAddress)}
+              {formatTruncatedAddress(accountAddress)} / Group:{groupOfAddress(accountAddress)}
             </P4>
-            <P4 noOfLines={1}>[Group: {groupOfAddress(accountAddress)}]</P4>
           </Flex>
         </Flex>
         <Flex direction={"column"}>

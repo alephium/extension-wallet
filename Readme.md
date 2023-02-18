@@ -31,4 +31,4 @@ yarn dev  # run build process for all packages in watch mode
 
 ## Credits
 
-We have built this project on top of [Argent X](https://github.com/argentlabs/argent-x)'s codebase. We would like to take this oppurtunity to thank all the [contributors](https://github.com/argentlabs/argent-x/graphs/contributors) of the Argent X project ❤️
+We have built this project on top of [Argent X](https://github.com/argentlabs/argent-x)'s codebase. We would like to take this opportunity to thank all the [contributors](https://github.com/argentlabs/argent-x/graphs/contributors) of the Argent X project ❤️

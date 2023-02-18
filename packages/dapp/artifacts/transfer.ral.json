@@ -1,5 +1,5 @@
 {
-  "version": "v1.6.0",
+  "version": "v1.7.1",
   "name": "Transfer",
   "bytecodeTemplate": "01010300000006{1}{2}0e0c{0}0100",
   "fieldsSig": {

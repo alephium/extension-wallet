@@ -4,8 +4,7 @@ import { utils } from "ethers"
 import { Abi, Contract, number, uint256 } from "starknet"
 import * as web3 from '@alephium/web3'
 import { binToHex, contractIdFromAddress } from '@alephium/web3'
-import shinyToken from '../../artifacts/shiny-token.ral.json'
-import tokenTransfer from '../../artifacts/transfer.ral.json'
+import { ShinyToken, Transfer } from '../../artifacts/ts'
 
 import Erc20Abi from "../../abi/ERC20.json"
 
@@ -93,16 +92,11 @@ export const mintToken = async (
     throw Error("alephium object not initialized")
   }
 
-  const tokenContract = web3.Contract.fromJson(shinyToken)
-  const txResult = tokenContract.deploy(
-    alephium,
-    {
-      initialAttoAlphAmount: BigInt(1100000000000000000),
-      issueTokenAmount: BigInt(mintAmount),
-    }
-  )
-
-  return txResult
+  return ShinyToken.deploy(alephium, {
+    initialFields: {},
+    initialAttoAlphAmount: BigInt(1100000000000000000),
+    issueTokenAmount: BigInt(mintAmount),
+  })
 }
 
 export const withdrawMintedToken = async (
@@ -114,8 +108,7 @@ export const withdrawMintedToken = async (
     throw Error("alephium object not initialized")
   }
 
-  const script = web3.Script.fromJson(tokenTransfer)
-  return await script.execute(
+  return Transfer.execute(
     alephium,
     {
       initialFields: {
