@@ -56,12 +56,13 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
             networkId={selectedAccount.networkId}
           />
           <Field>
+            <FieldKey>Hasher</FieldKey>
+            <FieldValue>{dataToSign.messageHasher}</FieldValue>
+          </Field>
+          <SectionHeader>{dataToSign.message}</SectionHeader>
+          <Field>
             <FieldKey>Network</FieldKey>
             <FieldValue>{selectedAccount.networkName}</FieldValue>
-          </Field>
-          <SectionHeader>Message</SectionHeader>
-          <Field>
-            <Message>{dataToSign.message}</Message>
           </Field>
         </FieldGroup>
       }

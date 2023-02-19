@@ -1,7 +1,7 @@
 import { connect, getAlephium } from '@alephium/get-extension-wallet'
 import { AlephiumWindowObject } from '@alephium/get-extension-wallet/dist'
 import { CompiledContract, constants, shortString } from "starknet"
-import { SignMessageResult } from '@alephium/web3'
+import { MessageHasher, SignMessageResult } from '@alephium/web3'
 
 import { Network } from "./token.service"
 
@@ -48,7 +48,7 @@ export const getExplorerBaseUrl = (): string | undefined => {
   }
 }
 
-export const signMessage = async (message: string): Promise<SignMessageResult> => {
+export const signMessage = async (message: string, messageHasher: MessageHasher): Promise<SignMessageResult> => {
   const alephium = getAlephium()
   if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
     throw Error("alephium object not initialized")
@@ -56,6 +56,7 @@ export const signMessage = async (message: string): Promise<SignMessageResult> =
 
   return await alephium.signMessage({
     signerAddress: alephium.connectedAccount.address,
-    message
+    message,
+    messageHasher
   })
 }

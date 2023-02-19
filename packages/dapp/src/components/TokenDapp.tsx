@@ -16,7 +16,7 @@ import {
   signMessage,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
-import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3 } from "@alephium/web3"
+import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3, MessageHasher } from "@alephium/web3"
 
 type Status = "idle" | "approve" | "pending" | "success" | "failure"
 
@@ -27,6 +27,7 @@ export const TokenDapp: FC<{
   const [transferTo, setTransferTo] = useState("")
   const [transferAmount, setTransferAmount] = useState("")
   const [shortText, setShortText] = useState("")
+  const [messageHasher, setMessageHasher] = useState<MessageHasher>("alephium")
   const [lastSig, setLastSig] = useState<string>()
   const [lastTransactionHash, setLastTransactionHash] = useState("")
   const [transactionStatus, setTransactionStatus] = useState<Status>("idle")
@@ -194,8 +195,8 @@ export const TokenDapp: FC<{
       e.preventDefault()
       setTransactionStatus("approve")
 
-      console.log("sign", shortText)
-      const result = await signMessage(shortText)
+      console.log("sign", shortText, messageHasher)
+      const result = await signMessage(shortText, messageHasher)
       console.log(result)
 
       setLastSig(result.signature)
@@ -351,14 +352,25 @@ export const TokenDapp: FC<{
         <form onSubmit={handleSignSubmit}>
           <h2 className={styles.title}>Sign Message</h2>
 
-          <label htmlFor="short-text">Short Text</label>
-          <input
-            type="text"
-            id="short-text"
-            name="short-text"
-            value={shortText}
-            onChange={(e) => setShortText(e.target.value)}
-          />
+          <div className="columns">
+            <label htmlFor="short-text">Short Text</label>
+            <input
+              type="text"
+              id="short-text"
+              name="short-text"
+              value={shortText}
+              onChange={(e) => setShortText(e.target.value)}
+            />
+          </div>
+
+          <div className="columns">
+            <label htmlFor="short-text">Hasher</label>
+            <select name="hasher" id="hasher" onChange={(e) => setMessageHasher(e.target.value as MessageHasher)}>
+              <option value="alephium">Alephium</option>
+              <option value="sha256">Sha256</option>
+              <option value="blake2b">blake2b</option>
+            </select>
+          </div>
 
           <input type="submit" value="Sign" />
         </form>
