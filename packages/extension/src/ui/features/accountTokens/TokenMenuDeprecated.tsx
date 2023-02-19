@@ -84,6 +84,19 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
               </MenuItem>
             </MenuItemWrapper>
           </CopyToClipboard>
+          { !isALPH &&
+            <CopyToClipboard
+              text={addressFromContractId(tokenId)}
+              onCopy={() => setMenuOpen(false)}
+            >
+              <MenuItemWrapper>
+                <MenuItem>
+                  <ContentCopyIcon fontSize="inherit" htmlColor="white" />
+                  Copy token address
+                </MenuItem>
+              </MenuItemWrapper>
+            </CopyToClipboard>
+          }
           <Separator />
           <MenuItemWrapper
             onClick={() =>
