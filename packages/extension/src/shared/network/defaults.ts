@@ -1,6 +1,6 @@
 import { Network } from "./type"
 
-const DEVNET = {
+export const DEVNET = {
   id: 'devnet',
   nodeUrl: 'http://127.0.0.1:22973',
   explorerApiUrl: 'http://localhost:9090',

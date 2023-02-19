@@ -408,7 +408,7 @@ export const SendTokenScreen: FC = () => {
       />
       <NavigationContainer
         leftButton={<BarBackButton />}
-        rightButton={<TokenMenuDeprecated tokenAddress={address} />}
+        rightButton={<TokenMenuDeprecated tokenId={address} />}
         scrollContent={`Send ${symbol}`}
       >
         <>

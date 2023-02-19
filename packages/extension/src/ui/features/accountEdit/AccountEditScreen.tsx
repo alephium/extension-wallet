@@ -141,7 +141,7 @@ export const AccountEditScreen: FC = () => {
             }
             rightIcon={<ExpandIcon />}
           >
-            View on {blockExplorerTitle}
+            View on explorer
           </ButtonCell>
           <ButtonCell
             onClick={() => account && handleHideOrDeleteAccount(account)}

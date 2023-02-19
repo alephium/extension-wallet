@@ -98,7 +98,7 @@ export const TokenScreen: FC = () => {
   return (
     <NavigationContainer
       leftButton={<BarBackButton />}
-      rightButton={<TokenMenuDeprecated tokenAddress={address} />}
+      rightButton={<TokenMenuDeprecated tokenId={address} />}
       title={name === "Ether" ? "Ethereum" : name}
     >
       <TokenScreenWrapper>
