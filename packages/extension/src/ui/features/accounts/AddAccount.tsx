@@ -41,7 +41,7 @@ export const MemuSelector: FC<MenuSelectorProps> = ({title, options, setValue}) 
           {options.map(option => {
             const isCurrent = option === currentOption
             return (<MenuItem w="inherit" key={option} onClick={() => {setCurrentOption(option); setValue(option)}} sx={isCurrent ? { backgroundColor: "neutrals.600", } : {}}>
-              {option}
+              {title}: {option}
                 {/* <Flex
                   ml={"auto"}
                   justifyContent={"flex-end"}

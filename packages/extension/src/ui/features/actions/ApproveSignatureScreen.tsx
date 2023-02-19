@@ -26,6 +26,11 @@ export const Pre = styled.pre`
   overflow: auto;
 `
 
+export const Message = styled(Field)`
+  padding: 0px 0px;
+  color: ${({ theme }) => theme.text2};
+`
+
 export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
   dataToSign,
   onSubmit,
@@ -56,7 +61,7 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
           </Field>
           <SectionHeader>Message</SectionHeader>
           <Field>
-            <P>{dataToSign.message}</P>
+            <Message>{dataToSign.message}</Message>
           </Field>
         </FieldGroup>
       }
