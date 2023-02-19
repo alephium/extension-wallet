@@ -25,7 +25,7 @@ export async function sentTransactionNotification(
 ) {
   const id = `TX:${hash}`
   const title = `${meta?.title || "Transaction"} ${
-    ["ACCEPTED_ON_L1", "ACCEPTED_ON_L2", "PENDING"].includes(status)
+    ["ACCEPTED_ON_CHAIN", "ACCEPTED_ON_L2", "PENDING"].includes(status)
       ? "succeeded"
       : "rejected"
   }`

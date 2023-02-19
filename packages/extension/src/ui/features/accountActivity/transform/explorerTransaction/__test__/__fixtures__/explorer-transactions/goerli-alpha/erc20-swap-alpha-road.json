@@ -7,7 +7,7 @@
   "entryPoint": "__execute__",
   "maxFee": "0x405771ad1f09",
   "actualFee": "0x2d65cab264dd",
-  "status": "ACCEPTED_ON_L1",
+  "status": "ACCEPTED_ON_CHAIN",
   "statusData": "",
   "events": [
     {

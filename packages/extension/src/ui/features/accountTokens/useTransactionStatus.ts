@@ -7,7 +7,7 @@ import { useArrayStorage } from "../../../shared/storage/hooks"
 import { Transaction } from "../../../shared/transactions"
 
 function transformStatus(status: StarkNetStatus): Status {
-  return ["ACCEPTED_ON_L1", "ACCEPTED_ON_L2", "PENDING"].includes(status)
+  return ["ACCEPTED_ON_CHAIN", "ACCEPTED_ON_L2", "PENDING"].includes(status)
     ? "SUCCESS"
     : status === "REJECTED"
     ? "ERROR"
