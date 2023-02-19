@@ -29,7 +29,7 @@ export type WindowMessageType = MessageType & {
 }
 
 export const [sendMessage, messageStream, _waitForMessage] =
-  getMessage<MessageType>("ARGENTX")
+  getMessage<MessageType>("ALEPHIUM")
 
 export async function waitForMessage<
   K extends MessageType["type"],
