@@ -40,11 +40,6 @@ export const useAccounts = ({
 } = {}) => {
   const network = useCurrentNetwork()
   const accounts = useArrayStorage(accountStore)
-  const { addAccount } = useAddAccount()
-
-  if (accounts.length === 0) {
-    addAccount('default') // Q: is this necessary?
-  }
 
   const filteredAccounts = useMemo(
     () =>

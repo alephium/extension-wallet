@@ -33,6 +33,7 @@ export interface QueueItem {
 export type ExtQueueItem<T> = QueueItem & T
 
 interface OptionalBuiltTransaction {
+  networkId: string
   unsignedTx?: string
   txId?: string
 }
@@ -114,7 +115,7 @@ export type ActionItem =
     }
   | {
       type: "SIGN"
-      payload: SignMessageParams
+      payload: SignMessageParams & { networkId: string }
     }
   | {
       type: "REQUEST_ADD_CUSTOM_NETWORK"

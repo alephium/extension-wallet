@@ -56,7 +56,6 @@ export const signMessage = async (message: string): Promise<SignMessageResult> =
 
   return await alephium.signMessage({
     signerAddress: alephium.connectedAccount.address,
-    networkId: alephium.connectedNetworkId,
     message
   })
 }

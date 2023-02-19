@@ -155,7 +155,7 @@ export class Wallet {
 
     const network = await this.getNetwork(account.networkId)
     const nodeProvider = new NodeProvider(network.nodeUrl)
-    const privateKey = deriveHDWalletPrivateKey(binToHex(session.seed), account.signer.keyType, account.signer.derivationIndex)
+    const privateKey = deriveHDWalletPrivateKey(session.secret, account.signer.keyType, account.signer.derivationIndex)
     return new PrivateKeyWallet(privateKey, account.signer.keyType, nodeProvider)
   }
 
@@ -448,14 +448,14 @@ export class Wallet {
     const accounts = await this.walletStore.get(withHiddenSelector)
 
     const currentIndexes = accounts
-      .filter((account) => account.signer.type === "local_secret")
+      .filter((account) => account.signer.type === "local_secret" && account.signer.keyType === keyType)
       .map((account) => account.signer.derivationIndex)
 
     const startIndex = getNextPathIndex(currentIndexes)
     const [privateKey, index] = forGroup === undefined ? [deriveHDWalletPrivateKey(session.secret, keyType, startIndex), startIndex]
       : deriveHDWalletPrivateKeyForGroup(session.secret, forGroup, keyType, startIndex)
-    const publicKey = publicKeyFromPrivateKey(privateKey)
-    const newAddress = addressFromPublicKey(publicKey)
+    const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
+    const newAddress = addressFromPublicKey(publicKey, keyType)
 
     const account: WalletAccount = {
       address: newAddress,
@@ -500,7 +500,7 @@ export class Wallet {
       accountsEqual(account, selector),
     )
     if (!hit) {
-      throw Error("account not found")
+      throw Error(`account not found`)
     }
     return hit
   }

@@ -140,7 +140,6 @@ export const transferToken = async (
         amount: BigInt(transferAmount)
       }
       ]
-    }],
-    networkId: network || alephium.connectedNetworkId
+    }]
   })
 }

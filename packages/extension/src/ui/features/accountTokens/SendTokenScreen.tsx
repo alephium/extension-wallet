@@ -425,6 +425,7 @@ export const SendTokenScreen: FC = () => {
                     sweepResult.unsignedTxs.map((sweepUnsignedTx) => {
                       sendUnsignedTxTransaction({
                         signerAddress: account.address,
+                        networkId: account.networkId,
                         unsignedTx: sweepUnsignedTx.unsignedTx
                       })
                     })
@@ -447,6 +448,7 @@ export const SendTokenScreen: FC = () => {
 
                   sendTransferTransaction({
                     signerAddress: account.address,
+                    networkId: account.networkId,
                     destinations: [destination],
                   })
                 }

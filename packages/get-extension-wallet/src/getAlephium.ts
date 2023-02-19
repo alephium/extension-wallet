@@ -1,11 +1,6 @@
 import type {
   Account,
   Address,
-  ExtSignDeployContractTxParams,
-  ExtSignExecuteScriptTxParams,
-  ExtSignMessageParams,
-  ExtSignTransferTxParams,
-  ExtSignUnsignedTxParams,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
@@ -183,7 +178,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         }
 
         signAndSubmitTransferTx = async (
-          params: ExtSignTransferTxParams,
+          params: SignTransferTxParams,
         ): Promise<SignTransferTxResult> => {
           return await this.#call("signAndSubmitTransferTx", (wallet) =>
             wallet.signAndSubmitTransferTx(params),
@@ -191,7 +186,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         }
 
         signAndSubmitDeployContractTx = async (
-          params: ExtSignDeployContractTxParams,
+          params: SignDeployContractTxParams,
         ): Promise<SignDeployContractTxResult> => {
           return await this.#call("signAndSubmitDeployContractTx", (wallet) =>
             wallet.signAndSubmitDeployContractTx(params),
@@ -199,7 +194,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         }
 
         signAndSubmitExecuteScriptTx = async (
-          params: ExtSignExecuteScriptTxParams,
+          params: SignExecuteScriptTxParams,
         ): Promise<SignExecuteScriptTxResult> => {
           return await this.#call("signAndSubmitExecuteScriptTx", (wallet) =>
             wallet.signAndSubmitExecuteScriptTx(params),
@@ -207,7 +202,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         }
 
         signUnsignedTx = async (
-          params: ExtSignUnsignedTxParams,
+          params: SignUnsignedTxParams,
         ): Promise<SignUnsignedTxResult> => {
           return await this.#call("signUnsignedTx", (wallet) =>
             wallet.signUnsignedTx(params),
@@ -215,7 +210,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         }
 
         signAndSubmitUnsignedTx = async (
-          params: ExtSignUnsignedTxParams,
+          params: SignUnsignedTxParams,
         ): Promise<SignUnsignedTxResult> => {
           return await this.#call("signAndSubmitUnsignedTx", (wallet) =>
             wallet.signAndSubmitUnsignedTx(params),
@@ -223,7 +218,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         }
 
         signMessage = async (
-          params: ExtSignMessageParams,
+          params: SignMessageParams,
         ): Promise<SignMessageResult> => {
           return await this.#call("signMessage", (wallet) =>
             wallet.signMessage(params),

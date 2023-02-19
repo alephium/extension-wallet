@@ -21,7 +21,6 @@ import {
   SignUnsignedTxResult
 } from "@alephium/web3"
 import { TransactionParams } from "../shared/actionQueue/types"
-import { WalletAccount } from "../shared/wallet.model"
 
 const VERSION = `${process.env.VERSION}`
 
@@ -105,11 +104,11 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     this.connectedAccount = {
       address: walletAccount.address,
       publicKey: walletAccount.signer.publicKey,
-      keyType: 'default' as const,
+      keyType: walletAccount.signer.keyType,
       group: 0
     }
 
-    this.connectedNetworkId = options.networkId
+    this.connectedNetworkId = walletAccount.network.id
     this.nodeProvider = new NodeProvider(walletAccount.network.nodeUrl)
     if (walletAccount.network.explorerApiUrl) {
       this.explorerProvider = new ExplorerProvider(walletAccount.network.explorerApiUrl)
@@ -126,7 +125,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     const result = (
       await executeAlephiumTransaction({
         type: 'TRANSFER',
-        params,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        params: { networkId: this.connectedNetworkId!, signerKeyType: this.connectedAccount?.keyType, ...params},
         salt: Date.now().toString()
       })
     ).result as Omit<SignTransferTxResult, 'signature'>
@@ -137,7 +137,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     const result = (
       await executeAlephiumTransaction({
         type: 'DEPLOY_CONTRACT',
-        params,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        params: { networkId: this.connectedNetworkId!, signerKeyType: this.connectedAccount?.keyType, ...params},
         salt: Date.now().toString()
       })
     ).result as Omit<SignDeployContractTxResult, 'signature'>
@@ -148,7 +149,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     const result = (
       await executeAlephiumTransaction({
         type: 'EXECUTE_SCRIPT',
-        params,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        params: { networkId: this.connectedNetworkId!, signerKeyType: this.connectedAccount?.keyType, ...params},
         salt: Date.now().toString()
       })
     ).result as Omit<SignExecuteScriptTxResult, 'signature'>
@@ -159,7 +161,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     const result = (
       await executeAlephiumTransaction({
         type: 'UNSIGNED_TX',
-        params,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        params: { networkId: this.connectedNetworkId!, signerKeyType: this.connectedAccount?.keyType, ...params},
         salt: Date.now().toString()
       })
     ).result as Omit<SignUnsignedTxResult, 'signature'>
@@ -171,7 +174,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   }
 
   signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
-    sendMessage({ type: "SIGN_MESSAGE", data: params })
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    sendMessage({ type: "SIGN_MESSAGE", data: {networkId: this.connectedNetworkId!, ...params} })
     const { actionHash } = await waitForMessage("SIGN_MESSAGE_RES", 1000)
 
     sendMessage({ type: "OPEN_UI" })

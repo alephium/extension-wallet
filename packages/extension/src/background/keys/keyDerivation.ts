@@ -36,12 +36,11 @@ export function getIndexForPath(path: string, baseDerivationPath: string) {
 }
 
 export function getNextPathIndex(indexes: number[]): number {
-  for (let k = 0; k < indexes.length; k++) {
-    if (!indexes.includes(indexes[k])) {
-      return indexes[k]
-    }
+  if (indexes.length === 0) {
+    return 0
+  } else {
+    return Math.max(...indexes) + 1
   }
-  return indexes.length
 }
 
 // inspired/copied from https://github.com/authereum/starkware-monorepo/blob/51c5df19e7f98399a2f7e63d564210d761d138d1/packages/starkware-crypto/src/keyDerivation.ts#L85
