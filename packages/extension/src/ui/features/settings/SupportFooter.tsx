@@ -19,8 +19,8 @@ const SupportFooter: FC = () => (
         size="sm"
         rounded={"lg"}
         leftIcon={<SupportIcon />}
-        href="https://support.argent.xyz/hc/en-us/categories/5767453283473-Argent-X"
-        title="Get ArgentX Support"
+        href="https://discord.gg/JErgRBfRSB"
+        title="Get Alephium Support"
         target="_blank"
       >
         Help
@@ -30,8 +30,8 @@ const SupportFooter: FC = () => (
         size="sm"
         rounded={"lg"}
         leftIcon={<Discord />}
-        href="https://discord.gg/T4PDFHxm6T"
-        title="Ask a question on the argent-x-support channel on Discord"
+        href="https://discord.gg/JErgRBfRSB"
+        title="Ask a question on the dev-wallet channel on Discord"
         target="_blank"
       >
         Discord
@@ -41,8 +41,8 @@ const SupportFooter: FC = () => (
         size="sm"
         rounded={"lg"}
         leftIcon={<Github />}
-        href="https://github.com/argentlabs/argent-x/issues"
-        title="Post an issue on Argent X GitHub"
+        href="https://github.com/alephium/extension-wallet/issues"
+        title="Post an issue on GitHub"
         target="_blank"
       >
         Github
