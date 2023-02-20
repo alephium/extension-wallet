@@ -21,14 +21,7 @@ export type {
  * @returns {Promise<AlephiumWindowObject>}
  */
 export const getAlephium = (): AlephiumWindowObject => {
-  const alephium = gaw.getAlephium()
-
-  alephium.enable = async (options?: EnableOptions): Promise<Address> => {
-    const wallet = await connect({ showList: options?.showModal })
-    return wallet?.enable(options)
-  }
-
-  return alephium
+  return gaw.getAlephium()
 }
 
 /**
@@ -50,6 +43,6 @@ export const connect = (options?: GetAlephiumWalletOptions): Promise<AlephiumWin
  * @param {DisconnectOptions} [options]
  * @returns {boolean}
  */
-export const disconnect = (options?: DisconnectOptions): boolean => {
+export const disconnect = (options?: DisconnectOptions): Promise<boolean> => {
   return gaw.disconnect(options)
 }

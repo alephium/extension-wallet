@@ -97,7 +97,7 @@ export interface IGetAlephiumWallet {
    * disconnect from a wallet
    * @param options
    */
-  disconnect(options?: DisconnectOptions): boolean
+  disconnect(options?: DisconnectOptions): Promise<boolean>
 
   /**
    * returns a list of browser-installed wallets (as opposed to browser-available wallets)
