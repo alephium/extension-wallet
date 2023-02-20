@@ -13,7 +13,7 @@ import { EXTENSION_IS_POPUP } from "../browser/constants"
 import { recover } from "../recovery/recovery.service"
 import { PasswordForm } from "./PasswordForm"
 
-const { ArgentXLogo } = logos
+const { AlephiumLogoDark, AlephiumLogoLight } = logos
 
 export const LockScreen: FC = () => {
   const navigate = useNavigate()
@@ -39,7 +39,7 @@ export const LockScreen: FC = () => {
           Reset
         </P4>
         <Text pt={18} fontSize="10xl">
-          <ArgentXLogo />
+          <AlephiumLogoLight />
         </Text>
         <Box mt="8" mb="8" width="100%">
           <H2>Welcome back</H2>

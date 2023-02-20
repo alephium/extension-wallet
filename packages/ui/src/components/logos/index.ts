@@ -2,6 +2,8 @@
 
 export { default as ArgentXLogoFull } from "./ArgentXLogoFull"
 export { default as ArgentXLogo } from "./ArgentXLogo"
+export { default as AlephiumLogoDark } from "./AlephiumLogoDark"
+export { default as AlephiumLogoLight } from "./AlephiumLogoLight"
 export { default as Github } from "./Github"
 export { default as Discord } from "./Discord"
 export { default as Twitter } from "./Twitter"
