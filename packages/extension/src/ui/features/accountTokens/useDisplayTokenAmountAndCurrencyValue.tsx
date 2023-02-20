@@ -7,7 +7,7 @@ import {
   prettifyTokenAmount,
 } from "../../../shared/token/price"
 import { useAppState } from "../../app.state"
-import { isEqualAddress } from "../../services/addresses"
+import { formatLongString, isEqualAddress } from "../../services/addresses"
 import { useTokenAmountToCurrencyValue } from "./tokenPriceHooks"
 import { useTokensInNetwork } from "./tokens.state"
 
@@ -51,4 +51,53 @@ export const useDisplayTokenAmountAndCurrencyValue = ({
     displayAmount,
     displayValue,
   }
+}
+
+export interface IUseDisplayTokensAmountAndCurrencyValue {
+  amounts: {id: string, amount: bigint}[],
+  currencySymbol?: string
+}
+
+const defaultAmountFmt: BigIntToLocaleStringOptions = {
+  notation: 'scientific',
+  maximumFractionDigits: 6 // The default is 3, but 20 is the maximum supported by JS according to MDN.
+};
+
+export const useDisplayTokensAmountAndCurrencyValue = ({
+  amounts,
+  currencySymbol = "$",
+}: IUseDisplayTokensAmountAndCurrencyValue) => {
+  const { switcherNetworkId } = useAppState()
+  const tokensByNetwork = useTokensInNetwork(switcherNetworkId)
+  return amounts.map(amount => {
+    const token = amount.id
+      ? tokensByNetwork.find(({ address }) =>
+          isEqualAddress(address, amount.id),
+        )
+      : undefined
+      const naiveAmount = amount.amount.toLocaleString('en-US', defaultAmountFmt) + " (?)"
+      if (!token) {
+        return {
+          displayAmount: naiveAmount,
+          displayValue: null,
+        }
+      }
+      const displayAmount = prettifyTokenAmount({
+        amount: amount.amount,
+        decimals: token?.decimals,
+        symbol: token?.symbol || "Unknown token",
+      })
+      const displayValue = null
+      if (displayAmount !== undefined) {
+        return {
+          displayAmount,
+          displayValue,
+        }
+      } else {
+        return {
+          displayAmount: naiveAmount,
+          displayValue: null
+        }
+      }
+  })
 }

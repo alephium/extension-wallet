@@ -7,7 +7,7 @@ import { Token } from "../../../shared/token/type"
 import { TransactionStatusIndicator } from "../../components/StatusIndicator"
 import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
-import { TransactionListItem } from "./TransactionListItem"
+import { ReviewedTransactionListItem, TransactionListItem } from "./TransactionListItem"
 import { transformExplorerTransaction, transformTransaction } from "./transform"
 import { isActivityTransaction, isExplorerTransaction } from "./transform/is"
 import { LoadMoreTrigger } from "./ui/LoadMoreTrigger"
@@ -39,16 +39,11 @@ export const AccountActivity: FC<AccountActivityProps> = ({
           {transactions.map((transaction) => {
             if (isActivityTransaction(transaction)) {
               const { hash, isRejected } = transaction
-              const transactionTransformed = transformTransaction({
-                transaction,
-                accountAddress: account.address,
-                tokensByNetwork,
-                nftContractAddresses,
-              })
+              const transactionTransformed = transaction.meta?.reviewTxResult
 
               if (transactionTransformed) {
                 return (
-                  <TransactionListItem
+                  <ReviewedTransactionListItem
                     key={hash}
                     transactionTransformed={transactionTransformed}
                     networkId={account.networkId}
@@ -59,7 +54,7 @@ export const AccountActivity: FC<AccountActivityProps> = ({
                         <TransactionStatusIndicator color={"red"} />
                       </div>
                     ) : null}
-                  </TransactionListItem>
+                  </ReviewedTransactionListItem>
                 )
               }
               return null

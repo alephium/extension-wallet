@@ -1,8 +1,10 @@
 import { H6, P4 } from "@argent/ui"
 import { Flex } from "@chakra-ui/react"
 import { FC, ReactNode, useMemo } from "react"
+import { ReviewTransactionResult } from "../../../shared/actionQueue/types"
 
 import { CustomButtonCell } from "../../components/CustomButtonCell"
+import { formatLongString } from "../../services/addresses"
 import { PrettyAccountAddress } from "../accounts/PrettyAccountAddress"
 import {
   isAlphTransferTransaction,
@@ -19,8 +21,8 @@ import { TransformedTransaction } from "./transform/type"
 import { NFTImage } from "./ui/NFTImage"
 import { SwapAccessory } from "./ui/SwapAccessory"
 import { SwapTransactionIcon } from "./ui/SwapTransactionIcon"
-import { TransactionIcon } from "./ui/TransactionIcon"
-import { TransferAccessory } from "./ui/TransferAccessory"
+import { ReviewedTransactionIcon, TransactionIcon } from "./ui/TransactionIcon"
+import { ReviewedTransferAccessory, TransferAccessory } from "./ui/TransferAccessory"
 
 export interface TransactionListItemProps {
   transactionTransformed: TransformedTransaction
@@ -142,6 +144,138 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
           >
             {subtitle}
           </P4>
+        </Flex>
+      </Flex>
+      {accessory}
+      {children}
+    </CustomButtonCell>
+  )
+}
+
+export interface ReviewedTransactionListItemProps {
+  transactionTransformed: ReviewTransactionResult
+  networkId: string
+  highlighted?: boolean
+  onClick?: () => void
+  children?: ReactNode | ReactNode[]
+}
+
+export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> = ({
+  transactionTransformed,
+  networkId,
+  highlighted,
+  children,
+  ...props
+}) => {
+  const isTransfer = transactionTransformed.type === 'TRANSFER'
+  const isDeployContract = transactionTransformed.type === 'DEPLOY_CONTRACT'
+  const isExecuteScript = transactionTransformed.type === 'EXECUTE_SCRIPT'
+  const isUnsignedTx = transactionTransformed.type === 'UNSIGNED_TX'
+
+  const subtitles = useMemo(() => {
+    if (isTransfer) {
+      return transactionTransformed.params.destinations.map(destination => (
+        <>
+          {"To: "}
+          <PrettyAccountAddress
+            accountAddress={destination.address}
+            networkId={networkId}
+            icon={false}
+          />
+        </>
+        
+      ))
+    }
+    if (isDeployContract) {
+      return [<>{`@${formatLongString(transactionTransformed.result.contractAddress)}`}</>]
+    }
+    if (isExecuteScript) {
+      return [<>{`Run: ${formatLongString(transactionTransformed.params.bytecode)}`}</>]
+    }
+    if (isUnsignedTx) {
+      return [<>{`Raw tx: ${formatLongString(transactionTransformed.params.unsignedTx)}`}</>]
+    }
+    return null
+  }, [
+    isTransfer,
+    isDeployContract,
+    isExecuteScript,
+    isUnsignedTx,
+    transactionTransformed,
+    networkId
+  ])
+
+  const displayName = useMemo(() => {
+    switch (transactionTransformed.type) {
+      case "TRANSFER":
+        return "Transfer"
+      case "DEPLOY_CONTRACT":
+        return "New Contract"
+      case "EXECUTE_SCRIPT":
+        return "Call Contract"
+      default:
+        return "Raw tx"
+    }
+  }, [transactionTransformed])
+
+  const accessory = useMemo(() => {
+    if (isTransfer) {
+      return <ReviewedTransferAccessory transaction={transactionTransformed.params} />
+    }
+    if (isDeployContract) {
+      const mintAmount = transactionTransformed.params.issueTokenAmount
+      if (mintAmount !== undefined) {
+        return <H6
+          overflow="hidden"
+          textOverflow={"ellipsis"}
+          textAlign={"right"}
+          color="green.400"
+        >
+          {`Mint ${mintAmount} (?)`}
+        </H6>
+      } 
+      return null
+    }
+    if (isExecuteScript) {
+      return null
+    }
+    if (isUnsignedTx) {
+      return null
+    }
+    return null
+  }, [isTransfer, isDeployContract, isExecuteScript, isUnsignedTx])
+
+  const icon = useMemo(() => {
+    return <ReviewedTransactionIcon transaction={transactionTransformed} size={9} />
+  }, [transactionTransformed])
+
+  return (
+    <CustomButtonCell highlighted={highlighted} {...props}>
+      {icon}
+      <Flex
+        flexGrow={1}
+        alignItems="center"
+        justifyContent={"space-between"}
+        gap={2}
+        overflow={"hidden"}
+      >
+        <Flex direction={"column"} overflow="hidden">
+          <H6 overflow="hidden" textOverflow={"ellipsis"}>
+            {displayName}
+          </H6>
+          {subtitles !== null &&
+            subtitles.map((t,index) => {
+              return (<P4
+                key={index}
+                color="neutrals.300"
+                fontWeight={"semibold"}
+                overflow="hidden"
+                textOverflow={"ellipsis"}
+              >
+                {t}
+              </P4>)
+            })
+          }
         </Flex>
       </Flex>
       {accessory}

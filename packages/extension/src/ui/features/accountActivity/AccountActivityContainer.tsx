@@ -35,7 +35,7 @@ export const AccountActivityContainer: FC<AccountActivityContainerProps> = ({
       <PendingTransactionsContainer account={account} />
       <ErrorBoundary
         fallback={
-          <ErrorBoundaryFallback title="Seems like Voyager API is down..." />
+          <ErrorBoundaryFallback title="Seems like Explorer API is down..." />
         }
       >
         <Suspense

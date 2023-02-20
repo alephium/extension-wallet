@@ -23,6 +23,7 @@ export interface TransactionMeta {
   subTitle?: string
   transactions?: Call | Call[]
   type?: string // TODO: in future can be DECLARE | DEPLOY | CALL
+  reviewTxResult?: ReviewTransactionResult
 }
 
 export interface TransactionBase {

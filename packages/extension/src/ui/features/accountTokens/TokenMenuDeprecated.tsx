@@ -60,8 +60,6 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
 
   const [isALPH] = useState(tokenId === '0x0000000000000000000000000000000000000000000000000000000000000000')
 
-  console.log(`===== tokenId: ${tokenId}`)
-
   useOnClickOutside(ref, () => setMenuOpen(false))
 
   return (

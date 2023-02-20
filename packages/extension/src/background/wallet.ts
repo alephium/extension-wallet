@@ -143,7 +143,6 @@ export class Wallet {
     account: WalletAccount,
     params: SignMessageParams
   ): Promise<SignMessageResult> {
-    console.log(`====== ${JSON.stringify(params)}`)
     const signer = await this.getPrivateKeySigner(account)
     return signer.signMessage(params)
   }

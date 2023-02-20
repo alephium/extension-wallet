@@ -1,5 +1,5 @@
 import { convertAlphToSet } from "@alephium/sdk"
-import { ALPH_TOKEN_ID, Destination, NodeProvider } from "@alephium/web3"
+import { ALPH_TOKEN_ID, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
 import { BuildSweepAddressTransactionsResult } from "@alephium/web3/dist/src/api/api-alephium"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
 import { utils } from "ethers"
@@ -435,19 +435,20 @@ export const SendTokenScreen: FC = () => {
                   if (isAlphToken(tokenAddress)) {
                     destination = {
                       address: recipient,
-                      attoAlphAmount: convertAlphToSet(amount) + BigInt(standardFee),
+                      attoAlphAmount: convertAlphToSet(amount),
                       tokens: []
                     }
                   } else {
                     destination = {
                       address: recipient,
-                      attoAlphAmount: minimumALPHAmount(1) + BigInt(standardFee),
+                      attoAlphAmount: DUST_AMOUNT,
                       tokens: [{ id: tokenAddress as string, amount: BigInt(amount) }]
                     }
                   }
 
                   sendTransferTransaction({
                     signerAddress: account.address,
+                    signerKeyType: account.signer.keyType,
                     networkId: account.networkId,
                     destinations: [destination],
                   })

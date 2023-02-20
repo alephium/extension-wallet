@@ -37,7 +37,7 @@ interface OptionalBuiltTransaction {
   unsignedTx?: string
   txId?: string
 }
-type TransactionPayload<T> = T & OptionalBuiltTransaction
+export type TransactionPayload<T> = T & OptionalBuiltTransaction
 
 export type TransactionParams = (
   | {
