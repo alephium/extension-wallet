@@ -21,6 +21,15 @@ import { FormError } from "../../theme/Typography"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import { TOTAL_NUMBER_OF_GROUPS } from "@alephium/web3"
 import { useAddAccount } from "./useAddAccount"
+import { AlephiumLogo } from "../../components/Icons/ArgentXLogo"
+import styled from "styled-components"
+
+const StyledAlephiumLogo = styled(AlephiumLogo)`
+  font-size: 20px;
+  color: ${({ theme }) => theme.primary};
+  width: 1.5em; 
+  height: 1.5em;
+`
 
 interface MenuSelectorProps {
   title: string
@@ -88,7 +97,7 @@ export const AddAccount: FC = () => {
         <OptionsWrapper>
           <Option
             title="Create new Alephium account"
-            icon={<AlephiumIcon />}
+            icon={<StyledAlephiumLogo />}
             description="Generate a new wallet address"
             hideArrow
             onClick={() => handleAddAccount(group, signMethod)}
