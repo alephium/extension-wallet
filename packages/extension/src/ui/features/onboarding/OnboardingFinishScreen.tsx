@@ -2,7 +2,6 @@ import { Twitter } from "@mui/icons-material"
 import { Slide, SlideProps, Snackbar } from "@mui/material"
 import { FC, useCallback } from "react"
 import styled from "styled-components"
-import { AlephiumIcon } from "../../components/Icons/AlephiumIcon"
 
 import { AlephiumLogo, ArgentXLogo } from "../../components/Icons/ArgentXLogo"
 import { DiscordIcon } from "../../components/Icons/DiscordIcon"
@@ -58,9 +57,11 @@ const StyledArgentXLogo = styled(ArgentXLogo)`
   color: ${({ theme }) => theme.primary};
 `
 
-const StyledAlephiumLogo = styled(AlephiumIcon)`
+const StyledAlephiumLogo = styled(AlephiumLogo)`
   font-size: 20px;
   color: ${({ theme }) => theme.primary};
+  width: 1em; 
+  height: 1em;
 `
 
 const StyledPushPinIcon = styled(PushPinIcon)`
