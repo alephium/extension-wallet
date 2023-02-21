@@ -62,7 +62,6 @@ import { SeedSettingsScreen } from "./features/settings/SeedSettingsScreen"
 import { SettingsPrivacyStatementScreen } from "./features/settings/SettingsPrivacyStatementScreen"
 import { SettingsScreen } from "./features/settings/SettingsScreen"
 import { SmartContractDevelopmentScreen } from "./features/settings/SmartContractDevelopmentScreen"
-import { NoSwap } from "./features/swap/NoSwap"
 import { ReviewFeedbackScreen } from "./features/userReview/ReviewFeedbackScreen"
 import { ReviewRatingScreen } from "./features/userReview/ReviewRatingScreen"
 import { routes } from "./routes"
@@ -127,11 +126,6 @@ const walletRoutes = (
       presentation="push"
       path={routes.accountCollections.path}
       element={<AccountScreen tab="collections" />}
-    />
-    <Route
-      presentation="push"
-      path={routes.swap.path}
-      element={<NoSwap />}
     />
     <Route
       presentation="push"

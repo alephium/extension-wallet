@@ -6,7 +6,6 @@ import { AccountCollections } from "../accountNfts/AccountCollections"
 import { AccountTokens } from "../accountTokens/AccountTokens"
 import { StatusMessageFullScreenContainer } from "../statusMessage/StatusMessageFullScreen"
 import { useShouldShowFullScreenStatusMessage } from "../statusMessage/useShouldShowFullScreenStatusMessage"
-import { NoSwap } from "../swap/NoSwap"
 import { AccountContainer } from "./AccountContainer"
 import { useAccount, useSelectedAccount } from "./accounts.state"
 import { AccountScreenEmpty } from "./AccountScreenEmpty"
@@ -43,8 +42,6 @@ export const AccountScreen: FC<AccountScreenProps> = ({ tab }) => {
   } else if (tab === "activity") {
     scrollKey = "accounts/AccountActivityContainer"
     body = <AccountActivityContainer account={account} />
-  } else if (tab === "swap") {
-    <NoSwap />
   } else {
     assertNever(tab)
   }

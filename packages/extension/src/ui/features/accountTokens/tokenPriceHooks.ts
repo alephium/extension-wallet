@@ -1,4 +1,3 @@
-import { Token as SwapToken } from "@argent/x-swap"
 import { BigNumberish } from "ethers"
 import { useMemo } from "react"
 
@@ -78,7 +77,7 @@ export const usePriceAndTokenData = ARGENT_API_ENABLED
 /** @returns individual price details for the token */
 
 export const useTokenPriceDetails = (
-  token?: Token | TokenDetailsWithBalance | SwapToken,
+  token?: Token | TokenDetailsWithBalance,
   usePriceAndTokenDataImpl = usePriceAndTokenData,
 ) => {
   const { pricesData, tokenData } = usePriceAndTokenDataImpl()
@@ -103,7 +102,7 @@ export const useTokenPriceDetails = (
  */
 
 export const useTokenUnitAmountToCurrencyValue = (
-  token?: Token | TokenDetailsWithBalance | SwapToken,
+  token?: Token | TokenDetailsWithBalance,
   unitAmount?: BigNumberish,
   usePriceAndTokenDataImpl = usePriceAndTokenData,
 ) => {
@@ -125,7 +124,7 @@ export const useTokenUnitAmountToCurrencyValue = (
  */
 
 export const useTokenAmountToCurrencyValue = (
-  token?: Token | TokenDetailsWithBalance | SwapToken,
+  token?: Token | TokenDetailsWithBalance,
   amount?: BigNumberish,
   usePriceAndTokenDataImpl = usePriceAndTokenData,
 ) => {
