@@ -21,6 +21,8 @@ jobs:
           cache: "yarn"
 
       - run: yarn install --frozen-lockfile
+      - run: |
+          echo 'module.exports.basePath = "/extension-wallet >> packages/dapp/next.config.js
       - run: yarn build
         env:
           UPLOAD_SENTRY_SOURCEMAPS: false
