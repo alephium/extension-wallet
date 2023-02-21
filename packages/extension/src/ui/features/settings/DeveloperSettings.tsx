@@ -22,11 +22,6 @@ const DeveloperSettings: FC = () => {
         />
 
         <SettingsMenuItem
-          to={routes.settingsBlockExplorer()}
-          title="Block explorer"
-        />
-
-        <SettingsMenuItem
           to={routes.settingsSmartContractDevelopment()}
           title="Smart contract development"
         />

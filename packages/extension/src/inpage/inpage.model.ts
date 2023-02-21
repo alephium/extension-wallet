@@ -1,4 +1,4 @@
-import { EnableOptionsBase, InteractiveSignerProvider } from "@alephium/web3"
+import { Account, EnableOptionsBase, InteractiveSignerProvider } from "@alephium/web3"
 import type { AccountInterface, ProviderInterface } from "starknet"
 import type {
   AccountInterface as AccountInterface3,
@@ -87,19 +87,18 @@ export type EnableOptions = EnableOptionsBase & {
   showModal?: boolean
 }
 
-export interface AlephiumWindowObject
+export abstract class AlephiumWindowObject
   extends InteractiveSignerProvider<EnableOptions> {
-  id: string
-  name: string
-  icon: string
-  version: string
+  abstract id: string
+  abstract name: string
+  abstract icon: string
+  abstract version: string
 
-  connectedAddress: string | undefined
+  connectedAccount: Account | undefined
   connectedNetworkId: string | undefined
   onDisconnected: (() => Promise<void>) | undefined
 
-  enable(options?: EnableOptions): Promise<string>
-  isPreauthorized(): Promise<boolean>
+  abstract isPreauthorized(): Promise<boolean>
 }
 
 declare global {

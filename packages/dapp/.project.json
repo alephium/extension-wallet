@@ -10,7 +10,7 @@
   "infos": {
     "ShinyToken": {
       "sourceFile": "shiny-token.ral",
-      "sourceCodeHash": "801b7954ee412c9d6fafdbc123eebb924834307e6d68eeca4561f8cc120b102a",
+      "sourceCodeHash": "f3127fc222b6e142fc68e7fe43412d2246ac84f05e3e19d0c3bd9d3167ccb945",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "eb751581aa1fc6da7377f792446d49817a6627c1c41b30d1f83cb6ebb57492fa",
       "warnings": []

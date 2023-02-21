@@ -34,7 +34,7 @@ export const AddAlephiumAccountScreen = () => {
   const handleAddAddress = async () => {
     try {
       const group = getValues('group')
-      await addAccount(group)
+      await addAccount('default', group)
     } catch (error: any) {
       useAppState.setState({ error: `${error}` })
       navigate(routes.error())

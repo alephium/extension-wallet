@@ -1,5 +1,5 @@
 import { connect, getAlephium } from '@alephium/get-extension-wallet'
-import { SignMessageResult } from '@alephium/web3'
+import { MessageHasher, SignMessageResult } from '@alephium/web3'
 
 export const silentConnectWallet = async (
   onDisconnected: () => Promise<void>
@@ -43,15 +43,15 @@ export const getExplorerBaseUrl = (): string | undefined => {
   }
 }
 
-export const signMessage = async (message: string): Promise<SignMessageResult> => {
+export const signMessage = async (message: string, messageHasher: MessageHasher): Promise<SignMessageResult> => {
   const alephium = getAlephium()
-  if (!alephium.connectedAddress || !alephium.connectedNetworkId) {
+  if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
     throw Error("alephium object not initialized")
   }
 
   return await alephium.signMessage({
-    signerAddress: alephium.connectedAddress,
-    networkId: alephium.connectedNetworkId,
-    message
+    signerAddress: alephium.connectedAccount.address,
+    message,
+    messageHasher
   })
 }

@@ -33,6 +33,8 @@ export const ActionScreen: FC = () => {
   const isLastAction = actions.length === 1
   const signerAccount = useAccount(action.type === 'TRANSACTION' && selectedAccount
     ? { address: action.payload.params.signerAddress, networkId: selectedAccount?.networkId }
+    : action.type === 'SIGN' && selectedAccount
+    ? { address: action.payload.signerAddress, networkId: selectedAccount?.networkId }
     : undefined
   )
 
@@ -191,7 +193,7 @@ export const ActionScreen: FC = () => {
             useAppState.setState({ isLoading: false })
           }}
           onReject={onReject}
-          selectedAccount={selectedAccount}
+          selectedAccount={signerAccount}
         />
       )
 

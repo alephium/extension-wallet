@@ -1,4 +1,4 @@
-import { groupOfAddress } from "@alephium/web3"
+import { groupOfAddress, KeyType } from "@alephium/web3"
 import { H6, L2, P4, icons, typographyStyles } from "@argent/ui"
 import { Circle, Flex, Image, Text, Tooltip, chakra } from "@chakra-ui/react"
 import { ComponentProps, FC } from "react"
@@ -18,8 +18,8 @@ export interface AccountListItemProps extends CustomButtonCellProps {
   accountName: string
   accountAddress: string
   networkId: string
+  keyType: KeyType
   networkName?: string
-  accountType?: ArgentAccountType
   deploying?: boolean
   upgrade?: boolean
   connectedHost?: string
@@ -96,7 +96,7 @@ export const AccountListItem: FC<AccountListItemProps> = ({
   accountAddress,
   networkId,
   networkName,
-  accountType,
+  keyType,
   deploying,
   upgrade,
   connectedHost,
@@ -130,7 +130,7 @@ export const AccountListItem: FC<AccountListItemProps> = ({
             <H6 overflow={"hidden"} textOverflow={"ellipsis"}>
               {accountName}
             </H6>
-            {accountType === "argent-plugin" && (
+            {keyType === "bip340-schnorr" && (
               <L2
                 backgroundColor={"neutrals.900"}
                 px={1}
@@ -142,15 +142,14 @@ export const AccountListItem: FC<AccountListItemProps> = ({
                 border={"1px solid"}
                 borderColor={"neutrals.700"}
               >
-                Plugin
+                Schnorr
               </L2>
             )}
           </Flex>
           <Flex gap={2} color={"neutrals.300"}>
             <P4 fontWeight={"semibold"}>
-              {formatTruncatedAddress(accountAddress)}
+              {formatTruncatedAddress(accountAddress)} / Group:{groupOfAddress(accountAddress)}
             </P4>
-            <P4 noOfLines={1}>[Group: {groupOfAddress(accountAddress)}]</P4>
           </Flex>
         </Flex>
         <Flex direction={"column"}>

@@ -34,9 +34,9 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         throw Error("you need an open session")
       }
 
-      const { networkId, group } = msg.data
+      const { networkId, keyType, group } = msg.data
       try {
-        const account = await wallet.newAlephiumAccount(networkId, group ? parseInt(group) : undefined)
+        const account = await wallet.newAlephiumAccount(networkId, keyType, group ? parseInt(group) : undefined)
 
         analytics.track("createAccount", {
           status: "success",

@@ -21,7 +21,7 @@ const Home: NextPage = () => {
           return Promise.resolve(setConnected(false))
         }
       )
-      setAddress(wallet?.connectedAddress)
+      setAddress(wallet?.connectedAccount?.address)
       setNetwork(wallet?.connectedNetworkId)
       setConnected(!!wallet?.connectedNetworkId)
     }
@@ -37,7 +37,7 @@ const Home: NextPage = () => {
         return Promise.resolve(setConnected(false))
       }
     )
-    setAddress(wallet?.connectedAddress)
+    setAddress(wallet?.connectedAccount?.address)
     setNetwork(wallet?.connectedNetworkId)
     setConnected(!!wallet?.connectedNetworkId)
   }

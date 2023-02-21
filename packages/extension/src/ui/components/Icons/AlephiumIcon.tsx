@@ -3,7 +3,7 @@ import { FC, SVGProps } from "react"
 export const AlephiumIcon: FC<SVGProps<SVGSVGElement>> = (props) => {
   return (
     <svg version="1.0"
-      xmlns="http://www.w3.org/2000/svg"
+    xmlns="http://www.w3.org/2000/svg"
       width="36.000000pt"
       height="36.000000pt"
       viewBox="0 0 108.000000 108.000000"
@@ -19,6 +19,6 @@ export const AlephiumIcon: FC<SVGProps<SVGSVGElement>> = (props) => {
         <path d="M390 426 l-55 -11 -3 -114 -3 -114 52 7 c90 12 90 12 87 133 -2 60
 -7 107 -13 109 -5 1 -35 -3 -65 -10z"/>
       </g>
-    </svg>
+ </svg>
   )
 }

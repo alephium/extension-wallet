@@ -12,6 +12,6 @@ export const mapAlephiumTransactionToTransaction = (
   outputs: transaction.outputs,
   account,
   meta,
-  status: "ACCEPTED_ON_L1",
+  status: "ACCEPTED_ON_CHAIN",
   timestamp: transaction.timestamp,
 })

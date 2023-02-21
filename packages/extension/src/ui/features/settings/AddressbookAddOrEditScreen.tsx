@@ -231,7 +231,7 @@ export const AddressbookAddOrEditScreen: FC<AddressbookAddOrEditProps> = ({
             <div>
               <StyledControlledTextArea
                 name="address"
-                placeholder="Starknet Address"
+                placeholder="Alephium Address"
                 autoComplete="false"
                 control={control}
                 minRows={3}

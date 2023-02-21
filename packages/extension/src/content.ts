@@ -8,7 +8,7 @@ const script = document.createElement("script")
 
 script.src = browser.runtime.getURL("inpage.js")
 const argentExtensionId = browser.runtime.id
-script.id = "argent-x-extension"
+script.id = "alephium-extension"
 script.setAttribute("data-extension-id", argentExtensionId)
 
 container.insertBefore(script, container.children[0])

@@ -18,7 +18,7 @@ export type ActionMessage =
       data: { actionHash: string; result: TransactionResult }
     }
   | { type: "REJECT_ACTION"; data: { actionHash: string | string[] } }
-  | { type: "SIGN_MESSAGE"; data: SignMessageParams }
+  | { type: "SIGN_MESSAGE"; data: SignMessageParams & { networkId: string } }
   | { type: "SIGN_MESSAGE_RES"; data: { actionHash: string } }
   | { type: "SIGNATURE_FAILURE"; data: { actionHash: string } }
   | {

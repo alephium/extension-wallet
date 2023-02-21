@@ -1,7 +1,7 @@
 import type { MessageType, WindowMessageType } from "../shared/messages"
 
 const extensionId = document
-  .getElementById("argent-x-extension")
+  .getElementById("alephium-extension")
   ?.getAttribute("data-extension-id")
 
 export function sendMessage(msg: MessageType): void {

@@ -30,7 +30,7 @@ export const AccountScreen: FC<AccountScreenProps> = ({ tab }) => {
   let scrollKey = "accounts/AccountScreen"
   if (showEmpty) {
     return (
-      <AccountScreenEmpty onAddAccount={addAccount} />
+      <AccountScreenEmpty onAddAccount={() => addAccount('default')} />
     )
   } else if (shouldShowFullScreenStatusMessage) {
     return <StatusMessageFullScreenContainer />

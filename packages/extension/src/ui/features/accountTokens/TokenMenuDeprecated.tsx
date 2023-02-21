@@ -1,3 +1,4 @@
+import { addressFromContractId } from "@alephium/web3"
 import { FC, useRef, useState } from "react"
 import CopyToClipboard from "react-copy-to-clipboard"
 import { useNavigate } from "react-router-dom"
@@ -44,19 +45,20 @@ const MoreVertWrapper = styled(RowCentered)`
 `
 
 export interface TokenMenuProps {
-  tokenAddress: string
+  tokenId: string
   canHideToken?: boolean
 }
 
 export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
-  tokenAddress,
+  tokenId,
   canHideToken = true,
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const currentNetwork = useCurrentNetwork()
-  const blockExplorerTitle = useBlockExplorerTitle()
+
+  const [isALPH] = useState(tokenId === '0x0000000000000000000000000000000000000000000000000000000000000000')
 
   useOnClickOutside(ref, () => setMenuOpen(false))
 
@@ -70,32 +72,47 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
       {isMenuOpen && (
         <StyledMenu>
           <CopyToClipboard
-            text={normalizeAddress(tokenAddress)}
+            text={normalizeAddress(tokenId)}
             onCopy={() => setMenuOpen(false)}
           >
             <MenuItemWrapper>
               <MenuItem>
                 <ContentCopyIcon fontSize="inherit" htmlColor="white" />
-                Copy address
+                Copy token ID
               </MenuItem>
             </MenuItemWrapper>
           </CopyToClipboard>
+          { !isALPH &&
+            <CopyToClipboard
+              text={addressFromContractId(tokenId)}
+              onCopy={() => setMenuOpen(false)}
+            >
+              <MenuItemWrapper>
+                <MenuItem>
+                  <ContentCopyIcon fontSize="inherit" htmlColor="white" />
+                  Copy token address
+                </MenuItem>
+              </MenuItemWrapper>
+            </CopyToClipboard>
+          }
           <Separator />
           <MenuItemWrapper
             onClick={() =>
-              openBlockExplorerAddress(currentNetwork, tokenAddress)
+              openBlockExplorerAddress(currentNetwork, addressFromContractId(tokenId))
             }
           >
-            <MenuItem>
-              <ViewOnBlockExplorerIcon />
-              View on {blockExplorerTitle}
-            </MenuItem>
+            { !isALPH &&
+              <MenuItem>
+                <ViewOnBlockExplorerIcon />
+                View on explorer
+              </MenuItem>
+            }
           </MenuItemWrapper>
-          {canHideToken && (
+          {canHideToken && !isALPH && (
             <>
               <Separator />
               <MenuItemWrapper
-                onClick={() => navigate(routes.hideToken(tokenAddress))}
+                onClick={() => navigate(routes.hideToken(tokenId))}
               >
                 <MenuItem>
                   <IconWrapper>

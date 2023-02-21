@@ -1,4 +1,3 @@
-import { groupOfAddress } from "@alephium/web3"
 import { getAccounts } from "../shared/account/store"
 import {
   ActionItem,
@@ -45,19 +44,12 @@ export const handleActionApproval = async (
     }
 
     case "TRANSACTION": {
+      const transaction = additionalData as ReviewTransactionResult
       try {
-        const selectedAccount = await wallet.getSelectedAccount()
-
-        if (!selectedAccount || !additionalData) {
-          openUi()
-          return
-        }
-
-        const transaction = additionalData as ReviewTransactionResult
         await executeTransactionAction(
           transaction,
           background,
-          selectedAccount.networkId,
+          transaction.params.networkId,
         )
 
         return {
@@ -73,7 +65,7 @@ export const handleActionApproval = async (
     }
 
     case "SIGN": {
-      const account = await wallet.getSelectedAccount()
+      const account = await wallet.selectAccount({ address: action.payload.signerAddress, networkId: action.payload.networkId })
       if (!account) {
         throw Error("No selected account")
       }

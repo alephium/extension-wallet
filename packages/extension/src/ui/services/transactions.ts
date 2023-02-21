@@ -5,7 +5,7 @@ import { TransactionWithAddress } from '../../shared/alephium-transactions'
 import { executeTransaction } from "./backgroundTransactions"
 import { formatDate } from './dates'
 
-export const sendTransferTransaction = (data: SignTransferTxParams) => {
+export const sendTransferTransaction = (data: SignTransferTxParams & { networkId: string }) => {
   executeTransaction({
     type: "TRANSFER",
     params: data,
@@ -13,7 +13,7 @@ export const sendTransferTransaction = (data: SignTransferTxParams) => {
   })
 }
 
-export const sendUnsignedTxTransaction = (data: SignUnsignedTxParams) => {
+export const sendUnsignedTxTransaction = (data: SignUnsignedTxParams & { networkId: string}) => {
   executeTransaction({
     type: "UNSIGNED_TX",
     params: data,

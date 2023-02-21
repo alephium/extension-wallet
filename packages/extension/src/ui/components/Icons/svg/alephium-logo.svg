@@ -1,0 +1,9 @@
+<svg width="100%" height="100%" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect id="Artboard1" x="0" y="0" width="200" height="200" style="fill:none;"/><g id="Artboard11" serif:id="Artboard1"><circle cx="100" cy="100" r="100" style="fill:#17171a;"/><g><g><g><path d="M86.131,122.503c-0,-1.825 -1.443,-3.054 -3.224,-2.74l-21.295,3.754c-1.782,0.314 -3.224,2.052 -3.224,3.877l-0,40.269c-0,1.829 1.442,3.058 3.224,2.744l21.295,-3.754c1.781,-0.314 3.224,-2.052 3.224,-3.881l-0,-40.269Z" style="fill:#fff;"/></g><g><path d="M141.611,32.336c-0,-1.825 -1.442,-3.054 -3.224,-2.74l-21.295,3.755c-1.782,0.314 -3.224,2.051 -3.224,3.876l0,40.27c0,1.829 1.442,3.058 3.224,2.744l21.295,-3.755c1.782,-0.314 3.224,-2.051 3.224,-3.88l-0,-40.27Z" style="fill:url(#_Linear1);"/>
+    </g>
+    <g><path d="M89.591,41.725c-0.823,-1.811 -3.034,-3.005 -4.942,-2.668l-22.816,4.022c-1.909,0.337 -2.789,2.075 -1.967,3.886l50.523,111.275c0.823,1.811 3.038,3.015 4.947,2.679l22.816,-4.023c1.909,-0.336 2.784,-2.085 1.962,-3.897l-50.523,-111.274Z" style="fill:#fff;"/></g>
+    </g></g></g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-16.2624,32.3057,-32.3057,-16.2624,137.865,38.9998)"><stop offset="0" style="stop-color:#d503ff;stop-opacity:1"/><stop offset="1" style="stop-color:#16167f;stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>

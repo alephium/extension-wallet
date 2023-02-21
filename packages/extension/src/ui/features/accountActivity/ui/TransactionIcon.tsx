@@ -1,6 +1,7 @@
 import { icons } from "@argent/ui"
 import { Circle, Image } from "@chakra-ui/react"
 import { ComponentProps, FC } from "react"
+import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
 
 import { getTokenIconUrl } from "../../accountTokens/TokenIcon"
 import { DappIcon } from "../../actions/connectDapp/DappIcon"
@@ -17,6 +18,7 @@ const {
   SendIcon,
   ReceiveIcon,
   DeployIcon,
+  CodeIcon,
   ApproveIcon,
   NftIcon,
   SwapIcon,
@@ -118,6 +120,50 @@ export const TransactionIcon: FC<TransactionIconProps> = ({
           {badgeComponent}
         </Circle>
       )}
+    </Circle>
+  )
+}
+
+export interface ReviewedTransactionIconProps
+  extends Omit<ComponentProps<typeof Circle>, "outline"> {
+  transaction: ReviewTransactionResult
+  outline?: boolean
+}
+
+export const ReviewedTransactionIcon: FC<ReviewedTransactionIconProps> = ({
+  transaction,
+  size = 18,
+  outline = false,
+  ...rest
+}) => {
+  const badgeSize = Math.min(32, Math.round((size * 16) / 36))
+  const iconSize = Math.round((4 * (size * 16)) / 36)
+  let iconComponent = <ActivityIcon />
+  switch (transaction.type) {
+    case "TRANSFER":
+      iconComponent = <SendIcon />
+      break
+    case "DEPLOY_CONTRACT":
+      iconComponent = <DocumentIcon />
+      break
+    case "EXECUTE_SCRIPT":
+      iconComponent = <DeployIcon />
+      break
+    case "UNSIGNED_TX":
+      iconComponent = <CodeIcon />
+      break
+  }
+
+  return (
+    <Circle
+      size={size}
+      border={outline ? `1px solid white` : undefined}
+      position={"relative"}
+      bg={"neutrals.600"}
+      fontSize={iconSize}
+      {...rest}
+    >
+      {iconComponent}
     </Circle>
   )
 }

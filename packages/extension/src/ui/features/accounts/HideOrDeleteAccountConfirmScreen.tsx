@@ -93,7 +93,7 @@ export const HideOrDeleteAccountConfirmScreen: FC<{
       <StyledP>
         {mode === "hide"
           ? "You will be able to unhide the account from the account list screen."
-          : "You will not be able to recover this account in the future."}
+          : "You will need to recover this account manually in the future."}
       </StyledP>
     </DeprecatedConfirmScreen>
   )

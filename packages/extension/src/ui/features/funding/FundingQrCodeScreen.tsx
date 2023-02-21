@@ -1,5 +1,5 @@
-import { BarBackButton, BarCloseButton, NavigationContainer } from "@argent/ui"
-import { FC, useCallback, useRef } from "react"
+import { AlertDialog, BarBackButton, BarCloseButton, NavigationContainer } from "@argent/ui"
+import { FC, useCallback, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
@@ -20,6 +20,7 @@ import { QrCode } from "./QrCode"
 import { testNodeWallet } from '@alephium/web3-test'
 import { web3 } from "@alephium/web3"
 import { defaultNetworks } from "../../../shared/network"
+import { Flex } from "@chakra-ui/react"
 
 const Container = styled.div`
   padding: 0 20px;
@@ -36,6 +37,17 @@ const StyledIconButton = styled(IconButton)`
   width: auto;
 `
 
+const alterMessages = [
+  {
+    title: "Request $ALPH",
+    message: "The faucet can be requested once per 5 minutes, please try later"
+  },
+  {
+    title: "Request $ALPH",
+    message: "The local Devnet is not available, please start one"
+  }
+]
+
 export const FundingQrCodeScreen: FC = () => {
   const navigate = useNavigate()
   const addressRef = useRef<HTMLParagraphElement | null>(null)
@@ -45,6 +57,8 @@ export const FundingQrCodeScreen: FC = () => {
   })
   const { accountNames } = useAccountMetadata()
   const copyAccountAddress = account ? normalizeAddress(account.address) : ""
+  const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false)
+  const [alterMessageIndex, setAlterMessageIndex] = useState(0)
 
   /** Intercept 'copy' event and replace fragmented address with plain text address */
   const onCopyAddress = useCallback(
@@ -85,11 +99,21 @@ export const FundingQrCodeScreen: FC = () => {
     if (account?.networkId === 'testnet') {
       // TODO: improve UX based on response
       fetch('https://faucet.testnet.alephium.org/send', { method: 'POST', body: account?.address })
+      .then(res =>{
+        if (!res.ok) {
+          setAlterMessageIndex(0)
+          setAlertDialogIsOpen(true)
+        }
+      })
     } else if (account?.networkId === 'devnet') {
       web3.setCurrentNodeProvider(defaultNetworks[2]['nodeUrl'])
       const wallet = await testNodeWallet()
-      const signerAddress = await wallet.getSelectedAddress()
+      const signerAddress = await (await wallet.getSelectedAccount()).address
       wallet.signAndSubmitTransferTx({ signerAddress: signerAddress, destinations: [{ address: account.address, attoAlphAmount: BigInt(1e21) }] })
+      .catch(() =>{
+        setAlterMessageIndex(1)
+        setAlertDialogIsOpen(true)
+      })
     }
   }, [])
 
@@ -100,6 +124,14 @@ export const FundingQrCodeScreen: FC = () => {
         <BarCloseButton onClick={() => navigate(routes.accountTokens())} />
       }
     >
+    <Flex gap={2} mx={"auto"}>
+      <AlertDialog
+        isOpen={alertDialogIsOpen}
+        title={alterMessages[alterMessageIndex].title}
+        message={alterMessages[alterMessageIndex].message}
+        onCancel={() => setAlertDialogIsOpen(false)}
+        cancelTitle={"OK"}
+      />
       <PageWrapper>
         {account && (
           <Container>
@@ -130,6 +162,7 @@ export const FundingQrCodeScreen: FC = () => {
           </Container>
         )}
       </PageWrapper>
+    </Flex>
     </NavigationContainer>
   )
 }

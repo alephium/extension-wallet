@@ -1,14 +1,16 @@
 import { Destination, MIN_UTXO_SET_AMOUNT, node } from "@alephium/web3"
 import { lowerCase, upperFirst } from "lodash-es"
-import { Call, Status } from "starknet"
+import { Call } from "starknet"
 import { ReviewTransactionResult } from "./actionQueue/types"
 import { Input, Output } from '@alephium/sdk/api/explorer'
 
 import { WalletAccount } from "./wallet.model"
 
+export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED';
+
 // Global Constants for Transactions
 export const SUCCESS_STATUSES: Status[] = [
-  "ACCEPTED_ON_L1",
+  "ACCEPTED_ON_CHAIN",
   "ACCEPTED_ON_L2",
   "PENDING",
 ]
@@ -23,6 +25,7 @@ export interface TransactionMeta {
   subTitle?: string
   transactions?: Call | Call[]
   type?: string // TODO: in future can be DECLARE | DEPLOY | CALL
+  reviewTxResult?: ReviewTransactionResult
 }
 
 export interface TransactionBase {

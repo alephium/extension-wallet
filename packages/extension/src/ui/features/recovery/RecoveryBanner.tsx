@@ -17,7 +17,7 @@ export const RecoveryBanner: FC = () => {
       size="lg"
       icon={<LockIcon />}
       onClick={() => {
-        navigate(routes.setupRecovery(returnTo))
+        navigate(routes.setupSeedRecovery(returnTo))
       }}
     />
   )

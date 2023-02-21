@@ -11,7 +11,7 @@ import { openBlockExplorerTransaction, openExplorerTransaction } from "../../ser
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { useTokensWithBalance } from "../accountTokens/tokens.state"
 import { useCurrentNetwork, useNetwork } from "../networks/useNetworks"
-import { TransactionListItem } from "./TransactionListItem"
+import { ReviewedTransactionListItem, TransactionListItem } from "./TransactionListItem"
 import { transformTransaction } from "./transform"
 
 interface PendingTransactionsContainerProps {
@@ -73,15 +73,11 @@ export const PendingTransactions: FC<PendingTransactionsProps> = ({
         </Flex>
       </HeaderCell>
       {pendingTransactions.map((transaction) => {
-        const transactionTransformed = transformTransaction({
-          transaction,
-          accountAddress,
-          tokensByNetwork,
-        })
+        const transactionTransformed = transaction.meta?.reviewTxResult
         if (transactionTransformed) {
           const { hash } = transaction
           return (
-            <TransactionListItem
+            <ReviewedTransactionListItem
               key={hash}
               transactionTransformed={transactionTransformed}
               networkId={network.id}

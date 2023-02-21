@@ -1,3 +1,4 @@
+import { KeyType } from "@alephium/web3"
 import { useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -10,8 +11,8 @@ export const useAddAccount = () => {
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
 
-  const addAccount = useCallback(async (group?: number) => {
-    const newAccount = await createAccount(switcherNetworkId, undefined, group)
+  const addAccount = useCallback(async (keyType: KeyType, group?: number) => {
+    const newAccount = await createAccount(switcherNetworkId, keyType, undefined, group)
     // switch background wallet to the account that was selected
     await selectAccount(newAccount)
     navigate(await recover())

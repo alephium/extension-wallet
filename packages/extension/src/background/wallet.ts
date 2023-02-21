@@ -1,5 +1,4 @@
 import {
-  deriveNewAddressData,
   getStorage,
   walletGenerate,
   walletImport,
@@ -23,10 +22,13 @@ import {
   addressFromPublicKey,
   publicKeyFromPrivateKey,
   groupOfAddress,
+  KeyType,
+  binToHex,
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
   deriveHDWalletPrivateKey,
+  deriveHDWalletPrivateKeyForGroup
 } from "@alephium/web3-wallet"
 import { ethers } from "ethers"
 import { ProgressCallback } from "ethers/lib/utils"
@@ -153,9 +155,8 @@ export class Wallet {
 
     const network = await this.getNetwork(account.networkId)
     const nodeProvider = new NodeProvider(network.nodeUrl)
-    const group = groupOfAddress(account.address)
-    const addressAndKeys = deriveNewAddressData(session.seed, group, account.signer.derivationIndex)
-    return new PrivateKeyWallet(addressAndKeys.privateKey, nodeProvider)
+    const privateKey = deriveHDWalletPrivateKey(session.secret, account.signer.keyType, account.signer.derivationIndex)
+    return new PrivateKeyWallet(privateKey, account.signer.keyType, nodeProvider)
   }
 
   public async isInitialized(): Promise<boolean> {
@@ -310,6 +311,7 @@ export class Wallet {
               signer: {
                 type: "local_secret",
                 publicKey: '', // FIXME
+                keyType: 'default', // FIXME
                 derivationIndex: lastCheck,
               },
               type: "argent",
@@ -437,7 +439,7 @@ export class Wallet {
     await this.walletStore.push(accounts)
   }
 
-  public async newAccount(networkId: string): Promise<WalletAccount> {
+  public async newAccount(networkId: string, keyType: KeyType, forGroup?: number): Promise<WalletAccount> {
     const session = await this.sessionStore.get()
     if (!this.isSessionOpen() || !session) {
       throw Error("no open session")
@@ -446,13 +448,14 @@ export class Wallet {
     const accounts = await this.walletStore.get(withHiddenSelector)
 
     const currentIndexes = accounts
-      .filter((account) => account.signer.type === "local_secret")
+      .filter((account) => account.signer.type === "local_secret" && account.signer.keyType === keyType)
       .map((account) => account.signer.derivationIndex)
 
-    const index = getNextPathIndex(currentIndexes)
-    const privateKey = deriveHDWalletPrivateKey(session.secret, index)
-    const publicKey = publicKeyFromPrivateKey(privateKey)
-    const newAddress = addressFromPublicKey(publicKey)
+    const startIndex = getNextPathIndex(currentIndexes)
+    const [privateKey, index] = forGroup === undefined ? [deriveHDWalletPrivateKey(session.secret, keyType, startIndex), startIndex]
+      : deriveHDWalletPrivateKeyForGroup(session.secret, forGroup, keyType, startIndex)
+    const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
+    const newAddress = addressFromPublicKey(publicKey, keyType)
 
     const account: WalletAccount = {
       address: newAddress,
@@ -460,6 +463,7 @@ export class Wallet {
       signer: {
         type: "local_secret" as const,
         publicKey: publicKey,
+        keyType: keyType,
         derivationIndex: index,
       },
       type: "argent",
@@ -472,21 +476,7 @@ export class Wallet {
     return account
   }
 
-  deriveWalletAccount(networkId: string, seed: Buffer, forGroup?: number | undefined, addressIndex?: number | undefined, skipAddressIndexes?: number[]): WalletAccount {
-    const addressAndKeys = deriveNewAddressData(seed, forGroup, addressIndex, skipAddressIndexes)
-    return {
-      address: addressAndKeys.address,
-      networkId: networkId,
-      signer: {
-        type: "local_secret" as const,
-        publicKey: addressAndKeys.publicKey,
-        derivationIndex: addressAndKeys.addressIndex,
-      },
-      type: "argent",
-    }
-  }
-
-  public async newAlephiumAccount(networkId: string, group?: number): Promise<WalletAccount> {
+  public async newAlephiumAccount(networkId: string, keyType: KeyType, group?: number): Promise<WalletAccount> {
     const session = await this.sessionStore.get()
     if (!this.isSessionOpen() || !session) {
       throw Error("no open session")
@@ -495,22 +485,9 @@ export class Wallet {
     if (!session?.seed) {
       throw Error("no seed")
     } else {
-      // do not store at the moment, but use public key and private key to sign
-      // store later
-      const accounts = await this.walletStore.get()
-      const accountsForNetwork = accounts.filter((account) => account.networkId === networkId)
-
       group = group || group === 0 ? ~~group : undefined
-      const skipIndexes = accountsForNetwork.map((account) => account.signer.derivationIndex)
 
-      let newAndDefaultAddress
-      if (accountsForNetwork.length > 0) {
-        newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, undefined, skipIndexes)
-        await this.walletStore.push([newAndDefaultAddress])
-      } else {
-        newAndDefaultAddress = this.deriveWalletAccount(networkId, session.seed, group, 0, skipIndexes)
-        await this.walletStore.push([newAndDefaultAddress])
-      }
+      const newAndDefaultAddress = await this.newAccount(networkId, keyType, group)
 
       await this.store.set("selected", newAndDefaultAddress)
 
@@ -523,22 +500,9 @@ export class Wallet {
       accountsEqual(account, selector),
     )
     if (!hit) {
-      throw Error("account not found")
+      throw Error(`account not found`)
     }
     return hit
-  }
-
-  public async getPrivateKeyByDerivationPath(derivationIndex: number) {
-    const session = await this.sessionStore.get()
-    if (!session?.secret) {
-      throw Error("session is not open")
-    }
-    return deriveHDWalletPrivateKey(session.secret, derivationIndex)
-  }
-
-  public async getPublicKeyByDerivationPath(derivationIndex: number) {
-    const privateKey = await this.getPrivateKeyByDerivationPath(derivationIndex)
-    return publicKeyFromPrivateKey(privateKey)
   }
 
   public async getKeyPairByDerivationPath(derivationPath: string) {
@@ -652,6 +616,7 @@ export class Wallet {
 
     const privateKey = deriveHDWalletPrivateKey(
       session.secret,
+      account.signer.keyType,
       account.signer.derivationIndex,
     )
     return privateKey

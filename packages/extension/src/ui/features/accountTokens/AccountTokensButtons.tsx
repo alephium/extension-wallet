@@ -74,30 +74,25 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
         onConfirm={onAddFunds}
       />
       <SimpleGrid columns={sendToken ? 2 : 1} spacing={2}>
-        <Button
-          onClick={onAddFunds}
-          colorScheme={"tertiary"}
-          size="sm"
-          leftIcon={<AddIcon />}
-        >
-          Add funds
-        </Button>
-        {sendToken && (
           <Button
-            onClick={onSend}
+          onClick={onAddFunds}
             colorScheme={"tertiary"}
             size="sm"
-            leftIcon={<SendIcon />}
+          leftIcon={<AddIcon />}
           >
-            Send
+          Add funds
           </Button>
+        {sendToken && (
+        <Button
+            onClick={onSend}
+          colorScheme={"tertiary"}
+          size="sm"
+            leftIcon={<SendIcon />}
+        >
+            Send
+        </Button>
         )}
       </SimpleGrid>
-      {account?.type === "argent-plugin" && (
-        <Button onClick={onPlugins} colorScheme={"tertiary"} size="sm">
-          <PluginIcon />
-        </Button>
-      )}
     </Flex>
   )
 }

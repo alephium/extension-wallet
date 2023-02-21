@@ -3,7 +3,7 @@ import { Slide, SlideProps, Snackbar } from "@mui/material"
 import { FC, useCallback } from "react"
 import styled from "styled-components"
 
-import { ArgentXLogo } from "../../components/Icons/ArgentXLogo"
+import { AlephiumLogo, ArgentXLogo } from "../../components/Icons/ArgentXLogo"
 import { DiscordIcon } from "../../components/Icons/DiscordIcon"
 import {
   CheckCircleOutlineRoundedIcon,
@@ -57,6 +57,13 @@ const StyledArgentXLogo = styled(ArgentXLogo)`
   color: ${({ theme }) => theme.primary};
 `
 
+const StyledAlephiumLogo = styled(AlephiumLogo)`
+  font-size: 20px;
+  color: ${({ theme }) => theme.primary};
+  width: 1em; 
+  height: 1em;
+`
+
 const StyledPushPinIcon = styled(PushPinIcon)`
   margin-left: auto;
 `
@@ -71,7 +78,7 @@ const SnackbarMessage: FC = () => {
         <span>Pin the Alephium extension for quick access</span>
       </Row>
       <ArgentXButton>
-        <StyledArgentXLogo />
+        <StyledAlephiumLogo />
         <span>Alephium</span>
         <StyledPushPinIcon fontSize="inherit" />
       </ArgentXButton>

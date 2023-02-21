@@ -2,6 +2,7 @@ import { addAddressPadding } from "starknet"
 import urlJoin from "url-join"
 
 import { Network } from "../../shared/network"
+import { DEVNET } from "../../shared/network/defaults"
 import { settingsStore } from "../../shared/settings"
 import {
   defaultBlockExplorerKey,
@@ -15,24 +16,15 @@ export const useBlockExplorerTitle = () => {
   return settingsBlockExplorer?.title ?? "Explorer"
 }
 
-export const getBlockExplorerUrlForNetwork = async (network: Network) => {
-  const blockExplorerKey = await settingsStore.get("blockExplorerKey")
-  const settingsBlockExplorer = defaultBlockExplorers[blockExplorerKey]
-  if (
-    network.id === "mainnet-alpha" ||
-    network.id === "goerli-alpha" ||
-    network.id === "goerli-alpha-2"
-  ) {
-    return settingsBlockExplorer.url[network.id]
-  }
-  return defaultBlockExplorers[defaultBlockExplorerKey].url["mainnet-alpha"]
+export const getBlockExplorerUrlForNetwork = (network: Network) => {
+  return network.explorerUrl ?? DEVNET.explorerUrl
 }
 
 export const openBlockExplorerTransaction = async (
   hash: string,
   network: Network,
 ) => {
-  const blockExplorerUrl = await getBlockExplorerUrlForNetwork(network)
+  const blockExplorerUrl = getBlockExplorerUrlForNetwork(network)
   const url = urlJoin(blockExplorerUrl, "tx", hash)
   window.open(url, "_blank")?.focus()
 }
@@ -41,9 +33,8 @@ export const openBlockExplorerAddress = async (
   network: Network,
   address: string,
 ) => {
-  const paddedAddress = addAddressPadding(address)
-  const blockExplorerUrl = await getBlockExplorerUrlForNetwork(network)
-  const url = urlJoin(blockExplorerUrl, "contract", paddedAddress)
+  const blockExplorerUrl = getBlockExplorerUrlForNetwork(network)
+  const url = urlJoin(blockExplorerUrl, "addresses", address)
   window.open(url, "_blank")?.focus()
 }
 

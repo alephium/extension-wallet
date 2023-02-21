@@ -5,8 +5,10 @@ import {
   NavigationContainer,
   SpacerCell,
   icons,
+  BarCloseButton,
 } from "@argent/ui"
 import { Center, Flex, Image } from "@chakra-ui/react"
+import { nip19 } from "nostr-tools"
 import { FC, useCallback, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
@@ -29,7 +31,7 @@ import { useAccount } from "../accounts/accounts.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { AccountEditName } from "./AccountEditName"
 
-const { ExpandIcon, HideIcon, PluginIcon, AlertIcon } = icons
+const { ExpandIcon, HideIcon, PluginIcon, AlertIcon, CopyIcon } = icons
 
 export const AccountEditScreen: FC = () => {
   const currentNetwork = useCurrentNetwork()
@@ -95,6 +97,7 @@ export const AccountEditScreen: FC = () => {
     <>
       <NavigationContainer
         leftButton={<BarBackButton onClick={onClose} />}
+        rightButton={<BarCloseButton onClick={() => navigate(routes.accountTokens())}></BarCloseButton>}
         title={liveEditingAccountName}
       >
         <Center p={4}>
@@ -132,6 +135,18 @@ export const AccountEditScreen: FC = () => {
             >
               <AddressCopyButton address={accountAddress} />
             </Center>
+            { account !== undefined && account.signer.keyType === "bip340-schnorr" &&
+              <Center
+                border={"1px solid"}
+                borderColor={"border"}
+                borderTop={"none"}
+                borderBottomLeftRadius="lg"
+                borderBottomRightRadius="lg"
+                p={2}
+              >
+                <AddressCopyButton address={nip19.npubEncode(account?.publicKey)} type="nostr public key" title="Nostr" />
+              </Center>
+            }
           </Flex>
           <SpacerCell />
           <ButtonCell
@@ -141,7 +156,7 @@ export const AccountEditScreen: FC = () => {
             }
             rightIcon={<ExpandIcon />}
           >
-            View on {blockExplorerTitle}
+            View on explorer
           </ButtonCell>
           <ButtonCell
             onClick={() => account && handleHideOrDeleteAccount(account)}

@@ -15,7 +15,7 @@ import { Call, number } from "starknet"
 import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
 
 import { entryPointToHumanReadable } from "../../../../shared/transactions"
-import { formatTruncatedAddress } from "../../../services/addresses"
+import { formatTruncatedAddress, formatLongString } from "../../../services/addresses"
 
 
 export interface TransactionActionRow {
@@ -52,7 +52,7 @@ export function extractActions(transaction: ReviewTransactionResult): Transactio
           },
           {
             key: 'Group',
-            value: `${transaction.result.fromGroup} -> ${transaction.result.toGroup}`
+            value: `${transaction.result.groupIndex} -> ${transaction.result.groupIndex}`
           },
         ]
       }]
@@ -66,7 +66,7 @@ export function extractActions(transaction: ReviewTransactionResult): Transactio
           },
           {
             key: 'Group',
-            value: `${transaction.result.fromGroup} -> ${transaction.result.toGroup}`
+            value: `${transaction.result.groupIndex} -> ${transaction.result.groupIndex}`
           }
         ]
       }]
@@ -104,6 +104,8 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
       </Box>
       <Accordion
         allowToggle
+        allowMultiple
+        defaultIndex={0}
         backgroundColor="neutrals.800"
         pt="3.5"
         borderBottomRadius="xl"
@@ -176,7 +178,7 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                         gap="2"
                       >
                         <P4 color="neutrals.300" fontWeight="bold">
-                          {detail.key}
+                          {formatLongString(detail.key)}
                         </P4>
                         <P4
                           color="neutrals.400"

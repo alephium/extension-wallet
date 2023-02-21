@@ -8,6 +8,8 @@ import {
   ConfirmPageProps,
   DeprecatedConfirmScreen,
 } from "./DeprecatedConfirmScreen"
+import { Field, FieldGroup, FieldKey, FieldValue, SectionHeader } from "../../components/Fields"
+import { AccountAddressField } from "./transaction/fields/AccountAddressField"
 
 interface ApproveSignatureScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
@@ -22,6 +24,11 @@ export const Pre = styled.pre`
   background-color: rgba(255, 255, 255, 0.15);
   max-width: calc(100vw - 64px);
   overflow: auto;
+`
+
+export const Message = styled(Field)`
+  padding: 0px 0px;
+  color: ${({ theme }) => theme.text2};
 `
 
 export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
@@ -41,8 +48,24 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
       }}
       {...props}
     >
-      <P>A dapp wants you to sign this message:</P>
-      <Pre>{JSON.stringify(dataToSign, null, 2)}</Pre>
+      { selectedAccount &&
+        <FieldGroup>
+          <AccountAddressField
+            title="Signer"
+            accountAddress={selectedAccount.address}
+            networkId={selectedAccount.networkId}
+          />
+          <Field>
+            <FieldKey>Hasher</FieldKey>
+            <FieldValue>{dataToSign.messageHasher}</FieldValue>
+          </Field>
+          <SectionHeader>{dataToSign.message}</SectionHeader>
+          <Field>
+            <FieldKey>Network</FieldKey>
+            <FieldValue>{selectedAccount.networkName}</FieldValue>
+          </Field>
+        </FieldGroup>
+      }
     </DeprecatedConfirmScreen>
   )
 }
