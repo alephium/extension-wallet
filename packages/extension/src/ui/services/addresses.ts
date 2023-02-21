@@ -41,12 +41,11 @@ const isChecksumAddress = (address: string) => {
   return true
 }
 
-export const addressLength = 45
+// TODO: improve address validation
 export const addressSchema = yup
   .string()
   .trim()
   .required('Address is required')
-  .length(addressLength)
   .test((address, ctx) => {
     if (!address) {
       return ctx.createError({ message: 'Address is required' })
