@@ -43,8 +43,6 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     try {
       this.#declare()
 
-      const connected = this.#isConnected()
-
       const {
         installed: installedWallets,
         preAuthorized,
@@ -72,7 +70,7 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
       // 1. we are called while connected
       // 2. we were explicitly told to show it
       // 3. user never selected from the popup
-      const forcePopup = connected || options?.showList || !lastWallet
+      const forcePopup = options?.showList || !lastWallet
       if (!forcePopup) {
         // return user-set default wallet if available
         for (const stateWallet of [
@@ -105,17 +103,19 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
     this.#declare()
   }
 
-  disconnect = (options?: DisconnectOptions): boolean => {
+  disconnect = async (options?: DisconnectOptions): Promise<boolean> => {
     this.#declare()
+    const isConnected = this.#isConnected()
 
-    const connected = this.#isConnected()
-    this.#walletObjRef.current = undefined
+    if (isConnected) {
+      await this.#walletObjRef.current.disconnect()
+      this.#walletObjRef.current = undefined
+    }
 
     if (options?.clearLastWallet) lastWallet.delete()
     if (options?.clearDefaultWallet) defaultWallet.delete()
 
-    // disconnected successfully if was connected before
-    return connected
+    return Promise.resolve(isConnected)
   }
 
   getAlephium = (): AlephiumWindowObject => {
@@ -131,11 +131,14 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         id = "disconnected"
         name = "Disconnected"
         icon = ""
-        connectedAccount?: Account = undefined
-        disconnect = () => {
+        connectedAddress?: string = undefined
+        disconnect = async (): Promise<void> => {
           if (self.#walletObjRef.current) {
-            return self.#walletObjRef.current.disconnect()
+            await self.#walletObjRef.current.disconnect()
+            self.#walletObjRef.current = undefined
           }
+
+          return Promise.resolve()
         }
         /**
          * stores pre-enabled wallet `on` calls' listeners

@@ -1,9 +1,5 @@
 import { connect, getAlephium } from '@alephium/get-extension-wallet'
-import { AlephiumWindowObject } from '@alephium/get-extension-wallet/dist'
-import { CompiledContract, constants, shortString } from "starknet"
 import { MessageHasher, SignMessageResult } from '@alephium/web3'
-
-import { Network } from "./token.service"
 
 export const silentConnectWallet = async (
   onDisconnected: () => Promise<void>
@@ -12,12 +8,6 @@ export const silentConnectWallet = async (
   await windowAlephium?.enable({ onDisconnected, networkId: 'devnet', chainGroup: 0 })
   return windowAlephium
 }
-
-export const disconnectWallet = () => {
-  const alephium = getAlephium()
-  return alephium?.disconnect()
-}
-
 
 export const connectWallet = async (
   onDisconnected: () => Promise<void>
@@ -33,6 +23,11 @@ export const connectWallet = async (
   })
 
   return windowAlephium
+}
+
+export const disconnectWallet = () => {
+  const alephium = getAlephium()
+  return alephium?.disconnect()
 }
 
 export const networkId = (): string | undefined => {
