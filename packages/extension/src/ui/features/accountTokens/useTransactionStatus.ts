@@ -1,12 +1,11 @@
 import { memoize } from "lodash-es"
 import { useMemo } from "react"
-import { Status as StarkNetStatus } from "starknet"
 
 import { transactionsStore } from "../../../background/transactions/store"
 import { useArrayStorage } from "../../../shared/storage/hooks"
-import { Transaction } from "../../../shared/transactions"
+import { Transaction, Status as DetailedStatus } from "../../../shared/transactions"
 
-function transformStatus(status: StarkNetStatus): Status {
+function transformStatus(status: DetailedStatus): Status {
   return ["ACCEPTED_ON_CHAIN", "ACCEPTED_ON_L2", "PENDING"].includes(status)
     ? "SUCCESS"
     : status === "REJECTED"

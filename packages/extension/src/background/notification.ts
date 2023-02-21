@@ -1,8 +1,7 @@
-import { Status } from "starknet"
 import browser from "webextension-polyfill"
 
 import { ArrayStorage } from "../shared/storage"
-import { TransactionMeta } from "../shared/transactions"
+import { Status, TransactionMeta } from "../shared/transactions"
 
 const notificationsStorage = new ArrayStorage<string>(
   [],

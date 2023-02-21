@@ -18,6 +18,7 @@ const {
   SendIcon,
   ReceiveIcon,
   DeployIcon,
+  CodeIcon,
   ApproveIcon,
   NftIcon,
   SwapIcon,
@@ -143,13 +144,13 @@ export const ReviewedTransactionIcon: FC<ReviewedTransactionIconProps> = ({
       iconComponent = <SendIcon />
       break
     case "DEPLOY_CONTRACT":
-      iconComponent = <DeployIcon />
+      iconComponent = <DocumentIcon />
       break
     case "EXECUTE_SCRIPT":
-      iconComponent = <DocumentIcon />
+      iconComponent = <DeployIcon />
       break
     case "UNSIGNED_TX":
-      iconComponent = <DocumentIcon />
+      iconComponent = <CodeIcon />
       break
   }
 
