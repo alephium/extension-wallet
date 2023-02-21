@@ -1,4 +1,3 @@
-import { Multicall } from "@argent/x-multicall"
 import { partition } from "lodash-es"
 import { number } from "starknet"
 import useSWR from "swr"
