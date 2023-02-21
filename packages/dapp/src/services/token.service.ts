@@ -1,12 +1,8 @@
 import { getAlephium } from "@alephium/get-extension-wallet"
-import { getStarknet } from "@argent/get-starknet"
 import { utils } from "ethers"
-import { Abi, Contract, number, uint256 } from "starknet"
 import * as web3 from '@alephium/web3'
 import { binToHex, contractIdFromAddress, DUST_AMOUNT } from '@alephium/web3'
 import { ShinyToken, Transfer } from '../../artifacts/ts'
-
-import Erc20Abi from "../../abi/ERC20.json"
 
 export const erc20TokenAddressByNetwork = {
   "goerli-alpha":
@@ -70,17 +66,6 @@ export const getAlphBalance = async (address: string) => {
   const balance = await alephium.explorerProvider.addresses.getAddressesAddressBalance(address)
 
   return balance
-}
-
-function getUint256CalldataFromBN(bn: number.BigNumberish) {
-  return { type: "struct" as const, ...uint256.bnToUint256(bn) }
-}
-
-export function parseInputAmountToUint256(
-  input: string,
-  decimals: number = 18,
-) {
-  return getUint256CalldataFromBN(utils.parseUnits(input, decimals).toString())
 }
 
 export const mintToken = async (

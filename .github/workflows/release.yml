@@ -46,8 +46,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           npm config set "//registry.npmjs.org/:_authToken" "$NPM_ACCESS_TOKEN"
-          cp Readme.md ./packages/get-starknet/README.md
-          yarn --cwd packages/get-starknet publish --access public || exit 0
+          cp Readme.md ./packages/get-extension-wallet/README.md
+          yarn --cwd packages/get-extension-wallet publish --access public || exit 0
           yarn --cwd packages/sessions publish --access public || exit 0
       - run: yarn --cwd packages/dapp export
       - name: Check bundlesize for chrome

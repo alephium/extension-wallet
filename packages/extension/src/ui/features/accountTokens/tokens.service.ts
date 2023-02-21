@@ -1,13 +1,8 @@
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { utils } from "ethers"
-import { Abi, Contract, number, shortString, uint256 } from "starknet"
 import useSWR from "swr"
 
-import { Network } from "./../../../shared/network/type"
-import parsedErc20Abi from "../../../abis/ERC20.json"
 import { getTokenBalanceForAccount } from "../../../shared/token/getTokenBalance"
-import { Token } from "../../../shared/token/type"
-import { getFeeToken } from "../../../shared/token/utils"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { Account } from "../accounts/Account"
 import { TokenDetailsWithBalance, getNetworkFeeToken } from "./tokens.state"
