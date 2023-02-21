@@ -3,7 +3,7 @@ name: GitHub Pages
 on:
   push:
     branches:
-      - main
+      - test-gh
   pull_request:
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
 
       - run: yarn install --frozen-lockfile
       - run: |
-          echo 'module.exports = { basePath: "/argent-x" }' > packages/dapp/next.config.js
+          echo 'module.exports = { basePath: "/alephium" }' > packages/dapp/next.config.js
       - run: yarn build
         env:
           UPLOAD_SENTRY_SOURCEMAPS: false
