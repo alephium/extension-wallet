@@ -174,7 +174,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
 
   const subtitles = useMemo(() => {
     if (isTransfer) {
-      return transactionTransformed.params.destinations.map(destination => (
+      const result = transactionTransformed.params.destinations.map(destination => (
         <>
           {"To: "}
           <PrettyAccountAddress
@@ -185,6 +185,11 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
         </>
         
       ))
+      if (result.length > 4) {
+        return [...result.slice(0, 3), "..."]
+      } else {
+        return result
+      }
     }
     if (isDeployContract) {
       return [<>{`@${formatLongString(transactionTransformed.result.contractAddress)}`}</>]
@@ -231,7 +236,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
           textAlign={"right"}
           color="green.400"
         >
-          {`Mint ${mintAmount} (?)`}
+          {`Mint ${mintAmount} ${transactionTransformed.result.contractId.slice(0, 4).toUpperCase()}`}
         </H6>
       } 
       return null

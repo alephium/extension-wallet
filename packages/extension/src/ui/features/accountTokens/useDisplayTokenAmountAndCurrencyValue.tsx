@@ -75,7 +75,7 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
           isEqualAddress(address, amount.id),
         )
       : undefined
-      const naiveAmount = amount.amount.toLocaleString('en-US', defaultAmountFmt) + " (?)"
+      const naiveAmount = amount.amount.toLocaleString('en-US', defaultAmountFmt) + ` ${amount.id.slice(0, 4).toUpperCase()}`
       if (!token) {
         return {
           displayAmount: naiveAmount,

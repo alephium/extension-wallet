@@ -5,7 +5,7 @@ import { FC } from "react"
 
 import { prettifyCurrencyValue } from "../../../shared/token/price"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
-import { AddressCopyButton } from "../../components/AddressCopyButton"
+import { AddressCopyButton, AddressCopyButtonMain } from "../../components/AddressCopyButton"
 import { AccountStatus } from "../accounts/accounts.service"
 import { useSumTokenBalancesToCurrencyValue } from "./tokenPriceHooks"
 import { useTokensWithBalance } from "./tokens.state"
@@ -32,8 +32,7 @@ export const AccountTokensHeader: FC<AccountSubheaderProps> = ({
       ) : (
         <H2>{accountName}</H2>
       )}
-      <AddressCopyButton address={accountAddress} />
-      <L2 pt="0.5">Group: {groupOfAddress(accountAddress)}</L2>
+      <AddressCopyButtonMain address={accountAddress}/>
       {status.code === "ERROR" && (
         <VStack spacing={2} pt={2}>
           <FieldError>{status.text}</FieldError>

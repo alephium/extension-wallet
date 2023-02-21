@@ -72,9 +72,7 @@ export const ReviewedTransferAccessory: FC<ReviewedTransferAccessoryProps> = ({
     })
     return result
   }, [transaction])
-  console.log('Reviewed amounts', amounts)
   const displayAmounts = useDisplayTokensAmountAndCurrencyValue({amounts})
-  console.log('Reviewed display amounts', displayAmounts)
   return (
     <Flex direction={"column"} overflow="hidden">
       {displayAmounts.map((amount, index) => 
