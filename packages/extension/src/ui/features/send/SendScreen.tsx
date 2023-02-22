@@ -14,6 +14,7 @@ import {
   StyledControlledInput,
 } from "../../components/InputText"
 import { Spinner } from "../../components/Spinner"
+import { showTokenId } from "../accountActivity/transform/transaction/transformTransaction"
 import { AccountCollections } from "../accountNfts/AccountCollections"
 import { Collection, Collections } from "../accountNfts/aspect.service"
 import { useCollections } from "../accountNfts/useCollections"
@@ -92,10 +93,6 @@ export const SendScreen: FC = () => {
 
   const collectibles = useCollections(account)
 
-  const customCollectiblesList = useCustomCollectiblesList(
-    collectibles,
-    currentQueryValue,
-  )
 
   if (!account) {
     return <></>
@@ -125,7 +122,7 @@ export const SendScreen: FC = () => {
 
         <TabView>
           <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>
-            {selectedTab === "tokens" && (
+            (
               <CellStack pt={0}>
                 <TokenList
                   tokenList={tokenList}
@@ -134,7 +131,7 @@ export const SendScreen: FC = () => {
                   showNewTokenButton
                 />
               </CellStack>
-            )}
+            )
           </Suspense>
         </TabView>
       </Container>
@@ -153,12 +150,13 @@ const useCustomTokenList = (
 
     const queryLowercase = query.toLowerCase()
 
-    return tokenDetails.filter(
+    const result = tokenDetails.filter(
       (token) =>
         token.name.toLowerCase().includes(queryLowercase) ||
-        token.address.toLowerCase().includes(queryLowercase) ||
+        showTokenId(token.address).toLowerCase().includes(queryLowercase) ||
         token.symbol.toLowerCase().includes(queryLowercase),
     )
+    return result
   }, [query, tokenDetails])
 }
 
