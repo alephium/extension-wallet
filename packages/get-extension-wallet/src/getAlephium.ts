@@ -63,14 +63,14 @@ class GetAlephiumWallet implements IGetAlephiumWallet {
         // is not preAuthorized (i.e. user could choose a wallet, but
         // not necessarily approve it for connection)
         console.log(`silent connect requested -> wallet: ${wallet?.id}`)
+
         return wallet ? this.#setCurrentWallet(wallet) : undefined
       }
 
       // force showing the popup if
-      // 1. we are called while connected
-      // 2. we were explicitly told to show it
-      // 3. user never selected from the popup
-      const forcePopup = options?.showList || !lastWallet
+      // 1. we were explicitly told to show it
+      // 2. user never selected from the popup
+      const forcePopup = options?.showList
       if (!forcePopup) {
         // return user-set default wallet if available
         for (const stateWallet of [
