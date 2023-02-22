@@ -8,6 +8,7 @@ import {
 } from "../../../shared/token/price"
 import { useAppState } from "../../app.state"
 import { formatLongString, isEqualAddress } from "../../services/addresses"
+import { showTokenId } from "../accountActivity/transform/transaction/transformTransaction"
 import { useTokenAmountToCurrencyValue } from "./tokenPriceHooks"
 import { useTokensInNetwork } from "./tokens.state"
 
@@ -75,10 +76,11 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
           isEqualAddress(address, amount.id),
         )
       : undefined
-      const naiveAmount = amount.amount.toLocaleString('en-US', defaultAmountFmt) + ` ${amount.id.slice(0, 4).toUpperCase()}`
-      if (!token) {
+      const naiveAmount = amount.amount.toLocaleString('en-US', defaultAmountFmt)
+      if (token === undefined) {
         return {
           displayAmount: naiveAmount,
+          displayTokenId: showTokenId(amount.id),
           displayValue: null,
         }
       }
@@ -88,14 +90,16 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
         symbol: token?.symbol || "Unknown token",
       })
       const displayValue = null
-      if (displayAmount !== undefined) {
+      if (displayAmount !== null) {
         return {
-          displayAmount,
+          displayAmount: displayAmount.split(" ")[0], // Hacky: trim the token symbol. To be improved
+          displayTokenId: displayAmount.split(" ")[1],
           displayValue,
         }
       } else {
         return {
           displayAmount: naiveAmount,
+          displayTokenId: showTokenId(amount.id),
           displayValue: null
         }
       }

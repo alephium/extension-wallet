@@ -180,7 +180,7 @@ export const useTokens = (
         const token = {
           address: addressToken,
           networkId: networkId,
-          name: addressToken.slice(0, 5),
+          name: addressToken.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase(),
           symbol: "",
           decimals: 0
         }

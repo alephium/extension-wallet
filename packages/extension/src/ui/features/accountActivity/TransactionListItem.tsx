@@ -17,12 +17,13 @@ import {
   isTokenMintTransaction,
   isTokenTransferTransaction,
 } from "./transform/is"
+import { showTokenId } from "./transform/transaction/transformTransaction"
 import { TransformedTransaction } from "./transform/type"
 import { NFTImage } from "./ui/NFTImage"
 import { SwapAccessory } from "./ui/SwapAccessory"
 import { SwapTransactionIcon } from "./ui/SwapTransactionIcon"
 import { ReviewedTransactionIcon, TransactionIcon } from "./ui/TransactionIcon"
-import { ReviewedTransferAccessory, TransferAccessory } from "./ui/TransferAccessory"
+import { ReviewedTransferAccessory, TokenAmount, TransferAccessory } from "./ui/TransferAccessory"
 
 export interface TransactionListItemProps {
   transactionTransformed: TransformedTransaction
@@ -230,14 +231,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
     if (isDeployContract) {
       const mintAmount = transactionTransformed.params.issueTokenAmount
       if (mintAmount !== undefined) {
-        return <H6
-          overflow="hidden"
-          textOverflow={"ellipsis"}
-          textAlign={"right"}
-          color="green.400"
-        >
-          {`Mint ${mintAmount} ${transactionTransformed.result.contractId.slice(0, 4).toUpperCase()}`}
-        </H6>
+        return <TokenAmount amount={`Mint ${mintAmount}`} symbol={showTokenId(transactionTransformed.result.contractId)} color="green.400" prefix=""/>
       } 
       return null
     }

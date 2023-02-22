@@ -1,6 +1,6 @@
 import { ALPH_TOKEN_ID, SignTransferTxParams } from "@alephium/web3"
 import { H6, P4 } from "@argent/ui"
-import { Flex } from "@chakra-ui/react"
+import { ColorProps, Flex } from "@chakra-ui/react"
 import { FC, useMemo } from "react"
 import { ReviewTransactionResult, TransactionPayload } from "../../../../shared/actionQueue/types"
 
@@ -57,6 +57,33 @@ export const TransferAccessory: FC<TransferAccessoryProps> = ({
   )
 }
 
+export const TokenAmount = ({
+  amount,
+  symbol,
+  color,
+  prefix
+}: {
+  amount: string,
+  symbol: string,
+  color: ColorProps['color'],
+  prefix: string
+}) => {
+  return <Flex direction="row-reverse" alignContent="flex-end">
+    <H6 key="xxxx" paddingLeft="1">
+      {symbol}
+    </H6>
+    <H6
+      overflow="hidden"
+      textOverflow={"ellipsis"}
+      textAlign={"right"}
+      color={color}
+    >
+      {`${prefix} ${amount}`}
+    </H6>
+  </Flex>
+
+}
+
 export interface ReviewedTransferAccessoryProps {
   transaction: TransactionPayload<SignTransferTxParams>
 }
@@ -74,31 +101,10 @@ export const ReviewedTransferAccessory: FC<ReviewedTransferAccessoryProps> = ({
   }, [transaction])
   const displayAmounts = useDisplayTokensAmountAndCurrencyValue({amounts})
   return (
-    <Flex direction={"column"} overflow="hidden">
+    <Flex direction={"column"} overflow="hidden" alignContent="flex-end">
       {displayAmounts.map((amount, index) => 
-        <H6
-          key={index}
-          overflow="hidden"
-          textOverflow={"ellipsis"}
-          textAlign={"right"}
-          color="orange.500"
-        >
-          {"- "}
-          {amount.displayAmount}
-        </H6>
+        <TokenAmount key={index} amount={amount.displayAmount} symbol={amount.displayTokenId} color="orange.500" prefix="-"/>
       )}
-      {/* {displayValue && (
-        <P4
-          color="neutrals.400"
-          fontWeight={"semibold"}
-          overflow="hidden"
-          textOverflow={"ellipsis"}
-          textAlign={"right"}
-        >
-          {prefix}
-          {displayValue}
-        </P4>
-      )} */}
     </Flex>
   )
 }

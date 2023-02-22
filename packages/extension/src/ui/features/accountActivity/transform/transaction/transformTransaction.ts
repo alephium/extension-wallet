@@ -95,3 +95,7 @@ export const transformTransaction = ({
     // don't throw on parsing error, UI will fallback to default
   }
 }
+
+export function showTokenId(tokenId: string): string {
+  return tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase()
+}
