@@ -9,7 +9,7 @@ import { routes } from "../../routes"
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenListItemVariant } from "./TokenListItem"
 import { TokenListItemContainer } from "./TokenListItemContainer"
-import { useTokensInNetwork, useTokens, useTokensWithBalance } from "./tokens.state"
+import { useTokensWithBalance, TokenDetailsWithBalance } from "./tokens.state"
 
 interface TokenListProps {
   tokenList?: Token[]
@@ -20,6 +20,7 @@ interface TokenListProps {
 }
 
 export const TokenList: FC<TokenListProps> = ({
+  tokenList,
   showNewTokenButton = true,
   showTokenSymbol = false,
   variant,
@@ -31,7 +32,12 @@ export const TokenList: FC<TokenListProps> = ({
   if (!account) {
     return null
   }
-  const tokens = tokensForAccount.tokenDetails
+  const tokens: TokenDetailsWithBalance[] | undefined = tokenList || tokensForAccount.tokenDetails
+  tokens.forEach(token => {
+    if (token.balance === undefined) {
+      token.balance = tokensForAccount.tokenDetails.find(td => td.address === token.address)?.balance
+    }
+  })
   return (
     <ErrorBoundary
       fallback={
