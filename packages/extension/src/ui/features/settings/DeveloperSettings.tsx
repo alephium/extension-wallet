@@ -21,10 +21,6 @@ const DeveloperSettings: FC = () => {
           title="Manage networks"
         />
 
-        <SettingsMenuItem
-          to={routes.settingsSmartContractDevelopment()}
-          title="Smart contract development"
-        />
         {isExperimentalSettingsEnabled && (
           <SettingsMenuItem
             to={routes.settingsExperimental()}
