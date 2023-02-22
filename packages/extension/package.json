@@ -5,9 +5,9 @@
   "license": "MIT",
   "devDependencies": {
     "@alephium/sdk": "0.3.0",
-    "@alephium/web3": "v0.5.0-rc.13",
-    "@alephium/web3-wallet": "v0.5.0-rc.13",
-    "@alephium/web3-test": "v0.5.0-rc.13",
+    "@alephium/web3": "v0.5.0-rc.14",
+    "@alephium/web3-wallet": "v0.5.0-rc.14",
+    "@alephium/web3-test": "v0.5.0-rc.14",
     "@playwright/test": "^1.23.0",
     "@sentry/webpack-plugin": "^1.18.9",
     "@svgr/webpack": "^6.0.0",

@@ -15,16 +15,13 @@ import {
   CallContractResult,
   TestContractParams,
   ContractEvent,
-  subscribeContractCreatedEvent,
-  subscribeContractDestroyedEvent,
   subscribeContractEvent,
-  subscribeAllEvents,
+  subscribeContractEvents,
   testMethod,
   callMethod,
   fetchContractState,
-  ContractCreatedEvent,
-  ContractDestroyedEvent,
   ContractInstance,
+  getContractEventsCurrentCount,
 } from "@alephium/web3";
 import { default as ShinyTokenContractJson } from "../shiny-token.ral.json";
 
@@ -65,26 +62,5 @@ export class ShinyTokenInstance extends ContractInstance {
 
   async fetchState(): Promise<ShinyTokenTypes.State> {
     return fetchContractState(ShinyToken, this);
-  }
-
-  subscribeContractCreatedEvent(
-    options: SubscribeOptions<ContractCreatedEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractCreatedEvent(this, options, fromCount);
-  }
-
-  subscribeContractDestroyedEvent(
-    options: SubscribeOptions<ContractDestroyedEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractDestroyedEvent(this, options, fromCount);
-  }
-
-  subscribeAllEvents(
-    options: SubscribeOptions<ContractCreatedEvent | ContractDestroyedEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeAllEvents(ShinyToken.contract, this, options, fromCount);
   }
 }
