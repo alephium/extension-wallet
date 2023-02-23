@@ -8,14 +8,14 @@ import {
   ARGENT_EXPLORER_ENABLED,
 } from "../../../shared/api/constants"
 import { argentApiNetworkForNetwork } from "../../../shared/api/fetcher"
-import { IExplorerTransaction } from "../../../shared/explorer/type"
+import { AlephiumExplorerTransaction, IExplorerTransaction } from "../../../shared/explorer/type"
 import {
   isPrivacySettingsEnabled,
   settingsStore,
 } from "../../../shared/settings"
 import { useKeyValueStorage } from "../../../shared/storage/hooks"
 import { urlWithQuery } from "../../../shared/utils/url"
-import { argentApiFetcher } from "../../services/argentApiFetcher"
+import { alephiumApiFetcher, argentApiFetcher } from "../../services/argentApiFetcher"
 import { useConditionallyEnabledSWR, withPolling } from "../../services/swr"
 import { stripAddressZeroPadding } from "../accounts/accounts.service"
 
@@ -145,6 +145,56 @@ export const useArgentExplorerAccountTransactionsInfinite = (
     ],
   )
   return useSWRInfinite<IExplorerTransaction[]>(key, argentApiFetcher, {
+    revalidateAll: true,
+    ...withPolling(15 * 1000) /** 15 seconds */,
+    ...config,
+  })
+}
+
+export interface IUseAlephiumExplorerAccountTransactions {
+  accountAddress?: string
+  explorerApiUrl?: string
+  page?: number
+  pageSize?: number
+  direction?: "DESC" | "ASC"
+  withTransfers?: boolean
+}
+
+export const useAlephiumExplorerAccountTransactionsInfinite = (
+  {
+    accountAddress,
+    explorerApiUrl,
+    pageSize = 10,
+  }: IUseAlephiumExplorerAccountTransactions,
+  config?: SWRConfiguration,
+) => {
+  const key = useCallback(
+    (index: number) => {
+      return (
+        accountAddress &&
+        explorerApiUrl &&
+        urlWithQuery(
+          [
+            explorerApiUrl,
+            "addresses",
+            accountAddress,
+            "transactions",
+          ],
+          {
+            page: index + 1,
+            limit: pageSize,
+          },
+        )
+      )
+    },
+    [
+      accountAddress,
+      explorerApiUrl,
+      pageSize,
+    ],
+  )
+  console.log('===== explorer', key(0))
+  return useSWRInfinite<AlephiumExplorerTransaction[]>(key, alephiumApiFetcher, {
     revalidateAll: true,
     ...withPolling(15 * 1000) /** 15 seconds */,
     ...config,

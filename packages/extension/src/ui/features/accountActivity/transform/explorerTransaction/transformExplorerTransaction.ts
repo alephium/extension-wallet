@@ -1,4 +1,6 @@
-import { IExplorerTransaction } from "../../../../../shared/explorer/type"
+import { Destination, fromApiNumber256, fromApiToken, SignTransferTxParams, SignTransferTxResult } from "@alephium/web3"
+import { ReviewTransactionResult, TransactionPayload } from "../../../../../shared/actionQueue/types"
+import { AlephiumExplorerTransaction, IExplorerTransaction } from "../../../../../shared/explorer/type"
 import { Token } from "../../../../../shared/token/type"
 import { TransformedTransaction } from "../type"
 import { fingerprintExplorerTransaction } from "./fingerprintExplorerTransaction"
@@ -127,4 +129,66 @@ export const transformExplorerTransaction = ({
   } catch (e) {
     // don't throw on parsing error, UI will fallback to default
   }
+}
+
+export interface ITransformAlephiumExplorerTransaction {
+  explorerTransaction: AlephiumExplorerTransaction
+  accountAddress?: string
+}
+
+export const transformAlephiumExplorerTransaction = ({
+  explorerTransaction,
+  accountAddress,
+}: ITransformAlephiumExplorerTransaction): ReviewTransactionResult | undefined => {
+  if (!explorerTransaction || !accountAddress) {
+    return
+  }
+  try {
+    const destinations = extractDestinations(explorerTransaction, accountAddress)
+
+    if (destinations === undefined) {
+      return
+    } 
+
+    const result: {
+      type: "TRANSFER"
+      params: TransactionPayload<SignTransferTxParams>
+      result: Omit<SignTransferTxResult, "signature">
+    } = {
+      type: "TRANSFER",
+      params: {
+        signerAddress: accountAddress,
+        destinations: destinations,
+        networkId: '',
+      },
+      result: {
+        fromGroup: 0,
+        toGroup: 0,
+        unsignedTx: '',
+        txId: explorerTransaction.hash,
+        gasAmount: 0, // TODO: remove this field
+        gasPrice: BigInt(0) // TODO: remove this field
+      }
+    }
+    return result
+  } catch (e) {
+    // don't throw on parsing error, UI will fallback to default
+  }
+}
+
+function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, accountAddress: string): Destination[] | undefined {
+  if (!explorerTransaction.outputs) {
+    return
+  }
+
+  const destinations: Record<string, Destination> = {}
+  for (const output of explorerTransaction.outputs.filter(output => output.address !== accountAddress)) {
+    destinations[output.address] ||= { address: output.address, attoAlphAmount: BigInt(0) }
+    destinations[output.address].attoAlphAmount += BigInt(output.attoAlphAmount)
+    if (output.tokens) {
+      destinations[output.address].tokens ||= []
+      destinations[output.address].tokens?.concat(output.tokens.map(fromApiToken))
+    }
+  }
+  return Object.values(destinations)
 }

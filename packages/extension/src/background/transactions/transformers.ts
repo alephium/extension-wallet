@@ -1,9 +1,9 @@
 import { Transaction } from "../../shared/transactions"
 import { WalletAccount } from "../../shared/wallet.model"
-import { Transaction as AlephiumTransaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer } from '@alephium/web3'
 
 export const mapAlephiumTransactionToTransaction = (
-  transaction: AlephiumTransaction,
+  transaction: explorer.Transaction,
   account: WalletAccount,
   meta?: { title?: string; subTitle?: string },
 ): Transaction => ({
