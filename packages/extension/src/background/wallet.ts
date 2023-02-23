@@ -156,7 +156,7 @@ export class Wallet {
     const network = await this.getNetwork(account.networkId)
     const nodeProvider = new NodeProvider(network.nodeUrl)
     const privateKey = deriveHDWalletPrivateKey(session.secret, account.signer.keyType, account.signer.derivationIndex)
-    return new PrivateKeyWallet(privateKey, account.signer.keyType, nodeProvider)
+    return new PrivateKeyWallet({ privateKey, keyType: account.signer.keyType, nodeProvider })
   }
 
   public async isInitialized(): Promise<boolean> {
