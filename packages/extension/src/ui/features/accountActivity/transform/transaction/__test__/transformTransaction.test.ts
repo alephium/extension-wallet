@@ -28,7 +28,8 @@ const makeTransaction = (transactions: Call | Call[]): Transaction => {
         derivationIndex: 0,
         publicKey: "",
         type: "local_secret",
-        keyType: "default"
+        keyType: "default",
+        group: -1
       },
     },
     hash: "0x535aa7c68e99011c090d3a2d277005dd9fe073ab6dc354a0c5d67f12505a5fc",

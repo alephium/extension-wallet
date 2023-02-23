@@ -244,86 +244,22 @@ export class Wallet {
     this.store.set("discoveredOnce", true)
   }
 
-  private async getAccountClassHashForNetwork(
-    network: Network,
-    accountType: ArgentAccountType,
-  ): Promise<string> {
-    throw Error('Not Implemented')
-  }
-
   private async restoreAccountsFromWallet(
     secret: string,
     network: Network,
     offset: number = CHECK_OFFSET,
   ): Promise<WalletAccount[]> {
-    const provider = getProvider(network)
-
     const accounts: WalletAccount[] = []
 
     const accountClassHashes = union(
       ARGENT_ACCOUNT_CONTRACT_CLASS_HASHES,
       []
     )
-    const proxyClassHashes = PROXY_CONTRACT_CLASS_HASHES
 
     if (!accountClassHashes?.length) {
       console.error(`No known account class hashes for network ${network.id}`)
       return accounts
     }
-
-    const proxyClassHashAndAccountClassHash2DMap = proxyClassHashes.flatMap(
-      (contractHash) =>
-        accountClassHashes.map(
-          (implementation) => [contractHash, implementation] as const,
-        ),
-    )
-
-    const promises = proxyClassHashAndAccountClassHash2DMap.map(
-      async ([contractClassHash, accountClassHash]) => {
-        let lastHit = 0
-        let lastCheck = 0
-
-        while (lastHit + offset > lastCheck) {
-          const starkPair = getStarkPair(lastCheck, secret, baseDerivationPath)
-          const starkPub = ec.getStarkKey(starkPair)
-
-          const address = calculateContractAddressFromHash(
-            starkPub,
-            contractClassHash,
-            stark.compileCalldata({
-              implementation: accountClassHash,
-              selector: getSelectorFromName("initialize"),
-              calldata: stark.compileCalldata({
-                signer: starkPub,
-                guardian: "0",
-              }),
-            }),
-            0,
-          )
-
-          const code = await provider.getCode(address)
-
-          if (code.bytecode.length > 0) {
-            lastHit = lastCheck
-            accounts.push({
-              address,
-              networkId: network.id,
-              signer: {
-                type: "local_secret",
-                publicKey: '', // FIXME
-                keyType: 'default', // FIXME
-                derivationIndex: lastCheck,
-              },
-              type: "argent",
-            })
-          }
-
-          ++lastCheck
-        }
-      },
-    )
-
-    await Promise.all(promises)
 
     try {
       const accountWithTypes = await getAccountTypesFromChain(accounts)
@@ -439,6 +375,12 @@ export class Wallet {
     await this.walletStore.push(accounts)
   }
 
+  static checkAccount(account: WalletAccount, networkId: string, keyType?: KeyType, group?: number): boolean {
+    return (account.networkId === networkId) &&
+      (keyType === undefined || account.signer.keyType === keyType) &&
+      (group === undefined || account.signer.group === group)
+  }
+
   public async newAccount(networkId: string, keyType: KeyType, forGroup?: number): Promise<WalletAccount> {
     const session = await this.sessionStore.get()
     if (!this.isSessionOpen() || !session) {
@@ -448,7 +390,7 @@ export class Wallet {
     const accounts = await this.walletStore.get(withHiddenSelector)
 
     const currentIndexes = accounts
-      .filter((account) => account.signer.type === "local_secret" && account.signer.keyType === keyType)
+      .filter((account) => account.signer.type === "local_secret" && Wallet.checkAccount(account, networkId, keyType, forGroup))
       .map((account) => account.signer.derivationIndex)
 
     const startIndex = getNextPathIndex(currentIndexes)
@@ -465,6 +407,7 @@ export class Wallet {
         publicKey: publicKey,
         keyType: keyType,
         derivationIndex: index,
+        group: groupOfAddress(newAddress)
       },
       type: "argent",
     }
@@ -485,8 +428,6 @@ export class Wallet {
     if (!session?.seed) {
       throw Error("no seed")
     } else {
-      group = group || group === 0 ? ~~group : undefined
-
       const newAndDefaultAddress = await this.newAccount(networkId, keyType, group)
 
       await this.store.set("selected", newAndDefaultAddress)
@@ -542,7 +483,7 @@ export class Wallet {
   }
 
   matchGroup(address: string, group?: number): boolean {
-    return !group || groupOfAddress(address) === group
+    return group === undefined || groupOfAddress(address) === group
   }
 
   public async getAlephiumSelectedAddress(group?: number): Promise<WalletAccount | undefined> {
