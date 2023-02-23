@@ -23,9 +23,9 @@ export const TRANSACTION_STATUSES_TO_TRACK: Status[] = [
 export interface TransactionMeta {
   title?: string
   subTitle?: string
-  transactions?: Call | Call[]
+  transactions?: Call | Call[] // TODO: remove this
   type?: string // TODO: in future can be DECLARE | DEPLOY | CALL
-  reviewTxResult?: ReviewTransactionResult
+  transaction?: ReviewTransactionResult
 }
 
 export interface TransactionBase {

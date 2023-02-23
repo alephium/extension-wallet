@@ -39,7 +39,7 @@ export const AccountActivity: FC<AccountActivityProps> = ({
           {transactions.map((transaction) => {
             if (isActivityTransaction(transaction)) {
               const { hash, isRejected } = transaction
-              const transactionTransformed = transaction.meta?.reviewTxResult
+              const transactionTransformed = transaction.meta?.transaction
 
               if (transactionTransformed) {
                 return (

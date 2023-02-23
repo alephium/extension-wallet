@@ -57,7 +57,7 @@ export const executeTransactionAction = async (
       account: account,
       hash: transaction.result.txId,
       meta: {
-        reviewTxResult: transaction
+        transaction: transaction
       }
     })
   }

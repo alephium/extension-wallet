@@ -73,7 +73,7 @@ export const PendingTransactions: FC<PendingTransactionsProps> = ({
         </Flex>
       </HeaderCell>
       {pendingTransactions.map((transaction) => {
-        const transactionTransformed = transaction.meta?.reviewTxResult
+        const transactionTransformed = transaction.meta?.transaction
         if (transactionTransformed) {
           const { hash } = transaction
           return (
