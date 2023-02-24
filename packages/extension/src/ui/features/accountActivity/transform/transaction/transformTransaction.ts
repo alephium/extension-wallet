@@ -108,7 +108,7 @@ export function transformReviewedTransaction(transaction: ReviewTransactionResul
     case 'TRANSFER':
       return {
         type: 'TRANSFER',
-        destinations: transaction.params.destinations.map(d => d.address),
+        destinations: transaction.params.destinations.map(d => ({ address: d.address, type: 'To' })),
         amountChanges: extractAmountChanges(transaction.params.destinations)
       }
     case 'DEPLOY_CONTRACT':
@@ -144,7 +144,7 @@ export function extractAmountChanges(destinations: Destination[]): AmountChanges
 }
 
 export function extractExplorerTransaction(transaction: any): AlephiumExplorerTransaction | undefined {
-  if (transaction.meta && transaction.meta.explorer && !transaction.meta.transaction) {
+  if (transaction.meta && transaction.meta.explorer && !transaction.meta.request) {
     return transaction.meta.explorer as AlephiumExplorerTransaction
   }
   if (transaction.inputs && transaction.outputs && transaction.hash) {

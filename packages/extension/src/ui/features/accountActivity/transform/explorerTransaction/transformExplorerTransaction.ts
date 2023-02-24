@@ -1,8 +1,8 @@
-import { Address, Destination, fromApiNumber256, fromApiToken, number256ToBigint, SignTransferTxParams, SignTransferTxResult } from "@alephium/web3"
+import { Address, fromApiNumber256, fromApiToken, number256ToBigint, SignTransferTxParams, SignTransferTxResult } from "@alephium/web3"
 import { ReviewTransactionResult, TransactionPayload } from "../../../../../shared/actionQueue/types"
 import { AlephiumExplorerTransaction, IExplorerTransaction } from "../../../../../shared/explorer/type"
 import { Token } from "../../../../../shared/token/type"
-import { AmountChanges, TransferTransformedAlephiumTransaction, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
+import { AmountChanges, Destination, TransferTransformedAlephiumTransaction, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
 import { fingerprintExplorerTransaction } from "./fingerprintExplorerTransaction"
 import accountCreateTransformer from "./transformers/accountCreateTransformer"
 import accountUpgradeTransformer from "./transformers/accountUpgradeTransformer"
@@ -161,18 +161,29 @@ export const transformAlephiumExplorerTransaction = ({
   }
 }
 
-function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, accountAddress: string): Address[] {
+function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, accountAddress: string): Destination[] {
   if (!explorerTransaction.outputs) {
     return []
   }
 
-  const destinations: Address[] = []
-  for (const output of explorerTransaction.outputs) {
-    if (output.address !== accountAddress && !destinations.includes(output.address)) {
-      destinations.push(output.address)
+  const destinations: Record<Address, Destination['type']> = {}
+  explorerTransaction.inputs?.forEach(input => {
+    if (input.address !== undefined && input.address !== accountAddress) {
+      destinations[input.address] = 'From'
     }
-  }
-  return destinations
+  })
+  explorerTransaction.outputs?.forEach(output => {
+    if (output.address !== accountAddress) {
+      if (output.address in destinations) {
+        if (destinations[output.address] === 'From') {
+          destinations[output.address] === 'From/To'
+        }
+      } else {
+        destinations[output.address] = 'To'
+      }
+    }
+  })
+  return Object.entries(destinations).map(pair => ({ address: pair[0], type: pair[1]}))
 }
 
 function extractAmountChanges(explorerTransation: AlephiumExplorerTransaction, accountAddress: string): AmountChanges {

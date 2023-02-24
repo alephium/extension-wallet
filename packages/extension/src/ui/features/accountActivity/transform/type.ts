@@ -121,6 +121,11 @@ export type TransformedTransaction =
   | DeclareContractTransaction
   | DeployContractTransaction
 
+export interface Destination {
+  address: Address
+  type: 'From' | 'To' | 'From/To'
+}
+
 export interface AmountChanges {
   attoAlphAmount: bigint
   tokens: Record<string, bigint> // (id, amount) pair
@@ -128,7 +133,7 @@ export interface AmountChanges {
 
 export interface TransferTransformedAlephiumTransaction {
   type: 'TRANSFER'
-  destinations: Address[]
+  destinations: Destination[]
   amountChanges: AmountChanges
 }
 

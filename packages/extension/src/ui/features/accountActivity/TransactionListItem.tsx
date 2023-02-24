@@ -176,11 +176,10 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
   const subtitles = useMemo(() => {
     if (isTransfer) {
       const result = transactionTransformed.destinations.map(destination => {
-        const transferType = getTransferType(transactionTransformed.amountChanges)
         return <>
-          { transferType === 'Out' ? "To: " : transferType === 'In' ? "From: " : "From/To: "}
+          {`${destination.type}: `}
           <PrettyAccountAddress
-            accountAddress={destination}
+            accountAddress={destination.address}
             networkId={networkId}
             icon={false}
           />
