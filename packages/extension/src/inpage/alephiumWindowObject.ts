@@ -8,6 +8,7 @@ import { getIsPreauthorized, removePreAuthorization } from "./messaging"
 import {
   Account,
   ExplorerProvider,
+  groupOfAddress,
   NodeProvider,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
@@ -105,7 +106,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
       address: walletAccount.address,
       publicKey: walletAccount.signer.publicKey,
       keyType: walletAccount.signer.keyType,
-      group: 0
+      group: groupOfAddress(walletAccount.address)
     }
 
     this.connectedNetworkId = walletAccount.network.id
