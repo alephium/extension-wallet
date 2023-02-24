@@ -60,11 +60,6 @@ export interface IUseDisplayTokensAmountAndCurrencyValue {
   currencySymbol?: string
 }
 
-const defaultAmountFmt: BigIntToLocaleStringOptions = {
-  notation: 'scientific',
-  maximumFractionDigits: 6 // The default is 3, but 20 is the maximum supported by JS according to MDN.
-};
-
 export const useDisplayTokensAmountAndCurrencyValue = ({
   amounts,
   currencySymbol = "$",
@@ -77,8 +72,8 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
           isEqualAddress(address, amount.id),
         )
       : undefined
-      const naiveAmount = amount.amount.toLocaleString('en-US', defaultAmountFmt)
-      if (token === undefined) {
+      const naiveAmount = prettifyTokenAmount(amount.amount, 0) ?? '?'
+      if (token === undefined || naiveAmount === undefined) {
         return {
           displayAmount: naiveAmount,
           displayTokenId: showTokenId(amount.id),

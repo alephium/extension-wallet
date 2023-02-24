@@ -104,14 +104,14 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
     }
     const matchedHashes: string[] = []
 
-    voyagerTransactions.map((voyagerTransaction) => {
+    transactions.map((transaction) => {
       const explorerTransaction = explorerTransactions.find(
         (explorerTransaction) =>
-          explorerTransaction.hash === voyagerTransaction.hash,
+          explorerTransaction.hash === transaction.hash,
       )
 
       if (explorerTransaction) {
-        matchedHashes.push(voyagerTransaction.hash)
+        matchedHashes.push(transaction.hash)
       }
     })
 

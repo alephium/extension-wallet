@@ -61,13 +61,9 @@ export const TransferAccessory: FC<TransferAccessoryProps> = ({
 export const TokenAmount = ({
   amount,
   symbol,
-  color,
-  prefix
 }: {
   amount: string,
   symbol: string,
-  color: ColorProps['color'],
-  prefix: string
 }) => {
   return <Flex direction="row-reverse" alignContent="flex-end">
     <H6 key="xxxx" paddingLeft="1">
@@ -77,9 +73,9 @@ export const TokenAmount = ({
       overflow="hidden"
       textOverflow={"ellipsis"}
       textAlign={"right"}
-      color={color}
+      color={amount.startsWith("-") ? "orange.500" : "green.400"}
     >
-      {`${prefix} ${amount}`}
+      {amount}
     </H6>
   </Flex>
 
@@ -102,7 +98,7 @@ export const ReviewedTransferAccessory: FC<ReviewedTransferAccessoryProps> = ({
   return (
     <Flex direction={"column"} overflow="hidden" alignContent="flex-end">
       {displayAmounts.map((amount, index) => 
-        <TokenAmount key={index} amount={amount.displayAmount} symbol={amount.displayTokenId} color="orange.500" prefix="-"/>
+        <TokenAmount key={index} amount={amount.displayAmount} symbol={amount.displayTokenId}/>
       )}
     </Flex>
   )

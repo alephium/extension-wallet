@@ -17,7 +17,7 @@ import {
   isTokenMintTransaction,
   isTokenTransferTransaction,
 } from "./transform/is"
-import { showTokenId } from "./transform/transaction/transformTransaction"
+import { getTransferType, showTokenId } from "./transform/transaction/transformTransaction"
 import { TransformedAlephiumTransaction, TransformedTransaction } from "./transform/type"
 import { NFTImage } from "./ui/NFTImage"
 import { SwapAccessory } from "./ui/SwapAccessory"
@@ -175,9 +175,10 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
 
   const subtitles = useMemo(() => {
     if (isTransfer) {
-      const result = transactionTransformed.destinations.map(destination => (
-        <>
-          {"To: "}
+      const result = transactionTransformed.destinations.map(destination => {
+        const transferType = getTransferType(transactionTransformed.amountChanges)
+        return <>
+          { transferType === 'Out' ? "To: " : transferType === 'In' ? "From: " : "From/To: "}
           <PrettyAccountAddress
             accountAddress={destination}
             networkId={networkId}
@@ -185,7 +186,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
           />
         </>
         
-      ))
+      })
       if (result.length > 4) {
         return [...result.slice(0, 3), "..."]
       } else {
@@ -231,7 +232,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
     if (isDeployContract) {
       const mintAmount = transactionTransformed.issueTokenAmount
       if (mintAmount !== undefined) {
-        return <TokenAmount amount={`Mint ${mintAmount}`} symbol={showTokenId(transactionTransformed.contractId)} color="green.400" prefix=""/>
+        return <TokenAmount amount={`Mint ${mintAmount}`} symbol={showTokenId(transactionTransformed.contractId)}/>
       } 
       return null
     }

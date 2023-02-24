@@ -144,11 +144,21 @@ export function extractAmountChanges(destinations: Destination[]): AmountChanges
 }
 
 export function extractExplorerTransaction(transaction: any): AlephiumExplorerTransaction | undefined {
-  if (transaction.meta && transaction.meta.explorer) {
+  if (transaction.meta && transaction.meta.explorer && !transaction.meta.transaction) {
     return transaction.meta.explorer as AlephiumExplorerTransaction
   }
   if (transaction.inputs && transaction.outputs && transaction.hash) {
     return transaction as AlephiumExplorerTransaction
   }
   return undefined
+}
+
+export function getTransferType(amountChanges: AmountChanges) {
+  if (amountChanges.attoAlphAmount < 0 && Object.values(amountChanges.tokens).every(value => value < 0)) {
+    return 'Out'
+  }
+  if (amountChanges.attoAlphAmount > 0 && Object.values(amountChanges.tokens).every(value => value > 0)) {
+    return 'In'
+  }
+  return 'InOut'
 }

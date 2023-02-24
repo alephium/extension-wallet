@@ -88,7 +88,7 @@ export const isDeployContractTransaction = (
 export const isActivityTransaction = (
   transaction: any,
 ): transaction is ActivityTransaction => {
-  return !!(transaction.hash && transaction.date && transaction.meta && transaction.meta.transaction)
+  return !!(transaction.hash && transaction.date && transaction.meta && transaction.meta.request)
 }
 
 export const isVoyagerTransaction = (
@@ -104,5 +104,5 @@ export const isExplorerTransaction = (
   transaction: any,
 ): transaction is AlephiumExplorerTransaction => {
   return (!!(transaction.inputs && transaction.outputs && transaction.hash)) ||
-    (!!(transaction.hash && transaction.date && transaction.meta && transaction.meta.explorer))
+    (!!(transaction.hash && transaction.date && transaction.meta && transaction.meta.explorer && !transaction.meta.request))
 }
