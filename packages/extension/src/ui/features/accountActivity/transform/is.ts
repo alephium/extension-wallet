@@ -103,5 +103,6 @@ export const isVoyagerTransaction = (
 export const isExplorerTransaction = (
   transaction: any,
 ): transaction is AlephiumExplorerTransaction => {
-  return !!(transaction.inputs && transaction.outputs && transaction.hash)
+  return (!!(transaction.inputs && transaction.outputs && transaction.hash)) ||
+    (!!(transaction.hash && transaction.date && transaction.meta && transaction.meta.explorer))
 }

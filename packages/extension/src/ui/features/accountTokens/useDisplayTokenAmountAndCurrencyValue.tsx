@@ -1,4 +1,4 @@
-import { prettifyTokenAmount } from "@alephium/web3"
+import { Number256, prettifyTokenAmount } from "@alephium/web3"
 import { BigNumberish } from "ethers"
 
 import {
@@ -56,7 +56,7 @@ export const useDisplayTokenAmountAndCurrencyValue = ({
 }
 
 export interface IUseDisplayTokensAmountAndCurrencyValue {
-  amounts: {id: string, amount: bigint}[],
+  amounts: {id: string, amount: Number256}[],
   currencySymbol?: string
 }
 

@@ -10,6 +10,7 @@ import { Account } from "../accounts/Account"
 import { ReviewedTransactionListItem } from "./TransactionListItem"
 import { transformAlephiumExplorerTransaction } from "./transform/explorerTransaction/transformExplorerTransaction"
 import { isActivityTransaction, isExplorerTransaction, isVoyagerTransaction } from "./transform/is"
+import { extractExplorerTransaction, transformReviewedTransaction } from "./transform/transaction/transformTransaction"
 import { LoadMoreTrigger } from "./ui/LoadMoreTrigger"
 import { ActivityTransaction } from "./useActivity"
 
@@ -40,8 +41,12 @@ export const AccountActivity: FC<AccountActivityProps> = ({
             console.log('===== test', isActivityTransaction(transaction), isVoyagerTransaction(transaction), isExplorerTransaction(transaction))
             if (isActivityTransaction(transaction)) {
               const { hash, isRejected } = transaction
-              const transactionTransformed = transaction.meta?.request
+              const reviewedTransaction = transaction.meta?.request
+              if (!reviewedTransaction) {
+                return null
+              }
 
+              const transactionTransformed = transformReviewedTransaction(reviewedTransaction)
               if (transactionTransformed) {
                 return (
                   <ReviewedTransactionListItem
@@ -58,12 +63,13 @@ export const AccountActivity: FC<AccountActivityProps> = ({
                   </ReviewedTransactionListItem>
                 )
               }
-              return null
-            } else if (isExplorerTransaction(transaction)) {
+            }
+            const explorerTransaction = extractExplorerTransaction(transaction)
+            if (explorerTransaction) {
               const explorerTransactionTransformed =
                 transaction &&
                 transformAlephiumExplorerTransaction({
-                  explorerTransaction: transaction,
+                  explorerTransaction,
                   accountAddress: account.address,
                 })
               if (explorerTransactionTransformed) {

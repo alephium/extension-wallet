@@ -1,3 +1,4 @@
+import { Address, Number256 } from "@alephium/web3"
 import { KnownDapp } from "../../../../shared/knownDapps"
 import { Token } from "../../../../shared/token/type"
 
@@ -119,3 +120,37 @@ export type TransformedTransaction =
   | SwapTransaction
   | DeclareContractTransaction
   | DeployContractTransaction
+
+export interface AmountChanges {
+  attoAlphAmount: bigint
+  tokens: Record<string, bigint> // (id, amount) pair
+}
+
+export interface TransferTransformedAlephiumTransaction {
+  type: 'TRANSFER'
+  destinations: Address[]
+  amountChanges: AmountChanges
+}
+
+export interface DeployContractTransformedAlephiumTransaction {
+  type: 'DEPLOY_CONTRACT'
+  contractAddress: string
+  contractId: string
+  issueTokenAmount?: Number256
+}
+
+export interface ExecuteScriptTransformedAlephiumTransaction {
+  type: "EXECUTE_SCRIPT"
+  bytecode: string
+}
+
+export interface UnsignedTxTransformedAlephiumTransaction {
+  type: "UNSIGNED_TX"
+  unsignedTx: string
+}
+
+export type TransformedAlephiumTransaction =
+  | TransferTransformedAlephiumTransaction
+  | DeployContractTransformedAlephiumTransaction
+  | ExecuteScriptTransformedAlephiumTransaction
+  | UnsignedTxTransformedAlephiumTransaction

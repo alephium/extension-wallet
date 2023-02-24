@@ -13,6 +13,7 @@ import { useTokensWithBalance } from "../accountTokens/tokens.state"
 import { useCurrentNetwork, useNetwork } from "../networks/useNetworks"
 import { ReviewedTransactionListItem, TransactionListItem } from "./TransactionListItem"
 import { transformTransaction } from "./transform"
+import { transformReviewedTransaction } from "./transform/transaction/transformTransaction"
 
 interface PendingTransactionsContainerProps {
   account: BaseWalletAccount
@@ -73,7 +74,11 @@ export const PendingTransactions: FC<PendingTransactionsProps> = ({
         </Flex>
       </HeaderCell>
       {pendingTransactions.map((transaction) => {
-        const transactionTransformed = transaction.meta?.request
+        const reviewedTransaction = transaction.meta?.request
+        if (!reviewedTransaction) {
+          return null
+        }
+        const transactionTransformed = transformReviewedTransaction(reviewedTransaction)
         if (transactionTransformed) {
           const { hash } = transaction
           return (

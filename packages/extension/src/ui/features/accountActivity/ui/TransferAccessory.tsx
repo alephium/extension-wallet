@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, SignTransferTxParams } from "@alephium/web3"
+import { ALPH_TOKEN_ID, Number256, number256ToBigint, SignTransferTxParams } from "@alephium/web3"
 import { H6, P4 } from "@argent/ui"
 import { ColorProps, Flex } from "@chakra-ui/react"
 import { FC, useMemo } from "react"
@@ -6,6 +6,7 @@ import { ReviewTransactionResult, TransactionPayload } from "../../../../shared/
 
 import { useDisplayTokenAmountAndCurrencyValue, useDisplayTokensAmountAndCurrencyValue } from "../../accountTokens/useDisplayTokenAmountAndCurrencyValue"
 import {
+  AmountChanges,
   TokenApproveTransaction,
   TokenMintTransaction,
   TokenTransferTransaction,
@@ -85,20 +86,18 @@ export const TokenAmount = ({
 }
 
 export interface ReviewedTransferAccessoryProps {
-  transaction: TransactionPayload<SignTransferTxParams>
+  amountChanges: AmountChanges
 }
 
 export const ReviewedTransferAccessory: FC<ReviewedTransferAccessoryProps> = ({
-  transaction,
+  amountChanges,
 }) => {
   const amounts = useMemo(() => {
-    const result: {id: string, amount: bigint}[] = []
-    transaction.destinations.forEach(destination => {
-      result.push({id: ALPH_TOKEN_ID, amount: destination.attoAlphAmount})
-      destination.tokens?.forEach(token => result.push(token))
-    })
+    const result: {id: string, amount: Number256}[] = []
+    result.push({id: ALPH_TOKEN_ID, amount: amountChanges.attoAlphAmount})
+    Object.entries(amountChanges.tokens).forEach(token => result.push({ id: token[0], amount: token[1]}))
     return result
-  }, [transaction])
+  }, [amountChanges])
   const displayAmounts = useDisplayTokensAmountAndCurrencyValue({amounts})
   return (
     <Flex direction={"column"} overflow="hidden" alignContent="flex-end">

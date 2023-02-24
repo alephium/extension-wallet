@@ -1,7 +1,10 @@
+import { Destination, number256ToBigint, SignTransferTxParams } from "@alephium/web3"
+import { ReviewTransactionResult, TransactionPayload } from "../../../../../shared/actionQueue/types"
+import { AlephiumExplorerTransaction } from "../../../../../shared/explorer/type"
 import { Token } from "../../../../../shared/token/type"
 import { Transaction } from "../../../../../shared/transactions"
 import { ActivityTransaction } from "../../useActivity"
-import { TransformedTransaction } from "../type"
+import { AmountChanges, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
 import dateTransformer from "./transformers/dateTransformer"
 import declareContractTransformer from "./transformers/declareContractTransformer"
 import defaultDisplayNameTransformer from "./transformers/defaultDisplayNameTransformer"
@@ -98,4 +101,54 @@ export const transformTransaction = ({
 
 export function showTokenId(tokenId: string): string {
   return tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase()
+}
+
+export function transformReviewedTransaction(transaction: ReviewTransactionResult): TransformedAlephiumTransaction {
+  switch (transaction.type) {
+    case 'TRANSFER':
+      return {
+        type: 'TRANSFER',
+        destinations: transaction.params.destinations.map(d => d.address),
+        amountChanges: extractAmountChanges(transaction.params.destinations)
+      }
+    case 'DEPLOY_CONTRACT':
+      return {
+        type: 'DEPLOY_CONTRACT',
+        contractAddress: transaction.result.contractAddress,
+        contractId: transaction.result.contractId,
+        issueTokenAmount: transaction.params.issueTokenAmount 
+      }
+    case 'EXECUTE_SCRIPT':
+      return {
+        type: 'EXECUTE_SCRIPT',
+        bytecode: transaction.params.bytecode
+      }
+    case 'UNSIGNED_TX':
+      return {
+        type: 'UNSIGNED_TX',
+        unsignedTx: transaction.params.unsignedTx
+      }
+  }
+}
+
+export function extractAmountChanges(destinations: Destination[]): AmountChanges {
+  const result: AmountChanges = { attoAlphAmount: BigInt(0), tokens: {} }
+  destinations.forEach(destination => {
+    result.attoAlphAmount -= number256ToBigint(destination.attoAlphAmount)
+    destination.tokens?.forEach(token => {
+      result.tokens[token.id] ||= BigInt(0)
+      result.tokens[token.id] -= number256ToBigint(token.amount)
+    })
+  })
+  return result
+}
+
+export function extractExplorerTransaction(transaction: any): AlephiumExplorerTransaction | undefined {
+  if (transaction.meta && transaction.meta.explorer) {
+    return transaction.meta.explorer as AlephiumExplorerTransaction
+  }
+  if (transaction.inputs && transaction.outputs && transaction.hash) {
+    return transaction as AlephiumExplorerTransaction
+  }
+  return undefined
 }

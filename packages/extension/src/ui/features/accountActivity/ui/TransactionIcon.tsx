@@ -11,7 +11,7 @@ import {
   isTokenMintTransaction,
   isTokenTransferTransaction,
 } from "../transform/is"
-import { TransformedTransaction } from "../transform/type"
+import { TransformedAlephiumTransaction, TransformedTransaction } from "../transform/type"
 
 const {
   DocumentIcon,
@@ -126,7 +126,7 @@ export const TransactionIcon: FC<TransactionIconProps> = ({
 
 export interface ReviewedTransactionIconProps
   extends Omit<ComponentProps<typeof Circle>, "outline"> {
-  transaction: ReviewTransactionResult
+  transaction: TransformedAlephiumTransaction
   outline?: boolean
 }
 

@@ -1,8 +1,8 @@
-import { Destination, fromApiNumber256, fromApiToken, SignTransferTxParams, SignTransferTxResult } from "@alephium/web3"
+import { Address, Destination, fromApiNumber256, fromApiToken, number256ToBigint, SignTransferTxParams, SignTransferTxResult } from "@alephium/web3"
 import { ReviewTransactionResult, TransactionPayload } from "../../../../../shared/actionQueue/types"
 import { AlephiumExplorerTransaction, IExplorerTransaction } from "../../../../../shared/explorer/type"
 import { Token } from "../../../../../shared/token/type"
-import { TransformedTransaction } from "../type"
+import { AmountChanges, TransferTransformedAlephiumTransaction, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
 import { fingerprintExplorerTransaction } from "./fingerprintExplorerTransaction"
 import accountCreateTransformer from "./transformers/accountCreateTransformer"
 import accountUpgradeTransformer from "./transformers/accountUpgradeTransformer"
@@ -139,8 +139,8 @@ export interface ITransformAlephiumExplorerTransaction {
 export const transformAlephiumExplorerTransaction = ({
   explorerTransaction,
   accountAddress,
-}: ITransformAlephiumExplorerTransaction): ReviewTransactionResult | undefined => {
-  if (!explorerTransaction || !accountAddress) {
+}: ITransformAlephiumExplorerTransaction): TransformedAlephiumTransaction | undefined => {
+  if (!accountAddress) {
     return
   }
   try {
@@ -150,25 +150,10 @@ export const transformAlephiumExplorerTransaction = ({
       return
     } 
 
-    const result: {
-      type: "TRANSFER"
-      params: TransactionPayload<SignTransferTxParams>
-      result: Omit<SignTransferTxResult, "signature">
-    } = {
+    const result: TransferTransformedAlephiumTransaction = {
       type: "TRANSFER",
-      params: {
-        signerAddress: accountAddress,
-        destinations: destinations,
-        networkId: '',
-      },
-      result: {
-        fromGroup: 0,
-        toGroup: 0,
-        unsignedTx: '',
-        txId: explorerTransaction.hash,
-        gasAmount: 0, // TODO: remove this field
-        gasPrice: BigInt(0) // TODO: remove this field
-      }
+      destinations: extractDestinations(explorerTransaction, accountAddress),
+      amountChanges: extractAmountChanges(explorerTransaction, accountAddress)
     }
     return result
   } catch (e) {
@@ -176,19 +161,43 @@ export const transformAlephiumExplorerTransaction = ({
   }
 }
 
-function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, accountAddress: string): Destination[] | undefined {
+function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, accountAddress: string): Address[] {
   if (!explorerTransaction.outputs) {
-    return
+    return []
   }
 
-  const destinations: Record<string, Destination> = {}
-  for (const output of explorerTransaction.outputs.filter(output => output.address !== accountAddress)) {
-    destinations[output.address] ||= { address: output.address, attoAlphAmount: BigInt(0) }
-    destinations[output.address].attoAlphAmount += BigInt(output.attoAlphAmount)
-    if (output.tokens) {
-      destinations[output.address].tokens ||= []
-      destinations[output.address].tokens?.concat(output.tokens.map(fromApiToken))
+  const destinations: Address[] = []
+  for (const output of explorerTransaction.outputs) {
+    if (output.address !== accountAddress && !destinations.includes(output.address)) {
+      destinations.push(output.address)
     }
   }
-  return Object.values(destinations)
+  return destinations
+}
+
+function extractAmountChanges(explorerTransation: AlephiumExplorerTransaction, accountAddress: string): AmountChanges {
+  const result: AmountChanges = { attoAlphAmount: BigInt(0), tokens: {} }
+  explorerTransation.inputs?.forEach(input => {
+    if (input.address === accountAddress) {
+      if (input.attoAlphAmount) {
+        result.attoAlphAmount -= number256ToBigint(input.attoAlphAmount)
+      }
+      input.tokens?.forEach(token => {
+        result.tokens[token.id] ||= BigInt(0)
+        result.tokens[token.id] -= number256ToBigint(token.amount)
+      })
+    }
+  })
+  explorerTransation.outputs?.forEach(output => {
+    if (output.address === accountAddress) {
+      if (output.attoAlphAmount) {
+        result.attoAlphAmount += number256ToBigint(output.attoAlphAmount)
+      }
+      output.tokens?.forEach(token => {
+        result.tokens[token.id] ||= BigInt(0)
+        result.tokens[token.id] += number256ToBigint(token.amount)
+      })
+    }
+  })
+  return result
 }
