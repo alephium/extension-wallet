@@ -8,10 +8,11 @@ export const mapAlephiumTransactionToTransaction = (
   meta?: { title?: string; subTitle?: string },
 ): Transaction => ({
   hash: transaction.hash,
-  inputs: transaction.inputs,
-  outputs: transaction.outputs,
   account,
-  meta,
+  meta: {
+    ...meta,
+    explorer: transaction
+  },
   status: "ACCEPTED_ON_CHAIN",
   timestamp: transaction.timestamp,
 })

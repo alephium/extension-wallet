@@ -148,13 +148,11 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
       const dateLabel = date.toString()
       activity[dateLabel] ||= []
       if (isVoyagerTransaction(transaction)) {
-        const { hash, meta, inputs, outputs, status } = transaction
+        const { hash, meta, status } = transaction
         const isRejected = status === "REJECTED"
         const activityTransaction: ActivityTransaction = {
           hash,
           date,
-          inputs,
-          outputs,
           meta,
           isRejected,
         }

@@ -40,7 +40,7 @@ export const AccountActivity: FC<AccountActivityProps> = ({
             console.log('===== test', isActivityTransaction(transaction), isVoyagerTransaction(transaction), isExplorerTransaction(transaction))
             if (isActivityTransaction(transaction)) {
               const { hash, isRejected } = transaction
-              const transactionTransformed = transaction.meta?.transaction
+              const transactionTransformed = transaction.meta?.request
 
               if (transactionTransformed) {
                 return (
