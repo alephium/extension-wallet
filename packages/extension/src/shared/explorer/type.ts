@@ -1,4 +1,5 @@
 import { Status } from "starknet"
+import { explorer } from "@alephium/web3"
 
 export interface IExplorerTransactionParameters {
   /** @example tokenId @example response_len */
@@ -42,3 +43,5 @@ export interface IExplorerTransaction {
   events: IExplorerTransactionEvent[]
   calls?: IExplorerTransactionCall[]
 }
+
+export type AlephiumExplorerTransaction = explorer.Transaction

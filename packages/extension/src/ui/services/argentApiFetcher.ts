@@ -27,3 +27,18 @@ export const argentApiFetcher = (
   }
   return fetcherImpl(input, initWithArgentApiHeaders)
 }
+
+export const alephiumApiFetcher = (
+  input: RequestInfo | URL,
+  init?: RequestInit,
+  fetcherImpl: Fetcher = fetcher,
+) => {
+  const initWithArgentApiHeaders = {
+    ...init,
+    headers: {
+      ...init?.headers,
+      accept: "application/json",
+    },
+  }
+  return fetcherImpl(input, initWithArgentApiHeaders)
+}

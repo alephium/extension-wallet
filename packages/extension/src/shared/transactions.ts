@@ -5,6 +5,7 @@ import { ReviewTransactionResult } from "./actionQueue/types"
 import { Input, Output } from '@alephium/sdk/api/explorer'
 
 import { WalletAccount } from "./wallet.model"
+import { AlephiumExplorerTransaction } from "./explorer/type"
 
 export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED';
 
@@ -23,15 +24,14 @@ export const TRANSACTION_STATUSES_TO_TRACK: Status[] = [
 export interface TransactionMeta {
   title?: string
   subTitle?: string
-  transactions?: Call | Call[]
+  transactions?: Call | Call[] // TODO: remove this
   type?: string // TODO: in future can be DECLARE | DEPLOY | CALL
-  reviewTxResult?: ReviewTransactionResult
+  request?: ReviewTransactionResult
+  explorer?: AlephiumExplorerTransaction
 }
 
 export interface TransactionBase {
   hash: string
-  inputs?: Input[]
-  outputs?: Output[]
   account: {
     networkId: string
   }

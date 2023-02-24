@@ -1,5 +1,5 @@
 import { convertSetToAlph } from "@alephium/sdk"
-import { Destination } from "@alephium/web3"
+import { Destination, prettifyAttoAlphAmount } from "@alephium/web3"
 import { CopyTooltip, P4 } from "@argent/ui"
 import {
   Accordion,
@@ -29,7 +29,7 @@ export interface TransactionAction {
 
 
 function getTokensFromDestination(destination: Destination): TransactionActionRow[] {
-  return [{ key: 'ALPH', value: convertSetToAlph(destination.attoAlphAmount) },
+  return [{ key: 'ALPH', value: prettifyAttoAlphAmount(destination.attoAlphAmount) ?? '?' },
     ...(destination.tokens ?? []).map(token => ({ key: token.id, value: token.amount.toString() }))]
 }
 

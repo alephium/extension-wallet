@@ -1,17 +1,19 @@
 import { Transaction } from "../../shared/transactions"
 import { WalletAccount } from "../../shared/wallet.model"
-import { Transaction as AlephiumTransaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer } from '@alephium/web3'
+import { ReviewTransactionResult } from "../../shared/actionQueue/types";
 
 export const mapAlephiumTransactionToTransaction = (
-  transaction: AlephiumTransaction,
+  transaction: explorer.Transaction,
   account: WalletAccount,
-  meta?: { title?: string; subTitle?: string },
+  meta?: { title?: string; subTitle?: string; request?: ReviewTransactionResult },
 ): Transaction => ({
   hash: transaction.hash,
-  inputs: transaction.inputs,
-  outputs: transaction.outputs,
   account,
-  meta,
+  meta: {
+    ...meta,
+    explorer: (meta === undefined || meta.request === undefined) ? transaction : undefined
+  },
   status: "ACCEPTED_ON_CHAIN",
   timestamp: transaction.timestamp,
 })

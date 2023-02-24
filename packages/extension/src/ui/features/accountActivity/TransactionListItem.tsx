@@ -17,8 +17,8 @@ import {
   isTokenMintTransaction,
   isTokenTransferTransaction,
 } from "./transform/is"
-import { showTokenId } from "./transform/transaction/transformTransaction"
-import { TransformedTransaction } from "./transform/type"
+import { getTransferType, showTokenId } from "./transform/transaction/transformTransaction"
+import { TransformedAlephiumTransaction, TransformedTransaction } from "./transform/type"
 import { NFTImage } from "./ui/NFTImage"
 import { SwapAccessory } from "./ui/SwapAccessory"
 import { SwapTransactionIcon } from "./ui/SwapTransactionIcon"
@@ -154,7 +154,7 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
 }
 
 export interface ReviewedTransactionListItemProps {
-  transactionTransformed: ReviewTransactionResult
+  transactionTransformed: TransformedAlephiumTransaction
   networkId: string
   highlighted?: boolean
   onClick?: () => void
@@ -175,9 +175,9 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
 
   const subtitles = useMemo(() => {
     if (isTransfer) {
-      const result = transactionTransformed.params.destinations.map(destination => (
-        <>
-          {"To: "}
+      const result = transactionTransformed.destinations.map(destination => {
+        return <>
+          {`${destination.type}: `}
           <PrettyAccountAddress
             accountAddress={destination.address}
             networkId={networkId}
@@ -185,7 +185,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
           />
         </>
         
-      ))
+      })
       if (result.length > 4) {
         return [...result.slice(0, 3), "..."]
       } else {
@@ -193,13 +193,13 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
       }
     }
     if (isDeployContract) {
-      return [<>{`@${formatLongString(transactionTransformed.result.contractAddress)}`}</>]
+      return [<>{`@${formatLongString(transactionTransformed.contractAddress)}`}</>]
     }
     if (isExecuteScript) {
-      return [<>{`Run: ${formatLongString(transactionTransformed.params.bytecode)}`}</>]
+      return [<>{`Run: ${formatLongString(transactionTransformed.bytecode)}`}</>]
     }
     if (isUnsignedTx) {
-      return [<>{`Raw tx: ${formatLongString(transactionTransformed.params.unsignedTx)}`}</>]
+      return [<>{`Raw tx: ${formatLongString(transactionTransformed.unsignedTx)}`}</>]
     }
     return null
   }, [
@@ -214,7 +214,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
   const displayName = useMemo(() => {
     switch (transactionTransformed.type) {
       case "TRANSFER":
-        return "Transfer"
+        return transactionTransformed.transferType
       case "DEPLOY_CONTRACT":
         return "New Contract"
       case "EXECUTE_SCRIPT":
@@ -226,12 +226,12 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
 
   const accessory = useMemo(() => {
     if (isTransfer) {
-      return <ReviewedTransferAccessory transaction={transactionTransformed.params} />
+      return <ReviewedTransferAccessory amountChanges={transactionTransformed.amountChanges} />
     }
     if (isDeployContract) {
-      const mintAmount = transactionTransformed.params.issueTokenAmount
+      const mintAmount = transactionTransformed.issueTokenAmount
       if (mintAmount !== undefined) {
-        return <TokenAmount amount={`Mint ${mintAmount}`} symbol={showTokenId(transactionTransformed.result.contractId)} color="green.400" prefix=""/>
+        return <TokenAmount amount={`Mint ${mintAmount}`} symbol={showTokenId(transactionTransformed.contractId)}/>
       } 
       return null
     }

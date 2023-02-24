@@ -1,6 +1,8 @@
-import { IExplorerTransaction } from "../../../../../shared/explorer/type"
+import { Address, number256ToBigint } from "@alephium/web3"
+import { AlephiumExplorerTransaction, IExplorerTransaction } from "../../../../../shared/explorer/type"
 import { Token } from "../../../../../shared/token/type"
-import { TransformedTransaction } from "../type"
+import { getTransferType } from "../transaction/transformTransaction"
+import { AmountChanges, DestinationAddress, TransferTransformedAlephiumTransaction, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
 import { fingerprintExplorerTransaction } from "./fingerprintExplorerTransaction"
 import accountCreateTransformer from "./transformers/accountCreateTransformer"
 import accountUpgradeTransformer from "./transformers/accountUpgradeTransformer"
@@ -127,4 +129,85 @@ export const transformExplorerTransaction = ({
   } catch (e) {
     // don't throw on parsing error, UI will fallback to default
   }
+}
+
+export interface ITransformAlephiumExplorerTransaction {
+  explorerTransaction: AlephiumExplorerTransaction
+  accountAddress?: string
+}
+
+export const transformAlephiumExplorerTransaction = ({
+  explorerTransaction,
+  accountAddress,
+}: ITransformAlephiumExplorerTransaction): TransformedAlephiumTransaction | undefined => {
+  if (!accountAddress) {
+    return
+  }
+  try {
+    const destinations = extractDestinations(explorerTransaction, accountAddress)
+    if (destinations.length === 0) {
+      return
+    } 
+    const result: TransferTransformedAlephiumTransaction = {
+      type: "TRANSFER",
+      transferType: getTransferType(destinations),
+      destinations: destinations,
+      amountChanges: extractAmountChanges(explorerTransaction, accountAddress)
+    }
+    return result
+  } catch (e) {
+    // don't throw on parsing error, UI will fallback to default
+  }
+}
+
+function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, accountAddress: string): DestinationAddress[] {
+  if (!explorerTransaction.outputs) {
+    return []
+  }
+
+  const destinations: Record<Address, DestinationAddress['type']> = {}
+  explorerTransaction.inputs?.forEach(input => {
+    if (input.address !== undefined && input.address !== accountAddress) {
+      destinations[input.address] = 'From'
+    }
+  })
+  explorerTransaction.outputs?.forEach(output => {
+    if (output.address !== accountAddress) {
+      if (output.address in destinations) {
+        if (destinations[output.address] === 'From') {
+          destinations[output.address] === 'From/To'
+        }
+      } else {
+        destinations[output.address] = 'To'
+      }
+    }
+  })
+  return Object.entries(destinations).map(pair => ({ address: pair[0], type: pair[1]}))
+}
+
+function extractAmountChanges(explorerTransation: AlephiumExplorerTransaction, accountAddress: string): AmountChanges {
+  const result: AmountChanges = { attoAlphAmount: BigInt(0), tokens: {} }
+  explorerTransation.inputs?.forEach(input => {
+    if (input.address === accountAddress) {
+      if (input.attoAlphAmount) {
+        result.attoAlphAmount -= number256ToBigint(input.attoAlphAmount)
+      }
+      input.tokens?.forEach(token => {
+        result.tokens[token.id] ||= BigInt(0)
+        result.tokens[token.id] -= number256ToBigint(token.amount)
+      })
+    }
+  })
+  explorerTransation.outputs?.forEach(output => {
+    if (output.address === accountAddress) {
+      if (output.attoAlphAmount) {
+        result.attoAlphAmount += number256ToBigint(output.attoAlphAmount)
+      }
+      output.tokens?.forEach(token => {
+        result.tokens[token.id] ||= BigInt(0)
+        result.tokens[token.id] += number256ToBigint(token.amount)
+      })
+    }
+  })
+  return result
 }

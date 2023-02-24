@@ -1,4 +1,4 @@
-import { IExplorerTransaction } from "../../../../shared/explorer/type"
+import { AlephiumExplorerTransaction, IExplorerTransaction } from "../../../../shared/explorer/type"
 import { Transaction } from "../../../../shared/transactions"
 import { ActivityTransaction } from "../useActivity"
 import {
@@ -88,15 +88,13 @@ export const isDeployContractTransaction = (
 export const isActivityTransaction = (
   transaction: any,
 ): transaction is ActivityTransaction => {
-  return !!(transaction.hash && transaction.date)
+  return !!(transaction.hash && transaction.date && transaction.meta && transaction.meta.request)
 }
 
 export const isVoyagerTransaction = (
   transaction: any,
 ): transaction is Transaction => {
   return !!(
-    transaction.hash &&
-    transaction.timestamp &&
     transaction.account &&
     transaction.status
   )
@@ -104,6 +102,7 @@ export const isVoyagerTransaction = (
 
 export const isExplorerTransaction = (
   transaction: any,
-): transaction is IExplorerTransaction => {
-  return !!(!isVoyagerTransaction(transaction) && transaction.transactionHash)
+): transaction is AlephiumExplorerTransaction => {
+  return (!!(transaction.inputs && transaction.outputs && transaction.hash)) ||
+    (!!(transaction.hash && transaction.date && transaction.meta && transaction.meta.explorer && !transaction.meta.request))
 }

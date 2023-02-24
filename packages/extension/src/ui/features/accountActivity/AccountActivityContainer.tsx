@@ -1,24 +1,24 @@
 import { CellStack, H4, SpacerCell } from "@argent/ui"
 import { Center, Skeleton } from "@chakra-ui/react"
-import { get } from "lodash-es"
+import { get, merge } from "lodash-es"
 import { FC, Suspense, useCallback, useMemo } from "react"
 import { transaction } from "starknet"
 
-import { IExplorerTransaction } from "../../../shared/explorer/type"
+import { AlephiumExplorerTransaction } from "../../../shared/explorer/type"
+import { Transaction } from "../../../shared/transactions"
 import { useAppState } from "../../app.state"
 import { ErrorBoundary } from "../../components/ErrorBoundary"
 import { ErrorBoundaryFallback } from "../../components/ErrorBoundaryFallback"
 import { formatDate } from "../../services/dates"
-import { useAspectContractAddresses } from "../accountNfts/aspect.service"
 import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { useTokens, useTokensWithBalance } from "../accountTokens/tokens.state"
+import { useNetwork } from "../networks/useNetworks"
 import { AccountActivity } from "./AccountActivity"
-import AccountTransactionList from "./AccountTransactionList"
 import { PendingTransactionsContainer } from "./PendingTransactions"
 import { isVoyagerTransaction } from "./transform/is"
 import { ActivityTransaction } from "./useActivity"
-import { useArgentExplorerAccountTransactionsInfinite } from "./useArgentExplorer"
+import { useAlephiumExplorerAccountTransactionsInfinite, useArgentExplorerAccountTransactionsInfinite } from "./useArgentExplorer"
 
 export interface AccountActivityContainerProps {
   account: Account
@@ -55,12 +55,38 @@ export const AccountActivityContainer: FC<AccountActivityContainerProps> = ({
   )
 }
 
+const PAGE_SIZE = 10
+
 export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
   account,
 }) => {
-  const { transactions } = useAccountTransactions(account)
   const tokens = useTokens(account)
-  const confirmedTransactions = useMemo(() => {
+
+  const { explorerApiUrl } = useNetwork(account.networkId)
+  const { data, setSize } = useAlephiumExplorerAccountTransactionsInfinite(
+    {
+      accountAddress: account.address,
+      explorerApiUrl: explorerApiUrl,
+      pageSize: PAGE_SIZE,
+    },
+    {
+      suspense: true,
+    },
+  )
+
+  const explorerTransactions = useMemo(() => {
+    if (!data) {
+      return
+    }
+    return data.flat()
+  }, [data])
+
+  const isEmpty = data?.[0]?.length === 0
+  const isReachingEnd =
+    isEmpty || (data && data[data.length - 1]?.length < PAGE_SIZE)
+
+  const { transactions } = useAccountTransactions(account)
+  const voyagerTransactions = useMemo(() => {
     // RECEIVED transactions are already shown as pending
     return transactions.filter(
       (transaction) =>
@@ -68,31 +94,86 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
     )
   }, [transactions])
 
-  console.log("confirmedTransactions", confirmedTransactions)
-  const activity: Record<
-    string,
-    Array<ActivityTransaction | IExplorerTransaction>
-  > = {}
-  for (const transaction of confirmedTransactions) {
-    const date = formatDate(new Date(transaction.timestamp))
-    const dateLabel = date.toString()
-    activity[dateLabel] ||= []
-    if (isVoyagerTransaction(transaction)) {
-      const { hash, meta, inputs, outputs, status } = transaction
-      const isRejected = status === "REJECTED"
-      const activityTransaction: ActivityTransaction = {
-        hash,
-        date,
-        inputs,
-        outputs,
-        meta,
-        isRejected,
+  const mergedTransactions = useMemo(() => {
+    if (!explorerTransactions) {
+      return {
+        transactions: voyagerTransactions,
       }
-      activity[dateLabel].push(activityTransaction)
-    } else {
-      activity[dateLabel].push(transaction)
     }
-  }
+    const matchedHashes: string[] = []
+
+    transactions.map((transaction) => {
+      const explorerTransaction = explorerTransactions.find(
+        (explorerTransaction) =>
+          explorerTransaction.hash === transaction.hash,
+      )
+
+      if (explorerTransaction) {
+        matchedHashes.push(transaction.hash)
+      }
+    })
+
+    const unmatchedExplorerTransactions = explorerTransactions.filter(
+      (explorerTransaction) =>
+        !matchedHashes.includes(explorerTransaction.hash),
+    )
+
+    const mergedTransactions: Array<Transaction | AlephiumExplorerTransaction> = [...voyagerTransactions]
+
+    for (const transaction of unmatchedExplorerTransactions) {
+      mergedTransactions.push(transaction)
+    }
+
+    const sortedTransactions = mergedTransactions.sort(
+      (a, b) => b.timestamp - a.timestamp,
+    )
+
+    return {
+      transactions: sortedTransactions,
+    }
+  }, [explorerTransactions, voyagerTransactions])
+
+  const { activity, loadMoreHashes } = useMemo(() => {
+    const activity: Record<
+      string,
+      Array<ActivityTransaction | AlephiumExplorerTransaction>
+    > = {}
+    let lastExplorerTransactionHash
+    for (const transaction of mergedTransactions.transactions) {
+      const date = formatDate(new Date(transaction.timestamp))
+      const dateLabel = date.toString()
+      activity[dateLabel] ||= []
+      if (isVoyagerTransaction(transaction)) {
+        const { hash, meta, status } = transaction
+        const isRejected = status === "REJECTED"
+        const activityTransaction: ActivityTransaction = {
+          hash,
+          date,
+          meta,
+          isRejected,
+        }
+        activity[dateLabel].push(activityTransaction)
+      } else {
+        activity[dateLabel].push(transaction)
+        lastExplorerTransactionHash = transaction.hash
+      }
+    }
+
+    const loadMoreHashes = []
+
+    if (lastExplorerTransactionHash) {
+      loadMoreHashes.push(lastExplorerTransactionHash)
+    }
+
+    return { activity, loadMoreHashes }
+  }, [mergedTransactions])
+
+
+  const onLoadMore = useCallback(() => {
+    if (!isReachingEnd) {
+      setSize((size) => size + 1)
+    }
+  }, [isReachingEnd, setSize])
 
   return (
     // Design 1
@@ -103,11 +184,11 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
     // Design 2
     <AccountActivity
       activity={activity}
-      loadMoreHashes={[]}
+      loadMoreHashes={loadMoreHashes}
       account={account}
       tokensByNetwork={tokens}
       nftContractAddresses={[]}
-      onLoadMore={() => { return }}
+      onLoadMore={onLoadMore}
     />
   )
 }

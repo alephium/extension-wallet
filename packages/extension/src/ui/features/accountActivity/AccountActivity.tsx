@@ -2,14 +2,15 @@ import { HeaderCell } from "@argent/ui"
 import { FC, Fragment } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { IExplorerTransaction } from "../../../shared/explorer/type"
+import { AlephiumExplorerTransaction } from "../../../shared/explorer/type"
 import { Token } from "../../../shared/token/type"
 import { TransactionStatusIndicator } from "../../components/StatusIndicator"
 import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
-import { ReviewedTransactionListItem, TransactionListItem } from "./TransactionListItem"
-import { transformExplorerTransaction, transformTransaction } from "./transform"
-import { isActivityTransaction, isExplorerTransaction } from "./transform/is"
+import { ReviewedTransactionListItem } from "./TransactionListItem"
+import { transformAlephiumExplorerTransaction } from "./transform/explorerTransaction/transformExplorerTransaction"
+import { isActivityTransaction, isExplorerTransaction, isVoyagerTransaction } from "./transform/is"
+import { extractExplorerTransaction, transformReviewedTransaction } from "./transform/transaction/transformTransaction"
 import { LoadMoreTrigger } from "./ui/LoadMoreTrigger"
 import { ActivityTransaction } from "./useActivity"
 
@@ -17,20 +18,19 @@ interface AccountActivityProps {
   account: Account
   tokensByNetwork?: Token[]
   nftContractAddresses?: string[]
-  activity: Record<string, Array<ActivityTransaction | IExplorerTransaction>>
+  activity: Record<string, Array<ActivityTransaction | AlephiumExplorerTransaction>>
   loadMoreHashes: string[]
   onLoadMore: () => void
 }
 
 export const AccountActivity: FC<AccountActivityProps> = ({
   account,
-  tokensByNetwork,
-  nftContractAddresses,
   activity,
   loadMoreHashes = [],
   onLoadMore,
 }) => {
   const navigate = useNavigate()
+
   return (
     <>
       {Object.entries(activity).map(([dateLabel, transactions]) => (
@@ -39,8 +39,12 @@ export const AccountActivity: FC<AccountActivityProps> = ({
           {transactions.map((transaction) => {
             if (isActivityTransaction(transaction)) {
               const { hash, isRejected } = transaction
-              const transactionTransformed = transaction.meta?.reviewTxResult
+              const reviewedTransaction = transaction.meta?.request
+              if (!reviewedTransaction) {
+                return null
+              }
 
+              const transactionTransformed = transformReviewedTransaction(reviewedTransaction)
               if (transactionTransformed) {
                 return (
                   <ReviewedTransactionListItem
@@ -57,26 +61,25 @@ export const AccountActivity: FC<AccountActivityProps> = ({
                   </ReviewedTransactionListItem>
                 )
               }
-              return null
-            } else if (isExplorerTransaction(transaction)) {
+            }
+            const explorerTransaction = extractExplorerTransaction(transaction)
+            if (explorerTransaction) {
               const explorerTransactionTransformed =
                 transaction &&
-                transformExplorerTransaction({
-                  explorerTransaction: transaction,
+                transformAlephiumExplorerTransaction({
+                  explorerTransaction,
                   accountAddress: account.address,
-                  tokensByNetwork,
-                  nftContractAddresses,
                 })
               if (explorerTransactionTransformed) {
-                const { transactionHash } = transaction
-                const loadMore = loadMoreHashes.includes(transactionHash)
+                const { hash } = transaction
+                const loadMore = loadMoreHashes.includes(hash)
                 return (
-                  <Fragment key={transactionHash}>
-                    <TransactionListItem
+                  <Fragment key={hash}>
+                    <ReviewedTransactionListItem
                       transactionTransformed={explorerTransactionTransformed}
                       networkId={account.networkId}
                       onClick={() =>
-                        navigate(routes.transactionDetail(transactionHash))
+                        navigate(routes.transactionDetail(hash))
                       }
                     />
                     {loadMore && (

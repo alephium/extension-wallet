@@ -1,10 +1,11 @@
+import { Number256, prettifyTokenAmount } from "@alephium/web3"
 import { BigNumberish } from "ethers"
 
 import {
   PRETTY_UNLIMITED,
   isUnlimitedAmount,
   prettifyCurrencyValue,
-  prettifyTokenAmount,
+  prettifyTokenAmount as argentPrettifyTokenAmount,
 } from "../../../shared/token/price"
 import { useAppState } from "../../app.state"
 import { formatLongString, isEqualAddress } from "../../services/addresses"
@@ -37,7 +38,7 @@ export const useDisplayTokenAmountAndCurrencyValue = ({
       displayValue: null,
     }
   }
-  const displayAmount = prettifyTokenAmount({
+  const displayAmount = argentPrettifyTokenAmount({
     amount,
     decimals: token?.decimals,
     symbol: token?.symbol || "Unknown token",
@@ -55,14 +56,9 @@ export const useDisplayTokenAmountAndCurrencyValue = ({
 }
 
 export interface IUseDisplayTokensAmountAndCurrencyValue {
-  amounts: {id: string, amount: bigint}[],
+  amounts: {id: string, amount: Number256}[],
   currencySymbol?: string
 }
-
-const defaultAmountFmt: BigIntToLocaleStringOptions = {
-  notation: 'scientific',
-  maximumFractionDigits: 6 // The default is 3, but 20 is the maximum supported by JS according to MDN.
-};
 
 export const useDisplayTokensAmountAndCurrencyValue = ({
   amounts,
@@ -76,30 +72,26 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
           isEqualAddress(address, amount.id),
         )
       : undefined
-      const naiveAmount = amount.amount.toLocaleString('en-US', defaultAmountFmt)
-      if (token === undefined) {
+      const naiveAmount = prettifyTokenAmount(amount.amount, 0) ?? '?'
+      if (token === undefined || naiveAmount === undefined) {
         return {
           displayAmount: naiveAmount,
           displayTokenId: showTokenId(amount.id),
           displayValue: null,
         }
       }
-      const displayAmount = prettifyTokenAmount({
-        amount: amount.amount,
-        decimals: token?.decimals,
-        symbol: token?.symbol || "Unknown token",
-      })
+      const displayAmount = prettifyTokenAmount(amount.amount, token.decimals)
       const displayValue = null
-      if (displayAmount !== null) {
+      if (displayAmount !== undefined) {
         return {
-          displayAmount: displayAmount.split(" ")[0], // Hacky: trim the token symbol. To be improved
-          displayTokenId: displayAmount.split(" ")[1],
+          displayAmount: displayAmount, 
+          displayTokenId: token.symbol ?? showTokenId(token.address),
           displayValue,
         }
       } else {
         return {
           displayAmount: naiveAmount,
-          displayTokenId: showTokenId(amount.id),
+          displayTokenId: token.symbol ?? showTokenId(token.address),
           displayValue: null
         }
       }

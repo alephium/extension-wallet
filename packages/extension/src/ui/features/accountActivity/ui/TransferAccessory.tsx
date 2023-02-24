@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, SignTransferTxParams } from "@alephium/web3"
+import { ALPH_TOKEN_ID, Number256, number256ToBigint, SignTransferTxParams } from "@alephium/web3"
 import { H6, P4 } from "@argent/ui"
 import { ColorProps, Flex } from "@chakra-ui/react"
 import { FC, useMemo } from "react"
@@ -6,6 +6,7 @@ import { ReviewTransactionResult, TransactionPayload } from "../../../../shared/
 
 import { useDisplayTokenAmountAndCurrencyValue, useDisplayTokensAmountAndCurrencyValue } from "../../accountTokens/useDisplayTokenAmountAndCurrencyValue"
 import {
+  AmountChanges,
   TokenApproveTransaction,
   TokenMintTransaction,
   TokenTransferTransaction,
@@ -60,13 +61,9 @@ export const TransferAccessory: FC<TransferAccessoryProps> = ({
 export const TokenAmount = ({
   amount,
   symbol,
-  color,
-  prefix
 }: {
   amount: string,
   symbol: string,
-  color: ColorProps['color'],
-  prefix: string
 }) => {
   return <Flex direction="row-reverse" alignContent="flex-end">
     <H6 key="xxxx" paddingLeft="1">
@@ -76,34 +73,32 @@ export const TokenAmount = ({
       overflow="hidden"
       textOverflow={"ellipsis"}
       textAlign={"right"}
-      color={color}
+      color={amount.startsWith("-") ? "orange.500" : "green.400"}
     >
-      {`${prefix} ${amount}`}
+      {amount}
     </H6>
   </Flex>
 
 }
 
 export interface ReviewedTransferAccessoryProps {
-  transaction: TransactionPayload<SignTransferTxParams>
+  amountChanges: AmountChanges
 }
 
 export const ReviewedTransferAccessory: FC<ReviewedTransferAccessoryProps> = ({
-  transaction,
+  amountChanges,
 }) => {
   const amounts = useMemo(() => {
-    const result: {id: string, amount: bigint}[] = []
-    transaction.destinations.forEach(destination => {
-      result.push({id: ALPH_TOKEN_ID, amount: destination.attoAlphAmount})
-      destination.tokens?.forEach(token => result.push(token))
-    })
+    const result: {id: string, amount: Number256}[] = []
+    result.push({id: ALPH_TOKEN_ID, amount: amountChanges.attoAlphAmount})
+    Object.entries(amountChanges.tokens).forEach(token => result.push({ id: token[0], amount: token[1]}))
     return result
-  }, [transaction])
+  }, [amountChanges])
   const displayAmounts = useDisplayTokensAmountAndCurrencyValue({amounts})
   return (
     <Flex direction={"column"} overflow="hidden" alignContent="flex-end">
       {displayAmounts.map((amount, index) => 
-        <TokenAmount key={index} amount={amount.displayAmount} symbol={amount.displayTokenId} color="orange.500" prefix="-"/>
+        <TokenAmount key={index} amount={amount.displayAmount} symbol={amount.displayTokenId}/>
       )}
     </Flex>
   )

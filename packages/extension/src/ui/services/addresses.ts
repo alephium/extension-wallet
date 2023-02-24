@@ -11,9 +11,9 @@ export const normalizeAddress = (address: string) => address
 
 export const formatLongString = (data: string) => {
   const items = data.split(' ')
-  if (items.length == 1 && data.length > 12) {
-    const start = data.slice(0, 6)
-    const end = data.slice(-6)
+  if (items.length == 1 && data.length > 8) {
+    const start = data.slice(0, 4)
+    const end = data.slice(-4)
     return `${start} ... ${end}`
   } else {
     return data
@@ -21,8 +21,8 @@ export const formatLongString = (data: string) => {
 }
 
 export const formatTruncatedAddress = (address: string) => {
-  const start = address.slice(0, 6)
-  const end = address.slice(-6)
+  const start = address.slice(0, 4)
+  const end = address.slice(-4)
   return `${start} ... ${end}`
 }
 

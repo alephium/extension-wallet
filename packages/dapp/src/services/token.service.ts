@@ -60,7 +60,7 @@ export const getAlphBalance = async (address: string) => {
   const alephium = getAlephium()
   if (!alephium.explorerProvider) {
     console.log("Alephium explorer provider not initialized")
-    return []
+    return undefined
   }
 
   const balance = await alephium.explorerProvider.addresses.getAddressesAddressBalance(address)
