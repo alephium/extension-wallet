@@ -11,6 +11,7 @@ import {
   isTokenMintTransaction,
   isTokenTransferTransaction,
 } from "../transform/is"
+import { getTransferType } from "../transform/transaction/transformTransaction"
 import { TransformedAlephiumTransaction, TransformedTransaction } from "../transform/type"
 
 const {
@@ -136,12 +137,19 @@ export const ReviewedTransactionIcon: FC<ReviewedTransactionIconProps> = ({
   outline = false,
   ...rest
 }) => {
-  const badgeSize = Math.min(32, Math.round((size * 16) / 36))
   const iconSize = Math.round((4 * (size * 16)) / 36)
   let iconComponent = <ActivityIcon />
+  let transferType
   switch (transaction.type) {
     case "TRANSFER":
-      iconComponent = <SendIcon />
+      transferType = transaction.transferType
+      if (transferType === 'Send') {
+        iconComponent = <SendIcon />
+      } else if (transferType === 'Receive') {
+        iconComponent = <ReceiveIcon />
+      } else {
+        iconComponent = <SwapIcon />
+      }
       break
     case "DEPLOY_CONTRACT":
       iconComponent = <DocumentIcon />

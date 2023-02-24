@@ -214,7 +214,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
   const displayName = useMemo(() => {
     switch (transactionTransformed.type) {
       case "TRANSFER":
-        return "Transfer"
+        return transactionTransformed.transferType
       case "DEPLOY_CONTRACT":
         return "New Contract"
       case "EXECUTE_SCRIPT":

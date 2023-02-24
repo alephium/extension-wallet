@@ -86,7 +86,6 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
     isEmpty || (data && data[data.length - 1]?.length < PAGE_SIZE)
 
   const { transactions } = useAccountTransactions(account)
-  console.log("===== transaction", transactions)
   const voyagerTransactions = useMemo(() => {
     // RECEIVED transactions are already shown as pending
     return transactions.filter(
@@ -95,7 +94,6 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
     )
   }, [transactions])
 
-  console.log("==== confirmedTransactions", voyagerTransactions)
   const mergedTransactions = useMemo(() => {
     if (!explorerTransactions) {
       return {
@@ -134,8 +132,6 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
       transactions: sortedTransactions,
     }
   }, [explorerTransactions, voyagerTransactions])
-
-  console.log("==== mergedTransaction", mergedTransactions)
 
   const { activity, loadMoreHashes } = useMemo(() => {
     const activity: Record<

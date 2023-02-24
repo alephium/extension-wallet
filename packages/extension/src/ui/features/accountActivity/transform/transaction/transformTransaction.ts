@@ -4,7 +4,7 @@ import { AlephiumExplorerTransaction } from "../../../../../shared/explorer/type
 import { Token } from "../../../../../shared/token/type"
 import { Transaction } from "../../../../../shared/transactions"
 import { ActivityTransaction } from "../../useActivity"
-import { AmountChanges, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
+import { AmountChanges, DestinationAddress, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
 import dateTransformer from "./transformers/dateTransformer"
 import declareContractTransformer from "./transformers/declareContractTransformer"
 import defaultDisplayNameTransformer from "./transformers/defaultDisplayNameTransformer"
@@ -104,11 +104,14 @@ export function showTokenId(tokenId: string): string {
 }
 
 export function transformReviewedTransaction(transaction: ReviewTransactionResult): TransformedAlephiumTransaction {
+  let destinations: DestinationAddress[]
   switch (transaction.type) {
     case 'TRANSFER':
+      destinations = transaction.params.destinations.map(d => ({ address: d.address, type: 'To' }))
       return {
         type: 'TRANSFER',
-        destinations: transaction.params.destinations.map(d => ({ address: d.address, type: 'To' })),
+        destinations: destinations,
+        transferType: getTransferType(destinations),
         amountChanges: extractAmountChanges(transaction.params.destinations)
       }
     case 'DEPLOY_CONTRACT':
@@ -153,12 +156,12 @@ export function extractExplorerTransaction(transaction: any): AlephiumExplorerTr
   return undefined
 }
 
-export function getTransferType(amountChanges: AmountChanges) {
-  if (amountChanges.attoAlphAmount < 0 && Object.values(amountChanges.tokens).every(value => value < 0)) {
-    return 'Out'
+export function getTransferType(destinations: DestinationAddress[]) {
+  if (destinations.every(d => d.type === 'To')) {
+    return 'Send'
   }
-  if (amountChanges.attoAlphAmount > 0 && Object.values(amountChanges.tokens).every(value => value > 0)) {
-    return 'In'
+  if (destinations.every(d => d.type === 'From')) {
+    return 'Receive'
   }
-  return 'InOut'
+  return 'Exchange'
 }

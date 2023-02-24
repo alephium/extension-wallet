@@ -31,14 +31,12 @@ export const AccountActivity: FC<AccountActivityProps> = ({
 }) => {
   const navigate = useNavigate()
 
-  console.log('===== AccountActivity', activity, loadMoreHashes, account)
   return (
     <>
       {Object.entries(activity).map(([dateLabel, transactions]) => (
         <Fragment key={dateLabel}>
           <HeaderCell>{dateLabel}</HeaderCell>
           {transactions.map((transaction) => {
-            console.log('===== test', isActivityTransaction(transaction), isVoyagerTransaction(transaction), isExplorerTransaction(transaction))
             if (isActivityTransaction(transaction)) {
               const { hash, isRejected } = transaction
               const reviewedTransaction = transaction.meta?.request

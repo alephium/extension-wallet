@@ -29,7 +29,6 @@ export interface TransactionAction {
 
 
 function getTokensFromDestination(destination: Destination): TransactionActionRow[] {
-  console.log(`==== ALPH`, destination.attoAlphAmount, prettifyAttoAlphAmount(destination.attoAlphAmount))
   return [{ key: 'ALPH', value: prettifyAttoAlphAmount(destination.attoAlphAmount) ?? '?' },
     ...(destination.tokens ?? []).map(token => ({ key: token.id, value: token.amount.toString() }))]
 }

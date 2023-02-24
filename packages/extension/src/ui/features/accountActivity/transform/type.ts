@@ -121,7 +121,7 @@ export type TransformedTransaction =
   | DeclareContractTransaction
   | DeployContractTransaction
 
-export interface Destination {
+export interface DestinationAddress {
   address: Address
   type: 'From' | 'To' | 'From/To'
 }
@@ -133,7 +133,8 @@ export interface AmountChanges {
 
 export interface TransferTransformedAlephiumTransaction {
   type: 'TRANSFER'
-  destinations: Destination[]
+  transferType: 'Send' | 'Receive' | 'Exchange'
+  destinations: DestinationAddress[]
   amountChanges: AmountChanges
 }
 

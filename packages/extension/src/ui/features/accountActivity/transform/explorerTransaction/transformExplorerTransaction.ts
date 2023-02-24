@@ -1,8 +1,8 @@
-import { Address, fromApiNumber256, fromApiToken, number256ToBigint, SignTransferTxParams, SignTransferTxResult } from "@alephium/web3"
-import { ReviewTransactionResult, TransactionPayload } from "../../../../../shared/actionQueue/types"
+import { Address, number256ToBigint } from "@alephium/web3"
 import { AlephiumExplorerTransaction, IExplorerTransaction } from "../../../../../shared/explorer/type"
 import { Token } from "../../../../../shared/token/type"
-import { AmountChanges, Destination, TransferTransformedAlephiumTransaction, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
+import { getTransferType } from "../transaction/transformTransaction"
+import { AmountChanges, DestinationAddress, TransferTransformedAlephiumTransaction, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
 import { fingerprintExplorerTransaction } from "./fingerprintExplorerTransaction"
 import accountCreateTransformer from "./transformers/accountCreateTransformer"
 import accountUpgradeTransformer from "./transformers/accountUpgradeTransformer"
@@ -145,14 +145,13 @@ export const transformAlephiumExplorerTransaction = ({
   }
   try {
     const destinations = extractDestinations(explorerTransaction, accountAddress)
-
-    if (destinations === undefined) {
+    if (destinations.length === 0) {
       return
     } 
-
     const result: TransferTransformedAlephiumTransaction = {
       type: "TRANSFER",
-      destinations: extractDestinations(explorerTransaction, accountAddress),
+      transferType: getTransferType(destinations),
+      destinations: destinations,
       amountChanges: extractAmountChanges(explorerTransaction, accountAddress)
     }
     return result
@@ -161,12 +160,12 @@ export const transformAlephiumExplorerTransaction = ({
   }
 }
 
-function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, accountAddress: string): Destination[] {
+function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, accountAddress: string): DestinationAddress[] {
   if (!explorerTransaction.outputs) {
     return []
   }
 
-  const destinations: Record<Address, Destination['type']> = {}
+  const destinations: Record<Address, DestinationAddress['type']> = {}
   explorerTransaction.inputs?.forEach(input => {
     if (input.address !== undefined && input.address !== accountAddress) {
       destinations[input.address] = 'From'

@@ -193,7 +193,6 @@ export const useAlephiumExplorerAccountTransactionsInfinite = (
       pageSize,
     ],
   )
-  console.log('===== explorer', key(0))
   return useSWRInfinite<AlephiumExplorerTransaction[]>(key, alephiumApiFetcher, {
     revalidateAll: true,
     ...withPolling(15 * 1000) /** 15 seconds */,
