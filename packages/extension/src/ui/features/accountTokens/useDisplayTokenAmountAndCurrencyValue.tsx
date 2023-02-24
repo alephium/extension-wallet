@@ -7,7 +7,7 @@ import {
   prettifyTokenAmount,
 } from "../../../shared/token/price"
 import { useAppState } from "../../app.state"
-import { formatLongString, isEqualAddress } from "../../services/addresses"
+import { isEqualAddress } from "../../services/addresses"
 import { showTokenId } from "../accountActivity/transform/transaction/transformTransaction"
 import { useTokenAmountToCurrencyValue } from "./tokenPriceHooks"
 import { useTokensInNetwork } from "./tokens.state"

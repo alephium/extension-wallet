@@ -86,5 +86,6 @@ export const useDappDisplayAttributes = (host: string) => {
     [host, "dappDisplayAttributes"],
     getDappDisplayAttributes,
   )
+
   return data
 }

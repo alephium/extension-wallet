@@ -94,15 +94,15 @@ export const ReviewedTransferAccessory: FC<ReviewedTransferAccessoryProps> = ({
   const amounts = useMemo(() => {
     const result: {id: string, amount: bigint}[] = []
     transaction.destinations.forEach(destination => {
-      result.push({id: ALPH_TOKEN_ID, amount: destination.attoAlphAmount})
-      destination.tokens?.forEach(token => result.push(token))
+      result.push({id: ALPH_TOKEN_ID, amount: BigInt(destination.attoAlphAmount)})
+      destination.tokens?.forEach(token => result.push({id: token.id, amount: BigInt(token.amount)}))
     })
     return result
   }, [transaction])
   const displayAmounts = useDisplayTokensAmountAndCurrencyValue({amounts})
   return (
     <Flex direction={"column"} overflow="hidden" alignContent="flex-end">
-      {displayAmounts.map((amount, index) => 
+      {displayAmounts.map((amount, index) =>
         <TokenAmount key={index} amount={amount.displayAmount} symbol={amount.displayTokenId} color="orange.500" prefix="-"/>
       )}
     </Flex>

@@ -29,7 +29,7 @@ export interface TransactionAction {
 
 
 function getTokensFromDestination(destination: Destination): TransactionActionRow[] {
-  return [{ key: 'ALPH', value: convertSetToAlph(destination.attoAlphAmount) },
+  return [{ key: 'ALPH', value: convertSetToAlph(BigInt(destination.attoAlphAmount)) },
     ...(destination.tokens ?? []).map(token => ({ key: token.id, value: token.amount.toString() }))]
 }
 
