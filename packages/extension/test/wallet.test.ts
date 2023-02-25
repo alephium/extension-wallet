@@ -35,11 +35,6 @@
 //   "utf8",
 // )
 
-// const loadContracts: LoadContracts = async () => [
-//   proxyCompiledContract,
-//   argentAccountCompiledContract,
-// ]
-
 // const getAccountStore = (name: string, defaults: WalletAccount[] = []) => {
 //   return new ArrayStorage<WalletAccount>(defaults, {
 //     namespace: name,
@@ -74,7 +69,6 @@
 //       storage,
 //       accountStore,
 //       sessionStore,
-//       loadContracts,
 //       getNetwork,
 //     )
 
@@ -126,7 +120,6 @@
 //       storage,
 //       accountStore,
 //       sessionStore,
-//       loadContracts,
 //       getNetwork,
 //     )
 
@@ -174,7 +167,6 @@
 //       storage,
 //       accountStore,
 //       sessionStore,
-//       loadContracts,
 //       getNetwork,
 //     )
 
@@ -199,7 +191,6 @@
 //       storage,
 //       accountStore,
 //       sessionStore,
-//       loadContracts,
 //       getNetwork,
 //     )
 
@@ -227,7 +218,6 @@
 //       storage,
 //       accountStore,
 //       sessionStore,
-//       loadContracts,
 //       getNetwork,
 //     )
 

@@ -28,8 +28,8 @@ export const useDisplayTokenAmountAndCurrencyValue = ({
   const tokensByNetwork = useTokensInNetwork(switcherNetworkId)
   const token = tokenAddress
     ? tokensByNetwork.find(({ address }) =>
-        isEqualAddress(address, tokenAddress),
-      )
+      isEqualAddress(address, tokenAddress),
+    )
     : undefined
   const amountCurrencyValue = useTokenAmountToCurrencyValue(token, amount)
   if (!token) {
@@ -56,7 +56,7 @@ export const useDisplayTokenAmountAndCurrencyValue = ({
 }
 
 export interface IUseDisplayTokensAmountAndCurrencyValue {
-  amounts: {id: string, amount: Number256}[],
+  amounts: { id: string, amount: Number256 }[],
   currencySymbol?: string
 }
 
@@ -69,31 +69,32 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
   return amounts.map(amount => {
     const token = amount.id
       ? tokensByNetwork.find(({ address }) =>
-          isEqualAddress(address, amount.id),
-        )
+        isEqualAddress(address, amount.id),
+      )
       : undefined
-      const naiveAmount = prettifyTokenAmount(amount.amount, 0) ?? '?'
-      if (token === undefined || naiveAmount === undefined) {
-        return {
-          displayAmount: naiveAmount,
-          displayTokenId: showTokenId(amount.id),
-          displayValue: null,
-        }
+    const naiveAmount = prettifyTokenAmount(amount.amount, 0) ?? '?'
+    if (token === undefined || naiveAmount === undefined) {
+      return {
+        displayAmount: naiveAmount,
+        displayTokenId: showTokenId(amount.id),
+        displayValue: null,
       }
-      const displayAmount = prettifyTokenAmount(amount.amount, token.decimals)
-      const displayValue = null
-      if (displayAmount !== undefined) {
-        return {
-          displayAmount: displayAmount, 
-          displayTokenId: token.symbol ?? showTokenId(token.address),
-          displayValue,
-        }
-      } else {
-        return {
-          displayAmount: naiveAmount,
-          displayTokenId: token.symbol ?? showTokenId(token.address),
-          displayValue: null
-        }
+    }
+
+    const displayAmount = prettifyTokenAmount(amount.amount, token.decimals)
+    const displayValue = null
+    if (displayAmount !== undefined) {
+      return {
+        displayAmount: displayAmount,
+        displayTokenId: token.symbol ?? showTokenId(token.address),
+        displayValue,
       }
+    } else {
+      return {
+        displayAmount: naiveAmount,
+        displayTokenId: token.symbol ?? showTokenId(token.address),
+        displayValue: null
+      }
+    }
   })
 }

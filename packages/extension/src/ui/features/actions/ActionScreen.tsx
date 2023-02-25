@@ -16,9 +16,6 @@ import { EXTENSION_IS_POPUP } from "../browser/constants"
 import { focusExtensionTab, useExtensionIsInTab } from "../browser/tabs"
 import { useActions } from "./actions.state"
 import { AddNetworkScreen } from "./AddNetworkScreen"
-import { ApproveDeclareContractScreen } from "./ApproveDeclareContractScreen"
-import { ApproveDeployAccountScreen } from "./ApproveDeployAccount"
-import { ApproveDeployContractScreen } from "./ApproveDeployContractScreen"
 import { ApproveSignatureScreen } from "./ApproveSignatureScreen"
 import { ApproveTransactionScreen } from "./ApproveTransactionScreen"
 import { ConnectDappScreen } from "./connectDapp/ConnectDappScreen"
@@ -34,8 +31,8 @@ export const ActionScreen: FC = () => {
   const signerAccount = useAccount(action.type === 'TRANSACTION' && selectedAccount
     ? { address: action.payload.params.signerAddress, networkId: selectedAccount?.networkId }
     : action.type === 'SIGN' && selectedAccount
-    ? { address: action.payload.signerAddress, networkId: selectedAccount?.networkId }
-    : undefined
+      ? { address: action.payload.signerAddress, networkId: selectedAccount?.networkId }
+      : undefined
   )
 
   const closePopup = useCallback(() => {

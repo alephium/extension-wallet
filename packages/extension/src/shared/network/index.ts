@@ -58,5 +58,4 @@ export const restoreDefaultCustomNetworks = async () => {
 export type { Network, NetworkStatus } from "./type"
 export { customNetworksStore } from "./storage"
 export { networkSchema } from "./schema"
-export { getProvider } from "./provider"
 export { defaultNetworks, defaultNetwork } from "./defaults"
