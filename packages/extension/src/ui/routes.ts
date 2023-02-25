@@ -83,8 +83,6 @@ export const routes = {
     `/account/activity/transaction-detail/:txHash`,
   ),
   upgrade: route("/account/upgrade"),
-  networkUpgradeV4: route("/account/network-upgradeV4"),
-  accountUpgradeV4: route("/account/account-upgradeV4"),
   accountsHidden: route(
     (networkId: string) => `/accounts/hidden/${networkId}`,
     "/accounts/hidden/:networkId",
@@ -138,20 +136,6 @@ export const routes = {
   ),
   settingsAddressbookAdd: route("/settings/addressbook/add-or-edit"),
   settingsPrivacyStatement: route("/settings/privacy-policy"),
-  settingsSmartContractDevelopment: route(
-    "/settings/smart-contract-development",
-  ),
-  settingsSmartContractDeclare: route(
-    "/settings/smart-contract-development/declare",
-  ),
-  settingsSmartContractDeploy: route(
-    "/settings/smart-contract-development/deploy",
-  ),
-  settingsSmartContractDeclareOrDeploySuccess: route(
-    (type: "declare" | "deploy", classHashOrDeployedAddress) =>
-      `/settings/smart-contract-development/${type}/success/${classHashOrDeployedAddress}`,
-    "/settings/smart-contract-development/:type/success/:classHashOrDeployedAddress",
-  ),
   networkWarning: routeWithReturnTo("/network-warning"),
   backupDownload: route(
     (isFromSettings?: boolean) =>

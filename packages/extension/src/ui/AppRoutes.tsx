@@ -48,9 +48,6 @@ import { AddressbookSettingsScreen } from "./features/settings/AddressbookSettin
 import { BlockExplorerSettingsScreen } from "./features/settings/BlockExplorerSettingsScreen"
 import { DappConnectionsSettingsScreen } from "./features/settings/DappConnectionsSettingsScreen"
 import { DeveloperSettings } from "./features/settings/DeveloperSettings"
-import { DeclareOrDeployContractSuccess } from "./features/settings/DeveloperSettings/DeclareContractClasshash"
-import { DeclareSmartContractScreen } from "./features/settings/DeveloperSettings/DeclareSmartContractScreen"
-import { DeploySmartContractScreen } from "./features/settings/DeveloperSettings/DeploySmartContractScreen"
 import { PrivacyExperimentalSettings } from "./features/settings/ExperimentalSettings"
 import { NetworkSettingsEditScreen } from "./features/settings/NetworkSettingsEditScreen"
 import { NetworkSettingsFormScreen } from "./features/settings/NetworkSettingsFormScreen"
@@ -59,7 +56,6 @@ import { PrivacySettingsScreen } from "./features/settings/PrivacySettingsScreen
 import { SeedSettingsScreen } from "./features/settings/SeedSettingsScreen"
 import { SettingsPrivacyStatementScreen } from "./features/settings/SettingsPrivacyStatementScreen"
 import { SettingsScreen } from "./features/settings/SettingsScreen"
-import { SmartContractDevelopmentScreen } from "./features/settings/SmartContractDevelopmentScreen"
 import { ReviewFeedbackScreen } from "./features/userReview/ReviewFeedbackScreen"
 import { ReviewRatingScreen } from "./features/userReview/ReviewRatingScreen"
 import { routes } from "./routes"
@@ -185,26 +181,6 @@ const walletRoutes = (
       presentation="push"
       path={routes.settingsDeveloper.path}
       element={<DeveloperSettings />}
-    />
-    <Route
-      presentation="push"
-      path={routes.settingsSmartContractDevelopment.path}
-      element={<SmartContractDevelopmentScreen />}
-    />
-    <Route
-      presentation="push"
-      path={routes.settingsSmartContractDeclare.path}
-      element={<DeclareSmartContractScreen />}
-    />
-    <Route
-      presentation="push"
-      path={routes.settingsSmartContractDeploy.path}
-      element={<DeploySmartContractScreen />}
-    />
-    <Route
-      presentation="push"
-      path={routes.settingsSmartContractDeclareOrDeploySuccess.path}
-      element={<DeclareOrDeployContractSuccess />}
     />
     <Route
       presentation="push"
