@@ -9,21 +9,13 @@ import {
 } from "starknet"
 
 import {
-  ExtQueueItem,
   ReviewTransactionResult,
-  TransactionParams,
-  TransactionResult,
 } from "../../shared/actionQueue/types"
 import { getL1GasPrice } from "../../shared/ethersUtils"
 import { AllowArray } from "../../shared/storage/types"
-import { nameTransaction } from "../../shared/transactions"
 import { WalletAccount } from "../../shared/wallet.model"
-import { accountsEqual } from "../../shared/wallet.service"
-import { analytics } from "../analytics"
 import { BackgroundService } from "../background"
-import { argentMaxFee } from "../utils/argentMaxFee"
-import { Wallet } from "../wallet"
-import { addTransaction, transactionsStore } from "./store"
+import { addTransaction } from "./store"
 
 export const checkTransactionHash = (
   transactionHash?: number.BigNumberish,

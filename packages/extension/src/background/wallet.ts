@@ -23,14 +23,13 @@ import {
 } from "@alephium/web3-wallet"
 import { ethers } from "ethers"
 import { ProgressCallback } from "ethers/lib/utils"
-import { find, noop, throttle, union } from "lodash-es"
+import { find } from "lodash-es"
 import browser from "webextension-polyfill"
 
 import { withHiddenSelector } from "../shared/account/selectors"
 import {
   Network,
   defaultNetwork,
-  defaultNetworks,
 } from "../shared/network"
 import {
   IArrayStorage,
@@ -40,7 +39,6 @@ import {
 } from "../shared/storage"
 import { BaseWalletAccount, WalletAccount } from "../shared/wallet.model"
 import { accountsEqual } from "../shared/wallet.service"
-import { LoadContracts } from "./accounts"
 import {
   getNextPathIndex,
   getStarkPair,
@@ -98,7 +96,6 @@ export class Wallet {
     private readonly store: IKeyValueStorage<WalletStorageProps>,
     private readonly walletStore: IArrayStorage<WalletAccount>,
     private readonly sessionStore: IObjectStorage<WalletSession | null>,
-    private readonly loadContracts: LoadContracts,
     private readonly getNetwork: GetNetwork,
   ) { }
   async signAndSubmitUnsignedTx(

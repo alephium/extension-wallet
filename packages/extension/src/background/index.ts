@@ -10,7 +10,6 @@ import { delay } from "../shared/utils/delay"
 import { migrateWallet } from "../shared/wallet/storeMigration"
 import { walletStore } from "../shared/wallet/walletStore"
 import { handleAccountMessage } from "./accountMessaging"
-import { loadContracts } from "./accounts"
 import { handleActionMessage } from "./actionMessaging"
 import { getQueue } from "./actionQueue"
 import {
@@ -137,7 +136,6 @@ messageStream.subscribe(async ([msg, sender]) => {
     walletStore,
     accountStore,
     sessionStore,
-    loadContracts,
     getNetwork,
   )
 

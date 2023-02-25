@@ -3,7 +3,7 @@ import { Slide, SlideProps, Snackbar } from "@mui/material"
 import { FC, useCallback } from "react"
 import styled from "styled-components"
 
-import { AlephiumLogo, ArgentXLogo } from "../../components/Icons/ArgentXLogo"
+import { AlephiumLogo } from "../../components/Icons/ArgentXLogo"
 import { DiscordIcon } from "../../components/Icons/DiscordIcon"
 import {
   CheckCircleOutlineRoundedIcon,
@@ -52,15 +52,10 @@ const SnackbarIconContainer = styled.div`
   margin-right: 12px;
 `
 
-const StyledArgentXLogo = styled(ArgentXLogo)`
-  font-size: 20px;
-  color: ${({ theme }) => theme.primary};
-`
-
 const StyledAlephiumLogo = styled(AlephiumLogo)`
   font-size: 20px;
   color: ${({ theme }) => theme.primary};
-  width: 1em; 
+  width: 1em;
   height: 1em;
 `
 
