@@ -8,7 +8,6 @@ import {
   compareTransactions,
 } from "../../shared/transactions"
 import { runAddedHandlers, runChangedStatusHandlers } from "./onupdate"
-import { checkTransactionHash } from "./transactionExecution"
 
 export const transactionsStore = new ArrayStorage<Transaction>([], {
   namespace: "core:transactions",
@@ -18,7 +17,7 @@ export const transactionsStore = new ArrayStorage<Transaction>([], {
 
 export const addTransaction = async (transaction: TransactionRequest) => {
   // sanity checks
-  if (!checkTransactionHash(transaction.hash)) {
+  if (!transaction.hash) {
     return // dont throw
   }
 

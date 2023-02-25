@@ -21,8 +21,6 @@ import {
   deriveHDWalletPrivateKey,
   deriveHDWalletPrivateKeyForGroup
 } from "@alephium/web3-wallet"
-import { ethers } from "ethers"
-import { ProgressCallback } from "ethers/lib/utils"
 import { find } from "lodash-es"
 import browser from "webextension-polyfill"
 
@@ -41,19 +39,13 @@ import { BaseWalletAccount, WalletAccount } from "../shared/wallet.model"
 import { accountsEqual } from "../shared/wallet.service"
 import {
   getNextPathIndex,
-  getStarkPair,
 } from "./keys/keyDerivation"
 import backupSchema from "./schema/backup.schema"
 
 const isDev = process.env.NODE_ENV === "development"
-const isTest = process.env.NODE_ENV === "test"
-const isDevOrTest = isDev || isTest
-const SCRYPT_N = isDevOrTest ? 64 : 262144 // 131072 is the default value used by ethers
 
 const CURRENT_BACKUP_VERSION = 1
 export const SESSION_DURATION = isDev ? 24 * 60 * 60 : 30 * 60 // 30 mins in prod, 24 hours in dev
-
-const CHECK_OFFSET = 10
 
 export const PROXY_CONTRACT_CLASS_HASHES = [
   "0x25ec026985a3bf9d0cc1fe17326b245dfdc3ff89b8fde106542a3ea56c5a918",
@@ -138,26 +130,6 @@ export class Wallet {
 
   public async isSessionOpen(): Promise<boolean> {
     return (await this.sessionStore.get()) !== null
-  }
-
-  private async generateNewLocalSecret(
-    password: string,
-    progressCallback?: ProgressCallback,
-  ) {
-    if (await this.isInitialized()) {
-      return
-    }
-
-    const ethersWallet = ethers.Wallet.createRandom()
-    const encryptedBackup = await ethersWallet.encrypt(
-      password,
-      { scrypt: { N: SCRYPT_N } },
-      progressCallback,
-    )
-
-    await this.store.set("discoveredOnce", true)
-    await this.store.set("backup", encryptedBackup)
-    return this.setSession(ethersWallet.privateKey, password)
   }
 
   public async getSeedPhrase(): Promise<string> {
@@ -288,14 +260,6 @@ export class Wallet {
       throw Error(`account not found`)
     }
     return hit
-  }
-
-  public async getKeyPairByDerivationPath(derivationPath: string) {
-    const session = await this.sessionStore.get()
-    if (!session?.secret) {
-      throw Error("session is not open")
-    }
-    return getStarkPair(derivationPath, session.secret)
   }
 
   public async getSelectedAccount(): Promise<WalletAccount | undefined> {
