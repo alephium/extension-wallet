@@ -1,3 +1,4 @@
+import useSWR from "swr"
 import useSWRImmutable from "swr/immutable"
 import urlJoin from "url-join"
 
@@ -82,7 +83,7 @@ export const getDappDisplayAttributes = async (
 }
 
 export const useDappDisplayAttributes = (host: string) => {
-  const { data } = useSWRImmutable(
+  const { data } = useSWR(
     [host, "dappDisplayAttributes"],
     getDappDisplayAttributes,
   )

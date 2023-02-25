@@ -1,4 +1,6 @@
 import { groupOfAddress } from "@alephium/web3"
+import { Flex } from "@chakra-ui/react"
+import { L2 } from "@argent/ui"
 import { FC, useCallback, useMemo, useState } from "react"
 import styled from "styled-components"
 
@@ -171,6 +173,22 @@ const SmallGreyText = styled.span`
   margin-left: 20px;
 `
 
+const Label = ({text}: {text: string}) => {
+  return <L2
+    backgroundColor={"neutrals.700"}
+    px={"6px"}
+    py={"3px"}
+    textTransform="capitalize"
+    fontWeight={"bold"}
+    color={"warn-high.300"}
+    borderRadius={"none"}
+    border={"1px solid"}
+    borderColor={"neutrals.600"}
+  >
+    {text}
+  </L2>
+}
+
 export const ConnectDappScreen: FC<ConnectDappProps> = ({
   onConnect: onConnectProp,
   onDisconnect: onDisconnectProp,
@@ -242,14 +260,18 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
         <DappIconContainer>
           <DappIcon host={host} />
         </DappIconContainer>
-        <Title>Connect to {dappDisplayAttributes?.title}{networkId ? ` for ${networkId}` : ""}</Title>
+        <Title>Connect to {`${dappDisplayAttributes?.title ?? 'Unknown'}`}</Title>
         <Host>{host}</Host>
+        <Flex gap={2} alignItems={"center"}>
+          <Label text={group !== undefined ? `Group: ${group}` : `Any group`}/>
+          <Label text={networkId !== undefined ? `${networkId}` : `Current net`}/>
+        </Flex>
       </ColumnCenter>
       <HR />
       {
         visibleAccountsForGroup.length > 0 ? (
           <>
-            <SmallText>Select the account{group !== undefined ? ` from group ${group}` : ""} to connect:</SmallText>
+            <SmallText>Select the account to connect:</SmallText>
             <SelectContainer>
               <ConnectDappAccountSelect
                 accounts={visibleAccountsForGroup}
