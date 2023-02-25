@@ -1,12 +1,6 @@
 import { Account, EnableOptionsBase, InteractiveSignerProvider } from "@alephium/web3"
-import { EventTemplate, Event } from "nostr-tools"
-import type { AccountInterface, ProviderInterface } from "starknet"
-import type {
-  AccountInterface as AccountInterface3,
-  ProviderInterface as ProviderInterface3,
-} from "starknet3"
+import { Event, UnsignedEvent } from "nostr-tools"
 
-import { Network } from "../shared/network"
 
 export type AccountChangeEventHandler = (accounts: string[]) => void
 
@@ -106,10 +100,11 @@ declare global {
   interface Window {
     // Inspired by EIP-5749: https://eips.ethereum.org/EIPS/eip-5749
     alephiumProviders?: Record<string, AlephiumWindowObject>
+    nostr?: NostrObject
   }
 }
 
 export interface NostrObject {
   getPublicKey(): Promise<string>
-  signEvent(t: EventTemplate): Promise<Event>
+  signEvent(t: UnsignedEvent): Promise<Event>
 }

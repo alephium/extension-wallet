@@ -212,7 +212,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
     showHidden: false
   })
 
-  const visibleAccountsForGroup = group === undefined ? visibleAccounts : visibleAccounts.filter((account) => {
+  const visibleAccountsForGroup = (group === undefined && keyType === undefined) ? visibleAccounts : visibleAccounts.filter((account) => {
     return Wallet.checkAccount(account, networkId, keyType, group)
   })
   const foundAccount = visibleAccountsForGroup.length > 0
