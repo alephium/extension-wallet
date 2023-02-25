@@ -11,7 +11,7 @@ import {
 } from "./DeprecatedConfirmScreen"
 import { Field, FieldGroup, FieldKey, FieldValue, SectionHeader } from "../../components/Fields"
 import { AccountAddressField } from "./transaction/fields/AccountAddressField"
-import { Flex } from "@chakra-ui/react"
+import { Box, Flex } from "@chakra-ui/react"
 import { ConfirmScreen } from "./ConfirmScreen"
 
 interface ApproveSignatureScreenProps
@@ -48,6 +48,7 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
       confirmButtonBackgroundColor="neutrals.800"
       rejectButtonText="Cancel"
       showHeader={false}
+      scrollable={false}
       selectedAccount={selectedAccount}
       onSubmit={() => {
         onSubmit(dataToSign)
@@ -86,6 +87,7 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
           </Field>
         </FieldGroup>
       }
+      <Box w="full" h={20} />
     </ConfirmScreen>
   )
 }

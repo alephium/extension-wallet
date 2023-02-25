@@ -28,6 +28,7 @@ interface OptionalBuiltTransaction {
   networkId: string
   unsignedTx?: string
   txId?: string
+  host?: string
 }
 export type TransactionPayload<T> = T & OptionalBuiltTransaction
 
@@ -50,7 +51,6 @@ export type TransactionParams = (
     }
 ) & {
   salt: string // to avoid hash collision for queue items
-  host?: string
 }
 
 export type ReviewTransactionResult =
@@ -66,7 +66,7 @@ export type ReviewTransactionResult =
     }
   | {
       type: "EXECUTE_SCRIPT"
-      params: TransactionPayload<SignExecuteScriptTxParams>
+      params: TransactionPayload<SignExecuteScriptTxParams> & { host?: string }
       result: Omit<SignExecuteScriptTxResult, "signature">
     }
   | {

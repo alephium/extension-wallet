@@ -38,9 +38,9 @@ export const DappHeader = ({
         <H5>
           {title}
         </H5>
-        {transaction.host && (
+        {transaction.params.host && (
           <P4 color="neutrals.300" sx={{ marginTop: 0 }}>
-            {transaction.host}
+            {transaction.params.host}
           </P4>
         )}
       </Flex>
@@ -52,8 +52,8 @@ export const DappHeader = ({
 const {
   SendIcon,
   DeployIcon,
-  CodeIcon,
   HelpIcon,
+  MulticallIcon
 } = icons
 
 const TransactionIcon = ({transaction}: {transaction: TransactionParams}) => {
@@ -63,7 +63,7 @@ const TransactionIcon = ({transaction}: {transaction: TransactionParams}) => {
     case 'DEPLOY_CONTRACT':
       return <DeployIcon fontSize={"4xl"} color="white" /> 
     case 'EXECUTE_SCRIPT':
-      return <CodeIcon fontSize={"4xl"} color="white" /> 
+      return <MulticallIcon fontSize={"4xl"} color="white" /> 
     case 'UNSIGNED_TX':
       return <HelpIcon fontSize={"4xl"} color="white" /> 
   }            
