@@ -148,6 +148,7 @@ export interface DeployContractTransformedAlephiumTransaction {
 export interface ExecuteScriptTransformedAlephiumTransaction {
   type: "EXECUTE_SCRIPT"
   bytecode: string
+  host?: string
 }
 
 export interface UnsignedTxTransformedAlephiumTransaction {

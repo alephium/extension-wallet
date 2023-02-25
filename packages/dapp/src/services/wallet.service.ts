@@ -4,24 +4,18 @@ import { MessageHasher, SignMessageResult } from '@alephium/web3'
 export const silentConnectWallet = async (
   onDisconnected: () => Promise<void>
 ) => {
-  const windowAlephium = await connect({ showList: false })
-  await windowAlephium?.enable({ onDisconnected, networkId: 'devnet', chainGroup: 0 })
-  return windowAlephium
+  return connectAlephium(false, onDisconnected)
 }
 
 export const connectWallet = async (
   onDisconnected: () => Promise<void>
 ) => {
-  const windowAlephium = await connect({
-    include: ['alephium']
-  })
+  return connectAlephium(true, onDisconnected)
+}
 
-  await windowAlephium?.enable({
-    onDisconnected,
-    networkId: 'devnet',
-  })
-
-  return windowAlephium
+async function connectAlephium(showList: boolean, onDisconnected: () => Promise<void>) {
+  let windowAlephium = await connect({ include: ['alephium'], showList: showList })
+  return windowAlephium?.enable({ onDisconnected, networkId: 'devnet', chainGroup: 0 }).catch(() => undefined)
 }
 
 export const disconnectWallet = () => {

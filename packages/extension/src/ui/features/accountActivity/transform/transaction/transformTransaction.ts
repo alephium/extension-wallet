@@ -124,7 +124,8 @@ export function transformReviewedTransaction(transaction: ReviewTransactionResul
     case 'EXECUTE_SCRIPT':
       return {
         type: 'EXECUTE_SCRIPT',
-        bytecode: transaction.params.bytecode
+        bytecode: transaction.params.bytecode,
+        host: transaction.params.host
       }
     case 'UNSIGNED_TX':
       return {

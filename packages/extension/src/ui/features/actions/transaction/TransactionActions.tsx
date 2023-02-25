@@ -47,12 +47,12 @@ export function extractActions(transaction: ReviewTransactionResult): Transactio
         header: { key: 'Deploy contract', value: formatTruncatedAddress(transaction.result.contractAddress) },
         details: [
           {
-            key: 'Contract bytecode',
+            key: 'Bytecode',
             value: transaction.params.bytecode
           },
           {
             key: 'Group',
-            value: `${transaction.result.groupIndex} -> ${transaction.result.groupIndex}`
+            value: `${transaction.result.groupIndex}`
           },
         ]
       }]
@@ -61,12 +61,12 @@ export function extractActions(transaction: ReviewTransactionResult): Transactio
         header: { key: 'Execute transaction script', value: '' },
         details: [
           {
-            key: 'Script bytecode',
+            key: 'Bytecode',
             value: transaction.params.bytecode
           },
           {
             key: 'Group',
-            value: `${transaction.result.groupIndex} -> ${transaction.result.groupIndex}`
+            value: `${transaction.result.groupIndex}`
           }
         ]
       }]

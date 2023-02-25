@@ -28,6 +28,7 @@ interface OptionalBuiltTransaction {
   networkId: string
   unsignedTx?: string
   txId?: string
+  host?: string
 }
 export type TransactionPayload<T> = T & OptionalBuiltTransaction
 
@@ -65,7 +66,7 @@ export type ReviewTransactionResult =
     }
   | {
       type: "EXECUTE_SCRIPT"
-      params: TransactionPayload<SignExecuteScriptTxParams>
+      params: TransactionPayload<SignExecuteScriptTxParams> & { host?: string }
       result: Omit<SignExecuteScriptTxResult, "signature">
     }
   | {
@@ -108,7 +109,7 @@ export type ActionItem =
     }
   | {
       type: "SIGN"
-      payload: SignMessageParams & { networkId: string }
+      payload: SignMessageParams & { networkId: string, host: string }
     }
   | {
       type: "REQUEST_ADD_CUSTOM_NETWORK"

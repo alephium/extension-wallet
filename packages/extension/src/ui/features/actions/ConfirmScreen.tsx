@@ -33,6 +33,7 @@ interface ConfirmScreenProps extends ConfirmPageProps {
   buttonGap?: string
   showHeader?: boolean
   px?: string
+  scrollable?: boolean
   footer?: ReactNode
   children: ReactNode
 }
@@ -70,13 +71,14 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   singleButton = false,
   switchButtonOrder = false,
   showHeader = true,
+  scrollable = true,
   footer,
   children,
   ...props
 }) => {
   const navigate = useNavigate()
   const { accountNames } = useAccountMetadata()
-  const [placeholderHeight, setPlaceholderHeight] = useState(100)
+  const [placeholderHeight, setPlaceholderHeight] = useState(0)
   onReject ??= () => navigate(-1)
 
   const accountHeader = Boolean(selectedAccount && showHeader)
@@ -112,7 +114,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
           )}
           {children}
 
-          <Box w="full" h={placeholderHeight} />
+          <Box w="full" h={scrollable ? placeholderHeight : 0} />
 
           <Measure
             bounds

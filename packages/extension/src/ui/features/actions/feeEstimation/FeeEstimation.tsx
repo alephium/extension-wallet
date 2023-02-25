@@ -1,4 +1,5 @@
 import { convertSetToAlph } from "@alephium/sdk"
+import { prettifyAttoAlphAmount } from "@alephium/web3"
 import { L1, L2, P4, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { Collapse } from "@mui/material"
@@ -78,23 +79,10 @@ export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
             alignItems="center"
             direction={extensionInTab ? "row" : "column-reverse"}
           >
-            {(
-              <L2 color="neutrals.300">
-                (Max {prettifyCurrencyValue(convertSetToAlph(fee), "ALPH")})
-              </L2>
-            )}
-
             <Flex alignItems="center">
-              {fee !== undefined ? (
-                <P4 fontWeight="bold">
-                  ≈ {prettifyCurrencyValue(convertSetToAlph(fee), "ALPH")}
-                </P4>
-              ) : (
-                <P4 fontWeight="bold">
-                  ≈{" "}
-                  <>{fee} Unknown</>
-                </P4>
-              )}
+              <P4 fontWeight="bold">
+                ≈ {`${prettifyAttoAlphAmount(fee)} ALPH`}
+              </P4>
             </Flex>
           </Flex>
         ) : (

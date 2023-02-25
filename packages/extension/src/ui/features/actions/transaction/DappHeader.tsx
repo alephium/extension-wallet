@@ -1,7 +1,7 @@
-import { H5, icons } from "@argent/ui"
-import { Box, Center, VStack } from "@chakra-ui/react"
+import { H5, P4, icons } from "@argent/ui"
+import { Box, Center, Flex, VStack } from "@chakra-ui/react"
 import React, { useMemo } from "react"
-import { Call } from "starknet"
+import styled from "styled-components"
 import { TransactionParams } from "../../../../shared/actionQueue/types"
 
 import { ApiTransactionReviewResponse } from "../../../../shared/transactionReview.service"
@@ -21,29 +21,50 @@ export const DappHeader = ({
   }, [transaction])
 
   return (
-    <Box mb="4">
-      <VStack gap="1">
-        <IconWrapper>
-          <NetworkIcon color="#58585B" />
-        </IconWrapper>
-        <H5>{title}</H5>
-      </VStack>
-    </Box>
+    <Box mb="6" mt="3">
+    <Flex
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+      gap="3"
+    >
+      <TransactionIcon transaction={transaction}/>
+      <Flex
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        gap="0.5"
+      >
+        <H5>
+          {title}
+        </H5>
+        {transaction.params.host && (
+          <P4 color="neutrals.300" sx={{ marginTop: 0 }}>
+            {transaction.params.host}
+          </P4>
+        )}
+      </Flex>
+    </Flex>
+  </Box>
   )
 }
 
-const IconWrapper = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <Box
-      w="14"
-      h="14"
-      background="neutrals.700"
-      borderRadius="2xl"
-      boxShadow="0px 4px 20px rgba(0, 0, 0, 0.5);"
-    >
-      <Center justifyContent="center" alignItems="center" height="full">
-        {children}
-      </Center>
-    </Box>
-  )
-}
+const {
+  SendIcon,
+  DeployIcon,
+  HelpIcon,
+  MulticallIcon
+} = icons
+
+const TransactionIcon = ({transaction}: {transaction: TransactionParams}) => {
+  switch (transaction.type) {
+    case 'TRANSFER':
+      return <SendIcon fontSize={"4xl"} color="white" /> 
+    case 'DEPLOY_CONTRACT':
+      return <DeployIcon fontSize={"4xl"} color="white" /> 
+    case 'EXECUTE_SCRIPT':
+      return <MulticallIcon fontSize={"4xl"} color="white" /> 
+    case 'UNSIGNED_TX':
+      return <HelpIcon fontSize={"4xl"} color="white" /> 
+  }            
+}              

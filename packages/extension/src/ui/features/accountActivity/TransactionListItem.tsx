@@ -196,7 +196,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
       return [<>{`@${formatLongString(transactionTransformed.contractAddress)}`}</>]
     }
     if (isExecuteScript) {
-      return [<>{`Run: ${formatLongString(transactionTransformed.bytecode)}`}</>]
+      return [<>{`${transactionTransformed.host ?? "Unknown host"}`}</>]
     }
     if (isUnsignedTx) {
       return [<>{`Raw tx: ${formatLongString(transactionTransformed.unsignedTx)}`}</>]
@@ -216,9 +216,9 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
       case "TRANSFER":
         return transactionTransformed.transferType
       case "DEPLOY_CONTRACT":
-        return "New Contract"
+        return "Deploy"
       case "EXECUTE_SCRIPT":
-        return "Call Contract"
+        return "Dapp"
       default:
         return "Raw tx"
     }
