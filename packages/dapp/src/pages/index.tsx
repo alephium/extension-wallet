@@ -21,9 +21,9 @@ const Home: NextPage = () => {
           return Promise.resolve(setConnected(false))
         }
       )
-      setAddress(wallet?.connectedAccount?.address)
-      setNetwork(wallet?.connectedNetworkId)
-      setConnected(!!wallet?.connectedNetworkId)
+      setAddress(wallet?.address)
+      setNetwork('devnet')
+      setConnected(!!wallet)
     }
 
       ; (async () => {
@@ -36,12 +36,10 @@ const Home: NextPage = () => {
       () => {
         return Promise.resolve(setConnected(false))
       }
-    ).catch(() => {
-      console.log(`Connection rejected`)
-    })
-    setAddress(wallet?.connectedAccount?.address)
-    setNetwork(wallet?.connectedNetworkId)
-    setConnected(!!wallet?.connectedNetworkId)
+    )
+    setAddress(wallet?.address)
+    setNetwork('devnet')
+    setConnected(!!wallet)
   }
 
   const handleDisconnectClick = async () => {
