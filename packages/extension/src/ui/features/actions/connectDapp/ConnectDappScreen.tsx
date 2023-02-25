@@ -143,6 +143,10 @@ const SmallText = styled.div`
   font-size: 13px;
 `
 
+const WarningText = styled.div`
+  font-size: 15px;
+`
+
 const SelectContainer = styled.div`
   padding-top: 16px;
 `
@@ -211,8 +215,9 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   const visibleAccountsForGroup = group === undefined ? visibleAccounts : visibleAccounts.filter((account) => {
     return Wallet.checkAccount(account, networkId, keyType, group)
   })
+  const foundAccount = visibleAccountsForGroup.length > 0
 
-  if (visibleAccountsForGroup.length > 0) {
+  if (foundAccount) {
     if (!initiallySelectedAccount) {
       initiallySelectedAccount = visibleAccountsForGroup[0]
     }
@@ -254,6 +259,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   return (
     <DeprecatedConfirmScreen
       confirmButtonText={isConnected ? "Continue" : "Connect"}
+      confirmButtonDisabled={!foundAccount ? true : false}
       rejectButtonText={isConnected ? "Disconnect" : "Reject"}
       onSubmit={onConnect}
       onReject={isConnected ? onDisconnect : onRejectProp}
@@ -273,7 +279,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
       </ColumnCenter>
       <HR />
       {
-        visibleAccountsForGroup.length > 0 ? (
+        foundAccount ? (
           <>
             <SmallText>Select the account to connect:</SmallText>
             <SelectContainer>
@@ -301,7 +307,10 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
             </List>
           </>
         ) : (
-          <SmallGreyText>No accounts{group !== undefined ? ` for group ${group}` : ""}, please create the account first</SmallGreyText>
+          <>
+            <WarningText>No matched account found, please create the account first</WarningText>
+            <HR />
+          </>
         )
       }
     </DeprecatedConfirmScreen>
