@@ -9,16 +9,8 @@ import {
   SignTransferTxResult,
   SignUnsignedTxParams,
   SignUnsignedTxResult,
-  node,
+  KeyType,
 } from "@alephium/web3"
-import type {
-  Abi,
-  Call,
-  DeclareContractPayload,
-  InvocationsDetails,
-  UniversalDeployerContractPayload,
-  typedData,
-} from "starknet"
 
 import { TransactionMeta } from "../transactions"
 import { BaseWalletAccount } from "../wallet.model"
@@ -106,7 +98,8 @@ export type ActionItem =
       payload: {
         host: string,
         networkId?: string,
-        group?: number
+        group?: number,
+        keyType?: KeyType
       }
     }
   | {

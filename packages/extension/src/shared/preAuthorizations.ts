@@ -77,6 +77,11 @@ export const getPreAuthorizations = () => {
   return preAuthorizeStore.get()
 }
 
+export const getPreAuthorized = async (host: string) => {
+  const hits = await preAuthorizeStore.get((x) => x.host === host)
+  return hits.length === 0 ? undefined : hits[0]
+}
+
 export const isPreAuthorized = async (
   account: BaseWalletAccount,
   host: string,

@@ -19,7 +19,6 @@ export const connectWallet = async (
   await windowAlephium?.enable({
     onDisconnected,
     networkId: 'devnet',
-    chainGroup: 0
   })
 
   return windowAlephium

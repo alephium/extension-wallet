@@ -375,8 +375,8 @@ export class Wallet {
     await this.walletStore.push(accounts)
   }
 
-  static checkAccount(account: WalletAccount, networkId: string, keyType?: KeyType, group?: number): boolean {
-    return (account.networkId === networkId) &&
+  static checkAccount(account: WalletAccount, networkId?: string, keyType?: KeyType, group?: number): boolean {
+    return (networkId === undefined || account.networkId === networkId) &&
       (keyType === undefined || account.signer.keyType === keyType) &&
       (group === undefined || account.signer.group === group)
   }
@@ -486,18 +486,15 @@ export class Wallet {
     return group === undefined || groupOfAddress(address) === group
   }
 
-  public async getAlephiumSelectedAddress(group?: number): Promise<WalletAccount | undefined> {
+  public async getAlephiumSelectedAddress(networkId?: string, group?: number, keyType?: KeyType): Promise<WalletAccount | undefined> {
     const accounts = await this.walletStore.get()
     const selectedAccount = await this.store.get("selected")
+    const selectedWallet = !selectedAccount ? undefined : find(accounts, (account) => accountsEqual(selectedAccount, account))
 
-    if (selectedAccount && this.matchGroup(selectedAccount.address, group)) {
-      const account = find(accounts, (account) =>
-        accountsEqual(selectedAccount, account),
-      )
-
-      return account
+    if (selectedWallet && Wallet.checkAccount(selectedWallet, networkId, keyType, group)) {
+      return selectedWallet
     } else {
-      const result = accounts.find((account) => this.matchGroup(account.address, group))
+      const result = accounts.find((account) => Wallet.checkAccount(account, networkId, keyType, group))
       if (result) {
         await this.store.set("selected", result)
       }

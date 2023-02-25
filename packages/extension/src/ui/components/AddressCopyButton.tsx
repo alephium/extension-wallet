@@ -40,7 +40,7 @@ export const AddressCopyButtonMain: FC<AddressCopyButtonMainProps> = ({ address 
         bg={"transparent"}
         _hover={{ bg: "neutrals.700", color: "text" }}
       >
-        {`${formatTruncatedAddress(address)} - Group: ${groupOfAddress(address)}`}
+        {`${formatTruncatedAddress(address)}  (Group: ${groupOfAddress(address)})`}
       </Button>
     </CopyTooltip>
   )

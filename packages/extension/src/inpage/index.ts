@@ -6,10 +6,11 @@ import { alephiumWindowObject, userEventHandlers } from "./alephiumWindowObject"
 import { sendMessage, waitForMessage } from "./messageActions"
 import { getIsPreauthorized } from "./messaging"
 import { isPlainObject } from "lodash-es"
+import { nostrObject } from "./nostrObject"
 
 const INJECT_NAMES = ["alephium"]
 
-function attach() {
+function attachAlephiumProvider() {
   window.alephiumProviders =
     window.alephiumProviders && isPlainObject(window.alephiumProviders) ? window.alephiumProviders : {}
 
@@ -35,6 +36,28 @@ function attach() {
       // ignore
     }
   })
+}
+
+function attachNostrProvider() {
+  try {
+    // set read only property to window
+    Object.defineProperty(window.nostr, 'nostr', {
+      value: nostrObject,
+      writable: false,
+    })
+  } catch {
+    // ignore
+  }
+  try {
+    ; (window as any)['nostr'] = nostrObject
+  } catch {
+    // ignore
+  }
+}
+
+function attach() {
+  attachAlephiumProvider()
+  attachNostrProvider()
 }
 
 function attachHandler() {

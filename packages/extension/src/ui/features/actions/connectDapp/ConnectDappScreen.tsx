@@ -1,4 +1,6 @@
-import { groupOfAddress } from "@alephium/web3"
+import { groupOfAddress, KeyType } from "@alephium/web3"
+import { Flex } from "@chakra-ui/react"
+import { L2 } from "@argent/ui"
 import { FC, useCallback, useMemo, useState } from "react"
 import styled from "styled-components"
 
@@ -26,6 +28,7 @@ import {
 } from "../DeprecatedConfirmScreen"
 import { DappIcon } from "./DappIcon"
 import { useDappDisplayAttributes } from "./useDappDisplayAttributes"
+import { Wallet } from "../../../../background/wallet"
 
 interface ConnectDappProps extends Omit<ConfirmPageProps, "onSubmit"> {
   onConnect: (selectedAccount?: Account) => void
@@ -33,6 +36,7 @@ interface ConnectDappProps extends Omit<ConfirmPageProps, "onSubmit"> {
   host: string
   networkId?: string,
   group?: number
+  keyType?: KeyType
 }
 
 export interface IConnectDappAccountSelect {
@@ -139,6 +143,10 @@ const SmallText = styled.div`
   font-size: 13px;
 `
 
+const WarningText = styled.div`
+  font-size: 15px;
+`
+
 const SelectContainer = styled.div`
   padding-top: 16px;
 `
@@ -171,6 +179,22 @@ const SmallGreyText = styled.span`
   margin-left: 20px;
 `
 
+const Label = ({text}: {text: string}) => {
+  return <L2
+    backgroundColor={"neutrals.700"}
+    px={"6px"}
+    py={"3px"}
+    textTransform="capitalize"
+    fontWeight={"bold"}
+    color={"warn-high.300"}
+    borderRadius={"none"}
+    border={"1px solid"}
+    borderColor={"neutrals.600"}
+  >
+    {text}
+  </L2>
+}
+
 export const ConnectDappScreen: FC<ConnectDappProps> = ({
   onConnect: onConnectProp,
   onDisconnect: onDisconnectProp,
@@ -178,6 +202,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   host,
   networkId,
   group,
+  keyType,
   ...rest
 }) => {
   let initiallySelectedAccount = useSelectedAccount()
@@ -187,11 +212,12 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
     showHidden: false
   })
 
-  const visibleAccountsForGroup = group === undefined ? visibleAccounts : visibleAccounts.filter((account) => {
-    return groupOfAddress(account.address) === group
+  const visibleAccountsForGroup = (group === undefined && keyType === undefined) ? visibleAccounts : visibleAccounts.filter((account) => {
+    return Wallet.checkAccount(account, networkId, keyType, group)
   })
+  const foundAccount = visibleAccountsForGroup.length > 0
 
-  if (visibleAccountsForGroup.length > 0) {
+  if (foundAccount) {
     if (!initiallySelectedAccount) {
       initiallySelectedAccount = visibleAccountsForGroup[0]
     }
@@ -233,6 +259,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   return (
     <DeprecatedConfirmScreen
       confirmButtonText={isConnected ? "Continue" : "Connect"}
+      confirmButtonDisabled={!foundAccount ? true : false}
       rejectButtonText={isConnected ? "Disconnect" : "Reject"}
       onSubmit={onConnect}
       onReject={isConnected ? onDisconnect : onRejectProp}
@@ -242,14 +269,19 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
         <DappIconContainer>
           <DappIcon host={host} />
         </DappIconContainer>
-        <Title>Connect to {dappDisplayAttributes?.title}{networkId ? ` for ${networkId}` : ""}</Title>
+        <Title>Connect to {`${dappDisplayAttributes?.title ?? 'Unknown'}`}</Title>
         <Host>{host}</Host>
+        <Flex gap={2} alignItems={"center"}>
+          <Label text={group !== undefined ? `Group: ${group}` : `Any group`}/>
+          <Label text={networkId !== undefined ? `${networkId}` : `Current net`}/>
+          { keyType === 'bip340-schnorr' && <Label text="Schnorr"/>}
+        </Flex>
       </ColumnCenter>
       <HR />
       {
-        visibleAccountsForGroup.length > 0 ? (
+        foundAccount ? (
           <>
-            <SmallText>Select the account{group !== undefined ? ` from group ${group}` : ""} to connect:</SmallText>
+            <SmallText>Select the account to connect:</SmallText>
             <SelectContainer>
               <ConnectDappAccountSelect
                 accounts={visibleAccountsForGroup}
@@ -275,7 +307,10 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
             </List>
           </>
         ) : (
-          <SmallGreyText>No accounts{group !== undefined ? ` for group ${group}` : ""}, please create the account first</SmallGreyText>
+          <>
+            <WarningText>No matched account found, please create the account first</WarningText>
+            <HR />
+          </>
         )
       }
     </DeprecatedConfirmScreen>

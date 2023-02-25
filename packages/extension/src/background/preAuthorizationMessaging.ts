@@ -1,7 +1,7 @@
 import { difference } from "lodash-es"
 
 import { PreAuthorisationMessage } from "../shared/messages/PreAuthorisationMessage"
-import { isPreAuthorized, preAuthorizeStore, removePreAuthorization } from "../shared/preAuthorizations"
+import { getPreAuthorized, isPreAuthorized, preAuthorizeStore, removePreAuthorization } from "../shared/preAuthorizations"
 import { withNetwork } from "../shared/wallet.service"
 import { addTab, sendMessageToHost } from "./activeTabs"
 import { UnhandledMessage } from "./background"
@@ -28,7 +28,7 @@ export const handlePreAuthorizationMessage: HandleMessage<
         openUi()
         return
       }
-      const isAuthorized = await isPreAuthorized(selectedAccount, msg.data.host)
+      const authorized = await getPreAuthorized(msg.data.host)
 
       if (sender.tab?.id) {
         addTab({
@@ -37,15 +37,16 @@ export const handlePreAuthorizationMessage: HandleMessage<
         })
       }
 
-      if (!isAuthorized) {
+      if (!authorized) {
         await actionQueue.push({
           type: "CONNECT_DAPP",
-          payload: { host: msg.data.host, networkId: msg.data.networkId, group: msg.data.group },
+          payload: { host: msg.data.host, networkId: msg.data.networkId, group: msg.data.group, keyType: msg.data.keyType },
         })
       }
 
-      if (isAuthorized && selectedAccount?.address) {
-        const walletAccountWithNetwork = await withNetwork(selectedAccount)
+      if (authorized) {
+        const authorizedAccount = await wallet.getAccount(authorized.account)
+        const walletAccountWithNetwork = await withNetwork(authorizedAccount)
         return respond({
           type: "CONNECT_DAPP_RES",
           data: walletAccountWithNetwork,
