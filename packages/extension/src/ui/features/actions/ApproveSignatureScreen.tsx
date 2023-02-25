@@ -1,4 +1,5 @@
 import { SignMessageParams } from "@alephium/web3"
+import { P4, H5, H6, H2 } from "@argent/ui"
 import { FC } from "react"
 import styled from "styled-components"
 
@@ -10,10 +11,12 @@ import {
 } from "./DeprecatedConfirmScreen"
 import { Field, FieldGroup, FieldKey, FieldValue, SectionHeader } from "../../components/Fields"
 import { AccountAddressField } from "./transaction/fields/AccountAddressField"
+import { Flex } from "@chakra-ui/react"
+import { ConfirmScreen } from "./ConfirmScreen"
 
 interface ApproveSignatureScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
-  dataToSign: SignMessageParams
+  dataToSign: SignMessageParams & { host: string }
   onSubmit: (data: SignMessageParams) => void
 }
 
@@ -40,14 +43,31 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
   usePageTracking("signMessage")
 
   return (
-    <DeprecatedConfirmScreen
-      title="Sign message"
+    <ConfirmScreen
       confirmButtonText="Sign"
+      confirmButtonBackgroundColor="neutrals.800"
+      rejectButtonText="Cancel"
+      showHeader={false}
+      selectedAccount={selectedAccount}
       onSubmit={() => {
         onSubmit(dataToSign)
       }}
       {...props}
     >
+      {
+        dataToSign.host &&
+        <Flex
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        mb="6"
+        mt="3"
+        gap="6"
+        >
+          <H2>Sign Message</H2>
+          <H6>{dataToSign.host}</H6>
+        </Flex>
+      }
       { selectedAccount &&
         <FieldGroup>
           <AccountAddressField
@@ -66,6 +86,6 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
           </Field>
         </FieldGroup>
       }
-    </DeprecatedConfirmScreen>
+    </ConfirmScreen>
   )
 }

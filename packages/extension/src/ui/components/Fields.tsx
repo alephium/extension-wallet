@@ -37,7 +37,7 @@ export const FieldError = styled.div<{ justify?: string }>`
 `
 
 export const FieldGroup = styled.section<{ error?: boolean }>`
-  background: ${({ theme }) => theme.bg2};
+  background: ${({ theme }) => theme.neutrals700};
   border-radius: 8px;
   display: flex;
   flex-direction: column;

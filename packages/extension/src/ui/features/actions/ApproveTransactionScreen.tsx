@@ -82,7 +82,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       onSubmit={() => {
         onSubmit(buildResult)
       }}
-      showHeader={true}
+      showHeader={false}
       footer={
         (
           buildResult && !("error" in buildResult) && (

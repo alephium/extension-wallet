@@ -50,6 +50,7 @@ export type TransactionParams = (
     }
 ) & {
   salt: string // to avoid hash collision for queue items
+  host?: string
 }
 
 export type ReviewTransactionResult =
@@ -108,7 +109,7 @@ export type ActionItem =
     }
   | {
       type: "SIGN"
-      payload: SignMessageParams & { networkId: string }
+      payload: SignMessageParams & { networkId: string, host: string }
     }
   | {
       type: "REQUEST_ADD_CUSTOM_NETWORK"
