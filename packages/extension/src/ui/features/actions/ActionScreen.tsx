@@ -81,6 +81,7 @@ export const ActionScreen: FC = () => {
           host={action.payload.host}
           networkId={action.payload.networkId}
           group={action.payload.group}
+          keyType={action.payload.keyType}
           onConnect={async (selectedAccount?: Account) => {
             if (selectedAccount) {
               useAppState.setState({ isLoading: true })

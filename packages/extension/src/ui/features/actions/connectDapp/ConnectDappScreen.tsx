@@ -1,4 +1,4 @@
-import { groupOfAddress } from "@alephium/web3"
+import { groupOfAddress, KeyType } from "@alephium/web3"
 import { Flex } from "@chakra-ui/react"
 import { L2 } from "@argent/ui"
 import { FC, useCallback, useMemo, useState } from "react"
@@ -28,6 +28,7 @@ import {
 } from "../DeprecatedConfirmScreen"
 import { DappIcon } from "./DappIcon"
 import { useDappDisplayAttributes } from "./useDappDisplayAttributes"
+import { Wallet } from "../../../../background/wallet"
 
 interface ConnectDappProps extends Omit<ConfirmPageProps, "onSubmit"> {
   onConnect: (selectedAccount?: Account) => void
@@ -35,6 +36,7 @@ interface ConnectDappProps extends Omit<ConfirmPageProps, "onSubmit"> {
   host: string
   networkId?: string,
   group?: number
+  keyType?: KeyType
 }
 
 export interface IConnectDappAccountSelect {
@@ -196,6 +198,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   host,
   networkId,
   group,
+  keyType,
   ...rest
 }) => {
   let initiallySelectedAccount = useSelectedAccount()
@@ -206,7 +209,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   })
 
   const visibleAccountsForGroup = group === undefined ? visibleAccounts : visibleAccounts.filter((account) => {
-    return groupOfAddress(account.address) === group
+    return Wallet.checkAccount(account, networkId, keyType, group)
   })
 
   if (visibleAccountsForGroup.length > 0) {
@@ -265,6 +268,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
         <Flex gap={2} alignItems={"center"}>
           <Label text={group !== undefined ? `Group: ${group}` : `Any group`}/>
           <Label text={networkId !== undefined ? `${networkId}` : `Current net`}/>
+          { keyType === 'bip340-schnorr' && <Label text="Schnorr"/>}
         </Flex>
       </ColumnCenter>
       <HR />
