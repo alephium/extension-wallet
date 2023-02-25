@@ -1,5 +1,6 @@
 import { FC, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
+
 import {
   Button,
   Flex,
@@ -11,12 +12,9 @@ import {
   Spacer,
 } from "@chakra-ui/react"
 
-import { useAppState } from "../../app.state"
 import { IconBar } from "../../components/IconBar"
-import { AlephiumIcon } from "../../components/Icons/AlephiumIcon"
 import { Option, OptionsWrapper } from "../../components/Options"
 import { PageWrapper, Title } from "../../components/Page"
-import { routes } from "../../routes"
 import { FormError } from "../../theme/Typography"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import { TOTAL_NUMBER_OF_GROUPS } from "@alephium/web3"
@@ -27,7 +25,7 @@ import styled from "styled-components"
 const StyledAlephiumLogo = styled(AlephiumLogo)`
   font-size: 20px;
   color: ${({ theme }) => theme.primary};
-  width: 1.5em; 
+  width: 1.5em;
   height: 1.5em;
 `
 
@@ -37,21 +35,21 @@ interface MenuSelectorProps {
   setValue: (value: string) => void
 }
 
-export const MemuSelector: FC<MenuSelectorProps> = ({title, options, setValue}) => {
+export const MemuSelector: FC<MenuSelectorProps> = ({ title, options, setValue }) => {
   const [currentOption, setCurrentOption] = useState<string>()
 
   return (
     <Menu>
       <MenuButton as={Button} rightIcon={<ChevronDownIcon />} w={'140px'} size={"xs"} margin="1">
-        {title}: { currentOption ?? options[0] }
+        {title}: {currentOption ?? options[0]}
       </MenuButton>
       <Portal>
         <MenuList p={0} minW="0" w={'140px'}>
           {options.map(option => {
             const isCurrent = option === currentOption
-            return (<MenuItem w="inherit" key={option} onClick={() => {setCurrentOption(option); setValue(option)}} sx={isCurrent ? { backgroundColor: "neutrals.600", } : {}}>
+            return (<MenuItem w="inherit" key={option} onClick={() => { setCurrentOption(option); setValue(option) }} sx={isCurrent ? { backgroundColor: "neutrals.600", } : {}}>
               {title}: {option}
-                {/* <Flex
+              {/* <Flex
                   ml={"auto"}
                   justifyContent={"flex-end"}
                   alignItems={"center"}
@@ -91,7 +89,7 @@ export const AddAccount: FC = () => {
         <Title>Add a new account</Title>
         <Flex marginBottom={5}>
           <MemuSelector title="Group" options={groupOptions} setValue={setGroup}></MemuSelector>
-          <Spacer/>
+          <Spacer />
           <MemuSelector title="Sign" options={signOptions} setValue={setSignMethod}></MemuSelector>
         </Flex>
         <OptionsWrapper>

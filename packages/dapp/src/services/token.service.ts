@@ -1,5 +1,4 @@
 import { getAlephium } from "@alephium/get-extension-wallet"
-import { utils } from "ethers"
 import * as web3 from '@alephium/web3'
 import { binToHex, contractIdFromAddress, DUST_AMOUNT } from '@alephium/web3'
 import { ShinyToken, Transfer } from '../../artifacts/ts'

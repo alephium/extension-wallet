@@ -1,9 +1,7 @@
-import { Account, TransactionBulk, number, stark } from "starknet"
+import { Account, number, stark } from "starknet"
 
 import { TransactionMessage } from "../../shared/messages/TransactionMessage"
 import { HandleMessage, UnhandledMessage } from "../background"
-import { openUi } from "../openUi"
-import { argentMaxFee } from "../utils/argentMaxFee"
 
 export const handleTransactionMessage: HandleMessage<
   TransactionMessage

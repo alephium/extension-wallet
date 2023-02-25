@@ -1,16 +1,10 @@
 import { KeyType } from "@alephium/web3"
-import { Abi, Contract, ProviderInterface, number, stark } from "starknet"
-
-import ArgentCompiledContractAbi from "../../../abis/ArgentAccount.json"
-import ProxyCompiledContractAbi from "../../../abis/Proxy.json"
-import { Network, getNetwork, getProvider } from "../../../shared/network"
 import {
   ArgentAccountType,
   BaseWalletAccount,
   WalletAccount,
   WalletAccountSigner,
 } from "../../../shared/wallet.model"
-import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { createNewAccount } from "../../services/backgroundAccounts"
 
 export interface AccountConstructorProps {

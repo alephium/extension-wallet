@@ -1,6 +1,4 @@
-import { assertNever } from "./../ui/services/assertNever"
 import type { WindowMessageType } from "../shared/messages"
-import { getProvider } from "../shared/network/provider"
 import { disconnectAccount } from "./account"
 import { alephiumWindowObject, userEventHandlers } from "./alephiumWindowObject"
 import { sendMessage, waitForMessage } from "./messageActions"

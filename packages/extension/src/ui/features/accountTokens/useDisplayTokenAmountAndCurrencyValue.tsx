@@ -85,7 +85,7 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
         }
       }
       const displayAmount = prettifyTokenAmount({
-        amount: amount.amount,
+        amount: amount.amount.toString(),
         decimals: token?.decimals,
         symbol: token?.symbol || "Unknown token",
       })
