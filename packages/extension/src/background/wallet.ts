@@ -6,24 +6,15 @@ import {
 } from '@alephium/sdk'
 
 import {
-  ExplorerProvider,
   NodeProvider,
-  SignDeployContractTxParams,
-  SignDeployContractTxResult,
-  SignExecuteScriptTxParams,
-  SignExecuteScriptTxResult,
   SignMessageParams,
   SignMessageResult,
-  SignTransferTxParams,
-  SignTransferTxResult,
   SignUnsignedTxParams,
   SignUnsignedTxResult,
-  SignerProvider,
   addressFromPublicKey,
   publicKeyFromPrivateKey,
   groupOfAddress,
   KeyType,
-  binToHex,
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
@@ -32,30 +23,15 @@ import {
 } from "@alephium/web3-wallet"
 import { ethers } from "ethers"
 import { ProgressCallback } from "ethers/lib/utils"
-import { find, noop, throttle, union, range } from "lodash-es"
-import {
-  Account,
-  DeployAccountContractTransaction,
-  EstimateFee,
-  InvocationsDetails,
-  ec,
-  hash,
-  number,
-  stark,
-} from "starknet"
-import { Account as Accountv4 } from "starknet4"
+import { find, noop, throttle, union } from "lodash-es"
 import browser from "webextension-polyfill"
 
-import { ArgentAccountType } from "./../shared/wallet.model"
-import { getAccountTypesFromChain } from "../shared/account/details/fetchType"
 import { withHiddenSelector } from "../shared/account/selectors"
 import {
   Network,
   defaultNetwork,
   defaultNetworks,
-  getProvider,
 } from "../shared/network"
-import { getProviderv4 } from "../shared/network/provider"
 import {
   IArrayStorage,
   IKeyValueStorage,
@@ -63,19 +39,13 @@ import {
   ObjectStorage,
 } from "../shared/storage"
 import { BaseWalletAccount, WalletAccount } from "../shared/wallet.model"
-import { accountsEqual, baseDerivationPath } from "../shared/wallet.service"
-import { isEqualAddress } from "../ui/services/addresses"
+import { accountsEqual } from "../shared/wallet.service"
 import { LoadContracts } from "./accounts"
 import {
-  getIndexForPath,
   getNextPathIndex,
-  getPathForIndex,
   getStarkPair,
 } from "./keys/keyDerivation"
 import backupSchema from "./schema/backup.schema"
-import { account } from '../../e2e/apis/account'
-
-const { calculateContractAddressFromHash, getSelectorFromName } = hash
 
 const isDev = process.env.NODE_ENV === "development"
 const isTest = process.env.NODE_ENV === "test"
@@ -218,58 +188,6 @@ export class Wallet {
     }
   }
 
-  public async discoverAccounts() {
-    const session = await this.sessionStore.get()
-    if (!session?.secret) {
-      throw new Error("Wallet is not initialized")
-    }
-    const wallet = new ethers.Wallet(session?.secret)
-
-    const networks = defaultNetworks
-      .map((network) => network.id)
-      .filter((networkId) => networkId !== "devnet")
-    const accountsResults = await Promise.all(
-      networks.map(async (networkId) => {
-        const network = await this.getNetwork(networkId)
-        if (!network) {
-          throw new Error(`Network ${networkId} not found`)
-        }
-        return this.restoreAccountsFromWallet(wallet.privateKey, network)
-      }),
-    )
-    const accounts = accountsResults.flatMap((x) => x)
-
-    await this.walletStore.push(accounts)
-
-    this.store.set("discoveredOnce", true)
-  }
-
-  private async restoreAccountsFromWallet(
-    secret: string,
-    network: Network,
-    offset: number = CHECK_OFFSET,
-  ): Promise<WalletAccount[]> {
-    const accounts: WalletAccount[] = []
-
-    const accountClassHashes = union(
-      ARGENT_ACCOUNT_CONTRACT_CLASS_HASHES,
-      []
-    )
-
-    if (!accountClassHashes?.length) {
-      console.error(`No known account class hashes for network ${network.id}`)
-      return accounts
-    }
-
-    try {
-      const accountWithTypes = await getAccountTypesFromChain(accounts)
-      return accountWithTypes
-    } catch (error) {
-      console.error("Error getting account types from chain", error)
-      return accounts
-    }
-  }
-
   public async startAlephiumSession(password: string): Promise<boolean> {
     const session = await this.sessionStore.get()
     if (session) {
@@ -299,80 +217,9 @@ export class Wallet {
     }
   }
 
-  public async startSession(
-    password: string,
-    progressCallback?: ProgressCallback,
-  ): Promise<boolean> {
-    // session has already started
-    const session = await this.sessionStore.get()
-    if (session) {
-      return true
-    }
-
-    const throttledProgressCallback = throttle(progressCallback ?? noop, 50, {
-      leading: true,
-      trailing: true,
-    })
-
-    // wallet is not initialized: let's initialise it
-    if (!(await this.isInitialized())) {
-      await this.generateNewLocalSecret(password, throttledProgressCallback)
-      return true
-    }
-
-    const backup = await this.store.get("backup")
-
-    if (!backup) {
-      throw new Error("Backup is not found")
-    }
-
-    try {
-      const wallet = await ethers.Wallet.fromEncryptedJson(
-        backup,
-        password,
-        throttledProgressCallback,
-      )
-
-      await this.setSession(wallet.privateKey, password)
-
-      // if we have not yet discovered accounts, do it now. This only applies to wallets which got restored from a backup file, as we could not restore all accounts from onchain yet as the backup was locked until now.
-      const discoveredOnce = await this.store.get("discoveredOnce")
-      if (!discoveredOnce) {
-        await this.discoverAccounts()
-      }
-
-      return true
-    } catch {
-      return false
-    }
-  }
-
   public async checkPassword(password: string): Promise<boolean> {
     const session = await this.sessionStore.get()
     return session?.password === password
-  }
-
-  public async discoverAccountsForNetwork(
-    network?: Network,
-    offset: number = CHECK_OFFSET,
-  ) {
-    const session = await this.sessionStore.get()
-    if (!this.isSessionOpen() || !session?.secret) {
-      throw new Error("Session is not open")
-    }
-    const wallet = new ethers.Wallet(session?.secret)
-
-    if (!network) {
-      return
-    }
-
-    const accounts = await this.restoreAccountsFromWallet(
-      wallet.privateKey,
-      network,
-      offset,
-    )
-
-    await this.walletStore.push(accounts)
   }
 
   static checkAccount(account: WalletAccount, networkId: string, keyType?: KeyType, group?: number): boolean {
@@ -452,16 +299,6 @@ export class Wallet {
       throw Error("session is not open")
     }
     return getStarkPair(derivationPath, session.secret)
-  }
-
-  public async isNonceManagedOnAccountContract(account: Accountv4) {
-    try {
-      // This will fetch nonce from account contract instead of Starknet OS
-      await account.getNonce()
-      return true
-    } catch {
-      return false
-    }
   }
 
   public async getSelectedAccount(): Promise<WalletAccount | undefined> {

@@ -8,8 +8,6 @@ import { useAppState } from "./app.state"
 import { ResponsiveBox } from "./components/Responsive"
 import { TransactionDetailScreen } from "./features/accountActivity/TransactionDetailScreen"
 import { AccountEditScreen } from "./features/accountEdit/AccountEditScreen"
-import { NoNft } from "./features/accountNfts/NftScreen"
-import { AddPluginScreen } from "./features/accountPlugins.tsx/AddPluginScreen"
 import { AccountListHiddenScreen } from "./features/accounts/AccountListHiddenScreen"
 import { AccountListScreen } from "./features/accounts/AccountListScreen"
 import { AccountScreen } from "./features/accounts/AccountScreen"
@@ -107,11 +105,6 @@ const nonWalletRoutes = (
 
 const walletRoutes = (
   <>
-    <Route
-      presentation="modal"
-      path={routes.accountNft.path}
-      element={<NoNft />}
-    />
     <Route
       presentation="modal"
       path={routes.networkWarning.path}
@@ -281,11 +274,6 @@ const walletRoutes = (
     />
     <Route path={routes.setupRecovery.path} element={<RecoverySetupScreen />} />
     <Route path={routes.token.path} element={<TokenScreen />} />
-    <Route
-      presentation="modal"
-      path={routes.addPlugin.path}
-      element={<AddPluginScreen />}
-    />
     <Route
       path={routes.backupDownload.path}
       element={<BackupDownloadScreen />}

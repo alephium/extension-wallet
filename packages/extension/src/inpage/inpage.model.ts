@@ -1,11 +1,4 @@
 import { Account, EnableOptionsBase, InteractiveSignerProvider } from "@alephium/web3"
-import type { AccountInterface, ProviderInterface } from "starknet"
-import type {
-  AccountInterface as AccountInterface3,
-  ProviderInterface as ProviderInterface3,
-} from "starknet3"
-
-import { Network } from "../shared/network"
 
 export type AccountChangeEventHandler = (accounts: string[]) => void
 
