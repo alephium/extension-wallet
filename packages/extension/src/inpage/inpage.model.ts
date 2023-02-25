@@ -1,4 +1,5 @@
 import { Account, EnableOptionsBase, InteractiveSignerProvider } from "@alephium/web3"
+import { EventTemplate, Event } from "nostr-tools"
 import type { AccountInterface, ProviderInterface } from "starknet"
 import type {
   AccountInterface as AccountInterface3,
@@ -106,4 +107,9 @@ declare global {
     // Inspired by EIP-5749: https://eips.ethereum.org/EIPS/eip-5749
     alephiumProviders?: Record<string, AlephiumWindowObject>
   }
+}
+
+export interface NostrObject {
+  getPublicKey(): Promise<string>
+  signEvent(t: EventTemplate): Promise<Event>
 }
