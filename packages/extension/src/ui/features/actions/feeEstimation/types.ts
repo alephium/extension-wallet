@@ -1,9 +1,4 @@
 import { BigNumber } from "ethers"
-import {
-  Call,
-  DeclareContractPayload,
-  UniversalDeployerContractPayload,
-} from "starknet"
 import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
 
 export interface TransactionsFeeEstimationProps {
@@ -14,23 +9,4 @@ export interface TransactionsFeeEstimationProps {
   accountAddress: string
   networkId: string
   actionHash: string
-}
-
-export type DeployAccountFeeEstimationProps = Omit<
-  TransactionsFeeEstimationProps,
-  "transactions"
->
-
-export type DeclareContractFeeEstimationProps = Omit<
-  TransactionsFeeEstimationProps,
-  "transactions"
-> & {
-  payload: DeclareContractPayload
-}
-
-export type DeployContractFeeEstimationProps = Omit<
-  TransactionsFeeEstimationProps,
-  "transactions"
-> & {
-  payload: UniversalDeployerContractPayload
 }
