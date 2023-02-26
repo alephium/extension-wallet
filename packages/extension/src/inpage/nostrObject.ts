@@ -4,19 +4,24 @@ import { alephiumWindowObject } from "./alephiumWindowObject";
 import { NostrObject } from "./inpage.model";
 
 export const nostrObject: NostrObject = new (class implements NostrObject {
-  private connectedAccount: Account | undefined = undefined
+  connectedAccount: Account | undefined = undefined
+
+  async connectIfNotYet(): Promise<void> {
+    if (this.connectedAccount === undefined) {
+      const account = await alephiumWindowObject.enable({ keyType: 'bip340-schnorr', onDisconnected: () => { return } })
+      this.connectedAccount = account
+    }
+  }
 
   async getPublicKey(): Promise<string> {
-    if (this.connectedAccount !== undefined) {
-      return this.connectedAccount.publicKey
-    }
-
-    const account = await alephiumWindowObject.enable({ keyType: 'bip340-schnorr', onDisconnected: () => { return } })
-    this.connectedAccount = account
-    return account.publicKey
+    await this.connectIfNotYet()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.connectedAccount!.publicKey
   }
 
   async signEvent(t: UnsignedEvent): Promise<Event> {
+    await this.connectIfNotYet()
+
     const event = t as Event
     event.id = getEventHash(event)
     const result = await alephiumWindowObject.signMessage({
