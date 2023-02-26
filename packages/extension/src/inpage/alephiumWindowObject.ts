@@ -175,17 +175,10 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   }
 
   signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    sendMessage({ type: "SIGN_MESSAGE", data: {...params, networkId: this.connectedNetworkId!, host: window.location.host } })
-    const { actionHash } = await waitForMessage("SIGN_MESSAGE_RES", 1000)
-
-    sendMessage({ type: "OPEN_UI" })
-
-    const result = await Promise.race([
+    const resultP = Promise.race([
       waitForMessage(
         "SIGNATURE_SUCCESS",
         11 * 60 * 1000,
-        (x) => x.data.actionHash === actionHash,
       ),
       waitForMessage(
         "SIGNATURE_FAILURE",
@@ -199,6 +192,14 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
         }),
     ])
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    sendMessage({ type: "SIGN_MESSAGE", data: {...params, networkId: this.connectedNetworkId, host: window.location.host } })
+    const { actionHash } = await waitForMessage("SIGN_MESSAGE_RES", 1000)
+
+    sendMessage({ type: "OPEN_UI" })
+
+    const result = await resultP
+
     if (result === "error") {
       throw Error("User abort")
     }
@@ -206,6 +207,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
       throw Error("User action timed out")
     }
 
+    console.log(`==== result`, result)
     return result
   }
 

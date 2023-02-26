@@ -252,16 +252,6 @@ export class Wallet {
     }
   }
 
-  public async getAccount(selector: BaseWalletAccount): Promise<WalletAccount> {
-    const [hit] = await this.walletStore.get((account) =>
-      accountsEqual(account, selector),
-    )
-    if (!hit) {
-      throw Error(`account not found`)
-    }
-    return hit
-  }
-
   public async getSelectedAccount(): Promise<WalletAccount | undefined> {
     if (!this.isSessionOpen()) {
       return
@@ -301,23 +291,22 @@ export class Wallet {
     }
   }
 
-  public async selectAccount(accountIdentifier?: BaseWalletAccount) {
-    if (!accountIdentifier) {
-      await this.store.set("selected", null) // Set null instead of undefinded
-      return
-    }
+  public async selectAccount({ address, networkId }: BaseWalletAccount) {
+    const account = await this.getAccount({ address, networkId })
+    await this.store.set("selected", { address: account.address, networkId: account.networkId })
+    return account
+  }
 
+  public async getAccount({ address, networkId }: { address: string, networkId?: string }) {
     const accounts = await this.walletStore.get()
     const account = find(accounts, (account) =>
-      accountsEqual(account, accountIdentifier),
+      account.address === address && (networkId === undefined || account.networkId === networkId)
     )
 
     if (!account) {
       throw Error("account not found")
     }
 
-    const { address, networkId } = account // makes sure to strip away unused properties
-    await this.store.set("selected", { address, networkId })
     return account
   }
 

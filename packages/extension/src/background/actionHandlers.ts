@@ -65,7 +65,7 @@ export const handleActionApproval = async (
     }
 
     case "SIGN": {
-      const account = await wallet.selectAccount({ address: action.payload.signerAddress, networkId: action.payload.networkId })
+      const account = await wallet.getAccount({ address: action.payload.signerAddress, networkId: action.payload.networkId })
       if (!account) {
         throw Error("No selected account")
       }
