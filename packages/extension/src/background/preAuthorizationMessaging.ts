@@ -57,13 +57,7 @@ export const handlePreAuthorizationMessage: HandleMessage<
     }
 
     case "IS_PREAUTHORIZED": {
-      const selectedAccount = await wallet.getSelectedAccount()
-
-      if (!selectedAccount) {
-        return respond({ type: "IS_PREAUTHORIZED_RES", data: false })
-      }
-
-      const valid = await isPreAuthorized(selectedAccount, msg.data)
+      const valid = await isPreAuthorized(msg.data)
       return respond({ type: "IS_PREAUTHORIZED_RES", data: valid })
     }
 

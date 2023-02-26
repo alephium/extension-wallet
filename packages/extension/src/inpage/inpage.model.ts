@@ -1,23 +1,6 @@
-import { Account, EnableOptionsBase, InteractiveSignerProvider } from "@alephium/web3"
+import { AlephiumWindowObject } from "@alephium/get-extension-wallet"
+import { Address, KeyType } from "@alephium/web3"
 import { Event, UnsignedEvent } from "nostr-tools"
-
-export type AccountChangeEventHandler = (accounts: string[]) => void
-
-export type NetworkChangeEventHandler = (network?: string) => void
-
-export type WalletEventHandlers =
-  | AccountChangeEventHandler
-  | NetworkChangeEventHandler
-
-export type WalletEvents =
-  | {
-    type: "accountsChanged"
-    handler: AccountChangeEventHandler
-  }
-  | {
-    type: "networkChanged"
-    handler: NetworkChangeEventHandler
-  }
 
 // EIP-747:
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-747.md
@@ -54,47 +37,6 @@ export interface AddStarknetChainParameters {
 export interface SwitchStarknetChainParameter {
   chainId: string // A 0x-prefixed hexadecimal string
 }
-
-export type RpcMessage =
-  | {
-    type: "wallet_watchAsset"
-    params: WatchAssetParameters
-    result: boolean
-  }
-  | {
-    type: "wallet_addStarknetChain"
-    params: AddStarknetChainParameters
-    result: boolean
-  }
-  | {
-    type: "wallet_switchStarknetChain"
-    params: SwitchStarknetChainParameter
-    result: boolean
-  }
-  | {
-    type: string
-    params: any
-    result: never
-  }
-
-export type EnableOptions = EnableOptionsBase & {
-  showModal?: boolean
-}
-
-export abstract class AlephiumWindowObject
-  extends InteractiveSignerProvider<EnableOptions> {
-  abstract id: string
-  abstract name: string
-  abstract icon: string
-  abstract version: string
-
-  connectedAccount: Account | undefined
-  connectedNetworkId: string | undefined
-  onDisconnected: (() => Promise<void>) | undefined
-
-  abstract isPreauthorized(): Promise<boolean>
-}
-
 declare global {
   interface Window {
     // Inspired by EIP-5749: https://eips.ethereum.org/EIPS/eip-5749
@@ -106,4 +48,12 @@ declare global {
 export interface NostrObject {
   getPublicKey(): Promise<string>
   signEvent(t: UnsignedEvent): Promise<Event>
+}
+
+export interface RequestOptions {
+  host: string
+  address?: Address 
+  chainGroup?: number
+  keyType?: KeyType
+  networkId?: string
 }

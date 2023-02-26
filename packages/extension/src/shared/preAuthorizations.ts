@@ -1,5 +1,7 @@
+import { groupOfAddress } from "@alephium/web3"
 import { isArray, pick } from "lodash-es"
 import browser from "webextension-polyfill"
+import { RequestOptions } from "../inpage/inpage.model"
 
 import { accountStore } from "./account/store"
 import { ArrayStorage } from "./storage"
@@ -82,12 +84,18 @@ export const getPreAuthorized = async (host: string) => {
   return hits.length === 0 ? undefined : hits[0]
 }
 
+function matchAuthorizedOptions(account: PreAuthorization, options: RequestOptions): boolean {
+  return account.host === options.host &&
+  (options.networkId === undefined || account.account.networkId === options.networkId) &&
+  (options.address === undefined || account.account.address === options.address) &&
+  (options.chainGroup === undefined || groupOfAddress(account.account.address) === options.chainGroup)
+}
+
 export const isPreAuthorized = async (
-  account: BaseWalletAccount,
-  host: string,
+  options: RequestOptions,
 ) => {
   const hits = await preAuthorizeStore.get((x) =>
-    equalPreAuthorization(x, { account, host }),
+    matchAuthorizedOptions(x, options),
   )
   return Boolean(hits.length)
 }
