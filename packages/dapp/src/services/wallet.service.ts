@@ -1,30 +1,41 @@
-import { connect, getAlephium } from '@alephium/get-extension-wallet'
+import { getDefaultAlephiumWallet } from '@alephium/get-extension-wallet'
 import { MessageHasher, SignMessageResult } from '@alephium/web3'
 
 export const silentConnectWallet = async (
   onDisconnected: () => Promise<void>
 ) => {
-  return connectAlephium(false, onDisconnected)
+  const alephium = getDefaultAlephiumWallet()
+  if (alephium === undefined) {
+    return undefined
+  }
+  return alephium?.enableIfPreauthorized({ onDisconnected, networkId: 'devnet', chainGroup: 0 })
+    .catch((error: any) => {
+      console.error(error)
+      return undefined
+    })
 }
 
 export const connectWallet = async (
   onDisconnected: () => Promise<void>
 ) => {
-  return connectAlephium(true, onDisconnected)
-}
-
-async function connectAlephium(showList: boolean, onDisconnected: () => Promise<void>) {
-  let windowAlephium = await connect({ include: ['alephium'], showList: showList })
-  return windowAlephium?.enable({ onDisconnected, networkId: 'devnet', chainGroup: 0 }).catch(() => undefined)
+  const alephium = getDefaultAlephiumWallet()
+  if (alephium === undefined) {
+    return undefined
+  }
+  return alephium?.enable({ onDisconnected, networkId: 'devnet', chainGroup: 0 })
+    .catch((error: any) => {
+      console.error(error)
+      throw undefined
+    })
 }
 
 export const disconnectWallet = () => {
-  const alephium = getAlephium()
+  const alephium = getDefaultAlephiumWallet()
   return alephium?.disconnect()
 }
 
 export const networkId = (): string | undefined => {
-  return getAlephium()?.connectedNetworkId
+  return getDefaultAlephiumWallet()?.connectedNetworkId
 }
 
 export const getExplorerBaseUrl = (): string | undefined => {
@@ -37,9 +48,9 @@ export const getExplorerBaseUrl = (): string | undefined => {
 }
 
 export const signMessage = async (message: string, messageHasher: MessageHasher): Promise<SignMessageResult> => {
-  const alephium = getAlephium()
-  if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
-    throw Error("alephium object not initialized")
+  const alephium = getDefaultAlephiumWallet()
+  if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
+    throw Error("Alephium object not initialized")
   }
 
   return await alephium.signMessage({

@@ -1,4 +1,4 @@
-import { getAlephium } from "@alephium/get-extension-wallet"
+import { getDefaultAlephiumWallet } from "@alephium/get-extension-wallet"
 import * as web3 from '@alephium/web3'
 import { binToHex, contractIdFromAddress, DUST_AMOUNT } from '@alephium/web3'
 import { ShinyToken, Transfer } from '../../artifacts/ts'
@@ -25,8 +25,8 @@ export const getErc20TokenAddress = (network: PublicNetwork) =>
   erc20TokenAddressByNetwork[network]
 
 export const getTokenBalances = async (address: string): Promise<TokenBalance[]> => {
-  const alephium = getAlephium()
-  if (!alephium.explorerProvider) {
+  const alephium = getDefaultAlephiumWallet()
+  if (!alephium?.explorerProvider) {
     console.log("Alephium explorer provider not initialized")
     return []
   }
@@ -56,8 +56,8 @@ export const getTokenBalances = async (address: string): Promise<TokenBalance[]>
 }
 
 export const getAlphBalance = async (address: string) => {
-  const alephium = getAlephium()
-  if (!alephium.explorerProvider) {
+  const alephium = getDefaultAlephiumWallet()
+  if (!alephium?.explorerProvider) {
     console.log("Alephium explorer provider not initialized")
     return undefined
   }
@@ -71,8 +71,8 @@ export const mintToken = async (
   mintAmount: string,
   network?: string
 ): Promise<web3.SignDeployContractTxResult> => {
-  const alephium = getAlephium()
-  if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
+  const alephium = getDefaultAlephiumWallet()
+  if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
     throw Error("alephium object not initialized")
   }
 
@@ -87,8 +87,8 @@ export const withdrawMintedToken = async (
   amount: string,
   tokenAddress: string
 ): Promise<web3.SignExecuteScriptTxResult> => {
-  const alephium = getAlephium()
-  if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
+  const alephium = getDefaultAlephiumWallet()
+  if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
     throw Error("alephium object not initialized")
   }
 
@@ -109,8 +109,8 @@ export const transferToken = async (
   transferAmount: string,
   network?: string
 ): Promise<web3.SignTransferTxResult> => {
-  const alephium = getAlephium()
-  if (!alephium.connectedAccount || !alephium.connectedNetworkId) {
+  const alephium = getDefaultAlephiumWallet()
+  if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
     throw Error("alephium object not initialized")
   }
 

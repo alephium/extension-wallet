@@ -104,9 +104,7 @@
 
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "paths": {
-      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"],
-      "@alephium/web3": ["../../node_modules/@alephium/web3"],
-      "@alephium/get-extension-wallet": ["../../node_modules/@alephium/get-extension-wallet"]
+      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
     },
     "plugins": [
       {
