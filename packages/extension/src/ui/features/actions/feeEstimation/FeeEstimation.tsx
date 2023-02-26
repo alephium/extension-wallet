@@ -4,33 +4,22 @@ import { L1, L2, P4, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { Collapse } from "@mui/material"
 import Tippy from "@tippyjs/react"
-import { BigNumber } from "ethers"
-import { FC, useEffect, useMemo, useState } from "react"
-import { number } from "starknet"
+import { FC } from "react"
 
 import {
   prettifyCurrencyValue,
-  prettifyTokenAmount,
 } from "../../../../shared/token/price"
-import { CopyTooltip, Tooltip } from "../../../components/CopyTooltip"
-import { makeClickable } from "../../../services/a11y"
+import { Tooltip } from "../../../components/CopyTooltip"
 import { useAccount } from "../../accounts/accounts.state"
-import { useTokenAmountToCurrencyValue } from "../../accountTokens/tokenPriceHooks"
 import { useFeeTokenBalance } from "../../accountTokens/tokens.service"
-import { useNetworkFeeToken } from "../../accountTokens/tokens.state"
 import { useExtensionIsInTab } from "../../browser/tabs"
 import {
-  ExtendableControl,
-  FeeEstimationValue,
   LoadingInput,
   StyledInfoRoundedIcon,
   StyledReportGmailerrorredRoundedIcon,
 } from "./styled"
 import { TransactionsFeeEstimationProps } from "./types"
-import { getTooltipText, useMaxFeeEstimation } from "./utils"
-import { getParsedError } from "./utils"
-
-const { AlertIcon, ChevronDownIcon } = icons
+import { getTooltipText } from "./utils"
 
 export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
   accountAddress,

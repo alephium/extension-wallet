@@ -8,8 +8,6 @@ import { useAppState } from "./app.state"
 import { ResponsiveBox } from "./components/Responsive"
 import { TransactionDetailScreen } from "./features/accountActivity/TransactionDetailScreen"
 import { AccountEditScreen } from "./features/accountEdit/AccountEditScreen"
-import { NoNft } from "./features/accountNfts/NftScreen"
-import { AddPluginScreen } from "./features/accountPlugins.tsx/AddPluginScreen"
 import { AccountListHiddenScreen } from "./features/accounts/AccountListHiddenScreen"
 import { AccountListScreen } from "./features/accounts/AccountListScreen"
 import { AccountScreen } from "./features/accounts/AccountScreen"
@@ -50,9 +48,6 @@ import { AddressbookSettingsScreen } from "./features/settings/AddressbookSettin
 import { BlockExplorerSettingsScreen } from "./features/settings/BlockExplorerSettingsScreen"
 import { DappConnectionsSettingsScreen } from "./features/settings/DappConnectionsSettingsScreen"
 import { DeveloperSettings } from "./features/settings/DeveloperSettings"
-import { DeclareOrDeployContractSuccess } from "./features/settings/DeveloperSettings/DeclareContractClasshash"
-import { DeclareSmartContractScreen } from "./features/settings/DeveloperSettings/DeclareSmartContractScreen"
-import { DeploySmartContractScreen } from "./features/settings/DeveloperSettings/DeploySmartContractScreen"
 import { PrivacyExperimentalSettings } from "./features/settings/ExperimentalSettings"
 import { NetworkSettingsEditScreen } from "./features/settings/NetworkSettingsEditScreen"
 import { NetworkSettingsFormScreen } from "./features/settings/NetworkSettingsFormScreen"
@@ -61,7 +56,6 @@ import { PrivacySettingsScreen } from "./features/settings/PrivacySettingsScreen
 import { SeedSettingsScreen } from "./features/settings/SeedSettingsScreen"
 import { SettingsPrivacyStatementScreen } from "./features/settings/SettingsPrivacyStatementScreen"
 import { SettingsScreen } from "./features/settings/SettingsScreen"
-import { SmartContractDevelopmentScreen } from "./features/settings/SmartContractDevelopmentScreen"
 import { ReviewFeedbackScreen } from "./features/userReview/ReviewFeedbackScreen"
 import { ReviewRatingScreen } from "./features/userReview/ReviewRatingScreen"
 import { routes } from "./routes"
@@ -107,11 +101,6 @@ const nonWalletRoutes = (
 
 const walletRoutes = (
   <>
-    <Route
-      presentation="modal"
-      path={routes.accountNft.path}
-      element={<NoNft />}
-    />
     <Route
       presentation="modal"
       path={routes.networkWarning.path}
@@ -195,26 +184,6 @@ const walletRoutes = (
     />
     <Route
       presentation="push"
-      path={routes.settingsSmartContractDevelopment.path}
-      element={<SmartContractDevelopmentScreen />}
-    />
-    <Route
-      presentation="push"
-      path={routes.settingsSmartContractDeclare.path}
-      element={<DeclareSmartContractScreen />}
-    />
-    <Route
-      presentation="push"
-      path={routes.settingsSmartContractDeploy.path}
-      element={<DeploySmartContractScreen />}
-    />
-    <Route
-      presentation="push"
-      path={routes.settingsSmartContractDeclareOrDeploySuccess.path}
-      element={<DeclareOrDeployContractSuccess />}
-    />
-    <Route
-      presentation="push"
       path={routes.settingsExperimental.path}
       element={<PrivacyExperimentalSettings />}
     />
@@ -281,11 +250,6 @@ const walletRoutes = (
     />
     <Route path={routes.setupRecovery.path} element={<RecoverySetupScreen />} />
     <Route path={routes.token.path} element={<TokenScreen />} />
-    <Route
-      presentation="modal"
-      path={routes.addPlugin.path}
-      element={<AddPluginScreen />}
-    />
     <Route
       path={routes.backupDownload.path}
       element={<BackupDownloadScreen />}

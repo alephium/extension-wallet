@@ -2,8 +2,6 @@ import { CellStack, H4, SpacerCell } from "@argent/ui"
 import { Center, Skeleton } from "@chakra-ui/react"
 import { get, merge } from "lodash-es"
 import { FC, Suspense, useCallback, useMemo } from "react"
-import { transaction } from "starknet"
-
 import { AlephiumExplorerTransaction } from "../../../shared/explorer/type"
 import { Transaction } from "../../../shared/transactions"
 import { useAppState } from "../../app.state"

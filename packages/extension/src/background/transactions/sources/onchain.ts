@@ -1,6 +1,5 @@
 import { ExplorerProvider } from "@alephium/web3"
 import { getNetwork } from "../../../shared/network"
-import { getProvider } from "../../../shared/network"
 import {
   Transaction,
   getInFlightTransactions,

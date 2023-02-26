@@ -1,5 +1,4 @@
 import { icons } from "@argent/ui"
-import { BigNumber } from "ethers"
 import { isString } from "lodash-es"
 import { FC, useMemo, useState } from "react"
 import CopyToClipboard from "react-copy-to-clipboard"
@@ -26,23 +25,19 @@ import { ContentCopyIcon } from "../../components/Icons/MuiIcons"
 import { formatTruncatedAddress } from "../../services/addresses"
 import {
   openBlockExplorerAddress,
-  openBlockExplorerTransaction,
   openExplorerTransaction,
 } from "../../services/blockExplorer.service"
-import { formatDateTime } from "../../services/dates"
 import { PrettyAccountAddress } from "../accounts/PrettyAccountAddress"
 import { AccountAddressField } from "../actions/transaction/fields/AccountAddressField"
 import { DappContractField } from "../actions/transaction/fields/DappContractField"
 import { FeeField } from "../actions/transaction/fields/FeeField"
 import { ParameterField } from "../actions/transaction/fields/ParameterField"
-import { TokenField } from "../actions/transaction/fields/TokenField"
 import { TransactionDetailWrapper } from "./TransactionDetailWrapper"
 import {
   isDeclareContractTransaction,
   isDeployContractTransaction,
   isNFTTransaction,
   isNFTTransferTransaction,
-  isSwapTransaction,
   isTokenApproveTransaction,
   isTokenMintTransaction,
   isTokenTransferTransaction,
@@ -168,7 +163,6 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
   const isTransfer = isTokenTransferTransaction(transactionTransformed)
   const isNFT = isNFTTransaction(transactionTransformed)
   const isNFTTransfer = isNFTTransferTransaction(transactionTransformed)
-  const isSwap = isSwapTransaction(transactionTransformed)
   const isTokenMint = isTokenMintTransaction(transactionTransformed)
   const isTokenApprove = isTokenApproveTransaction(transactionTransformed)
   const isDeclareContract = isDeclareContractTransaction(transactionTransformed)
@@ -227,35 +221,12 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
         </>
       )
     }
-    if (isSwap) {
-      const { fromTokenAddress, toTokenAddress, fromAmount, toAmount } =
-        transactionTransformed
-      const negativeFromAmount = BigNumber.from(0).sub(fromAmount)
-      return (
-        <>
-          <TokenField
-            label="Sold"
-            amount={negativeFromAmount}
-            contractAddress={fromTokenAddress}
-            tokensByNetwork={tokensByNetwork}
-          />
-          <TokenField
-            label="For"
-            amount={toAmount}
-            contractAddress={toTokenAddress}
-            tokensByNetwork={tokensByNetwork}
-          />
-        </>
-      )
-    }
     return null
   }, [
     isTransfer,
     isNFTTransfer,
-    isSwap,
     transactionTransformed,
-    network.id,
-    tokensByNetwork,
+    network.id
   ])
   const titleShowsTo =
     (isTransfer || isNFTTransfer) &&

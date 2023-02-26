@@ -1,12 +1,12 @@
-import { node, SignUnsignedTxParams, TransactionBuilder } from "@alephium/web3"
+import { TransactionBuilder } from "@alephium/web3"
 import { FC, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
-import { ReviewTransactionResult, TransactionParams, TransactionResult } from "../../../shared/actionQueue/types"
+import { ReviewTransactionResult, TransactionParams } from "../../../shared/actionQueue/types"
 
 import { routes } from "../../routes"
 import { usePageTracking } from "../../services/analytics"
 import { Account } from "../accounts/Account"
-import { useCurrentNetwork, useNetwork } from "../networks/useNetworks"
+import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
 import { ConfirmPageProps } from "./DeprecatedConfirmScreen"
 import { FeeEstimation } from "./feeEstimation/FeeEstimation"
@@ -86,7 +86,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       footer={
         (
           buildResult && !("error" in buildResult) && (
-            < FeeEstimation
+            <FeeEstimation
               onErrorChange={setDisableConfirm}
               accountAddress={selectedAccount.address}
               networkId={selectedAccount.networkId}
