@@ -8,9 +8,6 @@
     "declaration": true,
     "declarationMap": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "paths": {
-      "@alephium/web3": ["../../node_modules/@alephium/web3"]
-    }
+    "esModuleInterop": true
   }
 }
