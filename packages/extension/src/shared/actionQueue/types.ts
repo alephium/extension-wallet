@@ -109,7 +109,7 @@ export type ActionItem =
     }
   | {
       type: "SIGN"
-      payload: SignMessageParams & { networkId: string, host: string }
+      payload: SignMessageParams & { networkId?: string, host: string }
     }
   | {
       type: "REQUEST_ADD_CUSTOM_NETWORK"
