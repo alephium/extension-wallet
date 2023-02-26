@@ -1,6 +1,6 @@
 {
   "name": "@alephium/extension",
-  "version": "0.5.0-rc.12",
+  "version": "0.5.0-rc.14",
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
