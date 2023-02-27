@@ -75,11 +75,6 @@ export const AccountEditScreen: FC = () => {
     }
   }
 
-  const canUpgradeToPluginAccount =
-    experimentalPluginAccount &&
-    account &&
-    account.type !== "argent-plugin"
-
   const onChangeName = useCallback((name: string) => {
     setLiveEditingAccountName(name)
   }, [])
@@ -164,14 +159,6 @@ export const AccountEditScreen: FC = () => {
           >
             {showDelete ? "Delete" : "Hide"} account
           </ButtonCell>
-          {canUpgradeToPluginAccount && (
-            <ButtonCell
-              onClick={() => upgradeAccount(account, "argent-plugin")}
-              icon={<PluginIcon />}
-            >
-              Use Plugins
-            </ButtonCell>
-          )}
           <ButtonCell
             color={"error.500"}
             onClick={() => navigate(routes.exportPrivateKey())}

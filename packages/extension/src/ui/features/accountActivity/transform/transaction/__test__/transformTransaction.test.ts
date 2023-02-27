@@ -22,7 +22,7 @@ const makeTransaction = (transactions: Call | Call[]): Transaction => {
   return {
     account: {
       address: accountAddress,
-      type: "argent",
+      type: "alephium",
       networkId: "goerli-alpha",
       signer: {
         derivationIndex: 0,
