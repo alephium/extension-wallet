@@ -297,7 +297,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
               )}
             </SelectContainer>
             <HR />
-            <SmallText>This dapp will be able to:</SmallText>
+            <SmallText>This app will be able to:</SmallText>
             <List>
               <Bullet>Read your wallet address</Bullet>
               <Bullet>Request transactions</Bullet>{" "}

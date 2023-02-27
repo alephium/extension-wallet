@@ -62,6 +62,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   }
 
   #unsafeEnable = async (options: EnableOptions) => {
+    this.#checkTabFocused()
+
     const walletAccountP = Promise.race([
       waitForMessage("CONNECT_DAPP_RES", 10 * 60 * 1000),
       waitForMessage("REJECT_PREAUTHORIZATION", 10 * 60 * 1000).then(
@@ -212,6 +214,12 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     this.onDisconnected = undefined
   }
 
+  #checkTabFocused() {
+    if (!document.hasFocus()) {
+      throw Error(`Unsolicited request`)
+    }
+  }
+
   #checkParams({ signerAddress }: { signerAddress: Address }): void {
     if (this.#connectedAccount === undefined || this.#connectedNetworkId === undefined) {
       throw Error("No connection")
@@ -220,6 +228,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     if (signerAddress !== this.connectedAccount?.address) {
       throw Error(`Unauthorized address. Expected: ${this.connectedAccount?.address}, got: ${signerAddress}`)
     }
+
+    this.#checkTabFocused()
   }
 
   async #executeAlephiumTransaction<P extends { signerAddress: Address }>(params: P, dataBuilder: (param: P, host: string, networkId: string, keyType: KeyType) => TransactionParams) {

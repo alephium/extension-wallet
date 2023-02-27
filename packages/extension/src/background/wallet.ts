@@ -225,7 +225,7 @@ export class Wallet {
         derivationIndex: index,
         group: groupOfAddress(newAddress)
       },
-      type: "argent",
+      type: "alephium",
     }
 
     await this.walletStore.push([account])
