@@ -1,9 +1,10 @@
 import {
   getStorage,
-  walletGenerate,
+  walletEncrypt,
   walletImport,
   walletOpen
 } from '@alephium/sdk'
+import * as bip39 from 'bip39'
 
 import {
   NodeProvider,
@@ -61,7 +62,6 @@ const WalletName = 'alephium-extension-wallet'
 
 export interface WalletSession {
   secret: string     // NOTE: mnemonic for ALPH
-  seed?: Buffer
   password: string
 }
 
@@ -108,7 +108,7 @@ export class Wallet {
 
   public async getPrivateKeySigner(account: WalletAccount): Promise<PrivateKeyWallet> {
     const session = await this.sessionStore.get()
-    if (!this.isSessionOpen() || !session?.seed) {
+    if (!this.isSessionOpen() || !session?.secret) {
       throw new Error("No seed")
     }
 
@@ -151,7 +151,8 @@ export class Wallet {
     try {
       const wallet = walletImport(seedPhrase)
       AlephiumStorage.save(WalletName, wallet.encrypt(newPassword))
-      this.setSession(wallet.mnemonic, newPassword, wallet.seed)
+      this.setSession(wallet.mnemonic, newPassword)
+      this.newAccountForRestoredWallet(wallet.mnemonic)
     } catch {
       throw Error('Restore seedphrase failed')
     }
@@ -172,16 +173,16 @@ export class Wallet {
 
     try {
       if (!walletEncrypted) {
-        const wallet = walletGenerate()
-        AlephiumStorage.save(WalletName, wallet.encrypt(password))
-        this.setSession(wallet.mnemonic, password, wallet.seed)
+        const mnemonic = bip39.generateMnemonic(128)
+        AlephiumStorage.save(WalletName, walletEncrypt(password, mnemonic))
+        this.setSession(mnemonic, password)
       } else {
         const wallet = walletOpen(password, walletEncrypted)
-        this.setSession(wallet.mnemonic, password, wallet.seed)
+        this.setSession(wallet.mnemonic, password)
       }
 
       return true
-    } catch {
+    } catch (error) {
       return false
     }
   }
@@ -210,8 +211,16 @@ export class Wallet {
       .map((account) => account.signer.derivationIndex)
 
     const startIndex = getNextPathIndex(currentIndexes)
-    const [privateKey, index] = forGroup === undefined ? [deriveHDWalletPrivateKey(session.secret, keyType, startIndex), startIndex]
-      : deriveHDWalletPrivateKeyForGroup(session.secret, forGroup, keyType, startIndex)
+    return this.newAccountShared(session.secret, startIndex, networkId, keyType, forGroup)
+  }
+
+  public async newAccountForRestoredWallet(secret: string): Promise<WalletAccount> {
+    return this.newAccountShared(secret, 0, defaultNetwork.id, 'default')
+  }
+
+  public async newAccountShared(secret: string, startIndex: number, networkId: string, keyType: KeyType, forGroup?: number): Promise<WalletAccount> {
+    const [privateKey, index] = forGroup === undefined ? [deriveHDWalletPrivateKey(secret, keyType, startIndex), startIndex]
+      : deriveHDWalletPrivateKeyForGroup(secret, forGroup, keyType, startIndex)
     const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
     const newAddress = addressFromPublicKey(publicKey, keyType)
 
@@ -241,7 +250,7 @@ export class Wallet {
       throw Error("no open session")
     }
 
-    if (!session?.seed) {
+    if (!session?.secret) {
       throw Error("no seed")
     } else {
       const newAndDefaultAddress = await this.newAccount(networkId, keyType, group)
@@ -356,8 +365,8 @@ export class Wallet {
     }
   }
 
-  private async setSession(secret: string, password: string, seed?: Buffer) {
-    await this.sessionStore.set({ secret, seed, password })
+  private async setSession(secret: string, password: string) {
+    await this.sessionStore.set({ secret, password })
 
     browser.alarms.onAlarm.addListener(async (alarm) => {
       if (alarm.name === "session_timeout") {
