@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react"
 import { convertSetToAlph } from "@alephium/sdk"
 import Select from 'react-select';
-import { getAlephium } from '@alephium/get-extension-wallet'
+import { getDefaultAlephiumWallet } from '@alephium/get-extension-wallet'
 import {
   getAlphBalance,
   getTokenBalances,
@@ -39,7 +39,7 @@ export const TokenDapp: FC<{
   const [transferingMintedToken, setTransferingMintedToken] = useState<boolean>(false)
   const [selectedTokenBalance, setSelectedTokenBalance] = useState<{ value: TokenBalance, label: string } | undefined>()
 
-  const alephium = getAlephium()
+  const alephium = getDefaultAlephiumWallet()
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus)
 
@@ -130,7 +130,7 @@ export const TokenDapp: FC<{
         }
       }
     })()
-  }, [transactionStatus, lastTransactionHash])
+  }, [transactionStatus, lastTransactionHash, alephium?.nodeProvider, transferingMintedToken])
 
   const network = networkId()
 

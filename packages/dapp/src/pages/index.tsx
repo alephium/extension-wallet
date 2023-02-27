@@ -5,7 +5,7 @@ import { TokenDapp } from "../components/TokenDapp"
 import {
   connectWallet,
   disconnectWallet,
-  silentConnectWallet,
+  silentConnectWallet
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
 

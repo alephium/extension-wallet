@@ -138,7 +138,7 @@ module.exports = {
       path: require.resolve("path-browserify")
     },
     alias: {
-      "@mui/styled-engine": "@mui/styled-engine-sc",
+      "@mui/styled-engine": "@mui/styled-engine-sc"
     },
   },
   optimization: isProd

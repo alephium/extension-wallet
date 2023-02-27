@@ -1,11 +1,12 @@
 import { sendMessage, waitForMessage } from "./messageActions"
+import { RequestOptions } from "./inpage.model"
 
 /** check if current host is pre-authorized against currently selected account */
-export const getIsPreauthorized = async () => {
+export const getIsPreauthorized = async (options: RequestOptions) => {
   try {
     sendMessage({
       type: "IS_PREAUTHORIZED",
-      data: window.location.host,
+      data: options,
     })
     const isPreauthorized = await waitForMessage("IS_PREAUTHORIZED_RES", 1000)
     return isPreauthorized
