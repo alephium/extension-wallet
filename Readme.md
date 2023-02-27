@@ -18,7 +18,9 @@ yarn        # setup dependencies
 yarn build  # run build process for all packages
 ```
 
-To load the locally built chrome extension into your browser, follow the guide [here](https://developer.chrome.com/docs/extensions/mv3/getstarted/#manifest)
+To load the locally built chrome extension into your browser, follow the guide [here](https://developer.chrome.com/docs/extensions/mv3/getstarted/development-basics/#load-unpacked).
+
+Load the `./packages/extension/dist` folder
 
 ## Development
 
