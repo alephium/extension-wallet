@@ -13,7 +13,7 @@ export abstract class AlephiumWindowObject extends InteractiveSignerProvider<Ena
   abstract version: string
 
   abstract isPreauthorized: (options: EnableOptions) => Promise<boolean>
-  enableIfPreauthorized = async (
+  enableIfConneced = async (
     options: EnableOptions,
   ): Promise<Account | undefined> => {
     const isPreauthorized = await this.isPreauthorized(options)

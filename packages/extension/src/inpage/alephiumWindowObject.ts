@@ -218,7 +218,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     }
 
     if (signerAddress !== this.connectedAccount?.address) {
-      throw Error("Unauthorized address")
+      throw Error(`Unauthorized address. Expected: ${this.connectedAccount?.address}, got: ${signerAddress}`)
     }
   }
 

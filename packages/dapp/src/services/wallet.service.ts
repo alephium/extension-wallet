@@ -8,7 +8,7 @@ export const silentConnectWallet = async (
   if (alephium === undefined) {
     return undefined
   }
-  return alephium?.enableIfPreauthorized({ onDisconnected, networkId: 'devnet', chainGroup: 0 })
+  return alephium?.enableIfConneced({ onDisconnected, networkId: 'devnet', chainGroup: 0 })
     .catch((error: any) => {
       console.error(error)
       return undefined
