@@ -33,7 +33,7 @@ export const OnboardingRestoreSeed: FC = () => {
   )
   const handleRestoreClick = async () => {
     try {
-      validateAndSetSeedPhrase(seedPhraseInput)
+      validateAndSetSeedPhrase(seedPhraseInput.trim())
       customNavigate(routes.onboardingRestorePassword())
     } catch {
       setError("Invalid seed phrase")
@@ -46,8 +46,7 @@ export const OnboardingRestoreSeed: FC = () => {
       length={4}
       currentIndex={1}
       title={"Restore accounts"}
-      subtitle="Enter each of the 24 words from your recovery phrase separated by a
-      space"
+      subtitle="Enter your recovery phrase (upto 24 words) separated by a space."
     >
       <SeedInput
         mb="1"

@@ -11,7 +11,7 @@ export const useSeedRecovery = create<State>(() => ({}))
 export const validateSeedPhrase = (seedPhrase: string): boolean => {
   const words = wordlists.en.split(seedPhrase.trim())
   // check seed phrase has correct number of words
-  if (words.length !== 24) {
+  if (![12, 15, 18, 21, 24].includes(words.length)) {
     return false
   }
   // check every word is in the wordlist
@@ -22,7 +22,8 @@ export const validateSeedPhrase = (seedPhrase: string): boolean => {
   // check if seedphrase is valid with HDNode
   try {
     ethers.utils.HDNode.fromMnemonic(seedPhrase)
-  } catch {
+  } catch (error) {
+    console.error(`===== validate error`, error)
     return false
   }
 
