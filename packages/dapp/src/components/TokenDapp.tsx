@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react"
 import { convertSetToAlph } from "@alephium/sdk"
 import Select from 'react-select';
-import { getDefaultAlephiumWallet } from '@alephium/get-extension-wallet'
+import { AlephiumWindowObject, getDefaultAlephiumWallet } from '@alephium/get-extension-wallet'
 import {
   getAlphBalance,
   getTokenBalances,
@@ -12,7 +12,6 @@ import {
 } from "../services/token.service"
 import {
   getExplorerBaseUrl,
-  networkId,
   signMessage,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
@@ -38,8 +37,7 @@ export const TokenDapp: FC<{
   const [mintedToken, setMintedToken] = useState<string | undefined>()
   const [transferingMintedToken, setTransferingMintedToken] = useState<boolean>(false)
   const [selectedTokenBalance, setSelectedTokenBalance] = useState<{ value: TokenBalance, label: string } | undefined>()
-
-  const alephium = getDefaultAlephiumWallet()
+  const [alephium, setAlephium] = useState<AlephiumWindowObject | undefined>(undefined)
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus)
 
@@ -59,6 +57,12 @@ export const TokenDapp: FC<{
 
     getAlphBalance(address).then(alphBalance => {
       setAlphBalance(alphBalance)
+    })
+
+    getDefaultAlephiumWallet().then(alephium => {
+      if (!!alephium) {
+        setAlephium(alephium)
+      }
     })
   }, [address])
 
@@ -132,7 +136,7 @@ export const TokenDapp: FC<{
     })()
   }, [transactionStatus, lastTransactionHash, alephium?.nodeProvider, transferingMintedToken])
 
-  const network = networkId()
+  const network = 'devnet'
 
   const handleMintSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -216,7 +220,7 @@ export const TokenDapp: FC<{
         <h3 style={{ margin: 0 }}>
           Transaction hash:{" "}
           <a
-            href={`${getExplorerBaseUrl()}/tx/${lastTransactionHash}`}
+            href={`${getExplorerBaseUrl()}/transactions/${lastTransactionHash}`}
             target="_blank"
             rel="noreferrer"
             style={{ color: "blue", margin: "0 0 1em" }}

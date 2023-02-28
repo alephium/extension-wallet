@@ -3,28 +3,38 @@ import {
   checkProviderMetadata,
   knownProviders,
 } from "./knownProviders"
-import { AlephiumWindowObject, WalletProvider } from "./types"
+import { AlephiumWindowObject, providerInitializedEvent, WalletProvider } from "./types"
 
-export function getDefaultAlephiumWallet(): AlephiumWindowObject | undefined {
+export function getDefaultAlephiumWallet(): Promise<AlephiumWindowObject | undefined> {
   return getKnownWallet(alephiumProvider)
 }
 
-export function scanKnownWallets(): AlephiumWindowObject[] {
+export async function scanKnownWallets(): Promise<AlephiumWindowObject[]> {
   const wallets: AlephiumWindowObject[] = []
-  knownProviders.forEach((provider) => {
-    const wallet = getKnownWallet(provider)
+  for (const provider of knownProviders) {
+    const wallet = await getKnownWallet(provider)
     if (wallet !== undefined) {
       wallets.push(wallet)
     }
-  })
+  }
   return wallets
 }
 
 export function getKnownWallet(
   provider: WalletProvider,
-): AlephiumWindowObject | undefined {
-  const wallet = getWalletObject(provider.id)
-  return wallet && checkProviderMetadata(wallet, provider) ? wallet : undefined
+): Promise<AlephiumWindowObject | undefined> {
+  return new Promise<AlephiumWindowObject | undefined>(resolve => {
+    const fetch = () => {
+      const wallet = getWalletObject(provider.id)
+      if (!!wallet && checkProviderMetadata(wallet, provider)) {
+        resolve(wallet)
+      }
+    }
+
+    window.addEventListener(providerInitializedEvent(provider.id), fetch)
+    fetch()
+    setTimeout(() => resolve(undefined), 5000) // We only try for 5 seconds
+  })
 }
 
 export function getWalletObject(id: string): AlephiumWindowObject | undefined {

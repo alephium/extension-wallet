@@ -36,3 +36,7 @@ export type WalletProvider = {
     | { chrome?: `https://chrome.google.com/webstore/detail/${string}` }
     | { firefox?: `https://addons.mozilla.org/en-US/firefox/addon/${string}` }
 }
+
+export function providerInitializedEvent(id: string): string {
+  return `alephiumProviders/${id}#initialized`
+}

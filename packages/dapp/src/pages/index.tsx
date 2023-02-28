@@ -16,20 +16,23 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const handler = async () => {
-      const wallet = await silentConnectWallet(
-        () => {
-          return Promise.resolve(setConnected(false))
-        }
-      )
-      setAddress(wallet?.address)
-      setNetwork('devnet')
-      setConnected(!!wallet)
+      if (!isConnected) {
+        silentConnectWallet(
+          () => {
+            return Promise.resolve(setConnected(false))
+          }
+        ).then(wallet => {
+          setAddress(wallet?.address)
+          setNetwork('devnet')
+          setConnected(!!wallet)
+        })
+      }
     }
 
-      ; (async () => {
-        await handler()
-      })()
-  }, [])
+    ; (async () => {
+      await handler()
+    })()
+  }, [isConnected])
 
   const handleConnectClick = async () => {
     const wallet = await connectWallet(

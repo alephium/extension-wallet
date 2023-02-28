@@ -4,7 +4,7 @@ import { MessageHasher, SignMessageResult } from '@alephium/web3'
 export const silentConnectWallet = async (
   onDisconnected: () => Promise<void>
 ) => {
-  const alephium = getDefaultAlephiumWallet()
+  const alephium = await getDefaultAlephiumWallet()
   if (alephium === undefined) {
     return undefined
   }
@@ -18,7 +18,7 @@ export const silentConnectWallet = async (
 export const connectWallet = async (
   onDisconnected: () => Promise<void>
 ) => {
-  const alephium = getDefaultAlephiumWallet()
+  const alephium = await getDefaultAlephiumWallet()
   if (alephium === undefined) {
     return undefined
   }
@@ -29,26 +29,17 @@ export const connectWallet = async (
     })
 }
 
-export const disconnectWallet = () => {
-  const alephium = getDefaultAlephiumWallet()
+export const disconnectWallet = async () => {
+  const alephium = await getDefaultAlephiumWallet()
   return alephium?.disconnect()
 }
 
-export const networkId = (): string | undefined => {
-  return getDefaultAlephiumWallet()?.connectedNetworkId
-}
-
 export const getExplorerBaseUrl = (): string | undefined => {
-  const network = networkId()
-  if (network === "mainnet-alpha") {
-    return "https://voyager.online"
-  } else if (network === "goerli-alpha") {
-    return "https://goerli.voyager.online"
-  }
+  return 'http://localhost:23000'
 }
 
 export const signMessage = async (message: string, messageHasher: MessageHasher): Promise<SignMessageResult> => {
-  const alephium = getDefaultAlephiumWallet()
+  const alephium = await getDefaultAlephiumWallet()
   if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
     throw Error("Alephium object not initialized")
   }
