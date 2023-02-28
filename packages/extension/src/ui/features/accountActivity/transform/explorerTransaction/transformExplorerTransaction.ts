@@ -214,5 +214,10 @@ function extractAmountChanges(explorerTransation: AlephiumExplorerTransaction, a
       })
     }
   })
+  const gasFeePayer = explorerTransation.inputs?.at(0)?.address
+  if (gasFeePayer === accountAddress) {
+    const gasFee = BigInt(explorerTransation.gasAmount) * BigInt(explorerTransation.gasPrice)
+    result.attoAlphAmount += gasFee
+  }
   return result
 }
