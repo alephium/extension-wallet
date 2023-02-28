@@ -4,7 +4,6 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "@alephium/sdk": "0.3.0",
     "@alephium/web3": "v0.5.1",
     "@alephium/web3-wallet": "v0.5.1",
     "@alephium/web3-test": "v0.5.1",

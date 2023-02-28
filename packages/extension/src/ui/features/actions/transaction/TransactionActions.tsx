@@ -1,4 +1,3 @@
-import { convertSetToAlph } from "@alephium/sdk"
 import { Destination, prettifyAttoAlphAmount } from "@alephium/web3"
 import { CopyTooltip, P4 } from "@argent/ui"
 import {
@@ -11,12 +10,10 @@ import {
   Flex,
 } from "@chakra-ui/react"
 import { FC } from "react"
-import { Call, number } from "starknet"
 import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
 
 import { entryPointToHumanReadable } from "../../../../shared/transactions"
 import { formatTruncatedAddress, formatLongString } from "../../../services/addresses"
-
 
 export interface TransactionActionRow {
   key: string
@@ -198,9 +195,7 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                               overflow="hidden"
                               minWidth="0"
                             >
-                              {number.isHex(detail.value)
-                                ? formatTruncatedAddress(detail.value)
-                                : detail.value}
+                              {detail.value}
                             </Box>
                           </CopyTooltip>
                         </P4>

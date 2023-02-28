@@ -1,4 +1,3 @@
-import { convertSetToAlph } from "@alephium/sdk"
 import { prettifyAttoAlphAmount } from "@alephium/web3"
 import { L1, L2, P4, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
@@ -6,9 +5,6 @@ import { Collapse } from "@mui/material"
 import Tippy from "@tippyjs/react"
 import { FC } from "react"
 
-import {
-  prettifyCurrencyValue,
-} from "../../../../shared/token/price"
 import { Tooltip } from "../../../components/CopyTooltip"
 import { useAccount } from "../../accounts/accounts.state"
 import { useFeeTokenBalance } from "../../accountTokens/tokens.service"
