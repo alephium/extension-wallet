@@ -1,9 +1,5 @@
 import {
-  constants,
-  getChecksumAddress,
   number,
-  validateAndParseAddress,
-  validateChecksumAddress,
 } from "starknet"
 import * as yup from "yup"
 
@@ -21,9 +17,13 @@ export const formatLongString = (data: string) => {
 }
 
 export const formatTruncatedAddress = (address: string) => {
-  const start = address.slice(0, 4)
-  const end = address.slice(-4)
-  return `${start} ... ${end}`
+  if (address.length > 8) {
+    const start = address.slice(0, 4)
+    const end = address.slice(-4)
+    return `${start} ... ${end}`
+  } else {
+    return address
+  }
 }
 
 export const formatFullAddress = (address: string) => {

@@ -145,8 +145,13 @@ export const transformAlephiumExplorerTransaction = ({
   }
   try {
     const destinations = extractDestinations(explorerTransaction, accountAddress)
-    if (destinations.length === 0) {
-      return
+    if (destinations.length === 0) { // coinbase transaction
+      return {
+        type: "TRANSFER",
+        transferType: "Receive",
+        destinations: [{address: "Genesis", type: "From"}],
+        amountChanges: extractAmountChanges(explorerTransaction, accountAddress)
+      }
     } 
     const result: TransferTransformedAlephiumTransaction = {
       type: "TRANSFER",
@@ -209,5 +214,10 @@ function extractAmountChanges(explorerTransation: AlephiumExplorerTransaction, a
       })
     }
   })
+  const gasFeePayer = explorerTransation.inputs?.at(0)?.address
+  if (gasFeePayer === accountAddress) {
+    const gasFee = BigInt(explorerTransation.gasAmount) * BigInt(explorerTransation.gasPrice)
+    result.attoAlphAmount += gasFee
+  }
   return result
 }

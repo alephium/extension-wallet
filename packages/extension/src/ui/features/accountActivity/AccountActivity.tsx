@@ -65,7 +65,7 @@ export const AccountActivity: FC<AccountActivityProps> = ({
             const explorerTransaction = extractExplorerTransaction(transaction)
             if (explorerTransaction) {
               const explorerTransactionTransformed =
-                transaction &&
+                explorerTransaction &&
                 transformAlephiumExplorerTransaction({
                   explorerTransaction,
                   accountAddress: account.address,
