@@ -32,7 +32,7 @@ export async function sentTransactionNotification(
     type: "basic",
     title,
     message: `${hash}\nStatus: ${status}`,
-    iconUrl: "./assets/logo.png",
+    iconUrl: "./assets/favicon-128.png",
     eventTime: Date.now(),
   })
 }
