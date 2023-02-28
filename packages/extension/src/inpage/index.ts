@@ -1,10 +1,8 @@
 import type { WindowMessageType } from "../shared/messages"
-import { disconnectAccount } from "./account"
 import { alephiumWindowObject } from "./alephiumWindowObject"
-import { sendMessage, waitForMessage } from "./messageActions"
-import { getIsPreauthorized } from "./messaging"
 import { isPlainObject } from "lodash-es"
 import { nostrObject } from "./nostrObject"
+import { providerInitializedEvent } from "@alephium/get-extension-wallet"
 
 const INJECT_NAMES = ["alephium"]
 
@@ -33,6 +31,7 @@ function attachAlephiumProvider() {
     } catch {
       // ignore
     }
+    window.dispatchEvent(new Event(providerInitializedEvent('alephium')))
   })
 }
 
@@ -57,16 +56,8 @@ function attach() {
   attachAlephiumProvider()
   attachNostrProvider()
 }
-
-function attachHandler() {
-  attach()
-  setTimeout(attach, 100)
-}
 // inject script
-attachHandler()
-window.addEventListener("load", () => attachHandler())
-document.addEventListener("DOMContentLoaded", () => attachHandler())
-document.addEventListener("readystatechange", () => attachHandler())
+attach()
 
 // TODO: check if this listener is necessary
 window.addEventListener(
