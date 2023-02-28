@@ -145,7 +145,7 @@ export const transformAlephiumExplorerTransaction = ({
   }
   try {
     const destinations = extractDestinations(explorerTransaction, accountAddress)
-    if (destinations.length === 0) { // coinbase transaction
+    if (!(explorerTransaction.inputs?.length) && destinations.length === 0) { // coinbase transaction
       return {
         type: "TRANSFER",
         transferType: "Receive",

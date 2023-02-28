@@ -5,11 +5,12 @@ import * as yup from "yup"
 
 export const normalizeAddress = (address: string) => address
 
-export const formatLongString = (data: string) => {
+export const formatLongString = (data: string, _threshold?: number) => {
+  const threshold = _threshold ?? 4
   const items = data.split(' ')
-  if (items.length == 1 && data.length > 8) {
-    const start = data.slice(0, 4)
-    const end = data.slice(-4)
+  if (items.length == 1 && data.length > threshold * 2) {
+    const start = data.slice(0, threshold)
+    const end = data.slice(-threshold)
     return `${start} ... ${end}`
   } else {
     return data
