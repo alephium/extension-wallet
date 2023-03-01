@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, Suspense } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { Token } from "../../../shared/token/type"
@@ -6,6 +6,7 @@ import { ErrorBoundary } from "../../components/ErrorBoundary"
 import ErrorBoundaryFallbackWithCopyError from "../../components/ErrorBoundaryFallbackWithCopyError"
 import { routes } from "../../routes"
 import { useSelectedAccount } from "../accounts/accounts.state"
+import { NewTokenButton } from "./NewTokenButton"
 import { TokenListItemVariant } from "./TokenListItem"
 import { TokenListItemContainer } from "./TokenListItemContainer"
 import { useTokensWithBalance, TokenDetailsWithBalance } from "./tokens.state"
@@ -47,22 +48,25 @@ export const TokenList: FC<TokenListProps> = ({
         />
       }
     >
-      {tokens.map((token) => (
-        <TokenListItemContainer
-          key={token.id}
-          account={account}
-          tokenWithBalance={token}
-          variant={variant}
-          showTokenSymbol={showTokenSymbol}
-          onClick={() => {
-            navigate(
-              navigateToSend
-                ? routes.sendToken(token.id)
-                : routes.token(token.id),
-            )
-          }}
-        />
-      ))}
+      <Suspense fallback={<NewTokenButton isLoading />}>
+        {tokens.map((token) => (
+          <TokenListItemContainer
+            key={token.id}
+            account={account}
+            tokenWithBalance={token}
+            variant={variant}
+            showTokenSymbol={showTokenSymbol}
+            onClick={() => {
+              navigate(
+                navigateToSend
+                  ? routes.sendToken(token.id)
+                  : routes.token(token.id),
+              )
+            }}
+          />
+        ))}
+        {showNewTokenButton && <NewTokenButton />}
+      </Suspense>
     </ErrorBoundary>
   )
 }

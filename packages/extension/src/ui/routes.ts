@@ -94,6 +94,7 @@ export const routes = {
   ),
   addAccount: route("/accounts/new"),
   addAlephiumAccount: route("/accounts/new/alephium"),
+  newToken: route("/tokens/new"),
   funding: route("/funding"),
   fundingBridge: route("/funding/bridge"),
   exportPrivateKey: route("/export-private-key"),

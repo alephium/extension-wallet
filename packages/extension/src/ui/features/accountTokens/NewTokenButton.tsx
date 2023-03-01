@@ -13,7 +13,7 @@ export const NewTokenButton: FC<ComponentProps<typeof Button>> = (props) => {
       colorScheme={"transparent"}
       mx={"auto"}
       as={Link}
-      to={"To be removed"}
+      to={routes.newToken()}
       leftIcon={<AddIcon />}
       color="neutrals.400"
       loadingText={"Fetching tokens"}

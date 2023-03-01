@@ -34,13 +34,6 @@ export const formatFullAddress = (address: string) => {
   return `${hex} ${parts.join(" ")}`
 }
 
-const isChecksumAddress = (address: string) => {
-  if (/^0x[0-9a-f]{63,64}$/.test(address)) {
-    return false
-  }
-  return true
-}
-
 // TODO: improve address validation
 export const addressSchema = yup
   .string()

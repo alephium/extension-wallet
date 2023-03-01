@@ -26,7 +26,7 @@ export const tokenSchema: yup.Schema<Token> = baseTokenSchema
     name: yup.string().required("Name is required"),
     symbol: yup.string().required("Symbol is required"),
     decimals: yup.number().required("Decimals is required"),
-    logoURI: yup.string(),
+    logoURI: yup.string().url(),
     showAlways: yup.boolean(),
   })
 

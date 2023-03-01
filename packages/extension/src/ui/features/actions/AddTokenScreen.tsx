@@ -1,23 +1,21 @@
 import { BarBackButton, NavigationContainer } from "@argent/ui"
 import { BigNumber } from "@ethersproject/bignumber"
-import React, { FC, useEffect, useMemo, useRef, useState } from "react"
+import React, { FC, useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { number } from "starknet"
 import styled from "styled-components"
 
 import { addToken } from "../../../shared/token/storage"
-import { RequestToken, Token } from "../../../shared/token/type"
+import { Token } from "../../../shared/token/type"
 import { useAppState } from "../../app.state"
 import { Button, ButtonGroupHorizontal } from "../../components/Button"
 import { InfoCircle } from "../../components/Icons/InfoCircle"
 import { InputText } from "../../components/InputText"
 import Row from "../../components/Row"
-import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
-import { isValidAddress } from "../../services/addresses"
+import { isValidTokenId } from "../../services/token"
 import { FormError, H2, WarningText } from "../../theme/Typography"
-import { useSelectedAccount } from "../accounts/accounts.state"
 import { useTokensInNetwork } from "../accountTokens/tokens.state"
+import * as yup from "yup"
 
 const AddTokenScreenWrapper = styled.div`
   display: flex;
@@ -51,10 +49,15 @@ const ButtonSpacer = styled.div`
   flex: 1;
 `
 
+function isValidUrl(url: string | undefined): boolean {
+  return !!url && yup.string().url().isValidSync(url)
+}
+
 const isDataComplete = (data: Partial<Token>): data is Token => {
   if (
     data.id &&
-    isValidAddress(data.id) &&
+    isValidTokenId(data.id) &&
+    isValidUrl(data.logoURI) &&
     data.decimals?.toString() &&
     data.name &&
     data.symbol
@@ -64,189 +67,146 @@ const isDataComplete = (data: Partial<Token>): data is Token => {
   return false
 }
 
-function addressFormat64Byte(address: number.BigNumberish): string {
-  return `0x${number.toBN(address).toString("hex").padStart(64, "0")}`
-}
-
 interface AddTokenScreenProps {
-  defaultToken?: RequestToken
+  defaultToken?: Token
   hideBackButton?: boolean
   onSubmit?: () => void
   onReject?: () => void
 }
 
-// export const AddTokenScreen: FC<AddTokenScreenProps> = ({
-//   defaultToken,
-//   hideBackButton,
-//   onSubmit,
-//   onReject,
-// }) => {
-//   const navigate = useNavigate()
-//   const { switcherNetworkId } = useAppState()
-//   const account = useSelectedAccount()
-//   const [tokenAddress, setTokenAddress] = useState(defaultToken?.address || "")
-//   const [tokenName, setTokenName] = useState(defaultToken?.name || "")
-//   const [tokenSymbol, setTokenSymbol] = useState(defaultToken?.symbol || "")
-//   const [tokenDecimals, setTokenDecimals] = useState(
-//     defaultToken?.decimals || "0",
-//   )
-//   const [loading, setLoading] = useState(false)
-//   const [error, setError] = useState("")
-//   const [tokenDetails, setTokenDetails] = useState<Token>()
-//   const prevValidAddress = useRef("")
-//   const tokensInNetwork = useTokensInNetwork(switcherNetworkId)
+export const AddTokenScreen: FC<AddTokenScreenProps> = ({
+  defaultToken,
+  hideBackButton,
+  onSubmit,
+  onReject,
+}) => {
+  const navigate = useNavigate()
+  const { switcherNetworkId } = useAppState()
+  const [tokenId, setTokenId] = useState(defaultToken?.id || "")
+  const [logoURI, setLogoURI] = useState(defaultToken?.logoURI || "")
+  const [tokenName, setTokenName] = useState(defaultToken?.name || "")
+  const [tokenSymbol, setTokenSymbol] = useState(defaultToken?.symbol || "")
+  const [tokenDecimals, setTokenDecimals] = useState(
+    defaultToken?.decimals || "0",
+  )
+  const [error, setError] = useState("")
+  const tokensInNetwork = useTokensInNetwork(switcherNetworkId)
 
-//   const validAddress = useMemo(() => {
-//     return isValidAddress(tokenAddress)
-//   }, [tokenAddress])
+  const tokenExist = useMemo(
+    () =>
+      tokensInNetwork.some(
+        (token) => defaultToken && token.id === defaultToken.id,
+      ),
+    [defaultToken, tokensInNetwork],
+  )
 
-//   const tokenExist = useMemo(
-//     () =>
-//       tokensInNetwork.some(
-//         (token) => defaultToken && token.address === defaultToken.address,
-//       ),
-//     [defaultToken, tokensInNetwork],
-//   )
+  useEffect(() => {
+    const found = tokensInNetwork.find((token) => token.id === tokenId)
+    if (found) {
+      setTokenName(found.name || "")
+      setTokenSymbol(found.symbol || "")
+      setTokenDecimals(found.decimals || 0)
+      setLogoURI(found.logoURI || "")
+    }
+  }, [tokenId, tokensInNetwork])
 
-//   useEffect(() => {
-//     if (
-//       defaultToken &&
-//       defaultToken.address === tokenAddress &&
-//       !tokenDetails
-//     ) {
-//       setLoading(true)
-//     }
-//   }, [defaultToken, tokenAddress, tokenDetails])
+  const compiledData = {
+    id: tokenId,
+    ...(tokenName && { name: tokenName }),
+    ...(tokenSymbol && { symbol: tokenSymbol }),
+    ...(logoURI && { logoURI: logoURI }),
+    decimals: parseInt(tokenDecimals.toString(), 10) || 0,
+    networkId: switcherNetworkId,
+  }
 
-//   useEffect(() => {
-//     if (account) {
-//       if (loading && account) {
-//         fetchTokenDetails(tokenAddress, account)
-//           .then((details) => {
-//             setTokenDetails(details)
-//             setTokenName(details.name || "")
-//             setTokenSymbol(details.symbol || "")
-//           })
-//           .catch(() => {
-//             setTokenDetails(undefined)
-//           })
-//           .finally(() => {
-//             setLoading(false)
-//           })
-//       } else if (
-//         isValidAddress(tokenAddress) &&
-//         tokenAddress !== prevValidAddress.current
-//       ) {
-//         prevValidAddress.current = tokenAddress
-//         setLoading(true)
-//       }
-//     }
-//   }, [loading, tokenAddress, account])
+  return (
+    <NavigationContainer leftButton={hideBackButton ? null : <BarBackButton />}>
+      <AddTokenScreenWrapper>
+        <H2>Add tokens</H2>
 
-//   const compiledData = {
-//     address: tokenAddress,
-//     ...(tokenDetails ?? {}),
-//     ...(tokenName && { name: tokenName }),
-//     ...(tokenSymbol && { symbol: tokenSymbol }),
-//     ...(!tokenDetails?.decimals && {
-//       decimals: parseInt(tokenDecimals.toString(), 10) || 0,
-//     }),
-//     networkId: switcherNetworkId,
-//   }
+        {tokenExist && (
+          <TokenWarningWrapper>
+            <InfoCircle />
+            <WarningText>
+              This action will edit tokens that are already listed in your
+              wallet, which can be used to phish you. Only approve if you are
+              certain that you mean to change what these tokens represent.
+            </WarningText>
+          </TokenWarningWrapper>
+        )}
 
-//   return (
-//     <NavigationContainer leftButton={hideBackButton ? null : <BarBackButton />}>
-//       <AddTokenScreenWrapper>
-//         <H2>Add tokens</H2>
-
-//         {tokenExist && (
-//           <TokenWarningWrapper>
-//             <InfoCircle />
-//             <WarningText>
-//               This action will edit tokens that are already listed in your
-//               wallet, which can be used to phish you. Only approve if you are
-//               certain that you mean to change what these tokens represent.
-//             </WarningText>
-//           </TokenWarningWrapper>
-//         )}
-
-//         <form
-//           onSubmit={async (e: React.FormEvent) => {
-//             e.preventDefault()
-//             compiledData.address = addressFormat64Byte(compiledData.address)
-//             if (isDataComplete(compiledData)) {
-//               try {
-//                 await addToken(compiledData)
-//                 onSubmit?.()
-//                 navigate(routes.accountTokens())
-//               } catch (e) {
-//                 setError("Token already exists")
-//               }
-//             }
-//           }}
-//         >
-//           <InputText
-//             autoFocus
-//             placeholder="Contract address"
-//             type="text"
-//             value={tokenAddress}
-//             disabled={loading}
-//             onChange={(e: any) => {
-//               setTokenAddress(e.target.value?.toLowerCase())
-//             }}
-//           />
-//           {!loading && validAddress && (
-//             <>
-//               <InputText
-//                 placeholder="Name"
-//                 type="text"
-//                 value={tokenName}
-//                 disabled={loading || !validAddress}
-//                 onChange={(e: any) => setTokenName(e.target.value)}
-//               />
-//               <InputText
-//                 placeholder="Symbol"
-//                 type="text"
-//                 value={tokenSymbol}
-//                 disabled={loading || !validAddress}
-//                 onChange={(e: any) => setTokenSymbol(e.target.value)}
-//               />
-//               <InputText
-//                 placeholder="Decimals"
-//                 type="text"
-//                 value={tokenDetails?.decimals?.toString() ?? tokenDecimals}
-//                 disabled={
-//                   tokenDetails?.decimals?.toString() || loading || !validAddress
-//                 }
-//                 onChange={(e: any) => {
-//                   try {
-//                     BigNumber.from(e.target.value || "0")
-//                     setTokenDecimals(e.target.value)
-//                   } catch {
-//                     // pass
-//                   }
-//                 }}
-//               />
-//               {error && <FormError>{error}</FormError>}
-//             </>
-//           )}
-//           {loading && <Spinner size={64} style={{ marginTop: 50 }} />}
-//           <ButtonSpacer />
-//           <ButtonGroupHorizontal>
-//             {onReject && (
-//               <Button onClick={onReject} type="button">
-//                 Reject
-//               </Button>
-//             )}
-//             <Button
-//               type="submit"
-//               disabled={loading || !isDataComplete(compiledData)}
-//             >
-//               Continue
-//             </Button>
-//           </ButtonGroupHorizontal>
-//         </form>
-//       </AddTokenScreenWrapper>
-//     </NavigationContainer>
-//   )
-// }
+        <form
+          onSubmit={async (e: React.FormEvent) => {
+            e.preventDefault()
+            if (isDataComplete(compiledData)) {
+              try {
+                await addToken(compiledData)
+                onSubmit?.()
+                navigate(routes.accountTokens())
+              } catch (e) {
+                setError("Token already exists")
+              }
+            }
+          }}
+        >
+          <InputText
+            autoFocus
+            placeholder="Token Id"
+            type="text"
+            value={tokenId}
+            onChange={(e: any) => {
+              setTokenId(e.target.value?.toLowerCase())
+            }}
+          />
+          <InputText
+            placeholder="Name"
+            type="text"
+            value={tokenName}
+            onChange={(e: any) => setTokenName(e.target.value)}
+          />
+          <InputText
+            placeholder="Symbol"
+            type="text"
+            value={tokenSymbol}
+            onChange={(e: any) => setTokenSymbol(e.target.value)}
+          />
+          <InputText
+            placeholder="Decimals"
+            type="text"
+            value={tokenDecimals}
+            onChange={(e: any) => {
+              try {
+                BigNumber.from(e.target.value || "0")
+                setTokenDecimals(e.target.value)
+              } catch {
+                // pass
+              }
+            }}
+          />
+          <InputText
+            placeholder="Logo Url"
+            type="text"
+            value={logoURI}
+            onChange={(e: any) => setLogoURI(e.target.value)}
+          />
+          {error && <FormError>{error}</FormError>}
+          <ButtonSpacer />
+          <ButtonGroupHorizontal>
+            {onReject && (
+              <Button onClick={onReject} type="button">
+                Reject
+              </Button>
+            )}
+            <Button
+              type="submit"
+              style={{ marginTop: "0px" }}
+              disabled={!isDataComplete(compiledData)}
+            >
+              Continue
+            </Button>
+          </ButtonGroupHorizontal>
+        </form>
+      </AddTokenScreenWrapper>
+    </NavigationContainer>
+  )
+}
