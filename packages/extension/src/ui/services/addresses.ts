@@ -11,17 +11,18 @@ export const formatLongString = (data: string, _threshold?: number) => {
   if (items.length == 1 && data.length > threshold * 2) {
     const start = data.slice(0, threshold)
     const end = data.slice(-threshold)
-    return `${start} ... ${end}`
+    return `${start}...${end}`
   } else {
     return data
   }
 }
 
-export const formatTruncatedAddress = (address: string) => {
-  if (address.length > 8) {
-    const start = address.slice(0, 4)
-    const end = address.slice(-4)
-    return `${start} ... ${end}`
+export const formatTruncatedAddress = (address: string, _threshold?: number) => {
+  const threshold = _threshold ?? 4
+  if (address.length > threshold * 2) {
+    const start = address.slice(0, threshold)
+    const end = address.slice(-threshold)
+    return `${start}...${end}`
   } else {
     return address
   }
