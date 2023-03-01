@@ -157,6 +157,7 @@ export const useTokens = (
 
   const knownTokensInNetwork = useTokensInNetwork(networkId)
 
+  console.log("i m here...", networkId, knownTokensInNetwork)
   const {
     data
   } = useSWR(
@@ -170,7 +171,7 @@ export const useTokens = (
         return
       }
 
-      const allTokens: Token[] = knownTokensInNetwork.filter((network) => network.showAlways)
+      const allTokens: Token[] = []
 
       const network = await getNetwork(selectedAccount.networkId)
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
@@ -178,27 +179,12 @@ export const useTokens = (
 
       for (const tokenId of tokenIds) {
         if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
-          const found = knownTokensInNetwork.find((token) => token.id == tokenId)
-          let token: Token | undefined = undefined
-
-          if (found) {
-            token = {
-              id: tokenId,
-              networkId: networkId,
-              name: found.name,
-              symbol: found.symbol,
-              decimals: found.decimals,
-              logoURI: found.logoURI,
-              showAlways: true,
-            }
-          } else {
-            token = {
-              id: tokenId,
-              networkId: networkId,
-              name: tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase(),
-              symbol: "",
-              decimals: 0
-            }
+          const token = {
+            id: tokenId,
+            networkId: networkId,
+            name: tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase(),
+            symbol: "",
+            decimals: 0
           }
 
           allTokens.push(token)
@@ -218,5 +204,27 @@ export const useTokens = (
     },
   )
 
-  return data || []
+  const result = knownTokensInNetwork.filter((network) => network.showAlways)
+  const userTokens: Token[] = data || []
+
+  for (const userToken of userTokens) {
+    if (result.findIndex((t) => t.id == userToken.id) === -1) {
+      const found = knownTokensInNetwork.find((token) => token.id == userToken.id)
+
+      if (found) {
+        const token = {
+          id: found.id,
+          networkId: found.networkId,
+          name: found.name,
+          symbol: found.symbol,
+          decimals: found.decimals,
+          logoURI: found.logoURI,
+          showAlways: true,
+        }
+        result.push(token)
+      }
+    }
+  }
+
+  return result
 }
