@@ -3,9 +3,9 @@ import * as yup from "yup"
 import { ArrayStorage } from "../storage"
 import { assertSchema } from "../utils/schema"
 import { BaseToken, Token } from "./type"
-import { equalToken, parsedDefaultAlephiumTokens } from "./utils"
+import { equalToken, defaultKnownAlephiumTokens } from "./utils"
 
-export const tokenStore = new ArrayStorage(parsedDefaultAlephiumTokens, {
+export const tokenStore = new ArrayStorage(defaultKnownAlephiumTokens, {
   namespace: "core:tokens",
   areaName: "local",
   compare: equalToken,
@@ -22,10 +22,11 @@ export const baseTokenSchema: yup.Schema<BaseToken> = yup
 export const tokenSchema: yup.Schema<Token> = baseTokenSchema
   .required("Token is required")
   .shape({
+    id: yup.string().required("Id is required"),
     name: yup.string().required("Name is required"),
     symbol: yup.string().required("Symbol is required"),
-    decimals: yup.string().required("Decimals is required"),
-    image: yup.string(),
+    decimals: yup.number().required("Decimals is required"),
+    logoURI: yup.string(),
     showAlways: yup.boolean(),
   })
 

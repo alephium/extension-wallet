@@ -136,7 +136,7 @@ export const useTokensWithBalance = (
       .filter(
         (token) => token.showAlways || (token.balance && token.balance.gt(0)),
       )
-  }, [tokensForAccount, data])
+  }, [data])
 
   return {
     tokenDetails,
@@ -175,9 +175,8 @@ export const useTokens = (
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
       const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
 
-      // TODO: Check here
+      // TODO: name, symbol and decimals fetch from token registry
       for (const tokenId of tokenIds) {
-        // TODO: name, symbol and decimals fetch from token registry
         const token = {
           id: tokenId,
           networkId: networkId,

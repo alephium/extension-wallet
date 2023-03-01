@@ -31,6 +31,7 @@ export const TokenList: FC<TokenListProps> = ({
   if (!account) {
     return null
   }
+
   const tokens: TokenDetailsWithBalance[] | undefined = tokenList || tokensForAccount.tokenDetails
   tokens.forEach(token => {
     if (token.balance === undefined) {
@@ -38,7 +39,6 @@ export const TokenList: FC<TokenListProps> = ({
     }
   })
 
-  console.log("tokens", tokens)
   return (
     <ErrorBoundary
       fallback={

@@ -1,7 +1,5 @@
-import { number, shortString } from "starknet"
-
 import { NetworkMessage } from "../shared/messages/NetworkMessage"
-import { getNetwork, getNetworkByChainId, getNetworks } from "../shared/network"
+import { getNetwork, getNetworkById, getNetworks } from "../shared/network"
 import { UnhandledMessage } from "./background"
 import { HandleMessage } from "./background"
 import { getNetworkStatuses } from "./networkStatus"
@@ -50,7 +48,7 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
         return respond({
           type: "REQUEST_ADD_CUSTOM_NETWORK_REJ",
           data: {
-            error: `Network with chainId ${msg.data.chainId} already exists`,
+            error: `Network with id ${msg.data.id} already exists`,
           },
         })
       }
@@ -69,17 +67,17 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
     }
 
     case "REQUEST_SWITCH_CUSTOM_NETWORK": {
-      const { chainId } = msg.data
+      const { id } = msg.data
 
-      const network = await getNetworkByChainId(
-        chainId
+      const network = await getNetworkById(
+        id
       )
 
       if (!network) {
         return respond({
           type: "REQUEST_SWITCH_CUSTOM_NETWORK_REJ",
           data: {
-            error: `Network with chainId ${chainId} does not exist. Please add the network with wallet_addStarknetChain request`,
+            error: `Network with id ${id} does not exist. Please add the network with wallet_addStarknetChain request`,
           },
         })
       }

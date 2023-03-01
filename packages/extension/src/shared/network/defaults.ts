@@ -5,11 +5,10 @@ export const DEVNET = {
   nodeUrl: 'http://127.0.0.1:22973',
   explorerApiUrl: 'http://localhost:9090',
   explorerUrl: 'http://localhost:23000',
-  name: 'Devnet',
-  chainId: 2
+  name: 'Devnet'
 }
 
-const DEV_ONLY_NETWORKS: Network[] = [ DEVNET ]
+const DEV_ONLY_NETWORKS: Network[] = [DEVNET]
 
 export const defaultNetworks: Network[] = [
   {
@@ -18,7 +17,6 @@ export const defaultNetworks: Network[] = [
     explorerApiUrl: 'https://backend.mainnet.alephium.org',
     explorerUrl: 'https://explorer.mainnet.alephium.org',
     name: 'Mainnet',
-    chainId: 2,
     readonly: true
   },
   {
@@ -27,9 +25,10 @@ export const defaultNetworks: Network[] = [
     explorerApiUrl: 'https://backend-v112-v17.testnet.alephium.org',
     explorerUrl: 'https://explorer-v112-v17.testnet.alephium.org',
     name: 'Testnet',
-    chainId: 1
   },
   DEVNET
 ]
+
+export const defaultNetworkIds = defaultNetworks.map(network => network.id)
 
 export const defaultNetwork = defaultNetworks[2]

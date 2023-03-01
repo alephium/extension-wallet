@@ -13,7 +13,6 @@ export async function handleAddNetworkRequest(
     data: {
       id: callParams.id,
       name: callParams.chainName,
-      chainId: callParams.chainId,
       explorerApiUrl: callParams.explorerApiUrl,
       nodeUrl: callParams.nodeUrl,
       explorerUrl: callParams.explorerUrl,
@@ -65,11 +64,11 @@ export async function handleAddNetworkRequest(
 }
 
 export async function handleSwitchNetworkRequest(callParams: {
-  chainId: Network["chainId"]
+  id: Network["id"]
 }): Promise<boolean> {
   sendMessage({
     type: "REQUEST_SWITCH_CUSTOM_NETWORK",
-    data: { chainId: callParams.chainId },
+    data: { id: callParams.id },
   })
 
   const req = await Promise.race([

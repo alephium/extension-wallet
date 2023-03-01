@@ -100,12 +100,12 @@ export const handleActionApproval = async (
       try {
         const networks = await getNetworks()
 
-        const { chainId } = action.payload
+        const { id } = action.payload
 
-        const network = networks.find((n) => n.chainId === chainId)
+        const network = networks.find((n) => n.id === id)
 
         if (!network) {
-          throw Error(`Network with chainId ${chainId} not found`)
+          throw Error(`Network with id ${id} not found`)
         }
 
         const accountsOnNetwork = await getAccounts((account) => {
@@ -113,7 +113,7 @@ export const handleActionApproval = async (
         })
 
         if (!accountsOnNetwork.length) {
-          throw Error(`No accounts found on network with chainId ${chainId}`)
+          throw Error(`No accounts found on network with id ${id}`)
         }
 
         const currentlySelectedAccount = await wallet.getSelectedAccount()
@@ -129,7 +129,7 @@ export const handleActionApproval = async (
         )
 
         if (!selectedAccount) {
-          throw Error(`No accounts found on network with chainId ${chainId}`)
+          throw Error(`No accounts found on network with id ${id}`)
         }
 
         return {
