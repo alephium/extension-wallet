@@ -53,8 +53,8 @@ const ButtonSpacer = styled.div`
 
 const isDataComplete = (data: Partial<Token>): data is Token => {
   if (
-    data.address &&
-    isValidAddress(data.address) &&
+    data.id &&
+    isValidAddress(data.id) &&
     data.decimals?.toString() &&
     data.name &&
     data.symbol

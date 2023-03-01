@@ -61,7 +61,7 @@ export const addressSchema = yup
 export const isValidAddress = (address: string) =>
   addressSchema.isValidSync(address)
 
-export const isEqualAddress = (a: string, b: string) => {
+export const isEqualId = (a: string, b: string) => {
   try {
     if (a === b) {
       return true

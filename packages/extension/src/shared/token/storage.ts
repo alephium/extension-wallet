@@ -15,7 +15,7 @@ export const baseTokenSchema: yup.Schema<BaseToken> = yup
   .object()
   .required("BaseToken is required")
   .shape({
-    address: yup.string().required("Address is required"),
+    id: yup.string().required("Id is required"),
     networkId: yup.string().required("Network is required"),
   })
 

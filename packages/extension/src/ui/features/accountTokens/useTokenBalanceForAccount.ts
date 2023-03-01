@@ -9,7 +9,7 @@ import { IS_DEV } from "../../../shared/utils/dev"
 import { coerceErrorToString } from "../../../shared/utils/error"
 import { isNumeric } from "../../../shared/utils/number"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
-import { isEqualAddress } from "../../services/addresses"
+import { isEqualId } from "../../services/addresses"
 import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { TokenDetailsWithBalance } from "./tokens.state"
@@ -36,13 +36,13 @@ export const useTokenBalanceForAccount = (
     [
       getAccountIdentifier(account),
       "balanceOf",
-      token.address,
+      token.id,
       token.networkId,
     ],
     async () => {
       try {
         const balance = await getTokenBalanceForAccount(
-          token.address,
+          token.id,
           account.toBaseWalletAccount(),
         )
         return balance
@@ -50,7 +50,7 @@ export const useTokenBalanceForAccount = (
         if (shouldReturnError) {
           return errorToMessage(
             error,
-            token.address
+            token.id
           )
         } else {
           throw error
@@ -119,7 +119,7 @@ const errorToMessage = (
     const contractAddressMatches = message.match(/(0x[0-9a-f]+)/gi)
     const contractAddress = contractAddressMatches?.[0] ?? undefined
     if (contractAddress) {
-      if (isEqualAddress(contractAddress, tokenAddress)) {
+      if (isEqualId(contractAddress, tokenAddress)) {
         return {
           message: "Token not found",
           description: `Token with address ${tokenAddress} not deployed on this network`,

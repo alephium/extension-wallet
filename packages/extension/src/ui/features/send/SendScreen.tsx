@@ -123,14 +123,14 @@ export const SendScreen: FC = () => {
         <TabView>
           <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>
             (
-              <CellStack pt={0}>
-                <TokenList
-                  tokenList={tokenList}
-                  variant="no-currency"
-                  navigateToSend
-                  showNewTokenButton
-                />
-              </CellStack>
+            <CellStack pt={0}>
+              <TokenList
+                tokenList={tokenList}
+                variant="no-currency"
+                navigateToSend
+                showNewTokenButton
+              />
+            </CellStack>
             )
           </Suspense>
         </TabView>
@@ -153,7 +153,7 @@ const useCustomTokenList = (
     const result = tokenDetails.filter(
       (token) =>
         token.name.toLowerCase().includes(queryLowercase) ||
-        showTokenId(token.address).toLowerCase().includes(queryLowercase) ||
+        showTokenId(token.id).toLowerCase().includes(queryLowercase) ||
         token.symbol.toLowerCase().includes(queryLowercase),
     )
     return result

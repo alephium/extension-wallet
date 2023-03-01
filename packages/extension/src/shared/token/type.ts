@@ -1,10 +1,10 @@
 export interface BaseToken {
-  address: string
+  id: string
   networkId: string
 }
 
 export interface RequestToken extends Omit<BaseToken, "networkId"> {
-  address: string
+  id: string
   networkId?: string
   name?: string
   symbol?: string
@@ -12,6 +12,7 @@ export interface RequestToken extends Omit<BaseToken, "networkId"> {
 }
 
 export interface Token extends Required<RequestToken> {
-  image?: string
+  description?: string
+  logoURI?: string
   showAlways?: boolean
 }

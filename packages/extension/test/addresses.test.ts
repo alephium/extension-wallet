@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { addressSchema, isEqualAddress } from "../src/ui/services/addresses"
+import { addressSchema, isEqualId } from "../src/ui/services/addresses"
 
 describe("address input", () => {
   test("should not allow ethereum addresses", async () => {
@@ -46,11 +46,11 @@ describe("address input", () => {
   })
 })
 
-describe("isEqualAddress", () => {
+describe("isEqualId", () => {
   describe("when valid", () => {
     test("should match same address", () => {
       expect(
-        isEqualAddress(
+        isEqualId(
           "0x033d2a165d2a2ae64cbaf8e6dff7f0c1974d0f41cd4f0c24d273373d4837bcfd",
           "0x033d2a165d2a2ae64cbaf8e6dff7f0c1974d0f41cd4f0c24d273373d4837bcfd",
         ),
@@ -58,13 +58,13 @@ describe("isEqualAddress", () => {
     })
     test("should match same address regardless of zero padding", () => {
       expect(
-        isEqualAddress(
+        isEqualId(
           "0x33d2a165d2a2ae64cbaf8e6dff7f0c1974d0f41cd4f0c24d273373d4837bcfd",
           "0x033d2a165d2a2ae64cbaf8e6dff7f0c1974d0f41cd4f0c24d273373d4837bcfd",
         ),
       ).toBe(true)
       expect(
-        isEqualAddress(
+        isEqualId(
           "33d2a165d2a2ae64cbaf8e6dff7f0c1974d0f41cd4f0c24d273373d4837bcfd",
           "0x033d2a165d2a2ae64cbaf8e6dff7f0c1974d0f41cd4f0c24d273373d4837bcfd",
         ),
@@ -72,7 +72,7 @@ describe("isEqualAddress", () => {
     })
     test("should match regardless of case", () => {
       expect(
-        isEqualAddress(
+        isEqualId(
           "0x033d2a165d2a2ae64cbaf8e6dff7f0c1974d0f41cd4f0c24d273373d4837bcfd",
           "0x033D2A165D2A2AE64CBAF8E6DFF7F0C1974D0F41CD4F0C24D273373D4837BCFD",
         ),
@@ -82,12 +82,12 @@ describe("isEqualAddress", () => {
   describe("when invalid", () => {
     test("should return false without throwing", () => {
       expect(
-        isEqualAddress(
+        isEqualId(
           "0x033d2a165d2a2ae64cbaf8e6dff7f0c1974d0f41cd4f0c24d273373d4837bcfd",
           "foo",
         ),
       ).toBe(false)
-      expect(isEqualAddress("foo", "foo")).toBe(false)
+      expect(isEqualId("foo", "foo")).toBe(false)
     })
   })
 })

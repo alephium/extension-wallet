@@ -1,21 +1,21 @@
 import defaultTokens from "../../assets/default-tokens.json"
 import defaultAlephiumTokens from "../../assets/default-alephium-tokens.json"
-import { isEqualAddress } from "../../ui/services/addresses"
+import { isEqualId } from "../../ui/services/addresses"
 import { BaseToken, Token } from "./type"
 
 export const equalToken = (a: BaseToken, b: BaseToken) =>
-  a.networkId === b.networkId && isEqualAddress(a.address, b.address)
+  a.networkId === b.networkId && isEqualId(a.id, b.id)
 
 export const parsedDefaultTokens: Token[] = defaultTokens.map((token) => ({
   ...token,
   networkId: token.network,
-  decimals: parseInt(token.decimals, 10),
+  decimals: token.decimals,
 }))
 
 export const parsedDefaultAlephiumTokens: Token[] = defaultAlephiumTokens.map((token) => ({
   ...token,
   networkId: token.network,
-  decimals: parseInt(token.decimals, 10),
+  decimals: token.decimals,
 }))
 
 export const testDappToken = (networkId: string) =>

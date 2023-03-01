@@ -1,7 +1,6 @@
 import { icons } from "@argent/ui"
 import { Circle, Image } from "@chakra-ui/react"
 import { ComponentProps, FC } from "react"
-import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
 
 import { getTokenIconUrl } from "../../accountTokens/TokenIcon"
 import { DappIcon } from "../../actions/connectDapp/DappIcon"
@@ -11,7 +10,6 @@ import {
   isTokenMintTransaction,
   isTokenTransferTransaction,
 } from "../transform/is"
-import { getTransferType } from "../transform/transaction/transformTransaction"
 import { TransformedAlephiumTransaction, TransformedTransaction } from "../transform/type"
 
 const {
@@ -82,7 +80,7 @@ export const TransactionIcon: FC<TransactionIconProps> = ({
     const { token } = transaction
     if (token) {
       const src = getTokenIconUrl({
-        url: token.image,
+        url: token.logoURI,
         name: token.name,
       })
       badgeComponent = <Image src={src} />
@@ -91,7 +89,7 @@ export const TransactionIcon: FC<TransactionIconProps> = ({
     const { toToken } = transaction
     if (toToken) {
       const src = getTokenIconUrl({
-        url: toToken.image,
+        url: toToken.logoURI,
         name: toToken.name,
       })
       badgeComponent = <Image src={src} />

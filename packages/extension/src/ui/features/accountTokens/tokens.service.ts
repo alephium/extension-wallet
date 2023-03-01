@@ -8,13 +8,13 @@ import { Account } from "../accounts/Account"
 import { TokenDetailsWithBalance, getNetworkFeeToken } from "./tokens.state"
 
 export interface TokenView {
-  address: string
+  id: string
   name: string
   symbol: string
   decimals: number
   balance: string
 
-  image?: string
+  logoURI?: string
   showAlways?: boolean
 }
 
@@ -137,7 +137,7 @@ export const fetchFeeTokenBalance = async (
   if (!token) {
     return BigNumber.from(0)
   }
-  const balance = await getTokenBalanceForAccount(token.address, account)
+  const balance = await getTokenBalanceForAccount(token.id, account)
   return BigNumber.from(balance)
 }
 

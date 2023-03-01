@@ -1,11 +1,11 @@
-import { isEqualAddress } from "../../../../../services/addresses"
+import { isEqualId } from "../../../../../services/addresses"
 import { TokenTransferTransaction } from "../../type"
 import { getParameter } from "../getParameter"
 import { IExplorerTransactionTransformer } from "./type"
 
 /** adds erc20 token transfer data */
 
-export default function ({
+export default function({
   explorerTransaction,
   accountAddress,
   result,
@@ -30,11 +30,11 @@ export default function ({
       const toAddress = getParameter(parameters, "recipient")
       const amount = getParameter(parameters, "amount")
       if (accountAddress && toAddress && fromAddress) {
-        if (isEqualAddress(toAddress, accountAddress)) {
+        if (isEqualId(toAddress, accountAddress)) {
           action = "RECEIVE"
           displayName = "Receive"
         }
-        if (isEqualAddress(fromAddress, accountAddress)) {
+        if (isEqualId(fromAddress, accountAddress)) {
           action = "SEND"
           displayName = "Send"
         }

@@ -1,5 +1,4 @@
-import { getNetwork, Network } from "./network"
-import { isEqualAddress } from "../ui/services/addresses"
+import { getNetwork } from "./network"
 import { BaseWalletAccount, WalletAccount, WalletAccountWithNetwork } from "./wallet.model"
 
 // from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2645.md

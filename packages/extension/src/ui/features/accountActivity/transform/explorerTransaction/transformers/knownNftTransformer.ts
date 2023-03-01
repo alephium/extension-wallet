@@ -1,11 +1,11 @@
 import { includesAddress } from "../../../../../../shared/knownDapps"
-import { isEqualAddress } from "../../../../../services/addresses"
+import { isEqualId } from "../../../../../services/addresses"
 import { NFTTransaction, NFTTransferTransaction } from "../../type"
 import { IExplorerTransactionTransformer } from "./type"
 
 /** adds erc721 token transfer data */
 
-export default function ({
+export default function({
   explorerTransaction,
   accountAddress,
   result,
@@ -41,11 +41,11 @@ export default function ({
         return result
       }
       if (accountAddress && toAddress && fromAddress) {
-        if (isEqualAddress(toAddress, accountAddress)) {
+        if (isEqualId(toAddress, accountAddress)) {
           action = "RECEIVE"
           displayName = "Receive NFT"
         }
-        if (isEqualAddress(fromAddress, accountAddress)) {
+        if (isEqualId(fromAddress, accountAddress)) {
           action = "SEND"
           displayName = "Send NFT"
         }

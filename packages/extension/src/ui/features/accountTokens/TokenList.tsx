@@ -1,8 +1,7 @@
-import { FC, Suspense } from "react"
+import { FC } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { Token } from "../../../shared/token/type"
-import { useAppState } from "../../app.state"
 import { ErrorBoundary } from "../../components/ErrorBoundary"
 import ErrorBoundaryFallbackWithCopyError from "../../components/ErrorBoundaryFallbackWithCopyError"
 import { routes } from "../../routes"
@@ -35,9 +34,11 @@ export const TokenList: FC<TokenListProps> = ({
   const tokens: TokenDetailsWithBalance[] | undefined = tokenList || tokensForAccount.tokenDetails
   tokens.forEach(token => {
     if (token.balance === undefined) {
-      token.balance = tokensForAccount.tokenDetails.find(td => td.address === token.address)?.balance
+      token.balance = tokensForAccount.tokenDetails.find(td => td.id === token.id)?.balance
     }
   })
+
+  console.log("tokens", tokens)
   return (
     <ErrorBoundary
       fallback={
@@ -48,7 +49,7 @@ export const TokenList: FC<TokenListProps> = ({
     >
       {tokens.map((token) => (
         <TokenListItemContainer
-          key={token.address}
+          key={token.id}
           account={account}
           tokenWithBalance={token}
           variant={variant}
@@ -56,8 +57,8 @@ export const TokenList: FC<TokenListProps> = ({
           onClick={() => {
             navigate(
               navigateToSend
-                ? routes.sendToken(token.address)
-                : routes.token(token.address),
+                ? routes.sendToken(token.id)
+                : routes.token(token.id),
             )
           }}
         />

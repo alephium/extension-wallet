@@ -27,7 +27,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom"
 import { Schema, object } from "yup"
 
 import { routes } from "../../routes"
-import { addressSchema, isEqualAddress } from "../../services/addresses"
+import { addressSchema, isEqualId } from "../../services/addresses"
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenMenu } from "../accountTokens/TokenMenu"
 import { useNfts } from "./useNfts"
@@ -56,7 +56,7 @@ export const SendNftSchema: Schema<SendNftInput> = object().required().shape({
 //     .find(
 //       ({ contract_address, token_id }) =>
 //         contractAddress &&
-//         isEqualAddress(contract_address, contractAddress) &&
+//         isEqualId(contract_address, contractAddress) &&
 //         token_id === tokenId,
 //     )
 

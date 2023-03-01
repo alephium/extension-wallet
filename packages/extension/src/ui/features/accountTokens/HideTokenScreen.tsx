@@ -38,7 +38,7 @@ export const HideTokenScreen: FC = () => {
   const { switcherNetworkId } = useAppState()
   const { tokenAddress } = useParams()
   const token = useToken({
-    address: tokenAddress || "0x0",
+    id: tokenAddress || "0x0",
     networkId: switcherNetworkId || "Unknown",
   })
   const [error, setError] = useState("")
@@ -47,7 +47,7 @@ export const HideTokenScreen: FC = () => {
     return <Navigate to={routes.accountTokens()} />
   }
 
-  const { name, image } = toTokenView(token)
+  const { name, logoURI } = toTokenView(token)
 
   const handleSubmit = () => {
     try {
@@ -66,7 +66,7 @@ export const HideTokenScreen: FC = () => {
       onSubmit={handleSubmit}
     >
       <TokenTitle>
-        <TokenIcon url={image} name={name} size={12} />
+        <TokenIcon url={logoURI} name={name} size={12} />
         <TokenName>{name}</TokenName>
       </TokenTitle>
       {error && <FormError>{error}</FormError>}

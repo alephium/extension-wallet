@@ -50,7 +50,7 @@ export const useNetworkFeeToken = (networkId?: string) => {
 
 const tokenSelector = memoize(
   (baseToken: BaseToken) => (token: Token) => equalToken(token, baseToken),
-  (baseToken) => getAccountIdentifier(baseToken),
+  (baseToken) => getAccountIdentifier({ networkId: baseToken.networkId, address: baseToken.id }),
 )
 
 export const useTokensInNetwork = (networkId: string) =>
@@ -89,7 +89,7 @@ export const useTokensWithBalance = (
       }
 
       const balances = await fetchAllTokensBalance(
-        tokensForAccount.map((t) => t.address),
+        tokensForAccount.map((t) => t.id),
         selectedAccount,
       )
 
@@ -131,7 +131,7 @@ export const useTokensWithBalance = (
     return (data?.tokensForAccount || [])
       .map((token) => ({
         ...token,
-        balance: data?.balances[token.address] ?? BigNumber.from(0),
+        balance: data?.balances[token.id] ?? BigNumber.from(0),
       }))
       .filter(
         (token) => token.showAlways || (token.balance && token.balance.gt(0)),
@@ -173,19 +173,20 @@ export const useTokens = (
       const allTokens: Token[] = defaultTokensInNetwork
       const network = await getNetwork(selectedAccount.networkId)
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-      const addressTokens: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
+      const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
 
-      for (const addressToken of addressTokens) {
+      // TODO: Check here
+      for (const tokenId of tokenIds) {
         // TODO: name, symbol and decimals fetch from token registry
         const token = {
-          address: addressToken,
+          id: tokenId,
           networkId: networkId,
-          name: addressToken.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase(),
+          name: tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase(),
           symbol: "",
           decimals: 0
         }
 
-        if (allTokens.findIndex((t) => t.address == addressToken) === -1) {
+        if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
           allTokens.push(token)
         }
       }

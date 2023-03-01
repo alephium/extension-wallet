@@ -12,7 +12,6 @@ import { Schema, object } from "yup"
 import { AddressBookContact } from "../../../shared/addressBook"
 import { inputAmountSchema, parseAmount } from "../../../shared/token/amount"
 import { prettifyCurrencyValue } from "../../../shared/token/price"
-import { minimumALPHAmount } from "../../../shared/token/utils"
 import { AddContactBottomSheet } from "../../components/AddContactBottomSheet"
 import { Button, ButtonTransparent } from "../../components/Button"
 import Column, { ColumnCenter } from "../../components/Column"
@@ -31,7 +30,7 @@ import { useAddressBook } from "../../services/addressBook"
 import {
   addressSchema,
   formatTruncatedAddress,
-  isEqualAddress,
+  isEqualId,
   isValidAddress,
   normalizeAddress,
 } from "../../services/addresses"
@@ -259,7 +258,7 @@ export const SendTokenScreen: FC = () => {
   const inputAmount = formValues.amount
   const inputRecipient = formValues.recipient
 
-  const token = tokenDetails.find(({ address }) => address === tokenAddress)
+  const token = tokenDetails.find(({ id }) => id === tokenAddress)
   const currencyValue = useTokenUnitAmountToCurrencyValue(token, inputAmount)
   const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
   const standardFee = "2000000000000000"  // FIXME: Should estimate, hardcoded to 0.002 ALPH for now
@@ -274,7 +273,7 @@ export const SendTokenScreen: FC = () => {
 
         const maxAmount =
           account?.networkId ===
-          "devnet" /** FIXME: workaround for localhost fee estimate with devnet 0.3.4 */
+            "devnet" /** FIXME: workaround for localhost fee estimate with devnet 0.3.4 */
             ? balanceBn.sub(maxFee).sub(100000000000000)
             : balanceBn.sub(maxFee)
 
@@ -317,7 +316,7 @@ export const SendTokenScreen: FC = () => {
     () =>
       // Check if inputRecipient is in Contacts or userAccounts
       [...addressBook.contacts, ...addressBook.userAccounts].some((acc) =>
-        isEqualAddress(acc.address, inputRecipient),
+        isEqualId(acc.address, inputRecipient),
       ),
     [addressBook.contacts, addressBook.userAccounts, inputRecipient],
   )
@@ -346,13 +345,13 @@ export const SendTokenScreen: FC = () => {
       setMaxInputAmount(token, maxFee)
     }
     // dont add token as dependency as the reference can change
-  }, [maxClicked, maxFee, setMaxInputAmount, token?.address, token?.networkId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [maxClicked, maxFee, setMaxInputAmount, token?.id, token?.networkId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!token) {
     return <Navigate to={routes.accounts()} />
   }
 
-  const { address, name, symbol, balance, decimals, image } = toTokenView(token)
+  const { id, name, symbol, balance, decimals, logoURI } = toTokenView(token)
 
   const parsedInputAmount = inputAmount
     ? parseAmount(inputAmount, decimals)
@@ -362,7 +361,7 @@ export const SendTokenScreen: FC = () => {
 
   const isInputAmountGtBalance =
     parsedInputAmount.gt(token.balance?.toString() ?? 0) ||
-    (feeToken?.address === token.address &&
+    (feeToken?.id === token.id &&
       (inputAmount === balance ||
         parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
 
@@ -408,7 +407,7 @@ export const SendTokenScreen: FC = () => {
       />
       <NavigationContainer
         leftButton={<BarBackButton />}
-        rightButton={<TokenMenuDeprecated tokenId={address} />}
+        rightButton={<TokenMenuDeprecated tokenId={id} />}
         scrollContent={`Send ${symbol}`}
       >
         <>
@@ -474,7 +473,7 @@ export const SendTokenScreen: FC = () => {
                   style={{ padding: "17px 16px 17px 57px" }}
                 >
                   <InputGroupBefore>
-                    <TokenIcon name={name} url={image} size={8} />
+                    <TokenIcon name={name} url={logoURI} size={8} />
                   </InputGroupBefore>
                   <InputGroupAfter>
                     {inputAmount ? (
@@ -549,7 +548,7 @@ export const SendTokenScreen: FC = () => {
                       onChange={(e) => {
                         if (validateAddress(e.target.value)) {
                           const account = addressBook.contacts.find((c) =>
-                            isEqualAddress(c.address, e.target.value),
+                            isEqualId(c.address, e.target.value),
                           )
                           handleAddressSelect(account)
                         }

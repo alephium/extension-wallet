@@ -43,7 +43,7 @@ export const useMaxFeeEstimateForTransfer = (
     async () => {
       const feeToken = await getNetworkFeeToken(account.networkId)
 
-      if (feeToken?.address !== tokenAddress) {
+      if (feeToken?.id !== tokenAddress) {
         return {
           amount: "0",
           suggestedMaxFee: "0",
