@@ -23,7 +23,7 @@ export const TokenList: FC<TokenListProps> = ({
   showNewTokenButton = true,
   showTokenSymbol = false,
   variant,
-  navigateToSend = false,
+  navigateToSend = true,
 }) => {
   const navigate = useNavigate()
   const account = useSelectedAccount()

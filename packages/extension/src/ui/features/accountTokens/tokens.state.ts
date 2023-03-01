@@ -155,7 +155,7 @@ export const useTokens = (
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
 
-  const defaultTokensInNetwork = useTokensInNetwork(networkId)
+  const knownTokensInNetwork = useTokensInNetwork(networkId)
 
   const {
     data
@@ -170,22 +170,37 @@ export const useTokens = (
         return
       }
 
-      const allTokens: Token[] = defaultTokensInNetwork
+      const allTokens: Token[] = knownTokensInNetwork.filter((network) => network.showAlways)
+
       const network = await getNetwork(selectedAccount.networkId)
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
       const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
 
-      // TODO: name, symbol and decimals fetch from token registry
       for (const tokenId of tokenIds) {
-        const token = {
-          id: tokenId,
-          networkId: networkId,
-          name: tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase(),
-          symbol: "",
-          decimals: 0
-        }
-
         if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
+          const found = knownTokensInNetwork.find((token) => token.id == tokenId)
+          let token: Token | undefined = undefined
+
+          if (found) {
+            token = {
+              id: tokenId,
+              networkId: networkId,
+              name: found.name,
+              symbol: found.symbol,
+              decimals: found.decimals,
+              logoURI: found.logoURI,
+              showAlways: true,
+            }
+          } else {
+            token = {
+              id: tokenId,
+              networkId: networkId,
+              name: tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase(),
+              symbol: "",
+              decimals: 0
+            }
+          }
+
           allTokens.push(token)
         }
       }
