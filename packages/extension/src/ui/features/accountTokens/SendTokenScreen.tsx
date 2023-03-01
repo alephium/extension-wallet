@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, Destination, DUST_AMOUNT, NodeProvider, prettifyAttoAlphAmount } from "@alephium/web3"
+import { ALPH_TOKEN_ID, convertAlphAmountWithDecimals, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
 import { BuildSweepAddressTransactionsResult } from "@alephium/web3/dist/src/api/api-alephium"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
 import { utils } from "ethers"
@@ -260,7 +260,6 @@ export const SendTokenScreen: FC = () => {
   const token = tokenDetails.find(({ address }) => address === tokenAddress)
   const currencyValue = useTokenUnitAmountToCurrencyValue(token, inputAmount)
   const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
-  const standardFee = "2000000000000000"  // FIXME: Should estimate, hardcoded to 0.002 ALPH for now
 
   const setMaxInputAmount = useCallback(
     (token: TokenDetailsWithBalance, maxFee?: string) => {
@@ -433,7 +432,7 @@ export const SendTokenScreen: FC = () => {
                   if (isAlphToken(tokenAddress)) {
                     destination = {
                       address: recipient,
-                      attoAlphAmount: prettifyAttoAlphAmount(amount) ?? '?',
+                      attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '?',
                       tokens: []
                     }
                   } else {
