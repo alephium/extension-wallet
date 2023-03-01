@@ -124,7 +124,7 @@ export const OnboardingFinishScreen: FC = () => {
           </RectButton>
           <RectButton
             as="a"
-            href="https://discord.gg/JErgRBfRSB"
+            href="https://alephium.org/discord"
             title="Join Alephium's Discord"
             target="_blank"
           >
