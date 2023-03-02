@@ -10,6 +10,7 @@ import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
 import { ConfirmPageProps } from "./DeprecatedConfirmScreen"
 import { FeeEstimation } from "./feeEstimation/FeeEstimation"
+import { LoadingScreen } from "./LoadingScreen"
 import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import { DappHeader } from "./transaction/DappHeader"
 import { TransactionsList } from "./transaction/TransactionsList"
@@ -71,6 +72,10 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   if (!selectedAccount) {
     return <Navigate to={routes.accounts()} />
+  }
+
+  if (!buildResult) {
+    return <LoadingScreen />
   }
 
   return (
