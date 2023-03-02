@@ -57,11 +57,12 @@ export const TokenList: FC<TokenListProps> = ({
             variant={variant}
             showTokenSymbol={showTokenSymbol}
             onClick={() => {
-              navigate(
-                navigateToSend
-                  ? routes.sendToken(token.id)
-                  : routes.token(token.id),
-              )
+              // navigate(
+              //   navigateToSend
+              //     ? routes.sendToken(token.id)
+              //     : routes.token(token.id),
+              // )
+              navigate(routes.sendToken(token.id))
             }}
           />
         ))}
