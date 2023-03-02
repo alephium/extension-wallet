@@ -5,6 +5,7 @@ import { ReviewTransactionResult, TransactionParams } from "../../../shared/acti
 
 import { routes } from "../../routes"
 import { usePageTracking } from "../../services/analytics"
+import { useAppState } from "../../app.state"
 import { Account } from "../accounts/Account"
 import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
@@ -14,6 +15,7 @@ import { LoadingScreen } from "./LoadingScreen"
 import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import { DappHeader } from "./transaction/DappHeader"
 import { TransactionsList } from "./transaction/TransactionsList"
+import { rejectAction } from "../../services/backgroundActions"
 
 export interface ApproveTransactionScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
@@ -43,7 +45,6 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   onSubmit,
   ...props
 }) => {
-
   usePageTracking("signTransaction", {
     networkId: selectedAccount?.networkId || "unknown",
   })
@@ -76,6 +77,15 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   if (!buildResult) {
     return <LoadingScreen />
+  }
+
+  if ("error" in buildResult) {
+    useAppState.setState({
+      error: `Failed in building transaction: ${buildResult.error}`,
+      isLoading: false,
+    })
+    rejectAction(actionHash)
+    return <Navigate to={routes.error()} />
   }
 
   return (
