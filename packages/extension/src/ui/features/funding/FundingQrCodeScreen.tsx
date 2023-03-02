@@ -9,7 +9,7 @@ import { CopyIconButton } from "../../components/CopyIconButton"
 import { CheckCircleIcon, AddRoundedIcon } from "../../components/Icons/MuiIcons"
 import { PageWrapper } from "../../components/Page"
 import { routes } from "../../routes"
-import { formatFullAddress, formatTruncatedAddress, normalizeAddress } from "../../services/addresses"
+import { formatTruncatedAddress, normalizeAddress } from "../../services/addresses"
 import { usePageTracking } from "../../services/analytics"
 import {
   getAccountName,
@@ -141,7 +141,7 @@ export const FundingQrCodeScreen: FC = () => {
               ref={setAddressRef}
               aria-label="Full account address"
             >
-              {formatTruncatedAddress(account.address)}
+              {formatTruncatedAddress(account.address, 6)}
             </AccountAddress>
             <StyledCopyIconButton size="s" copyValue={copyAccountAddress}>
               Copy address

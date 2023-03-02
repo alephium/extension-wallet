@@ -1,8 +1,6 @@
-import { Destination, MIN_UTXO_SET_AMOUNT, node } from "@alephium/web3"
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call } from "starknet"
 import { ReviewTransactionResult } from "./actionQueue/types"
-import { Input, Output } from '@alephium/sdk/api/explorer'
 
 import { WalletAccount } from "./wallet.model"
 import { AlephiumExplorerTransaction } from "./explorer/type"

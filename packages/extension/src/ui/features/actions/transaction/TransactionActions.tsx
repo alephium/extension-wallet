@@ -1,4 +1,3 @@
-import { convertSetToAlph } from "@alephium/sdk"
 import { Destination, prettifyAttoAlphAmount } from "@alephium/web3"
 import { CopyTooltip, P4 } from "@argent/ui"
 import {
@@ -11,12 +10,10 @@ import {
   Flex,
 } from "@chakra-ui/react"
 import { FC } from "react"
-import { Call, number } from "starknet"
 import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
 
 import { entryPointToHumanReadable } from "../../../../shared/transactions"
 import { formatTruncatedAddress, formatLongString } from "../../../services/addresses"
-
 
 export interface TransactionActionRow {
   key: string
@@ -38,8 +35,8 @@ export function extractActions(transaction: ReviewTransactionResult): Transactio
     case 'TRANSFER':
       return transaction.params.destinations.map((destination) => {
         return {
-          header: { key: 'Transfer', value: formatTruncatedAddress(destination.address) },
-          details: getTokensFromDestination(destination)
+          header: { key: 'Send', value: formatTruncatedAddress(destination.address) },
+          details: [{ key: 'Recipient', value: destination.address }, ...getTokensFromDestination(destination)]
         }
       })
     case 'DEPLOY_CONTRACT':
@@ -58,7 +55,7 @@ export function extractActions(transaction: ReviewTransactionResult): Transactio
       }]
     case 'EXECUTE_SCRIPT':
       return [{
-        header: { key: 'Execute transaction script', value: '' },
+        header: { key: 'Call smart contracts', value: '' },
         details: [
           {
             key: 'Bytecode',
@@ -95,6 +92,7 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
   transaction
 }) => {
   const transactionActions = extractActions(transaction)
+  console.log(`====`, transactionActions)
   return (
     <Box borderRadius="xl">
       <Box backgroundColor="neutrals.700" px="3" py="2.5" borderTopRadius="xl">
@@ -178,12 +176,12 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                         gap="2"
                       >
                         <P4 color="neutrals.300" fontWeight="bold">
-                          {formatLongString(detail.key)}
+                          {formatLongString(detail.key, 5)}
                         </P4>
                         <P4
                           color="neutrals.400"
                           fontWeight="bold"
-                          maxWidth="70%"
+                          maxWidth="50%"
                         >
                           <CopyTooltip copyValue={detail.value} prompt={detail.value}>
                             <Box
@@ -197,9 +195,7 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                               overflow="hidden"
                               minWidth="0"
                             >
-                              {number.isHex(detail.value)
-                                ? formatTruncatedAddress(detail.value)
-                                : detail.value}
+                              {detail.value}
                             </Box>
                           </CopyTooltip>
                         </P4>

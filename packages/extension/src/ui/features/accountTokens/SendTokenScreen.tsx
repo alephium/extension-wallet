@@ -1,5 +1,4 @@
-import { convertAlphToSet } from "@alephium/sdk"
-import { ALPH_TOKEN_ID, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
+import { ALPH_TOKEN_ID, convertAlphAmountWithDecimals, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
 import { BuildSweepAddressTransactionsResult } from "@alephium/web3/dist/src/api/api-alephium"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
 import { utils } from "ethers"
@@ -12,7 +11,6 @@ import { Schema, object } from "yup"
 import { AddressBookContact } from "../../../shared/addressBook"
 import { inputAmountSchema, parseAmount } from "../../../shared/token/amount"
 import { prettifyCurrencyValue } from "../../../shared/token/price"
-import { minimumALPHAmount } from "../../../shared/token/utils"
 import { AddContactBottomSheet } from "../../components/AddContactBottomSheet"
 import { Button, ButtonTransparent } from "../../components/Button"
 import Column, { ColumnCenter } from "../../components/Column"
@@ -262,7 +260,6 @@ export const SendTokenScreen: FC = () => {
   const token = tokenDetails.find(({ address }) => address === tokenAddress)
   const currencyValue = useTokenUnitAmountToCurrencyValue(token, inputAmount)
   const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
-  const standardFee = "2000000000000000"  // FIXME: Should estimate, hardcoded to 0.002 ALPH for now
 
   const setMaxInputAmount = useCallback(
     (token: TokenDetailsWithBalance, maxFee?: string) => {
@@ -435,7 +432,7 @@ export const SendTokenScreen: FC = () => {
                   if (isAlphToken(tokenAddress)) {
                     destination = {
                       address: recipient,
-                      attoAlphAmount: convertAlphToSet(amount),
+                      attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '?',
                       tokens: []
                     }
                   } else {

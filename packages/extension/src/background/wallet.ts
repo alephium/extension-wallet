@@ -1,9 +1,3 @@
-import {
-  getStorage,
-  walletEncrypt,
-  walletImport,
-  walletOpen
-} from '@alephium/sdk'
 import * as bip39 from 'bip39'
 
 import {
@@ -42,6 +36,7 @@ import {
   getNextPathIndex,
 } from "./keys/keyDerivation"
 import backupSchema from "./schema/backup.schema"
+import { BrowserStorage, walletEncrypt, walletOpen } from './utils/walletStore'
 
 const isDev = process.env.NODE_ENV === "development"
 
@@ -57,7 +52,7 @@ export const ARGENT_ACCOUNT_CONTRACT_CLASS_HASHES = [
   "0x7e28fb0161d10d1cf7fe1f13e7ca57bce062731a3bd04494dfd2d0412699727",
 ]
 
-const AlephiumStorage = getStorage()
+const AlephiumStorage = new BrowserStorage()
 const WalletName = 'alephium-extension-wallet'
 
 export interface WalletSession {
@@ -149,10 +144,9 @@ export class Wallet {
     }
 
     try {
-      const wallet = walletImport(seedPhrase)
-      AlephiumStorage.save(WalletName, wallet.encrypt(newPassword))
-      this.setSession(wallet.mnemonic, newPassword)
-      this.newAccountForRestoredWallet(wallet.mnemonic)
+      AlephiumStorage.save(WalletName, walletEncrypt(newPassword, seedPhrase))
+      this.setSession(seedPhrase, newPassword)
+      this.newAccountForRestoredWallet(seedPhrase)
     } catch {
       throw Error('Restore seedphrase failed')
     }
@@ -177,8 +171,8 @@ export class Wallet {
         AlephiumStorage.save(WalletName, walletEncrypt(password, mnemonic))
         this.setSession(mnemonic, password)
       } else {
-        const wallet = walletOpen(password, walletEncrypted)
-        this.setSession(wallet.mnemonic, password)
+        const mnemonic = walletOpen(password, walletEncrypted)
+        this.setSession(mnemonic, password)
       }
 
       return true

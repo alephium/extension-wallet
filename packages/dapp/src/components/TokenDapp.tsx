@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from "react"
-import { convertSetToAlph } from "@alephium/sdk"
 import Select from 'react-select';
 import { AlephiumWindowObject, getDefaultAlephiumWallet } from '@alephium/get-extension-wallet'
 import {
@@ -15,7 +14,7 @@ import {
   signMessage,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
-import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3, MessageHasher } from "@alephium/web3"
+import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3, MessageHasher, prettifyAttoAlphAmount } from "@alephium/web3"
 
 type Status = "idle" | "approve" | "pending" | "success" | "failure"
 
@@ -241,7 +240,7 @@ export const TokenDapp: FC<{
       )}
 
       <h3 style={{ margin: 0 }}>
-        ALPH Balance: <code>{alphBalance?.balance && convertSetToAlph(BigInt(alphBalance.balance))} ALPH</code>
+        ALPH Balance: <code>{alphBalance?.balance && prettifyAttoAlphAmount(alphBalance.balance)} ALPH</code>
       </h3>
       <h3 style={{ margin: 0 }}>
         {

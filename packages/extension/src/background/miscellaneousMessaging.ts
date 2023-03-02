@@ -10,7 +10,7 @@ export const handleMiscellaneousMessage: HandleMessage<
   MiscellaneousMessage
 > = async ({ msg, messagingKeys: { publicKeyJwk }, respond }) => {
   switch (msg.type) {
-    case "OPEN_UI": {
+    case "ALPH_OPEN_UI": {
       return openUi()
     }
 

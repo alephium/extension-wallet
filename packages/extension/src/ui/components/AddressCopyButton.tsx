@@ -1,5 +1,6 @@
 import { groupOfAddress } from "@alephium/web3"
 import { Button, CopyTooltip } from "@argent/ui"
+import { Box, Flex } from "@chakra-ui/react"
 import { FC } from "react"
 
 import { formatTruncatedAddress, normalizeAddress } from "../services/addresses"
@@ -40,7 +41,17 @@ export const AddressCopyButtonMain: FC<AddressCopyButtonMainProps> = ({ address 
         bg={"transparent"}
         _hover={{ bg: "neutrals.700", color: "text" }}
       >
-        {`${formatTruncatedAddress(address)}  (Group: ${groupOfAddress(address)})`}
+        <Flex gap='1.5'>
+          <Box>
+            {formatTruncatedAddress(address, 6)}
+          </Box>
+          <Box>
+            /
+          </Box>
+          <Box>
+            {`Group: ${groupOfAddress(address)}`}
+          </Box>
+        </Flex>
       </Button>
     </CopyTooltip>
   )

@@ -2,13 +2,10 @@ import { TransactionMeta } from "../../../shared/transactions"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { formatDate } from "../../services/dates"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { Input, Output } from '@alephium/sdk/api/explorer'
 
 export interface ActivityTransaction {
   hash: string
   date: string
-  inputs?: Input[]
-  outputs?: Output[]
   meta?: TransactionMeta
   isRejected?: boolean
   timestamp?: number

@@ -30,10 +30,10 @@ export interface DeclareDeployEstimateFeeResponse
 
 export type TransactionMessage =
   | {
-      type: "EXECUTE_TRANSACTION"
+      type: "ALPH_EXECUTE_TRANSACTION"
       data: TransactionParams
     }
-  | { type: "EXECUTE_TRANSACTION_RES"; data: { actionHash: string } }
+  | { type: "ALPH_EXECUTE_TRANSACTION_RES"; data: { actionHash: string } }
   | { type: "TRANSACTION_UPDATES"; data: Transaction[] }
   | {
       type: "TRANSACTION_SUBMITTED"

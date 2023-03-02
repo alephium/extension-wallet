@@ -72,7 +72,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     ])
 
     sendMessage({
-      type: "CONNECT_DAPP",
+      type: "ALPH_CONNECT_DAPP",
       data: { host: window.location.host, networkId: options.networkId, group: options.chainGroup, keyType: options.keyType },
     })
 
@@ -167,6 +167,10 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   #signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
     this.#checkParams(params)
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    sendMessage({ type: "ALPH_SIGN_MESSAGE", data: {...params, networkId: this.connectedNetworkId, host: window.location.host } })
+    const { actionHash } = await waitForMessage("ALPH_SIGN_MESSAGE_RES", 1000)
+
     const resultP = Promise.race([
       waitForMessage(
         "SIGNATURE_SUCCESS",
@@ -184,11 +188,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
         }),
     ])
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    sendMessage({ type: "SIGN_MESSAGE", data: {...params, networkId: this.connectedNetworkId, host: window.location.host } })
-    const { actionHash } = await waitForMessage("SIGN_MESSAGE_RES", 1000)
-
-    sendMessage({ type: "OPEN_UI" })
+    sendMessage({ type: "ALPH_OPEN_UI" })
 
     const result = await resultP
 
@@ -238,10 +238,10 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const data = dataBuilder(params, window.location.host, this.#connectedNetworkId!, this.connectedAccount!.keyType)
 
-    sendMessage({ type: 'EXECUTE_TRANSACTION', data })
-    const { actionHash } = await waitForMessage('EXECUTE_TRANSACTION_RES', 1000)
+    sendMessage({ type: 'ALPH_EXECUTE_TRANSACTION', data })
+    const { actionHash } = await waitForMessage('ALPH_EXECUTE_TRANSACTION_RES', 1000)
 
-    sendMessage({ type: "OPEN_UI" })
+    sendMessage({ type: "ALPH_OPEN_UI" })
 
     const result = await Promise.race([
       waitForMessage(

@@ -22,7 +22,7 @@ export const handlePreAuthorizationMessage: HandleMessage<
   PreAuthorisationMessage
 > = async ({ msg, sender, background: { wallet, actionQueue }, respond }) => {
   switch (msg.type) {
-    case "CONNECT_DAPP": {
+    case "ALPH_CONNECT_DAPP": {
       const selectedAccount = await wallet.getSelectedAccount()
       if (!selectedAccount) {
         openUi()
