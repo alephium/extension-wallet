@@ -1,5 +1,5 @@
 import { includesAddress } from "../../../../../../shared/knownDapps"
-import { isEqualId } from "../../../../../services/addresses"
+import { isEqualAddress } from "../../../../../services/addresses"
 import { NFTTransaction, NFTTransferTransaction } from "../../type"
 import { IExplorerTransactionTransformer } from "./type"
 
@@ -41,11 +41,11 @@ export default function({
         return result
       }
       if (accountAddress && toAddress && fromAddress) {
-        if (isEqualId(toAddress, accountAddress)) {
+        if (isEqualAddress(toAddress, accountAddress)) {
           action = "RECEIVE"
           displayName = "Receive NFT"
         }
-        if (isEqualId(fromAddress, accountAddress)) {
+        if (isEqualAddress(fromAddress, accountAddress)) {
           action = "SEND"
           displayName = "Send NFT"
         }

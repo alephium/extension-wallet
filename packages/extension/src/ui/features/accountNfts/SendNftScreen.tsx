@@ -21,7 +21,7 @@ import { useAddressBook } from "../../services/addressBook"
 import {
   addressSchema,
   formatTruncatedAddress,
-  isEqualId,
+  isEqualAddress,
   isValidAddress,
   normalizeAddress,
 } from "../../services/addresses"
@@ -155,7 +155,7 @@ export const SendNftSchema: Schema<SendNftInput> = object().required().shape({
 //     () =>
 //       // Check if inputRecipient is in Contacts or userAccounts
 //       [...addressBook.contacts, ...addressBook.userAccounts].some((acc) =>
-//         isEqualId(acc.address, inputRecipient),
+//         isEqualAddress(acc.address, inputRecipient),
 //       ),
 //     [addressBook.contacts, addressBook.userAccounts, inputRecipient],
 //   )
@@ -295,7 +295,7 @@ export const SendNftSchema: Schema<SendNftInput> = object().required().shape({
 //                       onChange={(e: any) => {
 //                         if (validateStarknetAddress(e.target.value)) {
 //                           const account = addressBook.contacts.find((c) =>
-//                             isEqualId(c.address, e.target.value),
+//                             isEqualAddress(c.address, e.target.value),
 //                           )
 //                           handleAddressSelect(account)
 //                         }

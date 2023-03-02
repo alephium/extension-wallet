@@ -9,7 +9,7 @@ import { IS_DEV } from "../../../shared/utils/dev"
 import { coerceErrorToString } from "../../../shared/utils/error"
 import { isNumeric } from "../../../shared/utils/number"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
-import { isEqualId } from "../../services/addresses"
+import { isEqualTokenId } from "../../services/token"
 import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { TokenDetailsWithBalance } from "./tokens.state"
@@ -119,7 +119,7 @@ const errorToMessage = (
     const contractAddressMatches = message.match(/(0x[0-9a-f]+)/gi)
     const contractAddress = contractAddressMatches?.[0] ?? undefined
     if (contractAddress) {
-      if (isEqualId(contractAddress, tokenAddress)) {
+      if (isEqualTokenId(contractAddress, tokenAddress)) {
         return {
           message: "Token not found",
           description: `Token with address ${tokenAddress} not deployed on this network`,

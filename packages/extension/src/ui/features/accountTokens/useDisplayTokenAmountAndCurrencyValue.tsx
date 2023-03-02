@@ -8,7 +8,7 @@ import {
   prettifyTokenAmount as argentPrettifyTokenAmount,
 } from "../../../shared/token/price"
 import { useAppState } from "../../app.state"
-import { isEqualId } from "../../services/addresses"
+import { isEqualTokenId } from "../../services/token"
 import { showTokenId } from "../accountActivity/transform/transaction/transformTransaction"
 import { useTokenAmountToCurrencyValue } from "./tokenPriceHooks"
 import { useTokensInNetwork } from "./tokens.state"
@@ -28,7 +28,7 @@ export const useDisplayTokenAmountAndCurrencyValue = ({
   const tokensByNetwork = useTokensInNetwork(switcherNetworkId)
   const token = tokenAddress
     ? tokensByNetwork.find(({ id }) =>
-      isEqualId(id, tokenAddress),
+      isEqualTokenId(id, tokenAddress),
     )
     : undefined
   const amountCurrencyValue = useTokenAmountToCurrencyValue(token, amount)
@@ -69,7 +69,7 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
   return amounts.map(amount => {
     const token = amount.id
       ? tokensByNetwork.find(({ id }) =>
-        isEqualId(id, amount.id),
+        isEqualTokenId(id, amount.id),
       )
       : undefined
     const naiveAmount = prettifyTokenAmount(amount.amount, 0) ?? '?'

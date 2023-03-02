@@ -1,12 +1,12 @@
 import defaultTokens from "../../assets/default-tokens.json"
 import defaultAlephiumTokens from "../../assets/default-alephium-tokens.json"
-import { isEqualId } from "../../ui/services/addresses"
+import { isEqualTokenId } from "../../ui/services/token"
 import { BaseToken, Token } from "./type"
 import { mainnetTokensMetadata, testnetTokensMetadata, TokenList } from "@alephium/token-list"
 import { defaultNetworkIds } from "../network/defaults"
 
 export const equalToken = (a: BaseToken, b: BaseToken) =>
-  a.networkId === b.networkId && isEqualId(a.id, b.id)
+  a.networkId === b.networkId && isEqualTokenId(a.id, b.id)
 
 export const parsedDefaultTokens: Token[] = defaultTokens.map((token) => ({
   ...token,

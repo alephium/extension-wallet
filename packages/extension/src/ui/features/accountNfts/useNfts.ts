@@ -2,7 +2,7 @@ import useSWR from "swr"
 
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
-import { isEqualId } from "../../services/addresses"
+import { isEqualAddress } from "../../services/addresses"
 import { SWRConfigCommon } from "../../services/swr"
 import { AspectNft } from "./aspect.model"
 import { fetchAspectNfts } from "./aspect.service"
@@ -36,7 +36,7 @@ export const getNft = ({ nfts, contractAddress, tokenId }: IGetNft) => {
   }
   const nft = nfts.find(
     ({ contract_address, token_id }) =>
-      isEqualId(contract_address, contractAddress) && token_id === tokenId,
+      isEqualAddress(contract_address, contractAddress) && token_id === tokenId,
   )
   return nft
 }

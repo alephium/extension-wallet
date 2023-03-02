@@ -19,3 +19,7 @@ export const tokenIdSchema = yup
 
 export const isValidTokenId = (id: string) =>
   tokenIdSchema.isValidSync(id)
+
+export const isEqualTokenId = (a: string, b: string) => {
+  return a === b
+}

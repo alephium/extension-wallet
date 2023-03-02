@@ -1,4 +1,4 @@
-import { isEqualId } from "../../../../../services/addresses"
+import { isEqualAddress } from "../../../../../services/addresses"
 import { TokenTransferTransaction } from "../../type"
 import { getParameter } from "../getParameter"
 import { IExplorerTransactionTransformer } from "./type"
@@ -30,11 +30,11 @@ export default function({
       const toAddress = getParameter(parameters, "recipient")
       const amount = getParameter(parameters, "amount")
       if (accountAddress && toAddress && fromAddress) {
-        if (isEqualId(toAddress, accountAddress)) {
+        if (isEqualAddress(toAddress, accountAddress)) {
           action = "RECEIVE"
           displayName = "Receive"
         }
-        if (isEqualId(fromAddress, accountAddress)) {
+        if (isEqualAddress(fromAddress, accountAddress)) {
           action = "SEND"
           displayName = "Send"
         }

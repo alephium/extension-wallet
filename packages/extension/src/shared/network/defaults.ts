@@ -8,8 +8,6 @@ export const DEVNET = {
   name: 'Devnet'
 }
 
-const DEV_ONLY_NETWORKS: Network[] = [DEVNET]
-
 export const defaultNetworks: Network[] = [
   {
     id: 'mainnet',

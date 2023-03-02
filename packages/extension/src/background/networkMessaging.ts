@@ -69,9 +69,7 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
     case "REQUEST_SWITCH_CUSTOM_NETWORK": {
       const { id } = msg.data
 
-      const network = await getNetworkById(
-        id
-      )
+      const network = await getNetworkById(id)
 
       if (!network) {
         return respond({

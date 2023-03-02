@@ -9,7 +9,7 @@ import {
   FieldValue,
   LeftPaddedField,
 } from "../../../../components/Fields"
-import { isEqualId } from "../../../../services/addresses"
+import { isEqualTokenId } from "../../../../services/token"
 import { TokenIcon } from "../../../accountTokens/TokenIcon"
 
 export interface ITokenField {
@@ -29,7 +29,7 @@ export const TokenField: FC<ITokenField> = ({
     return null
   }
   const token = tokensByNetwork.find(({ id }) =>
-    isEqualId(id, contractAddress),
+    isEqualTokenId(id, contractAddress),
   )
   const displayAmount = token
     ? prettifyTokenAmount({

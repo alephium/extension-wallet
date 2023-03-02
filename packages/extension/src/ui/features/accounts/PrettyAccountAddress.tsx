@@ -6,7 +6,7 @@ import { AddressBookContact } from "../../../shared/addressBook"
 import { useAddressBook } from "../../services/addressBook"
 import {
   formatTruncatedAddress,
-  isEqualId,
+  isEqualAddress,
 } from "../../services/addresses"
 import { TokenIcon } from "../accountTokens/TokenIcon"
 import { useAccountMetadata } from "./accountMetadata.state"
@@ -22,7 +22,7 @@ const getAccountNameForAddress = (
   }
   for (const entry of Object.entries(accountNames[networkId])) {
     const [address, accountName] = entry
-    if (isEqualId(address, accountAddress)) {
+    if (isEqualAddress(address, accountAddress)) {
       return accountName
     }
   }
@@ -39,7 +39,7 @@ const getContactNameForAddress = (
   for (const contact of contacts) {
     if (
       contact.networkId === networkId &&
-      isEqualId(contact.address, accountAddress)
+      isEqualAddress(contact.address, accountAddress)
     ) {
       return contact.name
     }

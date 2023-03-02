@@ -30,7 +30,7 @@ import { useAddressBook } from "../../services/addressBook"
 import {
   addressSchema,
   formatTruncatedAddress,
-  isEqualId,
+  isEqualAddress,
   isValidAddress,
   normalizeAddress,
 } from "../../services/addresses"
@@ -316,7 +316,7 @@ export const SendTokenScreen: FC = () => {
     () =>
       // Check if inputRecipient is in Contacts or userAccounts
       [...addressBook.contacts, ...addressBook.userAccounts].some((acc) =>
-        isEqualId(acc.address, inputRecipient),
+        isEqualAddress(acc.address, inputRecipient),
       ),
     [addressBook.contacts, addressBook.userAccounts, inputRecipient],
   )
@@ -548,7 +548,7 @@ export const SendTokenScreen: FC = () => {
                       onChange={(e) => {
                         if (validateAddress(e.target.value)) {
                           const account = addressBook.contacts.find((c) =>
-                            isEqualId(c.address, e.target.value),
+                            isEqualAddress(c.address, e.target.value),
                           )
                           handleAddressSelect(account)
                         }
