@@ -36,9 +36,9 @@ export const TokenName = styled.h3`
 export const HideTokenScreen: FC = () => {
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
-  const { tokenAddress } = useParams()
+  const { tokenId } = useParams()
   const token = useToken({
-    id: tokenAddress || "0x0",
+    id: tokenId || "Unknown",
     networkId: switcherNetworkId || "Unknown",
   })
   const [error, setError] = useState("")

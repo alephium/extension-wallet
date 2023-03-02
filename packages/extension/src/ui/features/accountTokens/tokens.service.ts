@@ -110,15 +110,15 @@ export const toTokenView = ({
 export type BalancesMap = Record<string, BigNumber | undefined>
 
 export const fetchAllTokensBalance = async (
-  tokenAddresses: string[],
+  tokenIds: string[],
   account: Account,
 ) => {
   const response = await Promise.allSettled(
-    tokenAddresses.map((tokenAddress) => {
-      return getTokenBalanceForAccount(tokenAddress, account)
+    tokenIds.map((tokenId) => {
+      return getTokenBalanceForAccount(tokenId, account)
     }),
   )
-  return tokenAddresses.reduce<BalancesMap>((acc, addr, i) => {
+  return tokenIds.reduce<BalancesMap>((acc, addr, i) => {
     const balance = response[i]
     return {
       ...acc,

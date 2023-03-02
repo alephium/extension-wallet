@@ -85,7 +85,7 @@ export const mintToken = async (
 
 export const withdrawMintedToken = async (
   amount: string,
-  tokenAddress: string
+  tokenId: string
 ): Promise<web3.SignExecuteScriptTxResult> => {
   const alephium = await getDefaultAlephiumWallet()
   if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
@@ -96,7 +96,7 @@ export const withdrawMintedToken = async (
     alephium,
     {
       initialFields: {
-        shinyTokenId: binToHex(contractIdFromAddress(tokenAddress)),
+        shinyTokenId: binToHex(contractIdFromAddress(tokenId)),
         to: alephium.connectedAccount.address,
         amount: BigInt(amount)
       }
@@ -104,7 +104,7 @@ export const withdrawMintedToken = async (
   )
 }
 export const transferToken = async (
-  tokenAddress: string,
+  tokenId: string,
   transferTo: string,
   transferAmount: string,
   network?: string
@@ -120,7 +120,7 @@ export const transferToken = async (
       address: transferTo,
       attoAlphAmount: DUST_AMOUNT,
       tokens: [{
-        id: tokenAddress,
+        id: tokenId,
         amount: BigInt(transferAmount)
       }
       ]

@@ -24,7 +24,7 @@ export const TransferTitle: FC<ITransferTitle> = ({
   fallback,
 }) => {
   const { displayAmount, displayValue } = useDisplayTokenAmountAndCurrencyValue(
-    { amount, tokenAddress },
+    { amount, tokenId: tokenAddress },
   )
   if (!displayAmount) {
     return <>{fallback}</>

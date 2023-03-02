@@ -122,7 +122,6 @@ export const SendScreen: FC = () => {
 
         <TabView>
           <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>
-            (
             <CellStack pt={0}>
               <TokenList
                 tokenList={tokenList}
@@ -131,7 +130,6 @@ export const SendScreen: FC = () => {
                 showNewTokenButton
               />
             </CellStack>
-            )
           </Suspense>
         </TabView>
       </Container>

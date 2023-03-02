@@ -1,8 +1,7 @@
-import { ALPH_TOKEN_ID, Number256, number256ToBigint, SignTransferTxParams } from "@alephium/web3"
+import { ALPH_TOKEN_ID, Number256 } from "@alephium/web3"
 import { H6, P4 } from "@argent/ui"
-import { ColorProps, Flex } from "@chakra-ui/react"
+import { Flex } from "@chakra-ui/react"
 import { FC, useMemo } from "react"
-import { ReviewTransactionResult, TransactionPayload } from "../../../../shared/actionQueue/types"
 
 import { useDisplayTokenAmountAndCurrencyValue, useDisplayTokensAmountAndCurrencyValue } from "../../accountTokens/useDisplayTokenAmountAndCurrencyValue"
 import {
@@ -24,7 +23,7 @@ export const TransferAccessory: FC<TransferAccessoryProps> = ({
 }) => {
   const { action, amount, tokenAddress } = transaction
   const { displayAmount, displayValue } = useDisplayTokenAmountAndCurrencyValue(
-    { amount, tokenAddress },
+    { amount, tokenId: tokenAddress },
   )
   if (!displayAmount) {
     return null
@@ -89,16 +88,16 @@ export const ReviewedTransferAccessory: FC<ReviewedTransferAccessoryProps> = ({
   amountChanges,
 }) => {
   const amounts = useMemo(() => {
-    const result: {id: string, amount: Number256}[] = []
-    result.push({id: ALPH_TOKEN_ID, amount: amountChanges.attoAlphAmount})
-    Object.entries(amountChanges.tokens).forEach(token => result.push({ id: token[0], amount: token[1]}))
+    const result: { id: string, amount: Number256 }[] = []
+    result.push({ id: ALPH_TOKEN_ID, amount: amountChanges.attoAlphAmount })
+    Object.entries(amountChanges.tokens).forEach(token => result.push({ id: token[0], amount: token[1] }))
     return result
   }, [amountChanges])
-  const displayAmounts = useDisplayTokensAmountAndCurrencyValue({amounts})
+  const displayAmounts = useDisplayTokensAmountAndCurrencyValue({ amounts })
   return (
     <Flex direction={"column"} overflow="hidden" alignContent="flex-end">
-      {displayAmounts.map((amount, index) => 
-        <TokenAmount key={index} amount={amount.displayAmount} symbol={amount.displayTokenId}/>
+      {displayAmounts.map((amount, index) =>
+        <TokenAmount key={index} amount={amount.displayAmount} symbol={amount.displayTokenId} />
       )}
     </Flex>
   )

@@ -109,7 +109,7 @@ export interface TokenBalanceErrorMessage {
 
 const errorToMessage = (
   error: unknown,
-  tokenAddress: string,
+  tokenId: string,
 ): TokenBalanceErrorMessage => {
   const errorCode = get(error, "errorCode") as any
   const message = get(error, "message") as any
@@ -119,10 +119,10 @@ const errorToMessage = (
     const contractAddressMatches = message.match(/(0x[0-9a-f]+)/gi)
     const contractAddress = contractAddressMatches?.[0] ?? undefined
     if (contractAddress) {
-      if (isEqualTokenId(contractAddress, tokenAddress)) {
+      if (isEqualTokenId(contractAddress, tokenId)) {
         return {
           message: "Token not found",
-          description: `Token with address ${tokenAddress} not deployed on this network`,
+          description: `Token with address ${tokenId} not deployed on this network`,
         }
       }
       return {

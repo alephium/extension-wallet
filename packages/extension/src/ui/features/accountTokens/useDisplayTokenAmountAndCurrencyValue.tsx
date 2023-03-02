@@ -15,20 +15,20 @@ import { useTokensInNetwork } from "./tokens.state"
 
 export interface IUseDisplayTokenAmountAndCurrencyValue {
   amount: BigNumberish
-  tokenAddress?: string
+  tokenId?: string
   currencySymbol?: string
 }
 
 export const useDisplayTokenAmountAndCurrencyValue = ({
   amount,
-  tokenAddress,
+  tokenId,
   currencySymbol = "$",
 }: IUseDisplayTokenAmountAndCurrencyValue) => {
   const { switcherNetworkId } = useAppState()
   const tokensByNetwork = useTokensInNetwork(switcherNetworkId)
-  const token = tokenAddress
+  const token = tokenId
     ? tokensByNetwork.find(({ id }) =>
-      isEqualTokenId(id, tokenAddress),
+      isEqualTokenId(id, tokenId),
     )
     : undefined
   const amountCurrencyValue = useTokenAmountToCurrencyValue(token, amount)

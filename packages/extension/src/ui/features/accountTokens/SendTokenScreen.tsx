@@ -213,7 +213,7 @@ const SendSchema: Schema<SendInput> = object().required().shape({
 
 export const SendTokenScreen: FC = () => {
   const navigate = useNavigate()
-  const { tokenAddress } = useParams<{ tokenAddress: string }>()
+  const { tokenId } = useParams<{ tokenId: string }>()
   const account = useSelectedAccount()
   const { tokenDetails } = useTokensWithBalance(account)
   const resolver = useYupValidationResolver(SendSchema)
@@ -258,7 +258,7 @@ export const SendTokenScreen: FC = () => {
   const inputAmount = formValues.amount
   const inputRecipient = formValues.recipient
 
-  const token = tokenDetails.find(({ id }) => id === tokenAddress)
+  const token = tokenDetails.find(({ id }) => id === tokenId)
   const currencyValue = useTokenUnitAmountToCurrencyValue(token, inputAmount)
   const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
   const standardFee = "2000000000000000"  // FIXME: Should estimate, hardcoded to 0.002 ALPH for now
@@ -304,12 +304,12 @@ export const SendTokenScreen: FC = () => {
   const validRecipientAddress =
     inputRecipient && !getFieldState("recipient").error
 
-  const isAlphToken = (tokenAddress: string | undefined): boolean => {
-    return tokenAddress?.slice(2) === ALPH_TOKEN_ID || tokenAddress === undefined
+  const isAlphToken = (tokenId: string | undefined): boolean => {
+    return tokenId === ALPH_TOKEN_ID || tokenId === undefined
   }
 
-  const isSweepingAllAsset = (tokenAddress: string | undefined): boolean => {
-    return maxClicked && isAlphToken(tokenAddress)
+  const isSweepingAllAsset = (tokenId: string | undefined): boolean => {
+    return maxClicked && isAlphToken(tokenId)
   }
 
   const recipientInAddressBook = useMemo(
@@ -324,7 +324,7 @@ export const SendTokenScreen: FC = () => {
   const sweepTransaction: Promise<BuildSweepAddressTransactionsResult | undefined> = useMemo(
     async () => {
       let result = undefined
-      if (account && maxClicked && isAlphToken(tokenAddress) && validateAddress(inputRecipient)) {
+      if (account && maxClicked && isAlphToken(tokenId) && validateAddress(inputRecipient)) {
         const nodeProvider = new NodeProvider(nodeUrl)
         result = await nodeProvider.transactions.postTransactionsSweepAddressBuild({
           fromPublicKey: account.publicKey,
@@ -335,7 +335,7 @@ export const SendTokenScreen: FC = () => {
 
       return result
     },
-    [nodeUrl, account, maxClicked, tokenAddress, inputRecipient, validateAddress],
+    [nodeUrl, account, maxClicked, tokenId, inputRecipient, validateAddress],
   )
 
   const showSaveAddressButton = validRecipientAddress && !recipientInAddressBook
@@ -418,7 +418,7 @@ export const SendTokenScreen: FC = () => {
           <StyledForm
             onSubmit={handleSubmit(async ({ amount, recipient }) => {
               if (account) {
-                if (isSweepingAllAsset(tokenAddress)) {
+                if (isSweepingAllAsset(tokenId)) {
                   const sweepResult = await sweepTransaction
                   if (sweepResult) {
                     sweepResult.unsignedTxs.map((sweepUnsignedTx) => {
@@ -431,7 +431,7 @@ export const SendTokenScreen: FC = () => {
                   }
                 } else {
                   let destination: Destination
-                  if (isAlphToken(tokenAddress)) {
+                  if (isAlphToken(tokenId)) {
                     destination = {
                       address: recipient,
                       attoAlphAmount: convertAlphToSet(amount),
@@ -441,7 +441,7 @@ export const SendTokenScreen: FC = () => {
                     destination = {
                       address: recipient,
                       attoAlphAmount: DUST_AMOUNT,
-                      tokens: [{ id: tokenAddress as string, amount: BigInt(amount) }]
+                      tokens: [{ id: tokenId as string, amount: BigInt(amount) }]
                     }
                   }
 
@@ -598,7 +598,7 @@ export const SendTokenScreen: FC = () => {
                 )}
               </div>
               {
-                isSweepingAllAsset(tokenAddress) ? (
+                isSweepingAllAsset(tokenId) ? (
                   <WarningContainer>
                     Warning: This will sweep all assets to the recipient, including all the tokens.
                     {txsNumber > 1 ? `Due to the number of UTXOs, you need to sign ${txsNumber} transactions` : ""}

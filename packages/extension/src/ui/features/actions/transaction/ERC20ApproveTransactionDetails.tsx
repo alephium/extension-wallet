@@ -29,7 +29,7 @@ export const ERC20ApproveTransactionDetails: FC<
 
   const { displayValue } = useDisplayTokenAmountAndCurrencyValue({
     amount,
-    tokenAddress: contractAddress,
+    tokenId: contractAddress,
   })
 
   return (

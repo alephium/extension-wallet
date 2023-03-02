@@ -17,12 +17,12 @@ import { IconWrapper } from "./DeprecatedAccountMenu"
 const { MoreIcon } = icons
 
 export interface TokenMenuProps {
-  tokenAddress: string
+  tokenId: string
   canHideToken?: boolean
 }
 
 export const TokenMenu: FC<TokenMenuProps> = ({
-  tokenAddress,
+  tokenId,
   canHideToken = true,
 }) => {
   const navigate = useNavigate()
@@ -45,12 +45,12 @@ export const TokenMenu: FC<TokenMenuProps> = ({
           <MoreIcon />
         </MenuButton>
         <MenuList>
-          <CopyToClipboard text={normalizeAddress(tokenAddress)}>
+          <CopyToClipboard text={normalizeAddress(tokenId)}>
             <MenuItem>Copy address</MenuItem>
           </CopyToClipboard>
           <MenuItem
             onClick={() =>
-              openBlockExplorerAddress(currentNetwork, tokenAddress)
+              openBlockExplorerAddress(currentNetwork, tokenId)
             }
           >
             View on {blockExplorerTitle}
@@ -58,7 +58,7 @@ export const TokenMenu: FC<TokenMenuProps> = ({
           {canHideToken && (
             <>
               <MenuItem
-                onClick={() => navigate(routes.hideToken(tokenAddress))}
+                onClick={() => navigate(routes.hideToken(tokenId))}
               >
                 <IconWrapper>
                   <VisibilityOff fontSize="inherit" htmlColor="white" />

@@ -77,13 +77,13 @@ const TokenBalanceContainer = styled(RowCentered)`
 
 export const TokenScreen: FC = () => {
   const navigate = useNavigate()
-  const { tokenAddress } = useParams()
+  const { tokenId } = useParams()
   const account = useSelectedAccount()
   const { tokenDetails, tokenDetailsIsInitialising, isValidating } =
     useTokensWithBalance(account)
   const token = useMemo(
-    () => tokenDetails.find(({ id }) => id === tokenAddress),
-    [tokenAddress, tokenDetails],
+    () => tokenDetails.find(({ id }) => id === tokenId),
+    [tokenId, tokenDetails],
   )
   const currencyValue = useTokenBalanceToCurrencyValue(token)
 
