@@ -31,9 +31,8 @@ export const tokenSchema: yup.Schema<Token> = baseTokenSchema
   })
 
 export async function addToken(token: Token) {
-  const newToken: Token = { ...token, showAlways: true }
-  await assertSchema(tokenSchema, newToken)
-  return tokenStore.push(newToken)
+  await assertSchema(tokenSchema, token)
+  return tokenStore.push(token)
 }
 
 export async function hasToken(token: BaseToken) {

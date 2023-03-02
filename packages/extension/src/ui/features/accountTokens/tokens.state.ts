@@ -157,7 +157,6 @@ export const useTokens = (
 
   const knownTokensInNetwork = useTokensInNetwork(networkId)
 
-  console.log("i m here...", networkId, knownTokensInNetwork)
   const {
     data
   } = useSWR(
@@ -210,19 +209,7 @@ export const useTokens = (
   for (const userToken of userTokens) {
     if (result.findIndex((t) => t.id == userToken.id) === -1) {
       const found = knownTokensInNetwork.find((token) => token.id == userToken.id)
-
-      if (found) {
-        const token = {
-          id: found.id,
-          networkId: found.networkId,
-          name: found.name,
-          symbol: found.symbol,
-          decimals: found.decimals,
-          logoURI: found.logoURI,
-          showAlways: true,
-        }
-        result.push(token)
-      }
+      !!found && result.push(found)
     }
   }
 

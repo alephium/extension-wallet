@@ -22,10 +22,6 @@ export const TokenListItemContainer: FC<TokenListItemContainerProps> = ({
 }) => {
 
   const currencyValue = useTokenBalanceToCurrencyValue(tokenWithBalance)
-  const shouldShow = tokenWithBalance.showAlways
-  if (!shouldShow) {
-    return null
-  }
   return (
     <TokenListItem
       token={tokenWithBalance}
