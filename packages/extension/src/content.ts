@@ -7,9 +7,9 @@ const container = document.head || document.documentElement
 const script = document.createElement("script")
 
 script.src = browser.runtime.getURL("inpage.js")
-const argentExtensionId = browser.runtime.id
+const alephiumExtensionId = browser.runtime.id
 script.id = "alephium-extension"
-script.setAttribute("data-extension-id", argentExtensionId)
+script.setAttribute("data-extension-id", alephiumExtensionId)
 
 container.insertBefore(script, container.children[0])
 
@@ -19,7 +19,7 @@ window.addEventListener(
     // forward messages which were not forwarded before and belong to the extension
     if (
       !event.data?.forwarded &&
-      event.data?.extensionId === argentExtensionId
+      event.data?.extensionId === alephiumExtensionId
     ) {
       sendMessage({ ...event.data })
     }
@@ -27,7 +27,7 @@ window.addEventListener(
 )
 messageStream.subscribe(([msg]) => {
   window.postMessage(
-    { ...msg, forwarded: true, extensionId: argentExtensionId },
+    { ...msg, forwarded: true, extensionId: alephiumExtensionId },
     window.location.origin,
   )
 })

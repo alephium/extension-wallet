@@ -18,8 +18,8 @@ export type ActionMessage =
       data: { actionHash: string; result: TransactionResult }
     }
   | { type: "REJECT_ACTION"; data: { actionHash: string | string[] } }
-  | { type: "SIGN_MESSAGE"; data: SignMessageParams & { networkId?: string, host: string } }
-  | { type: "SIGN_MESSAGE_RES"; data: { actionHash: string } }
+  | { type: "ALPH_SIGN_MESSAGE"; data: SignMessageParams & { networkId?: string, host: string } }
+  | { type: "ALPH_SIGN_MESSAGE_RES"; data: { actionHash: string } }
   | { type: "SIGNATURE_FAILURE"; data: { actionHash: string } }
   | {
       type: "SIGNATURE_SUCCESS"

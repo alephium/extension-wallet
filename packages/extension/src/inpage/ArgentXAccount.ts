@@ -32,11 +32,11 @@ import { sendMessage, waitForMessage } from "./messageActions"
 //     transactionsDetail?: InvocationsDetails,
 //   ): ReturnType<Account["execute"]> {
 //     sendMessage({
-//       type: "EXECUTE_TRANSACTION",
+//       type: "ALPH_EXECUTE_TRANSACTION",
 //       data: { transactions, abis, transactionsDetail },
 //     })
-//     const { actionHash } = await waitForMessage("EXECUTE_TRANSACTION_RES", 1000)
-//     sendMessage({ type: "OPEN_UI" })
+//     const { actionHash } = await waitForMessage("ALPH_EXECUTE_TRANSACTION_RES", 1000)
+//     sendMessage({ type: "ALPH_OPEN_UI" })
 
 //     const result = await Promise.race([
 //       waitForMessage(
@@ -80,7 +80,7 @@ import { sendMessage, waitForMessage } from "./messageActions"
 //       "REQUEST_DECLARE_CONTRACT_RES",
 //       1000,
 //     )
-//     sendMessage({ type: "OPEN_UI" })
+//     sendMessage({ type: "ALPH_OPEN_UI" })
 
 //     const result = await Promise.race([
 //       waitForMessage(
@@ -115,9 +115,9 @@ import { sendMessage, waitForMessage } from "./messageActions"
 //   public override async signMessage(
 //     data: typedData.TypedData,
 //   ): Promise<Signature> {
-//     sendMessage({ type: "SIGN_MESSAGE", data })
-//     const { actionHash } = await waitForMessage("SIGN_MESSAGE_RES", 1000)
-//     sendMessage({ type: "OPEN_UI" })
+//     sendMessage({ type: "ALPH_SIGN_MESSAGE", data })
+//     const { actionHash } = await waitForMessage("ALPH_SIGN_MESSAGE_RES", 1000)
+//     sendMessage({ type: "ALPH_OPEN_UI" })
 
 //     const result = await Promise.race([
 //       waitForMessage(

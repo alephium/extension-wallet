@@ -22,7 +22,6 @@
   },
   "type": "commonjs",
   "devDependencies": {
-    "@alephium/web3": "v0.5.1",
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.0",
     "@rollup/plugin-commonjs": "^22.0.0",
@@ -53,6 +52,6 @@
   },
   "dependencies": {
     "bowser": "^2.11.0",
-    "@alephium/web3": "v0.5.1"
+    "@alephium/web3": "v0.5.4"
   }
 }

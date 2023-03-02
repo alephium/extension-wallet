@@ -30,7 +30,7 @@ export async function handleAddNetworkRequest(
 
   const { actionHash } = req
 
-  sendMessage({ type: "OPEN_UI" })
+  sendMessage({ type: "ALPH_OPEN_UI" })
 
   const result = await Promise.race([
     waitForMessage(
@@ -82,7 +82,7 @@ export async function handleSwitchNetworkRequest(callParams: {
 
   const { actionHash } = req
 
-  sendMessage({ type: "OPEN_UI" })
+  sendMessage({ type: "ALPH_OPEN_UI" })
 
   const result = await Promise.race([
     waitForMessage(

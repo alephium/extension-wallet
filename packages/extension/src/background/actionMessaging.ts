@@ -56,14 +56,14 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
       return
     }
 
-    case "SIGN_MESSAGE": {
+    case "ALPH_SIGN_MESSAGE": {
       const { meta } = await actionQueue.push({
         type: "SIGN",
         payload: msg.data,
       })
 
       return respond({
-        type: "SIGN_MESSAGE_RES",
+        type: "ALPH_SIGN_MESSAGE_RES",
         data: {
           actionHash: meta.hash,
         },

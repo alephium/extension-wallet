@@ -19,7 +19,7 @@ const SupportFooter: FC = () => (
         size="sm"
         rounded={"lg"}
         leftIcon={<SupportIcon />}
-        href="https://discord.gg/JErgRBfRSB"
+        href="https://alephium.org/discord"
         title="Get Alephium Support"
         target="_blank"
       >
@@ -30,7 +30,7 @@ const SupportFooter: FC = () => (
         size="sm"
         rounded={"lg"}
         leftIcon={<Discord />}
-        href="https://discord.gg/JErgRBfRSB"
+        href="https://alephium.org/discord"
         title="Ask a question on the dev-wallet channel on Discord"
         target="_blank"
       >

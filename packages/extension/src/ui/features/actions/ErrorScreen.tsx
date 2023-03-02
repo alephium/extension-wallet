@@ -4,7 +4,9 @@ import styled from "styled-components"
 
 import { coerceErrorToString } from "../../../shared/utils/error"
 import { useAppState } from "../../app.state"
+import { routes } from "../../routes"
 import { P } from "../../theme/Typography"
+import { EXTENSION_IS_POPUP } from "../browser/constants"
 import { Pre } from "./ApproveSignatureScreen"
 import { DeprecatedConfirmScreen } from "./DeprecatedConfirmScreen"
 
@@ -24,13 +26,21 @@ export const ErrorScreen: FC = () => {
 
   const message =
     error && error.replace ? error.replace(/^(error:\s*)+/gi, "") : displayError
+  
+  const onSubmit = () => {
+    if (EXTENSION_IS_POPUP) {
+      window.close()
+    } else {
+      navigate(-1)
+    }
+  }
 
   return (
     <DeprecatedConfirmScreen
       title="Error"
-      confirmButtonText="Back"
+      confirmButtonText={EXTENSION_IS_POPUP ? "Close" : "Back"}
       singleButton
-      onSubmit={() => navigate(-1)}
+      onSubmit={onSubmit}
     >
       <SP>Something went wrong:</SP>
       <WrappingPre>{message}</WrappingPre>

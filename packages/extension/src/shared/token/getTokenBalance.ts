@@ -1,5 +1,4 @@
-import { ExplorerProvider, ALPH_TOKEN_ID } from "@alephium/web3"
-import { AddressBalance } from '@alephium/sdk/api/explorer'
+import { explorer, ExplorerProvider, ALPH_TOKEN_ID } from "@alephium/web3"
 import { getNetwork } from "../network"
 import { BaseWalletAccount } from "../wallet.model"
 
@@ -14,7 +13,7 @@ export const getTokenBalanceForAccount = async (
   /** fallback to single call */
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
 
-  let result: AddressBalance
+  let result: explorer.AddressBalance
   if (ALPH_TOKEN_ID === tokenId) {
     result = await explorerProvider.addresses.getAddressesAddressBalance(account.address)
   } else {
