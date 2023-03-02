@@ -14,7 +14,7 @@ const knownTokensFromAlephiumTokenList: Token[] =
 const alphTokens: Token[] = defaultNetworkIds.map((networkId) => {
   return {
     "id": ALPH_TOKEN_ID,
-    "name": "ALPH",
+    "name": "Alephium",
     "symbol": "ALPH",
     "decimals": 18,
     "networkId": networkId,
