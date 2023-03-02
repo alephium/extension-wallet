@@ -103,6 +103,8 @@ export const FundingQrCodeScreen: FC = () => {
         if (!res.ok) {
           setAlterMessageIndex(0)
           setAlertDialogIsOpen(true)
+        } else {
+          navigate(routes.accountTokens())
         }
       })
     } else if (account?.networkId === 'devnet') {
@@ -110,6 +112,9 @@ export const FundingQrCodeScreen: FC = () => {
       const wallet = await testNodeWallet()
       const signerAddress = await (await wallet.getSelectedAccount()).address
       wallet.signAndSubmitTransferTx({ signerAddress: signerAddress, destinations: [{ address: account.address, attoAlphAmount: BigInt(1e21) }] })
+      .then(() => {
+        navigate(routes.accountTokens())
+      })
       .catch(() =>{
         setAlterMessageIndex(1)
         setAlertDialogIsOpen(true)

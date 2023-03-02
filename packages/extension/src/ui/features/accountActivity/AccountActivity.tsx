@@ -1,15 +1,16 @@
 import { HeaderCell } from "@argent/ui"
-import { FC, Fragment } from "react"
+import { FC, Fragment, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { AlephiumExplorerTransaction } from "../../../shared/explorer/type"
 import { Token } from "../../../shared/token/type"
 import { TransactionStatusIndicator } from "../../components/StatusIndicator"
-import { routes } from "../../routes"
+import { openExplorerTransaction } from "../../services/blockExplorer.service"
 import { Account } from "../accounts/Account"
+import { useCurrentNetwork } from "../networks/useNetworks"
 import { ReviewedTransactionListItem } from "./TransactionListItem"
 import { transformAlephiumExplorerTransaction } from "./transform/explorerTransaction/transformExplorerTransaction"
-import { isActivityTransaction, isExplorerTransaction, isVoyagerTransaction } from "./transform/is"
+import { isActivityTransaction } from "./transform/is"
 import { extractExplorerTransaction, transformReviewedTransaction } from "./transform/transaction/transformTransaction"
 import { LoadMoreTrigger } from "./ui/LoadMoreTrigger"
 import { ActivityTransaction } from "./useActivity"
@@ -30,6 +31,11 @@ export const AccountActivity: FC<AccountActivityProps> = ({
   onLoadMore,
 }) => {
   const navigate = useNavigate()
+  const network = useCurrentNetwork()
+
+  const showTx = useCallback((hash: string) => {
+    network.explorerUrl && openExplorerTransaction(network.explorerUrl, hash)
+  }, [network])
 
   return (
     <>
@@ -51,7 +57,7 @@ export const AccountActivity: FC<AccountActivityProps> = ({
                     key={hash}
                     transactionTransformed={transactionTransformed}
                     networkId={account.networkId}
-                    onClick={() => navigate(routes.transactionDetail(hash))}
+                    onClick={() => showTx(hash)}
                   >
                     {isRejected ? (
                       <div style={{ display: "flex" }}>
@@ -78,9 +84,7 @@ export const AccountActivity: FC<AccountActivityProps> = ({
                     <ReviewedTransactionListItem
                       transactionTransformed={explorerTransactionTransformed}
                       networkId={account.networkId}
-                      onClick={() =>
-                        navigate(routes.transactionDetail(hash))
-                      }
+                      onClick={() => showTx(hash)}
                     />
                     {loadMore && (
                       <LoadMoreTrigger onLoadMore={onLoadMore} mt={-2} />

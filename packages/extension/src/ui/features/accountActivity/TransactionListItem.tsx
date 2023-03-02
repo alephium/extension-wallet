@@ -231,7 +231,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
     if (isDeployContract) {
       const mintAmount = transactionTransformed.issueTokenAmount
       if (mintAmount !== undefined) {
-        return <TokenAmount amount={`Mint ${mintAmount}`} symbol={showTokenId(transactionTransformed.contractId)}/>
+        return <TokenAmount amount={`Mint`} symbol={"Token"}/>
       } 
       return null
     }
