@@ -1,33 +1,29 @@
 import defaultTokens from "../../assets/default-tokens.json"
-import defaultAlephiumTokens from "../../assets/default-alephium-tokens.json"
 import { isEqualTokenId } from "../../ui/services/token"
 import { BaseToken, Token } from "./type"
 import { mainnetTokensMetadata, testnetTokensMetadata, TokenList } from "@alephium/token-list"
 import { defaultNetworkIds } from "../network/defaults"
+import { ALPH_TOKEN_ID } from "@alephium/web3"
 
 export const equalToken = (a: BaseToken, b: BaseToken) =>
   a.networkId === b.networkId && isEqualTokenId(a.id, b.id)
 
-export const parsedDefaultTokens: Token[] = defaultTokens.map((token) => ({
-  ...token,
-  networkId: token.network,
-  decimals: token.decimals,
-}))
+const knownTokensFromAlephiumTokenList: Token[] =
+  [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
 
-export const alephiumTokensFromTokenList: Token[] = [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
+const alphTokens: Token[] = defaultNetworkIds.map((networkId) => {
+  return {
+    "id": ALPH_TOKEN_ID,
+    "name": "ALPH",
+    "symbol": "ALPH",
+    "decimals": 18,
+    "networkId": networkId,
+    "logoURI": "https://raw.githubusercontent.com/alephium/alephium-brand-guide/a4680dc86d6061a8d08468ebb42d659ab74db64a/logos/light/Logo-Icon.svg",
+    "showAlways": true
+  }
+})
 
-const parsedDefaultAlephiumTokens: Token[] = defaultAlephiumTokens.map((token) => ({
-  ...token,
-  networkId: token.network,
-  decimals: token.decimals,
-}))
-
-export const defaultKnownAlephiumTokens = parsedDefaultAlephiumTokens.concat(alephiumTokensFromTokenList)
-
-export const testDappToken = (networkId: string) =>
-  defaultTokens.find(
-    ({ name, network }) => name === "Test Token" && network === networkId,
-  )
+export const knownAlephiumTokens = alphTokens.concat(knownTokensFromAlephiumTokenList)
 
 export const dustALPHAmount = BigInt(1000000000000000)
 
@@ -45,3 +41,9 @@ function convertTokenList(tokenList: TokenList): Token[] {
     }
   })
 }
+
+export const parsedDefaultTokens: Token[] = defaultTokens.map((token) => ({
+  ...token,
+  networkId: token.network,
+  decimals: token.decimals,
+}))

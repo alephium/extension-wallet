@@ -3,9 +3,9 @@ import * as yup from "yup"
 import { ArrayStorage } from "../storage"
 import { assertSchema } from "../utils/schema"
 import { BaseToken, Token } from "./type"
-import { equalToken, defaultKnownAlephiumTokens } from "./utils"
+import { equalToken, knownAlephiumTokens } from "./utils"
 
-export const tokenStore = new ArrayStorage(defaultKnownAlephiumTokens, {
+export const tokenStore = new ArrayStorage(knownAlephiumTokens, {
   namespace: "core:tokens",
   areaName: "local",
   compare: equalToken,
