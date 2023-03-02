@@ -1,4 +1,4 @@
-import { addressFromContractId } from "@alephium/web3"
+import { addressFromContractId, ALPH_TOKEN_ID } from "@alephium/web3"
 import { FC, useRef, useState } from "react"
 import CopyToClipboard from "react-copy-to-clipboard"
 import { useNavigate } from "react-router-dom"
@@ -58,7 +58,7 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
   const navigate = useNavigate()
   const currentNetwork = useCurrentNetwork()
 
-  const [isALPH] = useState(tokenId === '0x0000000000000000000000000000000000000000000000000000000000000000')
+  const [isALPH] = useState(tokenId === ALPH_TOKEN_ID)
 
   useOnClickOutside(ref, () => setMenuOpen(false))
 
@@ -82,7 +82,7 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
               </MenuItem>
             </MenuItemWrapper>
           </CopyToClipboard>
-          { !isALPH &&
+          {!isALPH &&
             <CopyToClipboard
               text={addressFromContractId(tokenId)}
               onCopy={() => setMenuOpen(false)}
@@ -101,7 +101,7 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
               openBlockExplorerAddress(currentNetwork, addressFromContractId(tokenId))
             }
           >
-            { !isALPH &&
+            {!isALPH &&
               <MenuItem>
                 <ViewOnBlockExplorerIcon />
                 View on explorer

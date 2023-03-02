@@ -2,7 +2,7 @@ import { mergeArrayStableWith } from "../storage/array"
 import { SelectorFn } from "../storage/types"
 import { assertSchema } from "../utils/schema"
 import { networkSchema } from "./schema"
-import { networkSelector, networkSelectorByChainId } from "./selectors"
+import { networkSelector, networkSelectorById } from "./selectors"
 import {
   customNetworksStore,
   defaultCustomNetworks,
@@ -35,8 +35,8 @@ export async function getNetwork(networkId: string) {
   return network
 }
 
-export async function getNetworkByChainId(chainId: number) {
-  const [network] = await getNetworks(networkSelectorByChainId(chainId))
+export async function getNetworkById(id: string) {
+  const [network] = await getNetworks(networkSelectorById(id))
   return network
 }
 

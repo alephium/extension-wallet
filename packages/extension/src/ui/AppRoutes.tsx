@@ -60,6 +60,7 @@ import { ReviewFeedbackScreen } from "./features/userReview/ReviewFeedbackScreen
 import { ReviewRatingScreen } from "./features/userReview/ReviewRatingScreen"
 import { routes } from "./routes"
 import { useEntryRoute } from "./useEntryRoute"
+import { AddTokenScreen } from "./features/actions/AddTokenScreen"
 
 const ResponsiveContainer = chakra(ResponsiveBox, {
   baseStyle: {
@@ -249,6 +250,7 @@ const walletRoutes = (
       element={<SeedRecoverySetupScreen />}
     />
     <Route path={routes.setupRecovery.path} element={<RecoverySetupScreen />} />
+    <Route path={routes.newToken.path} element={<AddTokenScreen />} />
     <Route path={routes.token.path} element={<TokenScreen />} />
     <Route
       path={routes.backupDownload.path}

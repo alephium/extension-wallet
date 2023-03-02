@@ -32,7 +32,7 @@ export type NetworkMessage =
   // - used by dapps to request switching of already added custom network
   | {
       type: "REQUEST_SWITCH_CUSTOM_NETWORK"
-      data: { chainId: Network["chainId"] }
+      data: { id: Network["id"] }
     }
   | { type: "REQUEST_SWITCH_CUSTOM_NETWORK_RES"; data: { actionHash: string } }
   | {

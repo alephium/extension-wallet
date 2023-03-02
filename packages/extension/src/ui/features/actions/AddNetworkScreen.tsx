@@ -83,12 +83,6 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
                 readonly
               />
               <InputText
-                placeholder="Chain ID"
-                type="text"
-                value={requestedNetwork.chainId}
-                readonly
-              />
-              <InputText
                 placeholder="Node URL"
                 type="text"
                 value={requestedNetwork.nodeUrl}

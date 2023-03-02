@@ -14,8 +14,7 @@ const { UINT_256_MAX } = uint256
 
 /** shape of individual entity in the /tokens/info endpoint */
 export interface ApiTokenDetails {
-  id: number
-  address: string
+  id: string
   pricingId: number
 }
 
@@ -59,7 +58,7 @@ export const lookupTokenPriceDetails = ({
   }
   /** find token from tokenData by matching address */
   const tokenInPriceData = tokenData.tokens.find(
-    ({ address }) => address.toLowerCase() === token.address.toLowerCase(),
+    ({ id }) => id.toLowerCase() === token.id.toLowerCase(),
   )
   if (tokenInPriceData) {
     /** find token price details from pricesData by matching priceId */

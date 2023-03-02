@@ -6,9 +6,7 @@ import { Transaction } from "../../../../../shared/transactions"
 import { ActivityTransaction } from "../../useActivity"
 import { AmountChanges, DestinationAddress, TransformedAlephiumTransaction, TransformedTransaction } from "../type"
 import dateTransformer from "./transformers/dateTransformer"
-import declareContractTransformer from "./transformers/declareContractTransformer"
 import defaultDisplayNameTransformer from "./transformers/defaultDisplayNameTransformer"
-import deployContractTransformer from "./transformers/deployContractTransformer"
 import knownDappTransformer from "./transformers/knownDappTransformer"
 import nftTransferTransformer from "./transformers/nftTransferTransformer"
 import postTransferTransformer from "./transformers/postTransferTransformer"
@@ -24,8 +22,6 @@ const preTransformers = [
 
 /** all are executed until one returns */
 const mainTransformers = [
-  declareContractTransformer,
-  deployContractTransformer,
   nftTransferTransformer,
   tokenMintTransformer,
   tokenTransferTransformer
@@ -119,7 +115,7 @@ export function transformReviewedTransaction(transaction: ReviewTransactionResul
         type: 'DEPLOY_CONTRACT',
         contractAddress: transaction.result.contractAddress,
         contractId: transaction.result.contractId,
-        issueTokenAmount: transaction.params.issueTokenAmount 
+        issueTokenAmount: transaction.params.issueTokenAmount
       }
     case 'EXECUTE_SCRIPT':
       return {

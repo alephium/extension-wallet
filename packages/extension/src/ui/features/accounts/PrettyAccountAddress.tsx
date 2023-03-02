@@ -99,8 +99,8 @@ export const PrettyAccountAddress: FC<PrettyAccountAddressProps> = ({
   const accountDisplayName = accountName
     ? accountName
     : fallbackValue
-    ? fallbackValue(accountAddress)
-    : formatTruncatedAddress(accountAddress)
+      ? fallbackValue(accountAddress)
+      : formatTruncatedAddress(accountAddress)
   if (accountDisplayName && !icon) {
     return <>{accountDisplayName}</>
   }

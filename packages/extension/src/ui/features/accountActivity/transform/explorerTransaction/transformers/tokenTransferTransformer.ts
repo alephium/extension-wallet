@@ -5,7 +5,7 @@ import { IExplorerTransactionTransformer } from "./type"
 
 /** adds erc20 token transfer data */
 
-export default function ({
+export default function({
   explorerTransaction,
   accountAddress,
   result,

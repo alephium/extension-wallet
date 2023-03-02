@@ -29,7 +29,7 @@ export const FeeField: FC<IFeeField> = ({
 }) => {
   const feeToken = useNetworkFeeToken(networkId)
   const { displayAmount, displayValue } = useDisplayTokenAmountAndCurrencyValue(
-    { amount: fee, tokenAddress: feeToken?.address },
+    { amount: fee, tokenId: feeToken?.id },
   )
   if (!feeToken) {
     return null

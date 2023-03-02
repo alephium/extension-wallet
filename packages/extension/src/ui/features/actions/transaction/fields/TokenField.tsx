@@ -9,7 +9,7 @@ import {
   FieldValue,
   LeftPaddedField,
 } from "../../../../components/Fields"
-import { isEqualAddress } from "../../../../services/addresses"
+import { isEqualTokenId } from "../../../../services/token"
 import { TokenIcon } from "../../../accountTokens/TokenIcon"
 
 export interface ITokenField {
@@ -28,21 +28,21 @@ export const TokenField: FC<ITokenField> = ({
   if (!contractAddress || !amount) {
     return null
   }
-  const token = tokensByNetwork.find(({ address }) =>
-    isEqualAddress(address, contractAddress),
+  const token = tokensByNetwork.find(({ id }) =>
+    isEqualTokenId(id, contractAddress),
   )
   const displayAmount = token
     ? prettifyTokenAmount({
-        amount,
-        decimals: token?.decimals,
-        symbol: token?.symbol || "Unknown",
-      })
+      amount,
+      decimals: token?.decimals,
+      symbol: token?.symbol || "Unknown",
+    })
     : `${amount} Unknown`
   return (
     <Field>
       <FieldKey>{label}</FieldKey>
       <FieldValue>
-        {token && <TokenIcon url={token.image} name={token.name} size={6} />}
+        {token && <TokenIcon url={token.logoURI} name={token.name} size={6} />}
         <LeftPaddedField>{displayAmount}</LeftPaddedField>
       </FieldValue>
     </Field>

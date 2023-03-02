@@ -6,7 +6,7 @@ export const getTokenForContractAddress = (
   contractAddress: string,
   tokensByNetwork: Token[] = parsedDefaultTokens,
 ) => {
-  return tokensByNetwork.find(({ address }) =>
-    isEqualAddress(address, contractAddress),
+  return tokensByNetwork.find(({ id }) =>
+    isEqualAddress(id, contractAddress),
   )
 }

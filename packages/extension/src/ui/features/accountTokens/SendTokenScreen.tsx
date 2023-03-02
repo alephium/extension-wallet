@@ -212,7 +212,7 @@ const SendSchema: Schema<SendInput> = object().required().shape({
 
 export const SendTokenScreen: FC = () => {
   const navigate = useNavigate()
-  const { tokenAddress } = useParams<{ tokenAddress: string }>()
+  const { tokenId } = useParams<{ tokenId: string }>()
   const account = useSelectedAccount()
   const { tokenDetails } = useTokensWithBalance(account)
   const resolver = useYupValidationResolver(SendSchema)
@@ -257,7 +257,7 @@ export const SendTokenScreen: FC = () => {
   const inputAmount = formValues.amount
   const inputRecipient = formValues.recipient
 
-  const token = tokenDetails.find(({ address }) => address === tokenAddress)
+  const token = tokenDetails.find(({ id }) => id === tokenId)
   const currencyValue = useTokenUnitAmountToCurrencyValue(token, inputAmount)
   const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
 
@@ -271,7 +271,7 @@ export const SendTokenScreen: FC = () => {
 
         const maxAmount =
           account?.networkId ===
-          "devnet" /** FIXME: workaround for localhost fee estimate with devnet 0.3.4 */
+            "devnet" /** FIXME: workaround for localhost fee estimate with devnet 0.3.4 */
             ? balanceBn.sub(maxFee).sub(100000000000000)
             : balanceBn.sub(maxFee)
 
@@ -302,12 +302,12 @@ export const SendTokenScreen: FC = () => {
   const validRecipientAddress =
     inputRecipient && !getFieldState("recipient").error
 
-  const isAlphToken = (tokenAddress: string | undefined): boolean => {
-    return tokenAddress?.slice(2) === ALPH_TOKEN_ID || tokenAddress === undefined
+  const isAlphToken = (tokenId: string | undefined): boolean => {
+    return tokenId === ALPH_TOKEN_ID || tokenId === undefined
   }
 
-  const isSweepingAllAsset = (tokenAddress: string | undefined): boolean => {
-    return maxClicked && isAlphToken(tokenAddress)
+  const isSweepingAllAsset = (tokenId: string | undefined): boolean => {
+    return maxClicked && isAlphToken(tokenId)
   }
 
   const recipientInAddressBook = useMemo(
@@ -322,7 +322,7 @@ export const SendTokenScreen: FC = () => {
   const sweepTransaction: Promise<BuildSweepAddressTransactionsResult | undefined> = useMemo(
     async () => {
       let result = undefined
-      if (account && maxClicked && isAlphToken(tokenAddress) && validateAddress(inputRecipient)) {
+      if (account && maxClicked && isAlphToken(tokenId) && validateAddress(inputRecipient)) {
         const nodeProvider = new NodeProvider(nodeUrl)
         result = await nodeProvider.transactions.postTransactionsSweepAddressBuild({
           fromPublicKey: account.publicKey,
@@ -333,7 +333,7 @@ export const SendTokenScreen: FC = () => {
 
       return result
     },
-    [nodeUrl, account, maxClicked, tokenAddress, inputRecipient, validateAddress],
+    [nodeUrl, account, maxClicked, tokenId, inputRecipient, validateAddress],
   )
 
   const showSaveAddressButton = validRecipientAddress && !recipientInAddressBook
@@ -343,13 +343,13 @@ export const SendTokenScreen: FC = () => {
       setMaxInputAmount(token, maxFee)
     }
     // dont add token as dependency as the reference can change
-  }, [maxClicked, maxFee, setMaxInputAmount, token?.address, token?.networkId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [maxClicked, maxFee, setMaxInputAmount, token?.id, token?.networkId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!token) {
     return <Navigate to={routes.accounts()} />
   }
 
-  const { address, name, symbol, balance, decimals, image } = toTokenView(token)
+  const { id, name, symbol, balance, decimals, logoURI } = toTokenView(token)
 
   const parsedInputAmount = inputAmount
     ? parseAmount(inputAmount, decimals)
@@ -359,7 +359,7 @@ export const SendTokenScreen: FC = () => {
 
   const isInputAmountGtBalance =
     parsedInputAmount.gt(token.balance?.toString() ?? 0) ||
-    (feeToken?.address === token.address &&
+    (feeToken?.id === token.id &&
       (inputAmount === balance ||
         parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
 
@@ -405,7 +405,7 @@ export const SendTokenScreen: FC = () => {
       />
       <NavigationContainer
         leftButton={<BarBackButton />}
-        rightButton={<TokenMenuDeprecated tokenId={address} />}
+        rightButton={<TokenMenuDeprecated tokenId={id} />}
         scrollContent={`Send ${symbol}`}
       >
         <>
@@ -416,7 +416,7 @@ export const SendTokenScreen: FC = () => {
           <StyledForm
             onSubmit={handleSubmit(async ({ amount, recipient }) => {
               if (account) {
-                if (isSweepingAllAsset(tokenAddress)) {
+                if (isSweepingAllAsset(tokenId)) {
                   const sweepResult = await sweepTransaction
                   if (sweepResult) {
                     sweepResult.unsignedTxs.map((sweepUnsignedTx) => {
@@ -429,7 +429,7 @@ export const SendTokenScreen: FC = () => {
                   }
                 } else {
                   let destination: Destination
-                  if (isAlphToken(tokenAddress)) {
+                  if (isAlphToken(tokenId)) {
                     destination = {
                       address: recipient,
                       attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '?',
@@ -439,7 +439,7 @@ export const SendTokenScreen: FC = () => {
                     destination = {
                       address: recipient,
                       attoAlphAmount: DUST_AMOUNT,
-                      tokens: [{ id: tokenAddress as string, amount: BigInt(amount) }]
+                      tokens: [{ id: tokenId as string, amount: BigInt(amount) }]
                     }
                   }
 
@@ -471,7 +471,7 @@ export const SendTokenScreen: FC = () => {
                   style={{ padding: "17px 16px 17px 57px" }}
                 >
                   <InputGroupBefore>
-                    <TokenIcon name={name} url={image} size={8} />
+                    <TokenIcon name={name} url={logoURI} size={8} />
                   </InputGroupBefore>
                   <InputGroupAfter>
                     {inputAmount ? (
@@ -596,7 +596,7 @@ export const SendTokenScreen: FC = () => {
                 )}
               </div>
               {
-                isSweepingAllAsset(tokenAddress) ? (
+                isSweepingAllAsset(tokenId) ? (
                   <WarningContainer>
                     Warning: This will sweep all assets to the recipient, including all the tokens.
                     {txsNumber > 1 ? `Due to the number of UTXOs, you need to sign ${txsNumber} transactions` : ""}

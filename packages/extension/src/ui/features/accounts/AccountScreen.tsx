@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo } from "react"
+import { FC, ReactNode } from "react"
 
 import { assertNever } from "../../services/assertNever"
 import { AccountActivityContainer } from "../accountActivity/AccountActivityContainer"
@@ -7,10 +7,9 @@ import { AccountTokens } from "../accountTokens/AccountTokens"
 import { StatusMessageFullScreenContainer } from "../statusMessage/StatusMessageFullScreen"
 import { useShouldShowFullScreenStatusMessage } from "../statusMessage/useShouldShowFullScreenStatusMessage"
 import { AccountContainer } from "./AccountContainer"
-import { useAccount, useSelectedAccount } from "./accounts.state"
+import { useSelectedAccount } from "./accounts.state"
 import { AccountScreenEmpty } from "./AccountScreenEmpty"
 import { useAddAccount } from "./useAddAccount"
-import { walletStore } from "../../../shared/wallet/walletStore"
 
 interface AccountScreenProps {
   tab: "tokens" | "collections" | "activity"

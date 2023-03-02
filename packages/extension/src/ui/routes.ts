@@ -75,8 +75,8 @@ export const routes = {
   ),
   sendScreen: route("/send"),
   sendToken: route(
-    (tokenAddress: string) => `/send-token/${tokenAddress}`,
-    "/send-token/:tokenAddress",
+    (tokenId: string) => `/send-token/${tokenId}`,
+    "/send-token/:tokenId",
   ),
   transactionDetail: route(
     (txHash: string) => `/account/activity/transaction-detail/${txHash}`,
@@ -94,18 +94,19 @@ export const routes = {
   ),
   addAccount: route("/accounts/new"),
   addAlephiumAccount: route("/accounts/new/alephium"),
+  newToken: route("/tokens/new"),
   funding: route("/funding"),
   fundingBridge: route("/funding/bridge"),
   exportPrivateKey: route("/export-private-key"),
   fundingQrCode: route((address: string) => `/funding/qr-code/${address}`, `/funding/qr-code/:address`),
   fundingProvider: route("/funding/provider"),
   token: route(
-    (tokenAddress: string) => `/tokens/${tokenAddress}`,
-    "/tokens/:tokenAddress",
+    (tokenId: string) => `/tokens/${tokenId}`,
+    "/tokens/:tokenId",
   ),
   hideToken: route(
-    (tokenAddress: string) => `/tokens/${tokenAddress}/hide`,
-    "/tokens/:tokenAddress/hide",
+    (tokenId: string) => `/tokens/${tokenId}/hide`,
+    "/tokens/:tokenId/hide",
   ),
   addPlugin: route(
     (accountAddress) => `/add-plugin/${accountAddress}`,

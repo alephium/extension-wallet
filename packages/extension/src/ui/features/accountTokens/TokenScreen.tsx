@@ -25,7 +25,7 @@ const TokenScreenWrapper = styled(ColumnCenter)`
   width: 100%;
 `
 
-const TokenHeader = styled(RowCentered)<{ hasCurrencyValue: boolean }>`
+const TokenHeader = styled(RowCentered) <{ hasCurrencyValue: boolean }>`
   width: 100%;
   flex: 1;
   background-color: #000000;
@@ -77,13 +77,13 @@ const TokenBalanceContainer = styled(RowCentered)`
 
 export const TokenScreen: FC = () => {
   const navigate = useNavigate()
-  const { tokenAddress } = useParams()
+  const { tokenId } = useParams()
   const account = useSelectedAccount()
   const { tokenDetails, tokenDetailsIsInitialising, isValidating } =
     useTokensWithBalance(account)
   const token = useMemo(
-    () => tokenDetails.find(({ address }) => address === tokenAddress),
-    [tokenAddress, tokenDetails],
+    () => tokenDetails.find(({ id }) => id === tokenId),
+    [tokenId, tokenDetails],
   )
   const currencyValue = useTokenBalanceToCurrencyValue(token)
 
@@ -91,20 +91,20 @@ export const TokenScreen: FC = () => {
     return <Navigate to={routes.accounts()} />
   }
 
-  const { address, name, symbol, image } = toTokenView(token)
+  const { id, name, symbol, logoURI } = toTokenView(token)
   const displayBalance = prettifyTokenBalance(token, false)
   const isLoading = isValidating || tokenDetailsIsInitialising
 
   return (
     <NavigationContainer
       leftButton={<BarBackButton />}
-      rightButton={<TokenMenuDeprecated tokenId={address} />}
+      rightButton={<TokenMenuDeprecated tokenId={id} />}
       title={name === "Ether" ? "Ethereum" : name}
     >
       <TokenScreenWrapper>
         <TokenHeader hasCurrencyValue={!!currencyValue}>
           <ColumnCenter>
-            <TokenIcon name={name} url={image} size={12} />
+            <TokenIcon name={name} url={logoURI} size={12} />
             <TokenBalanceContainer>
               <LoadingPulse
                 isLoading={isLoading}
@@ -132,7 +132,7 @@ export const TokenScreen: FC = () => {
         <ActionContainer>
           <Button
             type="button"
-            onClick={() => navigate(routes.sendToken(address))}
+            onClick={() => navigate(routes.sendToken(id))}
           >
             Send
           </Button>

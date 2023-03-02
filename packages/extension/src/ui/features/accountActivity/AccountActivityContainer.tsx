@@ -1,22 +1,20 @@
 import { CellStack, H4, SpacerCell } from "@argent/ui"
 import { Center, Skeleton } from "@chakra-ui/react"
-import { get, merge } from "lodash-es"
 import { FC, Suspense, useCallback, useMemo } from "react"
 import { AlephiumExplorerTransaction } from "../../../shared/explorer/type"
 import { Transaction } from "../../../shared/transactions"
-import { useAppState } from "../../app.state"
 import { ErrorBoundary } from "../../components/ErrorBoundary"
 import { ErrorBoundaryFallback } from "../../components/ErrorBoundaryFallback"
 import { formatDate } from "../../services/dates"
 import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { useTokens, useTokensWithBalance } from "../accountTokens/tokens.state"
+import { useTokens } from "../accountTokens/tokens.state"
 import { useNetwork } from "../networks/useNetworks"
 import { AccountActivity } from "./AccountActivity"
 import { PendingTransactionsContainer } from "./PendingTransactions"
 import { isVoyagerTransaction } from "./transform/is"
 import { ActivityTransaction } from "./useActivity"
-import { useAlephiumExplorerAccountTransactionsInfinite, useArgentExplorerAccountTransactionsInfinite } from "./useArgentExplorer"
+import { useAlephiumExplorerAccountTransactionsInfinite } from "./useArgentExplorer"
 
 export interface AccountActivityContainerProps {
   account: Account
@@ -129,7 +127,7 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
     return {
       transactions: sortedTransactions,
     }
-  }, [explorerTransactions, voyagerTransactions])
+  }, [explorerTransactions, voyagerTransactions, transactions])
 
   const { activity, loadMoreHashes } = useMemo(() => {
     const activity: Record<
@@ -174,12 +172,6 @@ export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
   }, [isReachingEnd, setSize])
 
   return (
-    // Design 1
-    /*
-    <AccountTransactionList account={account} />
-    */
-
-    // Design 2
     <AccountActivity
       activity={activity}
       loadMoreHashes={loadMoreHashes}

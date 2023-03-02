@@ -8,13 +8,13 @@ import { Account } from "../accounts/Account"
 import { TokenDetailsWithBalance, getNetworkFeeToken } from "./tokens.state"
 
 export interface TokenView {
-  address: string
+  id: string
   name: string
   symbol: string
   decimals: number
   balance: string
 
-  image?: string
+  logoURI?: string
   showAlways?: boolean
 }
 
@@ -110,15 +110,15 @@ export const toTokenView = ({
 export type BalancesMap = Record<string, BigNumber | undefined>
 
 export const fetchAllTokensBalance = async (
-  tokenAddresses: string[],
+  tokenIds: string[],
   account: Account,
 ) => {
   const response = await Promise.allSettled(
-    tokenAddresses.map((tokenAddress) => {
-      return getTokenBalanceForAccount(tokenAddress, account)
+    tokenIds.map((tokenId) => {
+      return getTokenBalanceForAccount(tokenId, account)
     }),
   )
-  return tokenAddresses.reduce<BalancesMap>((acc, addr, i) => {
+  return tokenIds.reduce<BalancesMap>((acc, addr, i) => {
     const balance = response[i]
     return {
       ...acc,
@@ -137,7 +137,7 @@ export const fetchFeeTokenBalance = async (
   if (!token) {
     return BigNumber.from(0)
   }
-  const balance = await getTokenBalanceForAccount(token.address, account)
+  const balance = await getTokenBalanceForAccount(token.id, account)
   return BigNumber.from(balance)
 }
 

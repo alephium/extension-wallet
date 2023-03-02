@@ -8,27 +8,27 @@ import {
   prettifyTokenAmount as argentPrettifyTokenAmount,
 } from "../../../shared/token/price"
 import { useAppState } from "../../app.state"
-import { formatLongString, isEqualAddress } from "../../services/addresses"
+import { isEqualTokenId } from "../../services/token"
 import { showTokenId } from "../accountActivity/transform/transaction/transformTransaction"
 import { useTokenAmountToCurrencyValue } from "./tokenPriceHooks"
 import { useTokensInNetwork } from "./tokens.state"
 
 export interface IUseDisplayTokenAmountAndCurrencyValue {
   amount: BigNumberish
-  tokenAddress?: string
+  tokenId?: string
   currencySymbol?: string
 }
 
 export const useDisplayTokenAmountAndCurrencyValue = ({
   amount,
-  tokenAddress,
+  tokenId,
   currencySymbol = "$",
 }: IUseDisplayTokenAmountAndCurrencyValue) => {
   const { switcherNetworkId } = useAppState()
   const tokensByNetwork = useTokensInNetwork(switcherNetworkId)
-  const token = tokenAddress
-    ? tokensByNetwork.find(({ address }) =>
-      isEqualAddress(address, tokenAddress),
+  const token = tokenId
+    ? tokensByNetwork.find(({ id }) =>
+      isEqualTokenId(id, tokenId),
     )
     : undefined
   const amountCurrencyValue = useTokenAmountToCurrencyValue(token, amount)
@@ -68,8 +68,8 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
   const tokensByNetwork = useTokensInNetwork(switcherNetworkId)
   return amounts.map(amount => {
     const token = amount.id
-      ? tokensByNetwork.find(({ address }) =>
-        isEqualAddress(address, amount.id),
+      ? tokensByNetwork.find(({ id }) =>
+        isEqualTokenId(id, amount.id),
       )
       : undefined
     const naiveAmount = prettifyTokenAmount(amount.amount, 0) ?? '?'
@@ -86,13 +86,13 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
     if (displayAmount !== undefined) {
       return {
         displayAmount: displayAmount,
-        displayTokenId: token.symbol ?? showTokenId(token.address),
+        displayTokenId: token.symbol ?? showTokenId(token.id),
         displayValue,
       }
     } else {
       return {
         displayAmount: naiveAmount,
-        displayTokenId: token.symbol ?? showTokenId(token.address),
+        displayTokenId: token.symbol ?? showTokenId(token.id),
         displayValue: null
       }
     }
