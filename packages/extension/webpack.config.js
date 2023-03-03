@@ -16,7 +16,7 @@ const htmlPlugin = new HtmlWebPackPlugin({
 })
 
 const isProd = process.env.NODE_ENV === "production"
-const manifestV3 = process.env.MANIFEST_VERSION === "v3"
+const manifestV2 = process.env.MANIFEST_VERSION === "v2"
 const safeEnvVars = process.env.SAFE_ENV_VARS === "true"
 const uploadSentrySourcemaps = process.env.UPLOAD_SENTRY_SOURCEMAPS === "true"
 
@@ -76,7 +76,7 @@ module.exports = {
       patterns: [
         { from: "./src/ui/favicon.ico", to: "favicon.ico" },
         {
-          from: `./manifest/${manifestV3 ? "v3" : "v2"}.json`,
+          from: `./manifest/${manifestV2 ? "v2" : "v3"}.json`,
           to: "manifest.json",
         },
         { from: "./src/assets", to: "assets" },
