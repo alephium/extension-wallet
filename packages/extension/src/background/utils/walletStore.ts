@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from './crypto'
+import browser from "webextension-polyfill"
 
 export class BrowserStorage {
   key: string
@@ -7,35 +8,25 @@ export class BrowserStorage {
     this.key = 'wallet'
   }
 
-  remove = (name: string) => {
-    window.localStorage.removeItem(`${this.key}-${name}`)
+  remove = (name: string): Promise<void> => {
+    return browser.storage.local.remove(`${this.key}-${name}`)
   }
 
-  load = (name: string) => {
-    const str = window.localStorage.getItem(`${this.key}-${name}`)
-    if (str) {
-      return JSON.parse(str)
+  load = async (name: string): Promise<string> => {
+    const key = `${this.key}-${name}`
+    const result = await browser.storage.local.get(key)
+    if (result && result[key]) {
+      return JSON.parse(result[key])
     } else {
       throw new Error(`Unable to load wallet ${name}`)
     }
   }
 
-  save = (name: string, json: unknown) => {
-    const str = JSON.stringify(json)
-    window.localStorage.setItem(`${this.key}-${name}`, str)
-  }
-
-  list = () => {
-    const prefixLen = this.key.length + 1
-    const xs = []
-    for (let i = 0, len = localStorage.length; i < len; ++i) {
-      const key = localStorage.key(i)
-      if (key && key.startsWith(this.key)) {
-        xs.push(key.substring(prefixLen))
-      }
-    }
-
-    return xs
+  save = (name: string, json: unknown): Promise<void> => {
+    const value: { [key: string]: unknown } = {}
+    const keyName = `${this.key}-${name}`
+    value[keyName] = JSON.stringify(json)
+    return browser.storage.local.set(value)
   }
 }
 

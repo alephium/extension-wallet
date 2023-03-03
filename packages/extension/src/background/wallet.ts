@@ -115,7 +115,7 @@ export class Wallet {
 
   public async isInitialized(): Promise<boolean> {
     try {
-      AlephiumStorage.load(WalletName)
+      await AlephiumStorage.load(WalletName)
     } catch {
       return false
     }
@@ -160,7 +160,7 @@ export class Wallet {
 
     let walletEncrypted
     try {
-      walletEncrypted = AlephiumStorage.load(WalletName)
+      walletEncrypted = await AlephiumStorage.load(WalletName)
     } catch {
       walletEncrypted = undefined
     }
@@ -168,7 +168,7 @@ export class Wallet {
     try {
       if (!walletEncrypted) {
         const mnemonic = bip39.generateMnemonic(128)
-        AlephiumStorage.save(WalletName, walletEncrypt(password, mnemonic))
+        await AlephiumStorage.save(WalletName, walletEncrypt(password, mnemonic))
         this.setSession(mnemonic, password)
       } else {
         const mnemonic = walletOpen(password, walletEncrypted)

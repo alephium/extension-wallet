@@ -147,7 +147,7 @@ messageStream.subscribe(async ([msg, sender]) => {
     actionQueue,
   }
 
-  const extensionUrl = browser.extension.getURL("")
+  const extensionUrl = browser.runtime.getURL("")
   const safeOrigin = extensionUrl.replace(/\/$/, "")
   const origin = sender.origin ?? sender.url // Firefox uses url, Chrome uses origin
   const isSafeOrigin = Boolean(origin?.startsWith(safeOrigin))
