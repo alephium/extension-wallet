@@ -92,7 +92,6 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
   transaction
 }) => {
   const transactionActions = extractActions(transaction)
-  console.log(`====`, transactionActions)
   return (
     <Box borderRadius="xl">
       <Box backgroundColor="neutrals.700" px="3" py="2.5" borderTopRadius="xl">
