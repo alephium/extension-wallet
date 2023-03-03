@@ -11,10 +11,14 @@ import {
 } from "@chakra-ui/react"
 import { FC } from "react"
 import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
+import { AddressBookContact } from "../../../../shared/addressBook"
 import { Token } from "../../../../shared/token/type"
 
 import { entryPointToHumanReadable } from "../../../../shared/transactions"
+import { useAddressBook } from "../../../services/addressBook"
 import { formatTruncatedAddress, formatLongString } from "../../../services/addresses"
+import { useAccountMetadata } from "../../accounts/accountMetadata.state"
+import { getAccountNameForAddress, getContactNameForAddress } from "../../accounts/PrettyAccountAddress"
 import { useTokensInNetwork } from "../../accountTokens/tokens.state"
 
 export interface TransactionActionRow {
@@ -35,13 +39,39 @@ function getTokensFromDestination(destination: Destination, tokensInNetwork: Tok
     })]
 }
 
-export function extractActions(transaction: ReviewTransactionResult, tokensInNetwork: Token[]): TransactionAction[] {
+function prettifyAddressName(address: string, networkId: string, accountNames: Record<string, Record<string, string>>, contacts: AddressBookContact[]): [string, boolean] {
+  const accountName = getAccountNameForAddress(
+    address,
+    networkId,
+    accountNames,
+  )
+  if (accountName) {
+    return [accountName, true]
+  }
+  const contactName = getContactNameForAddress(
+    address,
+    networkId,
+    contacts
+  )
+  if (contactName) {
+    return [contactName, true]
+  }
+
+  return [address, false]
+}
+
+export function useExtractActions(transaction: ReviewTransactionResult, networkId: string, tokensInNetwork: Token[]): TransactionAction[] {
+  const accountNames = useAccountMetadata((x) => x.accountNames)
+  const { contacts } = useAddressBook()
+  let addressName: string
+  let found: boolean
   switch (transaction.type) {
     case 'TRANSFER':
       return transaction.params.destinations.map((destination) => {
+        [addressName, found] = prettifyAddressName(destination.address, networkId, accountNames, contacts)
         return {
-          header: { key: 'Send', value: formatTruncatedAddress(destination.address) },
-          details: [{ key: 'Recipient', value: destination.address }, ...getTokensFromDestination(destination, tokensInNetwork)]
+          header: { key: 'Send', value: found ? '' : formatTruncatedAddress(destination.address) },
+          details: [{ key: 'Recipient', value: addressName }, ...getTokensFromDestination(destination, tokensInNetwork)]
         }
       })
     case 'DEPLOY_CONTRACT':
@@ -99,7 +129,7 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
   transaction
 }) => {
   const tokensInNetwork = useTokensInNetwork(networkId)
-  const transactionActions = extractActions(transaction, tokensInNetwork)
+  const transactionActions = useExtractActions(transaction, networkId, tokensInNetwork)
   return (
     <Box borderRadius="xl">
       <Box backgroundColor="neutrals.700" px="3" py="2.5" borderTopRadius="xl">
@@ -133,10 +163,10 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
                     justifyContent="space-between"
                     outline="none"
                     px="3"
-                    pb={txIndex !== transactionActions.length - 1 ? "3" : "3.5"}
+                    pb={txIndex !== transactionActions.length - 1 ? "2" : "2.5"}
                     _expanded={{
                       backgroundColor: "neutrals.700",
-                      pb: "3.5",
+                      pb: "1.5",
                     }}
                     disabled={
                       transactionAction.details.length === 0
