@@ -438,14 +438,14 @@ export const SendTokenScreen: FC = () => {
                   if (isAlphToken(tokenId)) {
                     destination = {
                       address: recipient,
-                      attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '0',
+                      attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '?',
                       tokens: []
                     }
                   } else {
                     destination = {
                       address: recipient,
                       attoAlphAmount: DUST_AMOUNT,
-                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, token.decimals) ?? '0' }]
+                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, token.decimals) ?? '?' }]
                     }
                   }
 

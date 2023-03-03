@@ -23,7 +23,6 @@ export const validateSeedPhrase = (seedPhrase: string): boolean => {
   try {
     ethers.utils.HDNode.fromMnemonic(seedPhrase)
   } catch (error) {
-    console.error(`===== validate error`, error)
     return false
   }
 
