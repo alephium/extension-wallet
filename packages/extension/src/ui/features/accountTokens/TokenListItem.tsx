@@ -43,7 +43,7 @@ export const TokenListItem: FC<TokenListItemProps> = ({
   const isNoCurrencyVariant = variant === "no-currency"
   return (
     <CustomButtonCell {...rest}>
-      <TokenIcon size={9} url={logoURI} name={name} />
+      <TokenIcon size={7} url={logoURI} name={name} />
       <Flex
         flexGrow={1}
         alignItems="center"
@@ -52,7 +52,7 @@ export const TokenListItem: FC<TokenListItemProps> = ({
         overflow={"hidden"}
       >
         <Flex direction={"column"} overflow="hidden">
-          <H6 overflow="hidden" textOverflow={"ellipsis"}>
+          <H6 overflow="hidden" textOverflow={"ellipsis"} fontWeight="lg">
             {name === "Ether" ? "Ethereum" : name}
           </H6>
           {!isNoCurrencyVariant && (
@@ -88,7 +88,7 @@ export const TokenListItem: FC<TokenListItemProps> = ({
                 </FieldError>
               </Tooltip>
             ) : (
-              <H6 overflow="hidden" textOverflow={"ellipsis"}>
+              <H6 overflow="hidden" textOverflow={"ellipsis"} fontWeight="lg">
                 {isNoCurrencyVariant ? displayBalance : displayCurrencyValue}
               </H6>
             )}

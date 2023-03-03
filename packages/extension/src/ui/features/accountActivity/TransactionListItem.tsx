@@ -259,7 +259,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
         overflow={"hidden"}
       >
         <Flex direction={"column"} overflow="hidden">
-          <H6 overflow="hidden" textOverflow={"ellipsis"}>
+          <H6 overflow="hidden" textOverflow={"ellipsis"} fontWeight="lg">
             {displayName}
           </H6>
           {subtitles !== null &&

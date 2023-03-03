@@ -65,7 +65,7 @@ export const TokenAmount = ({
   symbol: string,
 }) => {
   return <Flex direction="row-reverse" alignContent="flex-end">
-    <H6 key="xxxx" paddingLeft="1">
+    <H6 key="xxxx" paddingLeft="1" fontWeight={"lg"}>
       {symbol}
     </H6>
     <H6
@@ -73,6 +73,7 @@ export const TokenAmount = ({
       textOverflow={"ellipsis"}
       textAlign={"right"}
       color={amount.startsWith("-") ? "orange.500" : "green.400"}
+      fontWeight="lg"
     >
       {amount}
     </H6>
