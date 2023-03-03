@@ -1,4 +1,4 @@
-import { Destination, prettifyAttoAlphAmount } from "@alephium/web3"
+import { Destination, prettifyAttoAlphAmount, prettifyTokenAmount } from "@alephium/web3"
 import { CopyTooltip, P4 } from "@argent/ui"
 import {
   Accordion,
@@ -11,9 +11,11 @@ import {
 } from "@chakra-ui/react"
 import { FC } from "react"
 import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
+import { Token } from "../../../../shared/token/type"
 
 import { entryPointToHumanReadable } from "../../../../shared/transactions"
 import { formatTruncatedAddress, formatLongString } from "../../../services/addresses"
+import { useTokensInNetwork } from "../../accountTokens/tokens.state"
 
 export interface TransactionActionRow {
   key: string
@@ -24,19 +26,22 @@ export interface TransactionAction {
   details: TransactionActionRow[]
 }
 
-
-function getTokensFromDestination(destination: Destination): TransactionActionRow[] {
+function getTokensFromDestination(destination: Destination, tokensInNetwork: Token[]): TransactionActionRow[] {
   return [{ key: 'ALPH', value: prettifyAttoAlphAmount(destination.attoAlphAmount) ?? '?' },
-    ...(destination.tokens ?? []).map(token => ({ key: token.id, value: token.amount.toString() }))]
+    ...(destination.tokens ?? []).map(token => {
+      const matchedToken = tokensInNetwork.find(t => t.id === token.id)
+      return matchedToken ? { key: matchedToken.symbol, value: prettifyTokenAmount(token.amount, matchedToken.decimals) ?? '???'}
+        : { key: "?? token", value: token.amount.toString() }
+    })]
 }
 
-export function extractActions(transaction: ReviewTransactionResult): TransactionAction[] {
+export function extractActions(transaction: ReviewTransactionResult, tokensInNetwork: Token[]): TransactionAction[] {
   switch (transaction.type) {
     case 'TRANSFER':
       return transaction.params.destinations.map((destination) => {
         return {
           header: { key: 'Send', value: formatTruncatedAddress(destination.address) },
-          details: [{ key: 'Recipient', value: destination.address }, ...getTokensFromDestination(destination)]
+          details: [{ key: 'Recipient', value: destination.address }, ...getTokensFromDestination(destination, tokensInNetwork)]
         }
       })
     case 'DEPLOY_CONTRACT':
@@ -85,13 +90,16 @@ export function extractActions(transaction: ReviewTransactionResult): Transactio
 }
 
 export interface TransactionActionsProps {
+  networkId: string
   transaction: ReviewTransactionResult
 }
 
 export const TransactionActions: FC<TransactionActionsProps> = ({
+  networkId,
   transaction
 }) => {
-  const transactionActions = extractActions(transaction)
+  const tokensInNetwork = useTokensInNetwork(networkId)
+  const transactionActions = extractActions(transaction, tokensInNetwork)
   return (
     <Box borderRadius="xl">
       <Box backgroundColor="neutrals.700" px="3" py="2.5" borderTopRadius="xl">
