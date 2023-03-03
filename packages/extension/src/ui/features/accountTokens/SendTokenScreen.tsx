@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, convertAlphAmountWithDecimals, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
+import { ALPH_TOKEN_ID, convertAlphAmountWithDecimals, convertAmountWithDecimals, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
 import { BuildSweepAddressTransactionsResult } from "@alephium/web3/dist/src/api/api-alephium"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
 import { utils } from "ethers"
@@ -56,8 +56,9 @@ import { formatTokenBalance, toTokenView } from "./tokens.service"
 import {
   TokenDetailsWithBalance,
   useNetworkFeeToken,
-  useTokensWithBalance,
+  useToken
 } from "./tokens.state"
+import { useTokenBalanceForAccount } from './useTokenBalanceForAccount'
 
 export const BalanceText = styled.div`
   font-weight: 600;
@@ -212,9 +213,15 @@ const SendSchema: Schema<SendInput> = object().required().shape({
 
 export const SendTokenScreen: FC = () => {
   const navigate = useNavigate()
-  const { tokenId } = useParams<{ tokenId: string }>()
+
   const account = useSelectedAccount()
-  const { tokenDetails } = useTokensWithBalance(account)
+  const { tokenId } = useParams<{ tokenId: string }>()
+  const token = useToken({
+    id: tokenId || "0x0",
+    networkId: account?.networkId || "Unknown",
+  })
+  const { tokenWithBalance } = useTokenBalanceForAccount({ token, account })
+
   const resolver = useYupValidationResolver(SendSchema)
   const feeToken = useNetworkFeeToken(account?.networkId)
   const [maxClicked, setMaxClicked] = useState(false)
@@ -257,7 +264,6 @@ export const SendTokenScreen: FC = () => {
   const inputAmount = formValues.amount
   const inputRecipient = formValues.recipient
 
-  const token = tokenDetails.find(({ id }) => id === tokenId)
   const currencyValue = useTokenUnitAmountToCurrencyValue(token, inputAmount)
   const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
 
@@ -355,10 +361,10 @@ export const SendTokenScreen: FC = () => {
     ? parseAmount(inputAmount, decimals)
     : parseAmount("0", decimals)
 
-  const parsedTokenBalance = token.balance || parseAmount("0", decimals)
+  const parsedTokenBalance = tokenWithBalance?.balance || parseAmount("0", decimals)
 
   const isInputAmountGtBalance =
-    parsedInputAmount.gt(token.balance?.toString() ?? 0) ||
+    parsedInputAmount.gt(tokenWithBalance?.balance?.toString() ?? 0) ||
     (feeToken?.id === token.id &&
       (inputAmount === balance ||
         parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
@@ -432,14 +438,14 @@ export const SendTokenScreen: FC = () => {
                   if (isAlphToken(tokenId)) {
                     destination = {
                       address: recipient,
-                      attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '?',
+                      attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '0',
                       tokens: []
                     }
                   } else {
                     destination = {
                       address: recipient,
                       attoAlphAmount: DUST_AMOUNT,
-                      tokens: [{ id: tokenId as string, amount: BigInt(amount) }]
+                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, token.decimals) ?? '0' }]
                     }
                   }
 

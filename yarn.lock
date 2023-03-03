@@ -16,10 +16,10 @@
     jest "^28.1.0"
     prettier "^2.3.1"
 
-"@alephium/token-list@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@alephium/token-list/-/token-list-0.0.1.tgz#9fdfc6245fbf2848278361cced0ed9544eb41856"
-  integrity sha512-R+ov44btHANz2ETkSgg5HLuQRHxkALyayOI0j5rU1ly9BGwvl1HJTQHqDNNEXcOIVMcmIGW1b2ml7IicH69dqQ==
+"@alephium/token-list@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@alephium/token-list/-/token-list-0.0.3.tgz#b6f67830519522c72a8abfea8af488959c59d810"
+  integrity sha512-bfDZ51BBkyxr5IrEQgOiOd1zoT6a0pfvMDUwRRDBXPmQmbr51fHs2w44xh3CFRdRcaYFxHdVIAuGRmWhroU6cA==
   dependencies:
     eslint-config-prettier "^8.6.0"
     eslint-plugin-header "^3.1.1"
