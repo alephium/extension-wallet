@@ -85,6 +85,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     if (walletAccount === "USER_ABORTED") {
       throw Error("User aborted")
     }
+
     const { alephiumProviders } = window
     const alephium = alephiumProviders?.alephium
     if (!alephium) {
@@ -168,7 +169,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     this.#checkParams(params)
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    sendMessage({ type: "ALPH_SIGN_MESSAGE", data: {...params, networkId: this.connectedNetworkId, host: window.location.host } })
+    sendMessage({ type: "ALPH_SIGN_MESSAGE", data: { ...params, networkId: this.connectedNetworkId, host: window.location.host } })
     const { actionHash } = await waitForMessage("ALPH_SIGN_MESSAGE_RES", 1000)
 
     const resultP = Promise.race([
