@@ -19,7 +19,7 @@ import { useAddressBook } from "../../../services/addressBook"
 import { formatTruncatedAddress, formatLongString } from "../../../services/addresses"
 import { useAccountMetadata } from "../../accounts/accountMetadata.state"
 import { getAccountNameForAddress, getContactNameForAddress } from "../../accounts/PrettyAccountAddress"
-import { useTokensInNetwork } from "../../accountTokens/tokens.state"
+import { devnetToken, useTokensInNetwork } from "../../accountTokens/tokens.state"
 
 export interface TransactionActionRow {
   key: string
@@ -30,12 +30,24 @@ export interface TransactionAction {
   details: TransactionActionRow[]
 }
 
-function getTokensFromDestination(destination: Destination, tokensInNetwork: Token[]): TransactionActionRow[] {
-  return [{ key: 'ALPH', value: prettifyAttoAlphAmount(destination.attoAlphAmount) ?? '?' },
+function getTokensFromDestination(networkId: string, destination: Destination, tokensInNetwork: Token[]): TransactionActionRow[] {
+  return [{ key: 'Alephium', value: `${prettifyAttoAlphAmount(destination.attoAlphAmount)} ALPH` ?? '?' },
     ...(destination.tokens ?? []).map(token => {
       const matchedToken = tokensInNetwork.find(t => t.id === token.id)
-      return matchedToken ? { key: matchedToken.symbol, value: prettifyTokenAmount(token.amount, matchedToken.decimals) ?? '???'}
-        : { key: "?? token", value: token.amount.toString() }
+      if (matchedToken) {
+        return {
+          key: matchedToken.name,
+          value: `${prettifyTokenAmount(token.amount, matchedToken.decimals) ?? '???'} ${matchedToken.symbol}`
+        }
+      } else if (networkId === "devnet") {
+        const devToken = devnetToken({ id: token.id, networkId: networkId })
+        return {
+          key: devToken.name,
+          value: `${token.amount.toString()} ${devToken.symbol}`
+        }
+      } else {
+        return { key: "?? token", value: token.amount.toString() }
+      }
     })]
 }
 
@@ -71,7 +83,7 @@ export function useExtractActions(transaction: ReviewTransactionResult, networkI
         [addressName, found] = prettifyAddressName(destination.address, networkId, accountNames, contacts)
         return {
           header: { key: 'Send', value: found ? '' : formatTruncatedAddress(destination.address) },
-          details: [{ key: 'Recipient', value: addressName }, ...getTokensFromDestination(destination, tokensInNetwork)]
+          details: [{ key: 'To:', value: addressName }, ...getTokensFromDestination(networkId, destination, tokensInNetwork)]
         }
       })
     case 'DEPLOY_CONTRACT':

@@ -56,8 +56,26 @@ const tokenSelector = memoize(
 export const useTokensInNetwork = (networkId: string) =>
   useArrayStorage(tokenStore, networkIdSelector(networkId))
 
+export const devnetTokenSymbol = (baseToken: { id: string }): string => {
+  return baseToken.id.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase()
+}
+
+export const devnetToken = (baseToken: BaseToken): Token => {
+  const symbol = devnetTokenSymbol(baseToken)
+  return {
+    id: baseToken.id,
+    networkId: baseToken.networkId,
+    name: `Dev ${symbol}`,
+    symbol: symbol,
+    decimals: 0
+  }
+}
+
 export const useToken = (baseToken: BaseToken): Token | undefined => {
   const [token] = useArrayStorage(tokenStore, tokenSelector(baseToken))
+  if (token === undefined && baseToken.networkId === 'devnet') {
+    return devnetToken(baseToken)
+  }
   return token
 }
 
@@ -170,24 +188,15 @@ export const useTokens = (
         return
       }
 
-      const allTokens: Token[] = []
+      const allTokens: BaseToken[] = []
 
       const network = await getNetwork(selectedAccount.networkId)
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
       const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
 
-      for (const tokenId of tokenIds) {
-        if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
-          const symbol = networkId === 'devnet' ? tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase() : ""
-          const token = {
-            id: tokenId,
-            networkId: networkId,
-            name: `Dev ${symbol}`,
-            symbol: symbol,
-            decimals: 0
-          }
-
-          allTokens.push(token)
+        for (const tokenId of tokenIds) {
+          if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
+            allTokens.push({ id: tokenId, networkId: networkId })
         }
       }
 
@@ -205,7 +214,7 @@ export const useTokens = (
   )
 
   const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
-  const userTokens: Token[] = data || []
+  const userTokens: BaseToken[] = data || []
 
   for (const userToken of userTokens) {
     if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
@@ -213,7 +222,7 @@ export const useTokens = (
       if (foundIndex !== -1) {
         result.push([knownTokensInNetwork[foundIndex], foundIndex])
       } else if (account?.networkId === 'devnet') {
-        result.push([userToken, knownTokensInNetwork.length])
+        result.push([devnetToken(userToken), knownTokensInNetwork.length])
       }
     }
   }
