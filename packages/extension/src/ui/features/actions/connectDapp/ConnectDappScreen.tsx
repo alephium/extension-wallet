@@ -1,4 +1,4 @@
-import { groupOfAddress, KeyType } from "@alephium/web3"
+import { KeyType } from "@alephium/web3"
 import { Flex } from "@chakra-ui/react"
 import { L2 } from "@argent/ui"
 import { FC, useCallback, useMemo, useState } from "react"
@@ -206,6 +206,10 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   ...rest
 }) => {
   let initiallySelectedAccount = useSelectedAccount()
+  if (initiallySelectedAccount && !Wallet.checkAccount(initiallySelectedAccount, networkId, keyType, group)) {
+    initiallySelectedAccount = undefined
+  }
+
   const currentNetwork = useCurrentNetwork()
   const visibleAccounts = useAccountsOnNetwork({
     networkId: networkId || currentNetwork.id,
@@ -217,14 +221,8 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   })
   const foundAccount = visibleAccountsForGroup.length > 0
 
-  if (foundAccount) {
-    if (!initiallySelectedAccount) {
-      initiallySelectedAccount = visibleAccountsForGroup[0]
-    }
-
-    if (group !== undefined && groupOfAddress(initiallySelectedAccount.address) !== group) {
-      initiallySelectedAccount = visibleAccountsForGroup[0]
-    }
+  if (foundAccount && !initiallySelectedAccount) {
+    initiallySelectedAccount = visibleAccountsForGroup[0]
   }
 
   const [connectedAccount, setConnectedAccount] = useState<
