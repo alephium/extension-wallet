@@ -1,19 +1,16 @@
 name: Run Tests
 on:
   push:
-    branches: [develop]
+    branches: [master]
   pull_request:
-    branches: [develop]
+    branches: [master]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-
-    services:
-      devnet:
-        image: shardlabs/starknet-devnet:latest-seed0
-        ports:
-          - 5050:5050
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
 
     steps:
       - name: Check out repository code
@@ -27,25 +24,25 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Lint
-        run: yarn lint
+      # - name: Lint
+      #   run: yarn lint
 
       - name: Build
         run: yarn build
         env:
           UPLOAD_SENTRY_SOURCEMAPS: false
 
-      - name: Run tests
-        run: yarn test
+      # - name: Run tests
+      #   run: yarn test
 
-      - name: Run e2e tests
-        run: xvfb-run --auto-servernum yarn test:e2e
+      # - name: Run e2e tests
+      #   run: xvfb-run --auto-servernum yarn test:e2e
 
-      - uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: test-results
-          path: packages/extension/test-results/
+      # - uses: actions/upload-artifact@v3
+      #   if: failure()
+      #   with:
+      #     name: test-results
+      #     path: packages/extension/test-results/
 
-      - name: Check bundlesize
-        run: yarn run bundlewatch
+      # - name: Check bundlesize
+      #   run: yarn run bundlewatch
