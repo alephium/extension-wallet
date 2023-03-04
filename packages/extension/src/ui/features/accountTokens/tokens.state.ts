@@ -178,11 +178,12 @@ export const useTokens = (
 
       for (const tokenId of tokenIds) {
         if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
+          const symbol = networkId === 'devnet' ? tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase() : ""
           const token = {
             id: tokenId,
             networkId: networkId,
-            name: tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase(),
-            symbol: "",
+            name: `Dev ${symbol}`,
+            symbol: symbol,
             decimals: 0
           }
 
@@ -207,9 +208,13 @@ export const useTokens = (
   const userTokens: Token[] = data || []
 
   for (const userToken of userTokens) {
-    if (result.findIndex((t) => t.id == userToken.id) === -1) {
+    if (result.findIndex((t) => t.id === userToken.id) === -1) {
       const found = knownTokensInNetwork.find((token) => token.id == userToken.id)
-      !!found && result.push(found)
+      if (found) {
+        result.push(found)
+      } else if (account?.networkId === 'devnet') {
+        result.push(userToken)
+      }
     }
   }
 
