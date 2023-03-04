@@ -204,19 +204,19 @@ export const useTokens = (
     },
   )
 
-  const result = knownTokensInNetwork.filter((network) => network.showAlways)
+  const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
   const userTokens: Token[] = data || []
 
   for (const userToken of userTokens) {
-    if (result.findIndex((t) => t.id === userToken.id) === -1) {
-      const found = knownTokensInNetwork.find((token) => token.id == userToken.id)
-      if (found) {
-        result.push(found)
+    if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
+      const foundIndex = knownTokensInNetwork.findIndex((token) => token.id == userToken.id)
+      if (foundIndex !== -1) {
+        result.push([knownTokensInNetwork[foundIndex], foundIndex])
       } else if (account?.networkId === 'devnet') {
-        result.push(userToken)
+        result.push([userToken, knownTokensInNetwork.length])
       }
     }
   }
 
-  return result
+  return result.sort((a, b) => a[1] - b[1]).map(tuple => tuple[0])
 }
