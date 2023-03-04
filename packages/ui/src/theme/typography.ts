@@ -19,7 +19,7 @@ export const typography = {
     light: "300",
     normal: "400",
     semibold: "500",
-    bold: "600",
+    bold: "550",
     extrabold: "700",
   },
 

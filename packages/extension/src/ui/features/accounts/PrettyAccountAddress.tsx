@@ -12,7 +12,7 @@ import { TokenIcon } from "../accountTokens/TokenIcon"
 import { useAccountMetadata } from "./accountMetadata.state"
 import { getNetworkAccountImageUrl } from "./accounts.service"
 
-const getAccountNameForAddress = (
+export const getAccountNameForAddress = (
   accountAddress: string,
   networkId: string,
   accountNames?: Record<string, Record<string, string>>,
@@ -28,7 +28,7 @@ const getAccountNameForAddress = (
   }
 }
 
-const getContactNameForAddress = (
+export const getContactNameForAddress = (
   accountAddress: string,
   networkId: string,
   contacts?: AddressBookContact[],

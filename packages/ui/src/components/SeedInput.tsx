@@ -131,7 +131,7 @@ export const SeedInput: FC<SeedInputProps> = ({
               // split by space or newline regex
               const words = pasted.split(/\s+/).filter((s) => s)
 
-              if (words.length === length) {
+              if (words.length >= 12 && words.length <= 24) {
                 setSeedInput(words)
               }
             }}

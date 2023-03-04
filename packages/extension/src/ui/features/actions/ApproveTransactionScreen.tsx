@@ -117,14 +117,10 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         transaction={transaction}
       />
 
-      {
-        buildResult && !("error" in buildResult) && (
-          <TransactionsList
-            networkId={networkId}
-            transactionReview={buildResult}
-          />
-        )
-      }
+      <TransactionsList
+        networkId={networkId}
+        transactionReview={buildResult}
+      />
       <AccountNetworkInfo account={selectedAccount} />
     </ConfirmScreen >
   )

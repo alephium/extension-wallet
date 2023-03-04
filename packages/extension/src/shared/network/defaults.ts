@@ -29,4 +29,4 @@ export const defaultNetworks: Network[] = [
 
 export const defaultNetworkIds = defaultNetworks.map(network => network.id)
 
-export const defaultNetwork = defaultNetworks[2]
+export const defaultNetwork = defaultNetworks[0]

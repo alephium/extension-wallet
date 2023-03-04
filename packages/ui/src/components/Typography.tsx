@@ -31,6 +31,7 @@ export const typographyStyles = {
     fontSize: "base",
     lineHeight: 5,
     fontWeight: "bold",
+    color: "gray.50",
   },
 
   // paragraphs

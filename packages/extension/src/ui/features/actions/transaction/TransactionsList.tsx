@@ -1,18 +1,12 @@
-import { isArray } from "lodash-es"
-import { FC, useMemo } from "react"
-import { Call } from "starknet"
-import { ReviewTransactionResult, TransactionParams } from "../../../../shared/actionQueue/types"
+import { FC } from "react"
+import { ReviewTransactionResult } from "../../../../shared/actionQueue/types"
 
-import { Token } from "../../../../shared/token/type"
 import {
-  ApiTransactionReviewResponse,
   getDisplayWarnAndReasonForTransactionReview,
-  getTransactionReviewHasSwap,
 } from "../../../../shared/transactionReview.service"
 import { WarningIcon } from "../../../components/Icons/WarningIcon"
 import { TransactionActions } from "./TransactionActions"
 import { TransactionBanner } from "./TransactionBanner"
-import { TransactionsListSwap } from "./TransactionsListSwap"
 
 export interface ITransactionsList {
   networkId: string
@@ -22,6 +16,7 @@ export interface ITransactionsList {
 /** Renders one or more transactions with review if available */
 
 export const TransactionsList: FC<ITransactionsList> = ({
+  networkId,
   transactionReview
 }) => {
   const { warn, reason } =
@@ -35,7 +30,7 @@ export const TransactionsList: FC<ITransactionsList> = ({
           message={reason}
         />
       ) : (
-        <TransactionActions transaction={transactionReview} />
+        <TransactionActions networkId={networkId} transaction={transactionReview} />
       )}
     </>
   )

@@ -41,7 +41,7 @@ import { BrowserStorage, walletEncrypt, walletOpen } from './utils/walletStore'
 const isDev = process.env.NODE_ENV === "development"
 
 const CURRENT_BACKUP_VERSION = 1
-export const SESSION_DURATION = isDev ? 24 * 60 * 60 : 30 * 60 // 30 mins in prod, 24 hours in dev
+export const SESSION_DURATION = isDev ? 24 * 60 : 30 // 30 mins in prod, 24 hours in dev
 
 export const PROXY_CONTRACT_CLASS_HASHES = [
   "0x25ec026985a3bf9d0cc1fe17326b245dfdc3ff89b8fde106542a3ea56c5a918",
@@ -359,21 +359,23 @@ export class Wallet {
     }
   }
 
+  private sessionTimeoutListener = (alarm: browser.alarms.Alarm) => {
+    if (alarm.name === "session_timeout") {
+      return this.lock()
+    }
+  }
+
   private async setSession(secret: string, password: string) {
     await this.sessionStore.set({ secret, password })
 
-    browser.alarms.onAlarm.addListener(async (alarm) => {
-      if (alarm.name === "session_timeout") {
-        return this.lock()
-      }
-    })
-
-    const alarm = await browser.alarms.get("session_timeout")
-    if (alarm?.name !== "session_timeout") {
-      browser.alarms.create("session_timeout", {
-        delayInMinutes: SESSION_DURATION,
-      })
+    if (!browser.alarms.onAlarm.hasListener(this.sessionTimeoutListener)) {
+      browser.alarms.onAlarm.addListener(this.sessionTimeoutListener)
     }
+
+    await browser.alarms.clear("session_timeout")
+    browser.alarms.create("session_timeout", {
+      delayInMinutes: SESSION_DURATION,
+    })
   }
 
   public async importBackup(backup: string): Promise<void> {
