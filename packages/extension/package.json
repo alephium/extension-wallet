@@ -1,10 +1,10 @@
 {
   "name": "@alephium/extension",
-  "version": "0.6.0-rc.3",
+  "version": "0.6.0-rc.4",
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "@alephium/get-extension-wallet": "^0.6.0-rc.3",
+    "@alephium/get-extension-wallet": "^0.6.0-rc.4",
     "@alephium/token-list": "0.0.4",
     "@alephium/web3": "v0.6.0",
     "@alephium/web3-test": "v0.6.0",
@@ -78,8 +78,8 @@
     "push-release-branch": "git push --set-upstream origin release/v$npm_package_version --follow-tags"
   },
   "dependencies": {
-    "@argent/stack-router": "^0.6.0-rc.3",
-    "@argent/ui": "^0.6.0-rc.3",
+    "@argent/stack-router": "^0.6.0-rc.4",
+    "@argent/ui": "^0.6.0-rc.4",
     "@chakra-ui/icons": "^2.0.15",
     "@chakra-ui/react": "2.4.9",
     "@extend-chrome/messages": "^1.2.2",
