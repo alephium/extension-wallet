@@ -11,7 +11,6 @@ export const networkSchema: Schema<Network> = object()
   .shape({
     id: string().required().min(2).max(31),
     name: string().required().min(2).max(128),
-    chainId: number().required(),
     nodeUrl: string()
       .required()
       .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),

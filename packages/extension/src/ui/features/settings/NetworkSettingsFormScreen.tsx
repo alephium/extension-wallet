@@ -111,7 +111,7 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
         })}
       >
         <Wrapper>
-          <P>Here you can add your own custom network to Argent X.</P>
+          <P>Here you can add your own custom network.</P>
           <ControlledInputText
             autoFocus
             autoComplete="off"
@@ -128,15 +128,6 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
             name="id"
             type="text"
             disabled
-          />
-          <ControlledInputText
-            autoComplete="off"
-            control={control}
-            placeholder="Chain ID (e.g. SN_GOERLI)"
-            defaultValue="SN_GOERLI"
-            name="chainId"
-            type="text"
-            disabled={defaultNetwork.readonly}
           />
           <ControlledInputText
             autoComplete="off"
