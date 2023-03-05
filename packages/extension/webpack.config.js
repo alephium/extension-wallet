@@ -150,7 +150,31 @@ module.exports = {
           }),
         ],
         splitChunks: {
-          chunks: "async",
+          chunks(chunk) {
+            return chunk.name === 'main';
+          },
+          cacheGroups: {
+            tsxFiles: {
+              test: /\.tsx?$/,
+              priority: 0,
+              reuseExistingChunk: true
+            },
+            jsonFiles: {
+              test: /\.json$/,
+              priority: -5,
+              reuseExistingChunk: true
+            },
+            defaultVendors: {
+              test: /[\\/]node_modules[\\/]/,
+              priority: -10,
+              reuseExistingChunk: true,
+            },
+            default: {
+              minChunks: 2,
+              priority: -20,
+              reuseExistingChunk: true,
+            },
+          }
         },
       }
     : undefined,
