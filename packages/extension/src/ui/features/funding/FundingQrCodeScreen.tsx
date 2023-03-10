@@ -97,7 +97,6 @@ export const FundingQrCodeScreen: FC = () => {
  
   const onRequestToken = useCallback(async () => {
     if (account?.networkId === 'testnet') {
-      // TODO: improve UX based on response
       fetch('https://faucet.testnet.alephium.org/send', { method: 'POST', body: account?.address })
       .then(res =>{
         if (!res.ok) {
@@ -108,7 +107,6 @@ export const FundingQrCodeScreen: FC = () => {
         }
       })
     } else if (account?.networkId === 'devnet') {
-      web3.setCurrentNodeProvider(defaultNetworks[2]['nodeUrl'])
       const wallet = await testNodeWallet()
       const signerAddress = await (await wallet.getSelectedAccount()).address
       wallet.signAndSubmitTransferTx({ signerAddress: signerAddress, destinations: [{ address: account.address, attoAlphAmount: BigInt(1e21) }] })
@@ -120,7 +118,7 @@ export const FundingQrCodeScreen: FC = () => {
         setAlertDialogIsOpen(true)
       })
     }
-  }, [])
+  }, [account?.address, account?.networkId, navigate])
 
   return (
     <NavigationContainer

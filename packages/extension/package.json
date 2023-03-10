@@ -6,9 +6,9 @@
   "devDependencies": {
     "@alephium/get-extension-wallet": "^0.6.0-rc.5",
     "@alephium/token-list": "0.0.4",
-    "@alephium/web3": "v0.6.2",
-    "@alephium/web3-test": "v0.6.2",
-    "@alephium/web3-wallet": "v0.6.2",
+    "@alephium/web3": "v0.6.5",
+    "@alephium/web3-test": "v0.6.5",
+    "@alephium/web3-wallet": "v0.6.5",
     "@playwright/test": "^1.23.0",
     "@sentry/webpack-plugin": "^1.18.9",
     "@svgr/webpack": "^6.0.0",
