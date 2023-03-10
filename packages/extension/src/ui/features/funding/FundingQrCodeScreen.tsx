@@ -107,16 +107,16 @@ export const FundingQrCodeScreen: FC = () => {
         }
       })
     } else if (account?.networkId === 'devnet') {
-      const wallet = await testNodeWallet()
-      const signerAddress = await (await wallet.getSelectedAccount()).address
-      wallet.signAndSubmitTransferTx({ signerAddress: signerAddress, destinations: [{ address: account.address, attoAlphAmount: BigInt(1e21) }] })
-      .then(() => {
+      try {
+        const wallet = await testNodeWallet()
+        const signerAddress = (await wallet.getSelectedAccount()).address
+        await wallet.signAndSubmitTransferTx({ signerAddress: signerAddress, destinations: [{ address: account.address, attoAlphAmount: BigInt(1e21) }] })
         navigate(routes.accountTokens())
-      })
-      .catch(() =>{
+      } catch (error) {
+        console.error(`Failed in request token`, error)
         setAlterMessageIndex(1)
         setAlertDialogIsOpen(true)
-      })
+      }
     }
   }, [account?.address, account?.networkId, navigate])
 
