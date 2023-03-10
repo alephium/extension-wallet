@@ -1,4 +1,4 @@
-import { Destination, prettifyAttoAlphAmount, prettifyTokenAmount } from "@alephium/web3"
+import { Token as Web3Token, Number256, prettifyAttoAlphAmount, prettifyTokenAmount } from "@alephium/web3"
 import { CopyTooltip, P4 } from "@argent/ui"
 import {
   Accordion,
@@ -30,9 +30,8 @@ export interface TransactionAction {
   details: TransactionActionRow[]
 }
 
-function getTokensFromDestination(networkId: string, destination: Destination, tokensInNetwork: Token[]): TransactionActionRow[] {
-  return [{ key: 'Alephium', value: `${prettifyAttoAlphAmount(destination.attoAlphAmount)} ALPH` ?? '?' },
-    ...(destination.tokens ?? []).map(token => {
+function getActionsFromAmounts(networkId: string, amounts: { attoAlphAmount?: Number256, tokens?: Web3Token[] }, tokensInNetwork: Token[]): TransactionActionRow[] {
+  const tokenActions = (amounts.tokens ?? []).map(token => {
       const matchedToken = tokensInNetwork.find(t => t.id === token.id)
       if (matchedToken) {
         return {
@@ -48,7 +47,10 @@ function getTokensFromDestination(networkId: string, destination: Destination, t
       } else {
         return { key: "?? token", value: token.amount.toString() }
       }
-    })]
+    })
+  return amounts.attoAlphAmount !== undefined
+    ? [{ key: 'Alephium', value: `${prettifyAttoAlphAmount(amounts.attoAlphAmount)} ALPH` ?? '?' }, ...tokenActions]
+    : tokenActions
 }
 
 function prettifyAddressName(address: string, networkId: string, accountNames: Record<string, Record<string, string>>, contacts: AddressBookContact[]): [string, boolean] {
@@ -83,7 +85,7 @@ export function useExtractActions(transaction: ReviewTransactionResult, networkI
         [addressName, found] = prettifyAddressName(destination.address, networkId, accountNames, contacts)
         return {
           header: { key: 'Send', value: found ? '' : formatTruncatedAddress(destination.address) },
-          details: [{ key: 'To:', value: addressName }, ...getTokensFromDestination(networkId, destination, tokensInNetwork)]
+          details: [{ key: 'To:', value: addressName }, ...getActionsFromAmounts(networkId, destination, tokensInNetwork)]
         }
       })
     case 'DEPLOY_CONTRACT':
@@ -111,7 +113,8 @@ export function useExtractActions(transaction: ReviewTransactionResult, networkI
           {
             key: 'Group',
             value: `${transaction.result.groupIndex}`
-          }
+          },
+          ...getActionsFromAmounts(networkId, transaction.params, tokensInNetwork)
         ]
       }]
     case 'UNSIGNED_TX':
