@@ -1,4 +1,4 @@
-import { Address, Number256 } from "@alephium/web3"
+import { Address, Number256, Token as Web3Token } from "@alephium/web3"
 import { KnownDapp } from "../../../../shared/knownDapps"
 import { Token } from "../../../../shared/token/type"
 
@@ -149,6 +149,8 @@ export interface ExecuteScriptTransformedAlephiumTransaction {
   type: "EXECUTE_SCRIPT"
   bytecode: string
   host?: string
+  attoAlphAmount?: Number256
+  tokens?: Web3Token[]
 }
 
 export interface UnsignedTxTransformedAlephiumTransaction {

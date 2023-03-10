@@ -1,5 +1,5 @@
-import { Destination, number256ToBigint, SignTransferTxParams } from "@alephium/web3"
-import { ReviewTransactionResult, TransactionPayload } from "../../../../../shared/actionQueue/types"
+import { Destination, number256ToBigint } from "@alephium/web3"
+import { ReviewTransactionResult } from "../../../../../shared/actionQueue/types"
 import { AlephiumExplorerTransaction } from "../../../../../shared/explorer/type"
 import { Token } from "../../../../../shared/token/type"
 import { Transaction } from "../../../../../shared/transactions"
@@ -95,8 +95,12 @@ export const transformTransaction = ({
   }
 }
 
-export function showTokenId(tokenId: string): string {
-  return tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase()
+export function showTokenId(networkId: string, tokenId: string): string {
+  if (networkId === 'devnet') {
+    return tokenId.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase()
+  } else {
+    return '???'
+  }
 }
 
 export function transformReviewedTransaction(transaction: ReviewTransactionResult): TransformedAlephiumTransaction {
@@ -121,7 +125,9 @@ export function transformReviewedTransaction(transaction: ReviewTransactionResul
       return {
         type: 'EXECUTE_SCRIPT',
         bytecode: transaction.params.bytecode,
-        host: transaction.params.host
+        host: transaction.params.host,
+        attoAlphAmount: transaction.params.attoAlphAmount,
+        tokens: transaction.params.tokens
       }
     case 'UNSIGNED_TX':
       return {

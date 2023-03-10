@@ -45,7 +45,7 @@ function getActionsFromAmounts(networkId: string, amounts: { attoAlphAmount?: Nu
           value: `${token.amount.toString()} ${devToken.symbol}`
         }
       } else {
-        return { key: "?? token", value: token.amount.toString() }
+        return { key: "Token ???", value: token.amount.toString() }
       }
     })
   return amounts.attoAlphAmount !== undefined
