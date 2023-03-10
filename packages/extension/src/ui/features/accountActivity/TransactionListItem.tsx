@@ -17,13 +17,12 @@ import {
   isTokenMintTransaction,
   isTokenTransferTransaction,
 } from "./transform/is"
-import { getTransferType, showTokenId } from "./transform/transaction/transformTransaction"
 import { TransformedAlephiumTransaction, TransformedTransaction } from "./transform/type"
 import { NFTImage } from "./ui/NFTImage"
 import { SwapAccessory } from "./ui/SwapAccessory"
 import { SwapTransactionIcon } from "./ui/SwapTransactionIcon"
 import { ReviewedTransactionIcon, TransactionIcon } from "./ui/TransactionIcon"
-import { ReviewedTransferAccessory, TokenAmount, TransferAccessory } from "./ui/TransferAccessory"
+import { ReviewedScriptTxAccessory, ReviewedTransferAccessory, TokenAmount, TransferAccessory } from "./ui/TransferAccessory"
 
 export interface TransactionListItemProps {
   transactionTransformed: TransformedTransaction
@@ -226,7 +225,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
 
   const accessory = useMemo(() => {
     if (isTransfer) {
-      return <ReviewedTransferAccessory amountChanges={transactionTransformed.amountChanges} />
+      return <ReviewedTransferAccessory networkId={networkId} amountChanges={transactionTransformed.amountChanges} />
     }
     if (isDeployContract) {
       const mintAmount = transactionTransformed.issueTokenAmount
@@ -236,13 +235,13 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
       return null
     }
     if (isExecuteScript) {
-      return null
+      return <ReviewedScriptTxAccessory networkId={networkId} transaction={transactionTransformed} />
     }
     if (isUnsignedTx) {
       return null
     }
     return null
-  }, [isTransfer, isDeployContract, isExecuteScript, isUnsignedTx])
+  }, [isTransfer, isDeployContract, isExecuteScript, isUnsignedTx, transactionTransformed, networkId])
 
   const icon = useMemo(() => {
     return <ReviewedTransactionIcon transaction={transactionTransformed} size={9} />

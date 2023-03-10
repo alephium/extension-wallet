@@ -1,6 +1,5 @@
 import { HeaderCell } from "@argent/ui"
 import { FC, Fragment, useCallback } from "react"
-import { useNavigate } from "react-router-dom"
 
 import { AlephiumExplorerTransaction } from "../../../shared/explorer/type"
 import { Token } from "../../../shared/token/type"
@@ -30,7 +29,6 @@ export const AccountActivity: FC<AccountActivityProps> = ({
   loadMoreHashes = [],
   onLoadMore,
 }) => {
-  const navigate = useNavigate()
   const network = useCurrentNetwork()
 
   const showTx = useCallback((hash: string) => {

@@ -89,7 +89,7 @@ export const SendScreen: FC = () => {
 
   const tokensInNetwork = useTokens(account)
 
-  const tokenList = useCustomTokenList(tokensInNetwork, currentQueryValue)
+  const tokenList = useCustomTokenList(tokensInNetwork, account?.networkId, currentQueryValue)
 
   const collectibles = useCollections(account)
 
@@ -139,6 +139,7 @@ export const SendScreen: FC = () => {
 
 const useCustomTokenList = (
   tokenDetails: TokenDetailsWithBalance[],
+  networkId?: string,
   query?: string,
 ) => {
   return useMemo(() => {
@@ -151,7 +152,7 @@ const useCustomTokenList = (
     const result = tokenDetails.filter(
       (token) =>
         token.name.toLowerCase().includes(queryLowercase) ||
-        showTokenId(token.id).toLowerCase().includes(queryLowercase) ||
+        showTokenId(networkId ?? 'mainnet', token.id).toLowerCase().includes(queryLowercase) ||
         token.symbol.toLowerCase().includes(queryLowercase),
     )
     return result

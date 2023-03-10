@@ -56,11 +56,13 @@ export const useDisplayTokenAmountAndCurrencyValue = ({
 }
 
 export interface IUseDisplayTokensAmountAndCurrencyValue {
+  networkId: string,
   amounts: { id: string, amount: Number256 }[],
   currencySymbol?: string
 }
 
 export const useDisplayTokensAmountAndCurrencyValue = ({
+  networkId,
   amounts,
   currencySymbol = "$",
 }: IUseDisplayTokensAmountAndCurrencyValue) => {
@@ -76,7 +78,7 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
     if (token === undefined || naiveAmount === undefined) {
       return {
         displayAmount: naiveAmount,
-        displayTokenId: showTokenId(amount.id),
+        displayTokenId: showTokenId(networkId, amount.id),
         displayValue: null,
       }
     }
@@ -86,13 +88,13 @@ export const useDisplayTokensAmountAndCurrencyValue = ({
     if (displayAmount !== undefined) {
       return {
         displayAmount: displayAmount,
-        displayTokenId: token.symbol ?? showTokenId(token.id),
+        displayTokenId: token.symbol ?? showTokenId(networkId, token.id),
         displayValue,
       }
     } else {
       return {
         displayAmount: naiveAmount,
-        displayTokenId: token.symbol ?? showTokenId(token.id),
+        displayTokenId: token.symbol ?? showTokenId(networkId, token.id),
         displayValue: null
       }
     }

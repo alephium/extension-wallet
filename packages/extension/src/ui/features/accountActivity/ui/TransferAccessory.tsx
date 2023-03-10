@@ -6,6 +6,7 @@ import { FC, useMemo } from "react"
 import { useDisplayTokenAmountAndCurrencyValue, useDisplayTokensAmountAndCurrencyValue } from "../../accountTokens/useDisplayTokenAmountAndCurrencyValue"
 import {
   AmountChanges,
+  ExecuteScriptTransformedAlephiumTransaction,
   TokenApproveTransaction,
   TokenMintTransaction,
   TokenTransferTransaction,
@@ -81,10 +82,12 @@ export const TokenAmount = ({
 }
 
 export interface ReviewedTransferAccessoryProps {
+  networkId: string
   amountChanges: AmountChanges
 }
 
 export const ReviewedTransferAccessory: FC<ReviewedTransferAccessoryProps> = ({
+  networkId,
   amountChanges,
 }) => {
   const amounts = useMemo(() => {
@@ -93,11 +96,38 @@ export const ReviewedTransferAccessory: FC<ReviewedTransferAccessoryProps> = ({
     Object.entries(amountChanges.tokens).forEach(token => result.push({ id: token[0], amount: token[1] }))
     return result
   }, [amountChanges])
-  const displayAmounts = useDisplayTokensAmountAndCurrencyValue({ amounts })
+  const displayAmounts = useDisplayTokensAmountAndCurrencyValue({ networkId, amounts })
   return (
     <Flex direction={"column"} overflow="hidden" alignContent="flex-end">
       {displayAmounts.map((amount, index) =>
         <TokenAmount key={index} amount={amount.displayAmount} symbol={amount.displayTokenId} />
+      )}
+    </Flex>
+  )
+}
+
+export const ReviewedScriptTxAccessory: FC<{ networkId: string, transaction: ExecuteScriptTransformedAlephiumTransaction }> = ({
+  networkId,
+  transaction,
+}) => {
+  const amounts = useMemo(() => {
+    const result: { id: string, amount: Number256 }[] = []
+    if (transaction.attoAlphAmount !== undefined) {
+      result.push({ id: ALPH_TOKEN_ID, amount: transaction.attoAlphAmount })
+    }
+    transaction.tokens?.forEach(token => result.push(token))
+    return result
+  }, [transaction])
+  const displayAmounts = useDisplayTokensAmountAndCurrencyValue({ networkId, amounts })
+
+  if (displayAmounts.length === 0) {
+    return null
+  }
+
+  return (
+    <Flex direction={"column"} overflow="hidden" alignContent="flex-end">
+      {displayAmounts.map((amount, index) =>
+        <TokenAmount key={index} amount={`\u2713 ${amount.displayAmount}`} symbol={amount.displayTokenId} />
       )}
     </Flex>
   )
