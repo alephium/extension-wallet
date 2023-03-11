@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0-rc.2",
+  "version": "0.6.0",
   "private": true,
   "name": "alephium-browser-extension-wallet",
   "repository": "github:alephium/extension-wallet",
