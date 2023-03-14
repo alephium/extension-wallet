@@ -69,7 +69,7 @@
     "test:watch": "vitest",
     "pretest:e2e": "playwright install chromium && ([ -d dist ] || yarn build)",
     "test:e2e": "playwright test",
-    "version": "yarn run change-to-release-branch && yarn run sync-manifest-version && yarn run commit-version-changes && yarn run push-release-branch",
+    "version": "yarn run sync-manifest-version && yarn run commit-version-changes",
     "change-to-release-branch": "git checkout -b release/v$npm_package_version",
     "sync-manifest-version": "concurrently \"yarn sync-manifest-version:v2\" \"yarn sync-manifest-version:v3\"",
     "sync-manifest-version:v2": "node -p \"JSON.stringify({...require('./manifest/v2.json'), version: '$npm_package_version'}, null, 2)\" > ./manifest/v2.temp.json && prettier --write ./manifest/v2.temp.json && mv ./manifest/v2.temp.json ./manifest/v2.json",
