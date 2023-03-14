@@ -51,7 +51,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "@alephium/web3": "v0.6.6",
+    "@alephium/web3": "^0.7.0",
     "bowser": "^2.11.0"
   }
 }
