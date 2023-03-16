@@ -57,14 +57,5 @@ export const isValidAddress = (address: string) =>
   addressSchema.isValidSync(address)
 
 export const isEqualAddress = (a: string, b: string) => {
-  try {
-    if (a === b) {
-      return true
-    } else {
-      return number.hexToDecimalString(a) === number.hexToDecimalString(b)
-    }
-  } catch {
-    // ignore parsing error
-  }
-  return false
+  return a === b
 }
