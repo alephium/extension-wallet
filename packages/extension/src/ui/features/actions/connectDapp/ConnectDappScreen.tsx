@@ -306,7 +306,11 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
           </>
         ) : (
           <>
-            <WarningText>No matched account found, please create the account first</WarningText>
+            <WarningText>No matched account found! Please create an account for: 
+              {group !== undefined && <Label text={`Group: ${group}`}/>}
+              {group !== undefined && networkId !== undefined && ' and '}
+              {networkId !== undefined && <Label text={`${networkId}`}/>}
+            </WarningText>
             <HR />
           </>
         )

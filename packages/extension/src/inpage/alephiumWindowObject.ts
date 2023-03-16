@@ -22,6 +22,8 @@ import { AlephiumWindowObject, EnableOptions } from "@alephium/get-extension-wal
 import { TransactionParams } from "../shared/actionQueue/types"
 
 const VERSION = `${process.env.VERSION}`
+const USER_ACTION_TIMEOUT = 10 * 60 * 1000
+const USER_ACTION_TIMEOUT_LONGER = 11 * 60 * 1000
 
 // window.ethereum like
 export const alephiumWindowObject: AlephiumWindowObject = new (class extends AlephiumWindowObject {
@@ -65,8 +67,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     this.#checkTabFocused()
 
     const walletAccountP = Promise.race([
-      waitForMessage("CONNECT_DAPP_RES", 10 * 60 * 1000),
-      waitForMessage("REJECT_PREAUTHORIZATION", 10 * 60 * 1000).then(
+      waitForMessage("CONNECT_DAPP_RES", USER_ACTION_TIMEOUT),
+      waitForMessage("REJECT_PREAUTHORIZATION", USER_ACTION_TIMEOUT).then(
         () => "USER_ABORTED" as const,
       ),
     ])
@@ -170,16 +172,16 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     sendMessage({ type: "ALPH_SIGN_MESSAGE", data: { ...params, networkId: this.connectedNetworkId, host: window.location.host } })
-    const { actionHash } = await waitForMessage("ALPH_SIGN_MESSAGE_RES", 1000)
+    const { actionHash } = await waitForMessage("ALPH_SIGN_MESSAGE_RES", USER_ACTION_TIMEOUT)
 
     const resultP = Promise.race([
       waitForMessage(
         "SIGNATURE_SUCCESS",
-        11 * 60 * 1000,
+        USER_ACTION_TIMEOUT_LONGER,
       ),
       waitForMessage(
         "SIGNATURE_FAILURE",
-        10 * 60 * 1000,
+        USER_ACTION_TIMEOUT,
         (x) => x.data.actionHash === actionHash,
       )
         .then(() => "error" as const)
@@ -240,19 +242,19 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     const data = dataBuilder(params, window.location.host, this.#connectedNetworkId!, this.connectedAccount!.keyType)
 
     sendMessage({ type: 'ALPH_EXECUTE_TRANSACTION', data })
-    const { actionHash } = await waitForMessage('ALPH_EXECUTE_TRANSACTION_RES', 1000)
+    const { actionHash } = await waitForMessage('ALPH_EXECUTE_TRANSACTION_RES', USER_ACTION_TIMEOUT)
 
     sendMessage({ type: "ALPH_OPEN_UI" })
 
     const result = await Promise.race([
       waitForMessage(
         "TRANSACTION_SUBMITTED",
-        11 * 60 * 1000,
+        USER_ACTION_TIMEOUT_LONGER,
         (x) => x.data.actionHash === actionHash,
       ),
       waitForMessage(
         "TRANSACTION_FAILED",
-        10 * 60 * 1000,
+        USER_ACTION_TIMEOUT,
         (x) => x.data.actionHash === actionHash,
       )
         .then(() => "error" as const)
