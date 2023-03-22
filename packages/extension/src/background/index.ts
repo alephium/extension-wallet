@@ -18,6 +18,7 @@ import {
   sendMessageToActiveTabsAndUi,
   sendMessageToUi,
 } from "./activeTabs"
+import { setTransactionTrackerHistoryAlarm, setTransactionTrackerUpdateAlarm } from "./alarms"
 import {
   BackgroundService,
   HandleMessage,
@@ -35,12 +36,8 @@ import { transactionTracker } from "./transactions/tracking"
 import { handleTransactionMessage } from "./transactions/transactionMessaging"
 import { Wallet, sessionStore } from "./wallet"
 
-browser.alarms.create("core:transactionTracker:history", {
-  periodInMinutes: 5, // fetch history transactions every 5 minutes from voyager
-})
-browser.alarms.create("core:transactionTracker:update", {
-  periodInMinutes: 1, // fetch transaction updates of existing transactions every minute from onchain
-})
+setTransactionTrackerHistoryAlarm()
+setTransactionTrackerUpdateAlarm()
 browser.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === "core:transactionTracker:history") {
     console.info("~> fetching transaction history")

@@ -6,13 +6,11 @@ import { Network } from "../../../shared/network"
 import { Token } from "../../../shared/token/type"
 import { Transaction } from "../../../shared/transactions"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
-import { useAppState } from "../../app.state"
-import { openBlockExplorerTransaction, openExplorerTransaction } from "../../services/blockExplorer.service"
+import { openExplorerTransaction } from "../../services/blockExplorer.service"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { useTokensWithBalance } from "../accountTokens/tokens.state"
-import { useCurrentNetwork, useNetwork } from "../networks/useNetworks"
+import { useCurrentNetwork } from "../networks/useNetworks"
 import { ReviewedTransactionListItem, TransactionListItem } from "./TransactionListItem"
-import { transformTransaction } from "./transform"
 import { transformReviewedTransaction } from "./transform/transaction/transformTransaction"
 
 interface PendingTransactionsContainerProps {
@@ -24,7 +22,6 @@ export const PendingTransactionsContainer: FC<
 > = ({ account }) => {
   const network = useCurrentNetwork()
   const { pendingTransactions } = useAccountTransactions(account)
-  const { switcherNetworkId } = useAppState()
   const tokensByNetwork = useTokensWithBalance(account)
 
   return (

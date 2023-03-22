@@ -24,13 +24,14 @@ export const notifyAboutCompletedTransactions: TransactionUpdateListener =
       if (
         ifWithinTenMins &&
         (SUCCESS_STATUSES.includes(status) || status === "REJECTED") &&
-        !(await hasShownNotification(hash))
+        !(await hasShownNotification(hash + status))
       ) {
-        addToAlreadyShown(hash)
+        addToAlreadyShown(hash + status)
 
         if (!account.hidden) {
           await decrementTransactionsBeforeReview()
-          sentTransactionNotification(hash, status, meta)
+          // Make sure the id is different for mempol tx and onchain tx
+          sentTransactionNotification(hash + (status === "ACCEPTED_ON_CHAIN" ? ' ' : ''), status, meta)
         }
       }
     }
