@@ -9,7 +9,7 @@ import { addNetwork, getNetworks } from "../shared/network"
 import { preAuthorize } from "../shared/preAuthorizations"
 import { isEqualWalletAddress, withNetwork } from "../shared/wallet.service"
 import { assertNever } from "../ui/services/assertNever"
-import { refreshTransactionTrackerUpdate } from "./alarms"
+import { refreshTransactionTrackerUpdateAlarm } from "./alarms"
 import { analytics } from "./analytics"
 import { BackgroundService } from "./background"
 import { openUi } from "./openUi"
@@ -53,7 +53,7 @@ export const handleActionApproval = async (
           transaction.params.networkId,
         )
 
-        await refreshTransactionTrackerUpdate()
+        await refreshTransactionTrackerUpdateAlarm()
 
         return {
           type: "TRANSACTION_SUBMITTED",

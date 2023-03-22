@@ -13,7 +13,7 @@ export function setTransactionTrackerHistoryAlarm() {
 }
 
 const transactionTrackerUpdateAlarm = "core:transactionTracker:update"
-export async function refreshTransactionTrackerUpdate() {
+export async function refreshTransactionTrackerUpdateAlarm() {
   await browser.alarms.clear(transactionTrackerUpdateAlarm)
   setTransactionTrackerUpdateAlarm()
 }
