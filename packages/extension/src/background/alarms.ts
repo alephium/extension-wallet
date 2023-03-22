@@ -19,7 +19,7 @@ export async function refreshTransactionTrackerUpdate() {
 }
 export function setTransactionTrackerUpdateAlarm() {
   browser.alarms.create(transactionTrackerUpdateAlarm, {
-    delayInMinutes: 0.01,
-    periodInMinutes: 1, // fetch transaction updates of existing transactions every minute from onchain
+    delayInMinutes: 0.05,
+    periodInMinutes: 0.5, // fetch transaction updates of existing transactions every half minute from onchain
   })
 }
