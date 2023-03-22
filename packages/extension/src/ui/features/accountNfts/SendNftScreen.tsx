@@ -1,6 +1,6 @@
+import { binToHex, contractIdFromAddress } from "@alephium/web3"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
-import { BigNumber } from "ethers"
-import { FC, lazy, useCallback, useMemo, useRef, useState } from "react"
+import { FC, useCallback, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
@@ -25,9 +25,6 @@ import {
   isValidAddress,
   normalizeAddress,
 } from "../../services/addresses"
-import {
-  sendTransferTransaction,
-} from "../../services/transactions"
 import { useOnClickOutside } from "../../services/useOnClickOutside"
 import { H3, H5 } from "../../theme/Typography"
 import { Account } from "../accounts/Account"
@@ -50,9 +47,7 @@ import {
 import { TokenMenuDeprecated } from "../accountTokens/TokenMenuDeprecated"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { useYupValidationResolver } from "../settings/useYupValidationResolver"
-import { useNfts } from "./useNfts"
-
-const LazyNftModelViewer = lazy(() => import("./NftModelViewer"))
+import { useCollection } from "./useCollections"
 
 export const NftImageContainer = styled.div`
   width: 96px;
@@ -87,271 +82,250 @@ export const SendNftSchema: Schema<SendNftInput> = object().required().shape({
   recipient: addressSchema,
 })
 
-// export const SendNftScreen: FC = () => {
-//   const navigate = useNavigate()
-//   const { contractAddress, tokenId } = useParams()
-//   const account = useSelectedAccount()
+export const SendNftScreen: FC = () => {
+  const navigate = useNavigate()
+  const { contractAddress, tokenId } = useParams()
+  const account = useSelectedAccount()
+  const network = useCurrentNetwork()
 
-//   const { nfts = [] } = useNfts(account)
+  const { collection } = useCollection(
+    tokenId && [tokenId] || [],
+    network,
+    contractAddress && binToHex(contractIdFromAddress(contractAddress)),
+    account
+  )
 
-//   const nft = nfts.find(
-//     ({ contract_address, token_id }) =>
-//       contract_address === contractAddress && token_id === tokenId,
-//   )
+  const nft = collection && collection.nfts.find(
+    ({ collectionId, id }) =>
+      collectionId === contractAddress && id === tokenId,
+  )
 
-//   const resolver = useYupValidationResolver(SendNftSchema)
+  const resolver = useYupValidationResolver(SendNftSchema)
 
-//   const { id: currentNetworkId } = useCurrentNetwork()
-//   const [addressBookRecipient, setAddressBookRecipient] = useState<
-//     Account | AddressBookContact
-//   >()
+  const { id: currentNetworkId } = useCurrentNetwork()
+  const [addressBookRecipient, setAddressBookRecipient] = useState<
+    Account | AddressBookContact
+  >()
 
-//   const { accountNames } = useAccountMetadata()
-//   const [bottomSheetOpen, setBottomSheetOpen] = useState(false)
+  const { accountNames } = useAccountMetadata()
+  const [bottomSheetOpen, setBottomSheetOpen] = useState(false)
 
-//   const accountName = useMemo(
-//     () =>
-//       addressBookRecipient
-//         ? "name" in addressBookRecipient
-//           ? addressBookRecipient.name
-//           : getAccountName(addressBookRecipient, accountNames)
-//         : undefined,
-//     [accountNames, addressBookRecipient],
-//   )
+  const accountName = useMemo(
+    () =>
+      addressBookRecipient
+        ? "name" in addressBookRecipient
+          ? addressBookRecipient.name
+          : getAccountName(addressBookRecipient, accountNames)
+        : undefined,
+    [accountNames, addressBookRecipient],
+  )
 
-//   const {
-//     handleSubmit,
-//     formState: { errors, isDirty, isSubmitting, submitCount },
-//     getFieldState,
-//     control,
-//     setValue,
-//     watch,
-//   } = useForm<SendNftInput>({
-//     defaultValues: {
-//       recipient: "",
-//     },
-//     resolver,
-//   })
+  const {
+    handleSubmit,
+    formState: { errors, isDirty, isSubmitting, submitCount },
+    getFieldState,
+    control,
+    setValue,
+    watch,
+  } = useForm<SendNftInput>({
+    defaultValues: {
+      recipient: "",
+    },
+    resolver,
+  })
 
-//   const formValues = watch()
-//   const inputRecipient = formValues.recipient
+  const formValues = watch()
+  const inputRecipient = formValues.recipient
 
-//   const validateStarknetAddress = useCallback(
-//     (addr: string) => isValidAddress(addr),
-//     [],
-//   )
+  const validateStarknetAddress = useCallback(
+    (addr: string) => isValidAddress(addr),
+    [],
+  )
 
-//   const validRecipientAddress =
-//     inputRecipient && !getFieldState("recipient").error
+  const validRecipientAddress =
+    inputRecipient && !getFieldState("recipient").error
 
-//   const [addressBookOpen, setAddressBookOpen] = useState(false)
+  const [addressBookOpen, setAddressBookOpen] = useState(false)
 
-//   const ref = useRef<HTMLDivElement>(null)
-//   useOnClickOutside(ref, () => setAddressBookOpen(false))
+  const ref = useRef<HTMLDivElement>(null)
+  useOnClickOutside(ref, () => setAddressBookOpen(false))
 
-//   const addressBook = useAddressBook(account?.networkId || currentNetworkId)
+  const addressBook = useAddressBook(account?.networkId || currentNetworkId)
 
-//   const recipientInAddressBook = useMemo(
-//     () =>
-//       // Check if inputRecipient is in Contacts or userAccounts
-//       [...addressBook.contacts, ...addressBook.userAccounts].some((acc) =>
-//         isEqualAddress(acc.address, inputRecipient),
-//       ),
-//     [addressBook.contacts, addressBook.userAccounts, inputRecipient],
-//   )
+  const recipientInAddressBook = useMemo(
+    () =>
+      // Check if inputRecipient is in Contacts or userAccounts
+      [...addressBook.contacts, ...addressBook.userAccounts].some((acc) =>
+        isEqualAddress(acc.address, inputRecipient),
+      ),
+    [addressBook.contacts, addressBook.userAccounts, inputRecipient],
+  )
 
-//   const showSaveAddressButton = validRecipientAddress && !recipientInAddressBook
+  const showSaveAddressButton = validRecipientAddress && !recipientInAddressBook
 
-//   if (!account || !nft || !contractAddress || !tokenId) {
-//     return <Navigate to={routes.accounts()} />
-//   }
+  if (!account || !nft || !contractAddress || !tokenId) {
+    return <Navigate to={routes.accounts()} />
+  }
 
-//   const disableSubmit = isSubmitting || (submitCount > 0 && !isDirty)
+  const disableSubmit = isSubmitting || (submitCount > 0 && !isDirty)
 
-//   const onSubmit = async ({ recipient }: SendNftInput) => {
-//     if (nft.contract.schema === "ERC721") {
-//       sendTransaction({
-//         to: contractAddress,
-//         method: "transferFrom",
-//         calldata: {
-//           from_: account.address,
-//           to: recipient,
-//           tokenId: getUint256CalldataFromBN(BigNumber.from(tokenId)), // OZ specs need a uint256 as tokenId
-//         },
-//       })
-//     } else {
-//       sendTransaction({
-//         to: contractAddress,
-//         method: "safeTransferFrom",
-//         calldata: {
-//           from_: account.address,
-//           to: recipient,
-//           tokenId: getUint256CalldataFromBN(BigNumber.from(tokenId)),
-//           amount: getUint256CalldataFromBN(BigNumber.from(1)),
-//           data_len: "0",
-//         },
-//       })
-//     }
+  const onSubmit = async ({ recipient }: SendNftInput) => {
+    console.log("on submit")
+    navigate(routes.accountActivity(), { replace: true })
+  }
 
-//     navigate(routes.accountActivity(), { replace: true })
-//   }
+  const handleAddressSelect = (account?: Account | AddressBookContact) => {
+    if (!account) {
+      return
+    }
 
-//   const handleAddressSelect = (account?: Account | AddressBookContact) => {
-//     if (!account) {
-//       return
-//     }
+    setAddressBookRecipient(account)
+    setValue("recipient", normalizeAddress(account.address))
+    setAddressBookOpen(false)
+  }
 
-//     setAddressBookRecipient(account)
-//     setValue("recipient", normalizeAddress(account.address))
-//     setAddressBookOpen(false)
-//   }
+  const resetAddressBookRecipient = () => {
+    setAddressBookRecipient(undefined)
+    setValue("recipient", "")
+  }
 
-//   const resetAddressBookRecipient = () => {
-//     setAddressBookRecipient(undefined)
-//     setValue("recipient", "")
-//   }
+  const handleSaveAddress = (savedContact: AddressBookContact) => {
+    handleAddressSelect(savedContact)
 
-//   const handleSaveAddress = (savedContact: AddressBookContact) => {
-//     handleAddressSelect(savedContact)
+    setBottomSheetOpen(false)
+  }
 
-//     setBottomSheetOpen(false)
-//   }
+  return (
+    <>
+      <AddContactBottomSheet
+        open={bottomSheetOpen}
+        onSave={handleSaveAddress}
+        onCancel={() => setBottomSheetOpen(false)}
+        recipientAddress={inputRecipient}
+      />
+      <NavigationContainer
+        leftButton={<BarBackButton />}
+        rightButton={
+          <TokenMenuDeprecated tokenId={nft.id} />
+        }
+        scrollContent={nft.metadata.name}
+      >
+        <>
+          <ColumnCenter>
+            <H3>{nft.metadata.name}</H3>
+          </ColumnCenter>
+          <StyledForm onSubmit={handleSubmit(onSubmit)}>
+            <Column gap="12px">
+              <RowCentered>
+                <NftImageContainer>
+                  <img src={nft.metadata.image} alt={nft.metadata.name} />
+                </NftImageContainer>
+              </RowCentered>
+              <div>
+                {addressBookRecipient && accountName ? (
+                  <AddressBookRecipient
+                    onDoubleClick={() => setAddressBookRecipient(undefined)}
+                  >
+                    <RowBetween>
+                      <Row gap="16px">
+                        <ProfilePicture
+                          src={getAccountImageUrl(
+                            accountName,
+                            addressBookRecipient,
+                          )}
+                          width="40px"
+                          height="40px"
+                        />
 
-//   return (
-//     <>
-//       <AddContactBottomSheet
-//         open={bottomSheetOpen}
-//         onSave={handleSaveAddress}
-//         onCancel={() => setBottomSheetOpen(false)}
-//         recipientAddress={inputRecipient}
-//       />
-//       <NavigationContainer
-//         leftButton={<BarBackButton />}
-//         rightButton={
-//           <TokenMenuDeprecated tokenAddress={nft.contract_address} />
-//         }
-//         scrollContent={nft.name}
-//       >
-//         <>
-//           <ColumnCenter>
-//             <H3>{nft.name}</H3>
-//           </ColumnCenter>
-//           <StyledForm onSubmit={handleSubmit(onSubmit)}>
-//             <Column gap="12px">
-//               <RowCentered>
-//                 <NftImageContainer>
-//                   {nft.animation_uri ? (
-//                     <LazyNftModelViewer nft={nft} />
-//                   ) : (
-//                     <img src={nft.image_url_copy} alt={nft.name} />
-//                   )}
-//                 </NftImageContainer>
-//               </RowCentered>
-//               <div>
-//                 {addressBookRecipient && accountName ? (
-//                   <AddressBookRecipient
-//                     onDoubleClick={() => setAddressBookRecipient(undefined)}
-//                   >
-//                     <RowBetween>
-//                       <Row gap="16px">
-//                         <ProfilePicture
-//                           src={getAccountImageUrl(
-//                             accountName,
-//                             addressBookRecipient,
-//                           )}
-//                           width="40px"
-//                           height="40px"
-//                         />
+                        <Column>
+                          <H5>{accountName}</H5>
+                          <StyledAccountAddress>
+                            {formatTruncatedAddress(
+                              addressBookRecipient.address,
+                            )}
+                          </StyledAccountAddress>
+                        </Column>
+                      </Row>
+                      <CloseIconAlt
+                        {...makeClickable(resetAddressBookRecipient)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </RowBetween>
+                  </AddressBookRecipient>
+                ) : (
+                  <div ref={ref}>
+                    <StyledControlledTextArea
+                      autoComplete="off"
+                      control={control}
+                      spellCheck={false}
+                      placeholder="Recipient's address"
+                      name="recipient"
+                      maxRows={3}
+                      style={{
+                        paddingRight: "50px",
+                        borderRadius: addressBookOpen ? "8px 8px 0 0" : "8px",
+                      }}
+                      onlyAddressHex
+                      onChange={(e: any) => {
+                        if (validateStarknetAddress(e.target.value)) {
+                          const account = addressBook.contacts.find((c) =>
+                            isEqualAddress(c.address, e.target.value),
+                          )
+                          handleAddressSelect(account)
+                        }
+                      }}
+                    >
+                      <>
+                        <InputGroupAfter>
+                          {validRecipientAddress ? (
+                            <CloseIconAlt
+                              {...makeClickable(resetAddressBookRecipient)}
+                              style={{ cursor: "pointer" }}
+                            />
+                          ) : (
+                            <AtTheRateWrapper
+                              type="button"
+                              active={addressBookOpen}
+                              {...makeClickable(() =>
+                                setAddressBookOpen(!addressBookOpen),
+                              )}
+                            >
+                              <AtTheRateIcon />
+                            </AtTheRateWrapper>
+                          )}
+                        </InputGroupAfter>
 
-//                         <Column>
-//                           <H5>{accountName}</H5>
-//                           <StyledAccountAddress>
-//                             {formatTruncatedAddress(
-//                               addressBookRecipient.address,
-//                             )}
-//                           </StyledAccountAddress>
-//                         </Column>
-//                       </Row>
-//                       <CloseIconAlt
-//                         {...makeClickable(resetAddressBookRecipient)}
-//                         style={{ cursor: "pointer" }}
-//                       />
-//                     </RowBetween>
-//                   </AddressBookRecipient>
-//                 ) : (
-//                   <div ref={ref}>
-//                     <StyledControlledTextArea
-//                       autoComplete="off"
-//                       control={control}
-//                       spellCheck={false}
-//                       placeholder="Recipient's address"
-//                       name="recipient"
-//                       maxRows={3}
-//                       style={{
-//                         paddingRight: "50px",
-//                         borderRadius: addressBookOpen ? "8px 8px 0 0" : "8px",
-//                       }}
-//                       onlyAddressHex
-//                       onChange={(e: any) => {
-//                         if (validateStarknetAddress(e.target.value)) {
-//                           const account = addressBook.contacts.find((c) =>
-//                             isEqualAddress(c.address, e.target.value),
-//                           )
-//                           handleAddressSelect(account)
-//                         }
-//                       }}
-//                     >
-//                       <>
-//                         <InputGroupAfter>
-//                           {validRecipientAddress ? (
-//                             <CloseIconAlt
-//                               {...makeClickable(resetAddressBookRecipient)}
-//                               style={{ cursor: "pointer" }}
-//                             />
-//                           ) : (
-//                             <AtTheRateWrapper
-//                               type="button"
-//                               active={addressBookOpen}
-//                               {...makeClickable(() =>
-//                                 setAddressBookOpen(!addressBookOpen),
-//                               )}
-//                             >
-//                               <AtTheRateIcon />
-//                             </AtTheRateWrapper>
-//                           )}
-//                         </InputGroupAfter>
-
-//                         {addressBookOpen && !showSaveAddressButton && (
-//                           <AddressBookMenu
-//                             addressBook={addressBook}
-//                             onAddressSelect={handleAddressSelect}
-//                           />
-//                         )}
-//                       </>
-//                     </StyledControlledTextArea>
-//                     {showSaveAddressButton && (
-//                       <SaveAddressButton
-//                         type="button"
-//                         onClick={() => setBottomSheetOpen(true)}
-//                       >
-//                         <AddIcon fill="#29C5FF" style={{ fontSize: "15px" }} />
-//                         Save address
-//                       </SaveAddressButton>
-//                     )}
-//                     {errors.recipient && (
-//                       <FormError>{errors.recipient.message}</FormError>
-//                     )}
-//                   </div>
-//                 )}
-//               </div>
-//             </Column>
-//             <ButtonSpacer />
-//             <Button type="submit" disabled={disableSubmit}>
-//               Next
-//             </Button>
-//           </StyledForm>
-//         </>
-//       </NavigationContainer>
-//     </>
-//   )
-// }
+                        {addressBookOpen && !showSaveAddressButton && (
+                          <AddressBookMenu
+                            addressBook={addressBook}
+                            onAddressSelect={handleAddressSelect}
+                          />
+                        )}
+                      </>
+                    </StyledControlledTextArea>
+                    {showSaveAddressButton && (
+                      <SaveAddressButton
+                        type="button"
+                        onClick={() => setBottomSheetOpen(true)}
+                      >
+                        <AddIcon fill="#29C5FF" style={{ fontSize: "15px" }} />
+                        Save address
+                      </SaveAddressButton>
+                    )}
+                    {errors.recipient && (
+                      <FormError>{errors.recipient.message}</FormError>
+                    )}
+                  </div>
+                )}
+              </div>
+            </Column>
+            <ButtonSpacer />
+            <Button type="submit" disabled={disableSubmit}>
+              Next
+            </Button>
+          </StyledForm>
+        </>
+      </NavigationContainer>
+    </>
+  )
+}

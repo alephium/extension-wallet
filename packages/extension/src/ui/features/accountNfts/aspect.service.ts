@@ -13,7 +13,7 @@ const baseUrlMainnet = "https://api.aspect.co/api/v0/assets"
 
 export interface Collection {
   name: string
-  contractAddress: string
+  contractId: string
   nfts: AspectNft[]
   imageUri?: string
   floorPrice?: number.BigNumberish
@@ -77,40 +77,6 @@ export const fetchNextAspectNftsByUrl = async (
   }
 
   return data.assets
-}
-
-export const fetchAspectCollection = async (
-  account?: BaseWalletAccount,
-  contractAddress?: string,
-): Promise<Collection> => {
-  if (!account || !contractAddress) {
-    throw new Error("Account and Contract Address are required")
-  }
-  const { address } = account
-  const baseUrl = getAspectBaseUrl(account)
-
-  const params = new URLSearchParams({
-    owner_address: address,
-    contract_address: contractAddress,
-  })
-
-  const url = join(baseUrl, `?${params}`, "&limit=50")
-  const assets = await fetchNextAspectCollection(url, account, contractAddress)
-  if (Array.isArray(assets) && assets.length > 0) {
-    return {
-      name:
-        assets[0].contract.name_custom || assets[0].contract.name || "Untitled",
-      contractAddress,
-      imageUri: assets[0].contract.image_url,
-      floorPrice: assets[0].contract.floor_list_price,
-      nfts: assets,
-    }
-  }
-  return {
-    name: "No NFTs",
-    contractAddress,
-    nfts: [],
-  }
 }
 
 export const fetchNextAspectCollection = async (

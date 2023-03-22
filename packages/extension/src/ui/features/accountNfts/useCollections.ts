@@ -1,60 +1,24 @@
-import { useMemo } from "react"
 import useSWR from "swr"
 
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { SWRConfigCommon } from "../../services/swr"
-import {
-  Collection,
-  Collections,
-  fetchAspectCollection,
-} from "./aspect.service"
-import { useNfts } from "./useNfts"
 
-type SerialisedCollectibles = Record<string, Collection>
+import { Network } from "../../../shared/network"
+import { fetchNFTCollections, fetchNFTCollection } from "./alephium-nft.service"
 
 export const useCollections = (
-  account?: BaseWalletAccount,
-  config?: SWRConfigCommon,
-): Collections => {
-  const { nfts = [] } = useNfts(account, config)
-  return useMemo(
-    () =>
-      Object.values(
-        nfts.filter(Boolean).reduce<SerialisedCollectibles>((acc, nft) => {
-          if (acc[nft.contract_address]) {
-            acc[nft.contract_address].nfts.push(nft)
-            return acc
-          }
-
-          return {
-            ...acc,
-            [nft.contract_address]: {
-              name: nft.contract.name_custom || nft.contract.name || "Untitled",
-              contractAddress: nft.contract.contract_address,
-              imageUri: nft.contract.image_url,
-              nfts: [nft],
-            },
-          }
-        }, {}),
-      ),
-    [nfts],
-  )
-}
-
-export const useCollection = (
-  contractAddress?: string,
+  tokenIds: string[],
+  network: Network,
   account?: BaseWalletAccount,
   config?: SWRConfigCommon,
 ) => {
-  const { data: collectible, ...rest } = useSWR(
-    contractAddress &&
-      account && [
-        getAccountIdentifier(account),
-        contractAddress,
-        "collectible",
-      ],
-    () => fetchAspectCollection(account, contractAddress),
+  const { data: collections, ...rest } = useSWR(
+    account && [
+      getAccountIdentifier(account),
+      "collectible",
+    ],
+    () => fetchNFTCollections(tokenIds, network),
     {
       refreshInterval: 60e3 /* 1 minute */,
       suspense: true,
@@ -62,5 +26,36 @@ export const useCollection = (
     },
   )
 
-  return { collectible, ...rest }
+  return { collections: collections || [], ...rest }
+}
+
+export const useCollection = (
+  tokenIds: string[],
+  network: Network,
+  collectionId?: string,
+  account?: BaseWalletAccount,
+  config?: SWRConfigCommon,
+) => {
+  const { data: collection, ...rest } = useSWR(
+    collectionId &&
+    account && [
+      getAccountIdentifier(account),
+      collectionId,
+      "collection",
+    ],
+    async () => {
+      if (collectionId) {
+        return await fetchNFTCollection(collectionId, tokenIds, network)
+      } else {
+        return Promise.resolve(undefined)
+      }
+    },
+    {
+      refreshInterval: 60e3 /* 1 minute */,
+      suspense: true,
+      ...config,
+    },
+  )
+
+  return { collection, ...rest }
 }

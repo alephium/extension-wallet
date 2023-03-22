@@ -1,85 +1,72 @@
 import { H4 } from "@argent/ui"
 import { Flex, SimpleGrid } from "@chakra-ui/react"
-import { FC, Suspense } from "react"
+import { FC } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { ErrorBoundary } from "../../components/ErrorBoundary"
-import { ErrorBoundaryFallback } from "../../components/ErrorBoundaryFallback"
-import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
-import { Collections } from "./aspect.service"
+import { useTokensWithBalance } from "../accountTokens/tokens.state"
 import { EmptyCollections } from "./EmptyCollections"
 import { NftFigure } from "./NftFigure"
 import { NftItem } from "./NftItem"
 import { useCollections } from "./useCollections"
-import { useNfts } from "./useNfts"
+import { useNetwork } from "../networks/useNetworks"
 
 interface AccountCollectionsProps {
   account: Account
   withHeader?: boolean
-  customList?: Collections
   navigateToSend?: boolean
 }
 
 const Collections: FC<AccountCollectionsProps> = ({
   account,
-  customList,
   navigateToSend = false,
 }) => {
   const navigate = useNavigate()
-  const collectibles = useCollections(account)
+  const tokensWithBalances = useTokensWithBalance(account)
+  const tokenIds = tokensWithBalances.tokenDetails.map((token) => token.id)
+  const network = useNetwork(account.networkId)
+  const { collections } = useCollections(tokenIds, network, account)
 
   return (
     <>
-      {collectibles.length === 0 && (
+      {collections && collections.length === 0 && (
         <EmptyCollections networkId={account.networkId} />
       )}
 
-      {collectibles.length > 0 && (
+      {collections.length > 0 && (
         <SimpleGrid
           gridTemplateColumns="repeat(auto-fill, 158px)"
           gap="3"
           py={4}
           mx="4"
         >
-          {(customList || collectibles).map((collectible) => (
+          {collections.map((collection) => (
             <NftFigure
-              key={collectible.contractAddress}
-              onClick={() =>
-                navigate(routes.collectionNfts(collectible.contractAddress), {
+              key={collection.contractId}
+              onClick={() => {
+                navigate(routes.collectionNfts(collection.contractId), {
                   state: { navigateToSend },
                 })
-              }
+              }}
             >
               <NftItem
-                name={collectible.name}
-                thumbnailSrc={collectible.nfts[0].image_url_copy || ""}
-                logoSrc={collectible.imageUri}
-                total={collectible.nfts.length}
+                name={collection.metadata.name}
+                thumbnailSrc={collection.metadata.image}
+                total={collection.nfts.length}
               />
             </NftFigure>
           ))}
         </SimpleGrid>
-      )}
+      )
+      }
     </>
   )
-}
-
-const CollectionsFallback: FC<AccountCollectionsProps> = ({ account }) => {
-  // this is needed to keep swr mounted so it can retry the request
-  useNfts(account, {
-    suspense: false,
-    errorRetryInterval: 30e3 /* 30 seconds */,
-  })
-
-  return <ErrorBoundaryFallback title="Seems like Aspect API is down..." />
 }
 
 export const AccountCollections: FC<AccountCollectionsProps> = ({
   account,
   withHeader = true,
-  customList,
   navigateToSend,
   ...rest
 }) => {
@@ -87,15 +74,10 @@ export const AccountCollections: FC<AccountCollectionsProps> = ({
     <>
       {withHeader && <H4 textAlign="center">NFTs</H4>}
       <Flex direction="column" flex={1} {...rest}>
-        <ErrorBoundary fallback={<CollectionsFallback account={account} />}>
-          <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>
-            <Collections
-              account={account}
-              customList={customList}
-              navigateToSend={navigateToSend}
-            />
-          </Suspense>
-        </ErrorBoundary>
+        <Collections
+          account={account}
+          navigateToSend={navigateToSend}
+        />
       </Flex>
     </>
   )

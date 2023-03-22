@@ -57,8 +57,8 @@ export const routes = {
   accountCollections: route("/account/collections"),
   accountActivity: route("/account/activity"),
   collectionNfts: route(
-    (contractAddress: string) => `/account/collection/${contractAddress}`,
-    `/account/collection/:contractAddress`,
+    (contractId: string) => `/account/collection/${contractId}`,
+    `/account/collection/:contractId`,
   ),
   accountNft: route(
     (contractAddress: string, tokenId: string) =>
@@ -77,6 +77,11 @@ export const routes = {
   sendToken: route(
     (tokenId: string) => `/send-token/${tokenId}`,
     "/send-token/:tokenId",
+  ),
+  sendNft: route(
+    (contractAddress: string, tokenId: string) =>
+      `/account/send-nft/${contractAddress}/${tokenId}`,
+    `/account/send-nft/:contractAddress/:tokenId`,
   ),
   transactionDetail: route(
     (txHash: string) => `/account/activity/transaction-detail/${txHash}`,

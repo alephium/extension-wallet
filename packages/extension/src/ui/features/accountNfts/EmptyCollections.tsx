@@ -1,9 +1,7 @@
 import { Button, H5, L2, P3, icons, logos } from "@argent/ui"
 import { Box, Flex, SimpleGrid, Text } from "@chakra-ui/react"
 import { FC, ReactNode } from "react"
-
 const { NftIcon } = icons
-const { Aspect, Briq, Mintsquare } = logos
 
 const ButtonLink: FC<{ href: string; icon: ReactNode; title: string }> = ({
   icon,
@@ -26,7 +24,7 @@ const ButtonLink: FC<{ href: string; icon: ReactNode; title: string }> = ({
   </Box>
 )
 
-const EmptyCollections: FC<{ networkId: string }> = ({ networkId }) => (
+const EmptyCollections: FC<{ networkId: string }> = () => (
   <Flex
     direction="column"
     flex={1}
@@ -54,47 +52,6 @@ const EmptyCollections: FC<{ networkId: string }> = ({ networkId }) => (
         </Text>
       </Flex>
       <H5 color="neutrals.400">No NFTs</H5>
-    </Flex>
-    <Flex direction="column" flex={1} bg="black" p="-4">
-      <P3 color="neutrals.400" mb="3" mt="12">
-        Discover NFTs on StarkNet
-      </P3>
-
-      <SimpleGrid columns={networkId === "goerli-alpha" ? 3 : 2} gap="2" mx="8">
-        {networkId === "goerli-alpha" && (
-          <>
-            <ButtonLink
-              title="Aspect"
-              icon={<Aspect />}
-              href="https://testnet.aspect.co"
-            />
-            <ButtonLink
-              title="Mintsquare"
-              icon={<Mintsquare />}
-              href="https://mintsquare.io/starknet-testnet"
-            />
-            <ButtonLink
-              title="Briq"
-              icon={<Briq />}
-              href="https://briq.construction/"
-            />
-          </>
-        )}
-        {networkId === "mainnet-alpha" && (
-          <>
-            <ButtonLink
-              title="Aspect"
-              icon={<Aspect />}
-              href="https://aspect.co"
-            />
-            <ButtonLink
-              title="Mintsquare"
-              icon={<Mintsquare />}
-              href="https://mintsquare.io/starknet"
-            />
-          </>
-        )}
-      </SimpleGrid>
     </Flex>
   </Flex>
 )
