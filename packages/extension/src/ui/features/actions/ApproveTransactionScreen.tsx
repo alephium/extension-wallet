@@ -70,7 +70,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
     build()
   }, [nodeUrl, selectedAccount, transaction])
-
+  
   if (!selectedAccount) {
     return <Navigate to={routes.accounts()} />
   }

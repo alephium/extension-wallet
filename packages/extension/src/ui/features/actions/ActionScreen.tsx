@@ -29,9 +29,9 @@ export const ActionScreen: FC = () => {
   const [action] = actions
   const isLastAction = actions.length === 1
   const signerAccount = useAccount(action.type === 'TRANSACTION' && selectedAccount
-    ? { address: action.payload.params.signerAddress, networkId: selectedAccount?.networkId }
+    ? { address: action.payload.params.signerAddress, networkId: action.payload.params.networkId ?? selectedAccount.networkId }
     : action.type === 'SIGN' && selectedAccount
-      ? { address: action.payload.signerAddress, networkId: selectedAccount?.networkId }
+      ? { address: action.payload.signerAddress, networkId: action.payload.networkId ?? selectedAccount.networkId }
       : undefined
   )
 

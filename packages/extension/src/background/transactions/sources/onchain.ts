@@ -17,7 +17,7 @@ export async function getTransactionsUpdate(transactions: Transaction[]) {
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
       const updatedTransaction = await explorerProvider.transactions.getTransactionsTransactionHash(transaction.hash)
 
-      const status = updatedTransaction.type === "UnconfirmedTransaction" ? "PENDING" : "ACCEPTED_ON_CHAIN"
+      const status = updatedTransaction.type === "Accepted" ? "ACCEPTED_ON_CHAIN" : "ACCEPTED_ON_MEMPOOL"
       return { ...transaction, status }
     })
   )
