@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/chrome-manifest.json",
   "name": "Alephium Extension Wallet",
-  "description": "Alephium's official extension wallet with powerful features and a clean UI. A secure and convenient way for users to manage their digital assets and interact with decentralized applications (dApps) on the Alephium blockchain.",
-  "version": "0.6.2",
+  "description": "Alephium's official extension wallet with powerful features and a clean UI.",
+  "version": "0.6.3",
   "manifest_version": 2,
   "browser_action": {
     "default_icon": {
