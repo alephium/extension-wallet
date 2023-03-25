@@ -1,14 +1,14 @@
 {
   "name": "@alephium/extension",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
     "@alephium/get-extension-wallet": "^0.6.4",
     "@alephium/token-list": "0.0.4",
-    "@alephium/web3": "^0.8.0",
-    "@alephium/web3-test": "^0.8.0",
-    "@alephium/web3-wallet": "^0.8.0",
+    "@alephium/web3": "^0.8.1",
+    "@alephium/web3-test": "^0.8.1",
+    "@alephium/web3-wallet": "^0.8.1",
     "@playwright/test": "^1.23.0",
     "@sentry/webpack-plugin": "^1.18.9",
     "@svgr/webpack": "^6.0.0",
