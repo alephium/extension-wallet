@@ -1,6 +1,6 @@
 {
   "name": "@argent-x/storybook",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "private": true,
   "devDependencies": {
     "@alephium/extension": "^0.6.4",
