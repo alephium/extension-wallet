@@ -16,10 +16,10 @@
     jest "^28.1.0"
     prettier "^2.3.1"
 
-"@alephium/token-list@0.0.4":
-  version "0.0.4"
-  resolved "https://registry.npmjs.org/@alephium/token-list/-/token-list-0.0.4.tgz"
-  integrity sha512-NYLe8aGoeypOfQul7nZo/apDKIl/SfCPvTj7CYx0pmxsFeqYAwj51FknpqQyUQYmXsLczv73udSE1F/hxBOJCg==
+"@alephium/token-list@0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@alephium/token-list/-/token-list-0.0.5.tgz#6991653c6c2bc172584a27777660d52f3082fec2"
+  integrity sha512-CN+g+8yFRLcK37uk5GJy178+FVM0pn3I0iacosFZXSyYFO58lpPBQg3WLGQIeKMKxSoP8k/IfyVci2ML/uy9dA==
 
 "@alephium/web3-test@^0.8.1":
   version "0.8.1"
