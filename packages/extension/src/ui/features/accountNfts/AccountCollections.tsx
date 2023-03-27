@@ -30,7 +30,7 @@ const Collections: FC<AccountCollectionsProps> = ({
 
   return (
     <>
-      {collections && collections.length === 0 && (
+      {collections.length === 0 && (
         <EmptyCollections networkId={account.networkId} />
       )}
 
@@ -43,9 +43,9 @@ const Collections: FC<AccountCollectionsProps> = ({
         >
           {collections.map((collection) => (
             <NftFigure
-              key={collection.contractId}
+              key={collection.id}
               onClick={() => {
-                navigate(routes.collectionNfts(collection.contractId), {
+                navigate(routes.collectionNfts(collection.id), {
                   state: { navigateToSend },
                 })
               }}

@@ -1,4 +1,4 @@
-import { knownCollections, NFT } from "./alephium-nft.model"
+import { whitelistedCollection, NFT } from "./alephium-nft.model"
 import { NFTCollection } from "./alephium-nft.model"
 import { Network } from "../../../shared/network"
 import { addressFromContractId, binToHex, contractIdFromAddress, ExplorerProvider, groupOfAddress, hexToString, NodeProvider } from "@alephium/web3"
@@ -15,10 +15,10 @@ export const fetchNFTCollections = async (
     return [parent && binToHex(contractIdFromAddress(parent)), tokenId]
   }))
 
-  const tokenIdsByKnownNFTCollections = parentAndTokenIds.reduce((acc, parentAndTokenId) => {
+  const tokenIdsByWhitelistedNFTCollections = parentAndTokenIds.reduce((acc, parentAndTokenId) => {
     const parent = parentAndTokenId[0]
     const tokenId = parentAndTokenId[1]
-    if (!!parent && !!tokenId && isKnownCollection(parent, network.id)) {
+    if (!!parent && !!tokenId && isWhitelistedCollection(parent, network.id)) {
       if (acc[parent]) {
         acc[parent].push(tokenId)
       } else {
@@ -30,14 +30,14 @@ export const fetchNFTCollections = async (
   }, {} as Record<string, string[]>)
 
   const collections: NFTCollection[] = []
-  for (const knownCollectionId in tokenIdsByKnownNFTCollections) {
-    const collectionAddress = addressFromContractId(knownCollectionId)
-    const nftIds = tokenIdsByKnownNFTCollections[knownCollectionId]
+  for (const whitelistedCollectionId in tokenIdsByWhitelistedNFTCollections) {
+    const collectionAddress = addressFromContractId(whitelistedCollectionId)
+    const nftIds = tokenIdsByWhitelistedNFTCollections[whitelistedCollectionId]
     const collectionMetadata = await getCollectionMetadata(collectionAddress, nodeProvider)
-    const nfts: NFT[] = await getNFTs(knownCollectionId, nftIds, nodeProvider)
+    const nfts: NFT[] = await getNFTs(whitelistedCollectionId, nftIds, nodeProvider)
 
     collections.push({
-      contractId: knownCollectionId,
+      id: whitelistedCollectionId,
       metadata: collectionMetadata,
       nfts: nfts
     })
@@ -51,7 +51,7 @@ export const fetchNFTCollection = async (
   tokenIds: string[],
   network: Network,
 ): Promise<NFTCollection | undefined> => {
-  if (!isKnownCollection(collectionId, network.id)) {
+  if (!isWhitelistedCollection(collectionId, network.id)) {
     return undefined
   }
 
@@ -68,7 +68,7 @@ export const fetchNFTCollection = async (
   const collectionMetadata = await getCollectionMetadata(collectionAddress, nodeProvider)
   const nfts: NFT[] = await getNFTs(collectionId, nftIds, nodeProvider)
   return {
-    contractId: collectionId,
+    id: collectionId,
     metadata: collectionMetadata,
     nfts: nfts
   }
@@ -110,8 +110,8 @@ async function getCollectionMetadata(
   return await metadataResponse.json()
 }
 
-function isKnownCollection(parent: string, networkId: string): boolean {
-  //return networkId === 'devnet' || knownCollections[networkId].includes(parent)
+function isWhitelistedCollection(parent: string, networkId: string): boolean {
+  //return networkId === 'devnet' || whitelistedCollections[networkId].includes(parent)
   // FIXME: probably should check codeHash for local devnet
-  return knownCollections[networkId].includes(parent)
+  return whitelistedCollection[networkId].includes(parent)
 }

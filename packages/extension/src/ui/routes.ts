@@ -57,8 +57,8 @@ export const routes = {
   accountCollections: route("/account/collections"),
   accountActivity: route("/account/activity"),
   collectionNfts: route(
-    (contractId: string) => `/account/collection/${contractId}`,
-    `/account/collection/:contractId`,
+    (collectionId: string) => `/account/collection/${collectionId}`,
+    `/account/collection/:collectionId`,
   ),
   accountNft: route(
     (contractAddress: string, tokenId: string) =>

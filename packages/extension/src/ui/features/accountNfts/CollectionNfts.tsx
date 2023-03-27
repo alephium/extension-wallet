@@ -19,7 +19,7 @@ interface LocationWithState extends Location {
 }
 
 export const CollectionNfts: FC = () => {
-  const { contractId } = useParams<{ contractId: string }>()
+  const { collectionId } = useParams<{ collectionId: string }>()
   const account = useSelectedAccount()
   const navigate = useNavigate()
   const { state } = useLocation() as LocationWithState
@@ -29,9 +29,9 @@ export const CollectionNfts: FC = () => {
   const tokensWithBalances = useTokensWithBalance(account)
   const tokenIds = tokensWithBalances.tokenDetails.map((token) => token.id)
   const network = useCurrentNetwork()
-  const { collection, error } = useCollection(tokenIds, network, contractId, account)
+  const { collection, error } = useCollection(tokenIds, network, collectionId, account)
 
-  if (!contractId) {
+  if (!collectionId) {
     return <></>
   }
 

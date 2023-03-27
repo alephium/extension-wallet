@@ -1,7 +1,7 @@
 import { defaultNetworkIds } from "../../../shared/network/defaults"
 
 // TODO: These definitions should come from `token-list`, will remove
-const knownCollectionsFromTokenList = [
+const whitelistedCollectionFromTokenList = [
   {
     "networkId": 2,
     "collections": [
@@ -32,14 +32,14 @@ export interface NFT {
 }
 
 export interface NFTCollection {
-  contractId: string,
+  id: string,
   metadata: NFTCollectionMeta,
   nfts: NFT[]
 }
 
 export type NFTCollections = NFTCollection[]
 
-export const knownCollections: Record<string, string[]> = knownCollectionsFromTokenList
+export const whitelistedCollection: Record<string, string[]> = whitelistedCollectionFromTokenList
   .reduce((acc, collections) => {
     acc[defaultNetworkIds[collections.networkId]] = collections.collections.map(c => c.id)
     return acc

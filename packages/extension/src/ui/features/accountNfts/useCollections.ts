@@ -16,7 +16,7 @@ export const useCollections = (
   const { data: collections, ...rest } = useSWR(
     account && [
       getAccountIdentifier(account),
-      "collectible",
+      "collections",
     ],
     () => fetchNFTCollections(tokenIds, network),
     {
