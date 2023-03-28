@@ -18,6 +18,7 @@ import {
   sendMessageToActiveTabsAndUi,
   sendMessageToUi,
 } from "./activeTabs"
+import { setTransactionTrackerHistoryAlarm, setTransactionTrackerUpdateAlarm } from "./alarms"
 import {
   BackgroundService,
   HandleMessage,
@@ -35,12 +36,8 @@ import { transactionTracker } from "./transactions/tracking"
 import { handleTransactionMessage } from "./transactions/transactionMessaging"
 import { Wallet, sessionStore } from "./wallet"
 
-browser.alarms.create("core:transactionTracker:history", {
-  periodInMinutes: 5, // fetch history transactions every 5 minutes from voyager
-})
-browser.alarms.create("core:transactionTracker:update", {
-  periodInMinutes: 1, // fetch transaction updates of existing transactions every minute from onchain
-})
+setTransactionTrackerHistoryAlarm()
+setTransactionTrackerUpdateAlarm()
 browser.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === "core:transactionTracker:history") {
     console.info("~> fetching transaction history")
@@ -50,10 +47,10 @@ browser.alarms.onAlarm.addListener(async (alarm) => {
     console.info("~> fetching transaction updates")
     let hasInFlightTransactions = await transactionTracker.update()
 
-    // the config below will run transaction updates 4x per minute, if there are in-flight transactions
+    // the config below will run transaction updates 7x per minute, if there are in-flight transactions
     // it will update on second 0, 15, 30 and 45
-    const maxRetries = 3 // max 3 retries
-    const waitTimeInS = 15 // wait 15 seconds between retries
+    const maxRetries = 6 // max 3 retries
+    const waitTimeInS = 7.5 // wait 7.5 seconds between retries
 
     let runs = 0
     while (hasInFlightTransactions && runs < maxRetries) {

@@ -35,7 +35,7 @@ export const useAccountTransactions: UseAccountTransactions = (account) => {
   )
 
   const pendingTransactions = sortedTransactions.filter(
-    ({ status }) => status === "RECEIVED",
+    ({ status }) => status === "RECEIVED" || status === "ACCEPTED_ON_MEMPOOL",
   )
 
   return { transactions, pendingTransactions }

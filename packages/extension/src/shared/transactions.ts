@@ -5,10 +5,11 @@ import { ReviewTransactionResult } from "./actionQueue/types"
 import { WalletAccount } from "./wallet.model"
 import { AlephiumExplorerTransaction } from "./explorer/type"
 
-export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED';
+export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_MEMPOOL' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED';
 
 // Global Constants for Transactions
 export const SUCCESS_STATUSES: Status[] = [
+  "ACCEPTED_ON_MEMPOOL",
   "ACCEPTED_ON_CHAIN",
   "ACCEPTED_ON_L2",
   "PENDING",
@@ -16,6 +17,7 @@ export const SUCCESS_STATUSES: Status[] = [
 
 export const TRANSACTION_STATUSES_TO_TRACK: Status[] = [
   "RECEIVED",
+  "ACCEPTED_ON_MEMPOOL",
   "NOT_RECEIVED",
 ]
 
