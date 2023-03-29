@@ -1,6 +1,6 @@
 import { H4 } from "@argent/ui"
 import { Flex, SimpleGrid } from "@chakra-ui/react"
-import { FC } from "react"
+import { FC, Suspense } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { routes } from "../../routes"
@@ -11,6 +11,7 @@ import { NftFigure } from "./NftFigure"
 import { NftItem } from "./NftItem"
 import { useCollections } from "./useCollections"
 import { useNetwork } from "../networks/useNetworks"
+import { Spinner } from "../../components/Spinner"
 
 interface AccountCollectionsProps {
   account: Account
@@ -74,10 +75,12 @@ export const AccountCollections: FC<AccountCollectionsProps> = ({
     <>
       {withHeader && <H4 textAlign="center">NFTs</H4>}
       <Flex direction="column" flex={1} {...rest}>
-        <Collections
-          account={account}
-          navigateToSend={navigateToSend}
-        />
+        <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>
+          <Collections
+            account={account}
+            navigateToSend={navigateToSend}
+          />
+        </Suspense>
       </Flex>
     </>
   )

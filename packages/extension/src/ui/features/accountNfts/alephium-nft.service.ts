@@ -110,8 +110,8 @@ async function getCollectionMetadata(
   return await metadataResponse.json()
 }
 
-function isWhitelistedCollection(parent: string, networkId: string): boolean {
+function isWhitelistedCollection(collectionId: string, networkId: string): boolean {
   //return networkId === 'devnet' || whitelistedCollections[networkId].includes(parent)
   // FIXME: probably should check codeHash for local devnet
-  return whitelistedCollection[networkId].includes(parent)
+  return whitelistedCollection[networkId].includes(collectionId)
 }
