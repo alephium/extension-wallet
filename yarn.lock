@@ -24,14 +24,6 @@
     "@alephium/web3" "^0.10.0-rc.1"
     bowser "^2.11.0"
 
-"@alephium/get-extension-wallet@^0.6.4":
-  version "0.6.5"
-  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-0.6.5.tgz#b9253cf68b86355c6f64d70ced6296820130f60a"
-  integrity sha512-ZruNx+llGbPBWLrwutPWqTbFWz8pp2MKKPAl9BNK7oS6oSFOv5xeH7azYo5jXsnWxwKt7zAmXOOvBYyzhqpxaw==
-  dependencies:
-    "@alephium/web3" "^0.8.1"
-    bowser "^2.11.0"
-
 "@alephium/token-list@0.0.4":
   version "0.0.4"
   resolved "https://registry.npmjs.org/@alephium/token-list/-/token-list-0.0.4.tgz"
@@ -70,21 +62,6 @@
     bignumber.js "^9.1.1"
     blakejs "1.2.1"
     bn.js "5.2.1"
-    buffer "^6.0.3"
-    cross-fetch "^3.1.5"
-    elliptic "6.5.4"
-    eventemitter3 "^4.0.7"
-
-"@alephium/web3@^0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.8.1.tgz#c2e31e587bff42cb23d6aa4780450d1b453651a6"
-  integrity sha512-Al/CnxZ53BXwpoyUKSETpDgTIINEt9jDhlEk3lmXw5G7RvaYPHBbjoUOPb+8AnmdOCkNejzAE07SsrAVMOOUDQ==
-  dependencies:
-    "@noble/secp256k1" "1.7.1"
-    async-sema "^3.1.1"
-    base-x "4.0.0"
-    bignumber.js "^9.0.2"
-    blakejs "1.2.1"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
     elliptic "6.5.4"
