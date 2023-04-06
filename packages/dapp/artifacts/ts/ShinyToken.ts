@@ -19,6 +19,7 @@ import {
   subscribeContractEvents,
   testMethod,
   callMethod,
+  multicallMethods,
   fetchContractState,
   ContractInstance,
   getContractEventsCurrentCount,
@@ -35,14 +36,16 @@ class Factory extends ContractFactory<ShinyTokenInstance, {}> {
     return new ShinyTokenInstance(address);
   }
 
-  async testTransferMethod(
-    params: Omit<
-      TestContractParams<never, { to: HexString; amount: bigint }>,
-      "initialFields"
-    >
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "transfer", params);
-  }
+  tests = {
+    transfer: async (
+      params: Omit<
+        TestContractParams<never, { to: HexString; amount: bigint }>,
+        "initialFields"
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "transfer", params);
+    },
+  };
 }
 
 // Use this object to test and deploy the contract
