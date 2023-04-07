@@ -1,7 +1,7 @@
 import { getDefaultAlephiumWallet } from "@alephium/get-extension-wallet"
 import * as web3 from '@alephium/web3'
 import { binToHex, contractIdFromAddress, DUST_AMOUNT } from '@alephium/web3'
-import { ShinyToken, Transfer } from '../../artifacts/ts'
+import { ShinyToken, ShinyTokenInstance, Transfer } from '../../artifacts/ts'
 
 export const erc20TokenAddressByNetwork = {
   "goerli-alpha":
@@ -70,7 +70,7 @@ export const getAlphBalance = async (address: string) => {
 export const mintToken = async (
   mintAmount: string,
   network?: string
-): Promise<web3.SignDeployContractTxResult> => {
+): Promise<web3.DeployContractResult<ShinyTokenInstance>> => {
   const alephium = await getDefaultAlephiumWallet()
   if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
     throw Error("alephium object not initialized")

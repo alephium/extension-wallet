@@ -146,7 +146,7 @@ export const TokenDapp: FC<{
       const result = await mintToken(mintAmount, network)
       console.log(result)
 
-      setMintedToken(result.contractAddress)
+      setMintedToken(result.contractInstance.address)
       setLastTransactionHash(result.txId)
       setTransactionStatus("pending")
     } catch (e) {
