@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill"
 
 import { getWindowLocationHost } from "../shared/browser/host"
+import { routes } from "../ui/routes"
 
 const NOTIFICATION_WIDTH = 360
 const NOTIFICATION_HEIGHT = 600 + 28 // +28 for the title bar
@@ -60,4 +61,17 @@ async function openPopup() {
   })
 
   return popup
+}
+
+export async function openConnectLedger(group?: number) {
+  const left = 0
+  const top = 0
+  await browser.windows.create({
+    url: `index.html#/${routes.ledgerEntry(group)}`,
+    type: 'popup',
+    width: NOTIFICATION_WIDTH,
+    height: NOTIFICATION_HEIGHT,
+    left,
+    top
+  })
 }

@@ -1,5 +1,6 @@
 import { FC, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import A from "tracking-link"
 
 import {
   Button,
@@ -20,7 +21,9 @@ import { ChevronDownIcon } from "@chakra-ui/icons"
 import { TOTAL_NUMBER_OF_GROUPS } from "@alephium/web3"
 import { useAddAccount } from "./useAddAccount"
 import { AlephiumLogo } from "../../components/Icons/ArgentXLogo"
+import { LedgerIcon } from "../../components/Icons/LedgerIcon"
 import styled from "styled-components"
+import { openConnectLedger } from '../../../background/openUi'
 
 const StyledAlephiumLogo = styled(AlephiumLogo)`
   font-size: 20px;
@@ -68,6 +71,19 @@ export const MemuSelector: FC<MenuSelectorProps> = ({ title, options, setValue }
 const groupOptions = ["any", ...Array.from(Array(TOTAL_NUMBER_OF_GROUPS).keys()).map(g => `${g}`)]
 const signOptions = ["default", "schnorr"] as const
 
+// function initLedgerWindowListener(): Promise<Address> {
+//   return new Promise((resolve)=>{
+//     async function onMessage(message: any, sender: any, sendResponse: any) {
+//       if (typeof message == 'object' && 'ledgerAddress' in message) {
+//         browser.runtime.onMessage.removeListener(onMessage)
+//         resolve(message['ledgerAddress'] as Address)
+//         sendResponse && sendResponse()
+//       }
+//     }
+//     browser.runtime.onMessage.addListener(onMessage)
+//   })
+// }
+
 export const AddAccount: FC = () => {
   const navigate = useNavigate()
   const [hasError, setHasError] = useState(false)
@@ -76,10 +92,25 @@ export const AddAccount: FC = () => {
 
   const { addAccount } = useAddAccount()
 
-  const handleAddAccount = useCallback((group: string, signMethod: string) => {
+  const handleAddAccount = useCallback((group: string, signMethod: string, accountType: "local" | "ledger") => {
     const parsedGroup = group === "any" ? undefined : parseInt(group)
     const parsedKeyType = signMethod === "default" ? "default" : "bip340-schnorr"
-    return addAccount(parsedKeyType, parsedGroup)
+    if (accountType === "local") {
+      return addAccount(parsedKeyType, parsedGroup)
+    } else {
+      // openConnectLedger(parsedGroup)
+      // const newAddress = await initLedgerWindowListener()
+      // console.log(`===== ${JSON.stringify(newAddress)}`)
+      // await deployLedgerAddress(newAddress)
+      // addAddress(newAddress)
+      // connectAddress({
+      //   address: newAddress.hash,
+      //   publicKey: newAddress.publicKey,
+      //   addressIndex: newAddress.index
+      // })
+      // setAddressMetadata(newAddress.hash, { name: getValues('name'), color: getValues('color') })
+      // navigate(await recover(routes.walletAddresses.path))
+    }
   }, [addAccount])
 
   return (
@@ -98,8 +129,22 @@ export const AddAccount: FC = () => {
             icon={<StyledAlephiumLogo />}
             description="Generate a new wallet address"
             hideArrow
-            onClick={() => handleAddAccount(group, signMethod)}
+            onClick={() => handleAddAccount(group, signMethod, "local")}
           />
+          <A
+            href="/index.html?goto=ledger"
+            targetBlank
+            onClick={async () => {
+              // somehow this just works if this function is provided
+            }}
+          >
+            <Option
+              title="Connect Ledger"
+              description="Use a Ledger hardware wallet"
+              icon={<LedgerIcon />}
+              hideArrow
+            />
+          </A>
         </OptionsWrapper>
         {hasError && (
           <FormError>

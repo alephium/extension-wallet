@@ -1,4 +1,4 @@
-import { KeyType } from "@alephium/web3";
+import { KeyType, Account } from "@alephium/web3";
 import {
   ArgentAccountType,
   BaseWalletAccount,
@@ -15,6 +15,15 @@ export type AccountMessage =
       }
     }
   | { type: "NEW_ACCOUNT_REJ"; data: { error: string } }
+  | { type: "NEW_LEDGER_ACCOUNT"; data: { account: Account; hdPath: string, networkId: string } }
+  | {
+      type: "NEW_LEDGER_ACCOUNT_RES"
+      data: {
+        account: WalletAccount
+        accounts: WalletAccount[]
+      }
+    }
+  | { type: "NEW_LEDGER_ACCOUNT_REJ"; data: { error: string } }
   | { type: "GET_ACCOUNTS"; data?: { showHidden: boolean } }
   | { type: "GET_ACCOUNTS_RES"; data: WalletAccount[] }
   | { type: "CONNECT_ACCOUNT"; data?: BaseWalletAccount }
