@@ -25,15 +25,10 @@ jobs:
         with:
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
-      - name: Publish get-extension-wallet package to npm
+      - name: Build the wallet
         run: |
           yarn
           yarn run build
-          pushd packages/get-extension-wallet
-          npm publish --access=public
-          popd
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Zip the extension wallet
         run: |
           pushd packages/extension

@@ -6,6 +6,8 @@ import {
   ExplorerProvider,
   groupOfAddress,
   KeyType,
+  NetworkId,
+  networkIds,
   NodeProvider,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
@@ -41,7 +43,10 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     return this.#connectedAccount
   }
   get connectedNetworkId() {
-    return this.#connectedNetworkId
+    if (!networkIds.includes(this.#connectedNetworkId as any)) {
+      throw Error(`Invalid network id ${this.#connectedNetworkId}`)
+    }
+    return this.#connectedNetworkId as NetworkId
   }
   get nodeProvider() {
     return this.#nodeProvider
