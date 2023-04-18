@@ -1,5 +1,5 @@
-import { FC, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { FC, useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
 
 import { Button } from "../../components/Button"
@@ -14,7 +14,6 @@ import { LedgerStartIllustration } from "./assets/LedgerStart"
 import { LedgerPage } from "./LedgerPage"
 import { Steps } from "./Steps"
 import { deriveAccount } from "./utils"
-import { importNewLedgerAccount } from '../../services/backgroundAccounts'
 import { useAddLedgerAccount } from "../accounts/useAddAccount"
 
 export const StyledButton = styled(Button)`
@@ -25,12 +24,28 @@ export const StyledButton = styled(Button)`
 `
 
 export const LedgerStartScreen: FC = () => {
+  const { networkId, addressGroupRaw } = useParams()
+  const [addressGroup, setAddressGroup] = useState<number>()
   const navigate = useNavigate()
   const [error, setError] = useState("")
   const [detecting, setDetecting] = useState(false)
-  const { addAccount } = useAddLedgerAccount()
+  const { addAccount } = useAddLedgerAccount(networkId ?? 'devnet')
 
-  return (
+  useEffect(() => {
+    if (networkId === undefined) {
+      setError(`Unknown network id`)
+    }
+
+    if (addressGroupRaw === undefined || addressGroupRaw === 'undefined') {
+      setAddressGroup(undefined)
+    } else {
+      setAddressGroup(parseInt(addressGroupRaw))
+    }
+  }, [networkId, addressGroupRaw])
+
+  console.log(`====== start screen`, networkId, addressGroupRaw)
+
+  {return (
     <LedgerPage>
       {detecting ? (
         <BlackCircle>
@@ -61,24 +76,9 @@ export const LedgerStartScreen: FC = () => {
             setDetecting(true)
             setError("")
             try {
-              const account = await deriveAccount()
+              const account = await deriveAccount(addressGroup)
               console.log(`===== account: ${JSON.stringify(account)}`)
-              addAccount(account, '')
-            //   const tp = await LedgerUsbTransport.create().catch((e) => {
-            //     console.error(e)
-            //     throw new Error("No Ledger device found")
-            //   })
-
-            //   const signer = new LedgerSigner(
-            //     "m/2645'/1195502025'/1148870696'/0'/0'/0",
-            //     tp,
-            //   )
-            //   await signer.getPubKey().catch((e) => {
-            //     console.error(e)
-            //     throw new Error(
-            //       "Make sure your Ledger is unlocked and StarkNet app is open",
-            //     )
-            //   })
+              addAccount(account, 0)
               navigate(routes.ledgerDone())
             } catch (e) {
               console.error(e)
@@ -96,5 +96,5 @@ export const LedgerStartScreen: FC = () => {
         </StyledButton>
       </ContentWrapper>
     </LedgerPage>
-  )
+  )}
 }

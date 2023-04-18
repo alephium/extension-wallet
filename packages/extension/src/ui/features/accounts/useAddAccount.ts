@@ -13,6 +13,7 @@ export const useAddAccount = () => {
   const { switcherNetworkId } = useAppState()
 
   const addAccount = useCallback(async (keyType: KeyType, group?: number) => {
+    console.log(`===== addAccount`, switcherNetworkId, keyType)
     const newAccount = await createAccount(switcherNetworkId, keyType, undefined, group)
     // switch background wallet to the account that was selected
     await selectAccount(newAccount)
@@ -22,16 +23,13 @@ export const useAddAccount = () => {
   return { addAccount }
 }
 
-export const useAddLedgerAccount = () => {
-  const navigate = useNavigate()
-  const { switcherNetworkId } = useAppState()
-
-  const addAccount = useCallback(async (account: Account, hdPath: string ) => {
-    await importNewLedgerAccount(account, hdPath, switcherNetworkId)
+export const useAddLedgerAccount = (networkId: string) => {
+  const addAccount = useCallback(async (account: Account, hdIndex: number ) => {
+    console.log(`==== useAddLedger`, networkId, account)
+    await importNewLedgerAccount(account, hdIndex, networkId)
     // switch background wallet to the account that was selected
-    await selectAccount({ address: account.address, networkId: switcherNetworkId })
-    navigate(await recover())
-  }, [navigate, switcherNetworkId])
+    await selectAccount({ address: account.address, networkId: networkId })
+  }, [networkId])
 
   return { addAccount }
 }

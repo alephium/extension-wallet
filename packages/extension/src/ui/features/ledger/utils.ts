@@ -17,9 +17,9 @@ export const getLedgerTransport = async () => {
   return transport
 }
 
-export const deriveAccount = async () => {
+export const deriveAccount = async (targetAddressGroup?: number) => {
   const transport = await getLedgerTransport()
   const app = new LedgerApp(transport)
   const path = `m/44'/1234'/0'/0/0`
-  return await app.getAccount(path)
+  return await app.getAccount(path, targetAddressGroup)
 }

@@ -62,16 +62,3 @@ async function openPopup() {
 
   return popup
 }
-
-export async function openConnectLedger(group?: number) {
-  const left = 0
-  const top = 0
-  await browser.windows.create({
-    url: `index.html#/${routes.ledgerEntry(group)}`,
-    type: 'popup',
-    width: NOTIFICATION_WIDTH,
-    height: NOTIFICATION_HEIGHT,
-    left,
-    top
-  })
-}

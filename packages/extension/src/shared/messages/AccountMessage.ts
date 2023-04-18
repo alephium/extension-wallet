@@ -15,12 +15,11 @@ export type AccountMessage =
       }
     }
   | { type: "NEW_ACCOUNT_REJ"; data: { error: string } }
-  | { type: "NEW_LEDGER_ACCOUNT"; data: { account: Account; hdPath: string, networkId: string } }
+  | { type: "NEW_LEDGER_ACCOUNT"; data: { account: Account; hdIndex: number, networkId: string } }
   | {
       type: "NEW_LEDGER_ACCOUNT_RES"
       data: {
-        account: WalletAccount
-        accounts: WalletAccount[]
+        account: BaseWalletAccount
       }
     }
   | { type: "NEW_LEDGER_ACCOUNT_REJ"; data: { error: string } }

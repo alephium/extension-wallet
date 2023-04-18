@@ -1,9 +1,9 @@
 import { KeyType } from "@alephium/web3"
 import { getNetwork, Network } from "./network"
 
-export type ArgentAccountType = "alephium" | "alephium-plugin" | "alephium-ledger"
+export type ArgentAccountType = "alephium"
 export interface WalletAccountSigner {
-  type: "local_secret"
+  type: "local_secret" | "ledger"
   keyType: KeyType
   publicKey: string
   derivationIndex: number

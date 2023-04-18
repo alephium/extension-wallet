@@ -1,5 +1,6 @@
 import { FC, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useAppState } from "../../app.state"
 import A from "tracking-link"
 
 import {
@@ -23,7 +24,6 @@ import { useAddAccount } from "./useAddAccount"
 import { AlephiumLogo } from "../../components/Icons/ArgentXLogo"
 import { LedgerIcon } from "../../components/Icons/LedgerIcon"
 import styled from "styled-components"
-import { openConnectLedger } from '../../../background/openUi'
 
 const StyledAlephiumLogo = styled(AlephiumLogo)`
   font-size: 20px;
@@ -89,11 +89,13 @@ export const AddAccount: FC = () => {
   const [hasError, setHasError] = useState(false)
   const [group, setGroup] = useState<string>(groupOptions[0])
   const [signMethod, setSignMethod] = useState<string>(signOptions[0])
+  const { switcherNetworkId } = useAppState()
 
   const { addAccount } = useAddAccount()
+    
+  const parsedGroup = group === "any" ? undefined : parseInt(group)
 
   const handleAddAccount = useCallback((group: string, signMethod: string, accountType: "local" | "ledger") => {
-    const parsedGroup = group === "any" ? undefined : parseInt(group)
     const parsedKeyType = signMethod === "default" ? "default" : "bip340-schnorr"
     if (accountType === "local") {
       return addAccount(parsedKeyType, parsedGroup)
@@ -111,7 +113,7 @@ export const AddAccount: FC = () => {
       // setAddressMetadata(newAddress.hash, { name: getValues('name'), color: getValues('color') })
       // navigate(await recover(routes.walletAddresses.path))
     }
-  }, [addAccount])
+  }, [addAccount, parsedGroup])
 
   return (
     <>
@@ -132,7 +134,7 @@ export const AddAccount: FC = () => {
             onClick={() => handleAddAccount(group, signMethod, "local")}
           />
           <A
-            href="/index.html?goto=ledger"
+            href={`/index.html?goto=ledger&networkId=${switcherNetworkId}&group=${parsedGroup}`}
             targetBlank
             onClick={async () => {
               // somehow this just works if this function is provided

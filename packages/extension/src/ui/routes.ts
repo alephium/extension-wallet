@@ -146,7 +146,7 @@ export const routes = {
   userReview: route("/user-review"),
   userReviewFeedback: route("/user-review/feedback"),
   error: route("/error"),
-  ledgerEntry: route((group?: number) => `/ledger/import/start/${group}`, "/ledger/import/start/:group"),
+  ledgerEntry: route((networkId: string, group?: string) => `/ledger/import/start/${networkId}/${group}`, "/ledger/import/start/:networkId/:group"),
   ledgerSelect: route((group?: number) => `/ledger/import/select/${group}`, "/ledger/import/select/:group"),
   ledgerDone: route((group?: number) => `/ledger/import/done/${group}`, "/ledger/import/done/:group"),
 }

@@ -20,9 +20,9 @@ export const createNewAccount = async (networkId: string, keyType: KeyType, grou
   }
 }
 
-export const importNewLedgerAccount =async (account: Account, hdPath: string, networkId: string) => {
-  console.log(`========= ${account} ${hdPath}`)
-  sendMessage({ type: "NEW_LEDGER_ACCOUNT", data: { account, hdPath, networkId } })
+export const importNewLedgerAccount =async (account: Account, hdIndex: number, networkId: string) => {
+  console.log(`========= ${account} ${hdIndex}`)
+  sendMessage({ type: "NEW_LEDGER_ACCOUNT", data: { account, hdIndex, networkId } })
   try {
     return await Promise.race([
       waitForMessage("NEW_LEDGER_ACCOUNT_RES"),

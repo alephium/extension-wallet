@@ -10,6 +10,7 @@ import {
   publicKeyFromPrivateKey,
   groupOfAddress,
   KeyType,
+  Account,
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
@@ -253,6 +254,35 @@ export class Wallet {
 
       return newAndDefaultAddress
     }
+  }
+
+  public async importLedgerAccount(account: Account, hdIndex: number, networkId: string): Promise<BaseWalletAccount> {
+    const walletAccount: WalletAccount = {
+      address: account.address,
+      networkId: networkId,
+      signer: {
+        type: "ledger" as const,
+        publicKey: account.publicKey,
+        keyType: account.keyType,
+        derivationIndex: hdIndex,
+        group: groupOfAddress(account.address)
+      },
+      type: "alephium",
+    }
+    console.log(`========= wallet`, walletAccount)
+    await this.walletStore.push([walletAccount])
+    await this.selectAccount(walletAccount)
+    return walletAccount
+  }
+
+  public async getAllLedgerAccount(networkId: string): Promise<BaseWalletAccount[]> {
+    const accounts = await this.walletStore.get(withHiddenSelector)
+
+    return accounts.filter((account) =>
+      account.type === "alephium" &&
+      account.signer.type === "ledger" &&
+      account.networkId === networkId
+    )
   }
 
   public async getSelectedAccount(): Promise<WalletAccount | undefined> {
