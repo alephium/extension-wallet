@@ -6,10 +6,10 @@ const whitelistedCollectionFromTokenList = [
     "networkId": 2,
     "collections": [
       {
-        "id": "fda9906f8e2a31a08085a940babcd6e72aae5029848dc9b7f1d4bc62ad139900"
+        "id": "00442685dc4d0c2e1fec687294dc411a0d2f35484f9c9bbc24eea6093eb06300"
       },
       {
-        "id": "8633b79d56d06d0d864227a34db1c96517359d7bc416872294a66dc878553100"
+        "id": "27306a177ec5607cd0020dde836577b54378d77635919a2ffce121feba4f5700"
       }
     ]
   }

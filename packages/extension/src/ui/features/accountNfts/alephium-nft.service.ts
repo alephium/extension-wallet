@@ -10,10 +10,18 @@ export const fetchNFTCollections = async (
 ): Promise<NFTCollection[]> => {
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
   const nodeProvider = new NodeProvider(network.nodeUrl)
-  const parentAndTokenIds = await Promise.all(tokenIds.map(async (tokenId) => {
-    const { parent } = await explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId))
-    return [parent && binToHex(contractIdFromAddress(parent)), tokenId]
-  }))
+
+  const parentAndTokenIds: [string, string][] = []
+  for (const tokenId of tokenIds) {
+    try {
+      const result = await explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId))
+      if (result.parent) {
+        parentAndTokenIds.push([binToHex(contractIdFromAddress(result.parent)), tokenId])
+      }
+    } catch (e) {
+      console.debug("Error fetching parent for token id", e)
+    }
+  }
 
   const tokenIdsByWhitelistedNFTCollections = parentAndTokenIds.reduce((acc, parentAndTokenId) => {
     const parent = parentAndTokenId[0]
@@ -79,21 +87,30 @@ async function getNFTs(
   nftIds: string[],
   nodeProvider: NodeProvider
 ): Promise<NFT[]> {
-  return await Promise.all(nftIds.map(async (nftId) => {
+  const nfts: NFT[] = [];
+
+  for (const nftId of nftIds) {
     const nftAddress = addressFromContractId(nftId)
-    const nftState = await nodeProvider.contracts.getContractsAddressState(
-      nftAddress,
-      { group: groupOfAddress(nftAddress) }
-    )
-    const metadataUri = hexToString((nftState.immFields[1] as ValByteVec).value)
-    const metadataResponse = await fetch(metadataUri)
-    const metadata = await metadataResponse.json()
-    return {
-      id: nftId,
-      collectionId: collectionId,
-      metadata: metadata
+    try {
+      const nftState = await nodeProvider.contracts.getContractsAddressState(
+        nftAddress,
+        { group: groupOfAddress(nftAddress) }
+      )
+
+      const metadataUri = hexToString((nftState.immFields[0] as ValByteVec).value)
+      const metadataResponse = await fetch(metadataUri)
+      const metadata = await metadataResponse.json()
+      nfts.push({
+        id: nftId,
+        collectionId: collectionId,
+        metadata: metadata
+      })
+    } catch (e) {
+      console.debug("Error fetching NFT", nftId)
     }
-  }))
+  }
+
+  return nfts
 }
 
 async function getCollectionMetadata(
