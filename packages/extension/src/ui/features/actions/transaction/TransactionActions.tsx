@@ -147,17 +147,14 @@ export const TransactionActions: FC<TransactionActionsProps> = ({
   const transactionActions = useExtractActions(transaction, networkId, tokensInNetwork)
   return (
     <Box borderRadius="xl">
-      <Box backgroundColor="neutrals.700" px="3" py="2.5" borderTopRadius="xl">
-        <P4 fontWeight="bold" color="neutrals.100">
-          Actions
-        </P4>
+      <Box backgroundColor="neutrals.700" px="3" py="1" borderTopRadius="xl">
       </Box>
       <Accordion
         allowToggle
         allowMultiple
         defaultIndex={0}
         backgroundColor="neutrals.800"
-        pt="3.5"
+        pt="0"
         borderBottomRadius="xl"
       >
         {transactionActions.map((transactionAction, txIndex) => (

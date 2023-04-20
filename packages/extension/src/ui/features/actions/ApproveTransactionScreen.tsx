@@ -5,6 +5,8 @@ import { L1, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
+import { CopyTooltip } from "../../components/CopyTooltip"
+import styled from "styled-components"
 
 import {
   ReviewTransactionResult,
@@ -26,6 +28,18 @@ import { DappHeader } from "./transaction/DappHeader"
 import { TransactionsList } from "./transaction/TransactionsList"
 
 const { AlertIcon } = icons
+
+const TxHashContainer = styled.div`
+  margin-top: 1px;
+  background: ${({ theme }) => theme.neutrals800};
+  border: 1px solid ${({ theme }) => theme.bg2};
+  color: ${({ theme }) => theme.text4};
+  padding: 9px 13px 8px;
+  overflow-wrap: break-word;
+  font-size: 14px;
+  line-height: 120%;
+  border-radius: 4px;
+`
 
 export interface ApproveTransactionScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
@@ -98,8 +112,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   const useLedger =
     selectedAccount !== undefined && selectedAccount.signer.type === "ledger"
-  const [ledgerApp, setLedgerApp] = useState<LedgerApp>()
-  const [signingWithLedger, setSigningWithLedger] = useState<boolean>(false)
+  const [ledgerApp, setLedgerApp] = useState<LedgerApp | "detecting" | "notfound">()
 
   // TODO: handle error
   useEffect(() => {
@@ -126,10 +139,13 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   const ledgerSign = useCallback(async () => {
     console.log(`====== connectLedger`, buildResult, useLedger, ledgerApp)
-    if (useLedger && !signingWithLedger) {
-      setSigningWithLedger(true)
+    if (selectedAccount === undefined) {
+      return
     }
-    {if (buildResult && !("error" in buildResult) && useLedger && ledgerApp === undefined) {
+    if (ledgerApp === undefined) {
+      setLedgerApp("detecting")
+    }
+    {if (buildResult && !("error" in buildResult) && typeof ledgerApp !== "object") {
       try {
         const app = await getLedgerApp()
         setLedgerApp(app)
@@ -139,10 +155,13 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         console.log(`========== connected`, app, signature)
       } catch (e) {
         console.log(`==== try again`, e)
+        if (ledgerApp !== "notfound") {
+          setLedgerApp("notfound")
+        }
         setTimeout(ledgerSign, 1000)
       }
     }}
-  }, [signingWithLedger, buildResult, ledgerApp, useLedger, onSubmit])
+  }, [selectedAccount, buildResult, ledgerApp, useLedger, onSubmit])
 
   if (!selectedAccount) {
     return <Navigate to={routes.accounts()} />
@@ -163,8 +182,8 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   return (
     <ConfirmScreen
-      confirmButtonText={signingWithLedger ? "Ledger..." : useLedger ? "Sign with Ledger" : "Sign"}
-      confirmButtonDisabled={signingWithLedger}
+      confirmButtonText={ledgerApp !== undefined ? "Ledger Signing..." : useLedger ? "Sign with Ledger" : "Sign"}
+      confirmButtonDisabled={ledgerApp !== undefined}
       rejectButtonText="Cancel"
       selectedAccount={selectedAccount}
       onSubmit={() => {
@@ -179,7 +198,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         buildResult &&
         !("error" in buildResult) && (
           <Flex direction="column" gap="1">
-            {signingWithLedger && !ledgerApp && (
+            {ledgerApp === "notfound" && (
               <Flex
                 direction="column"
                 backgroundColor="#330105"
@@ -192,7 +211,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
                   <Text color="errorText">
                     <AlertIcon />
                   </Text>
-                  <L1 color="errorText">The ledger app is not connected</L1>
+                  <L1 color="errorText">The ledger app is not working</L1>
                 </Flex>
               </Flex>
             )}
@@ -212,6 +231,18 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
       <TransactionsList networkId={networkId} transactionReview={buildResult} />
       <AccountNetworkInfo account={selectedAccount} />
+      <CopyTooltip copyValue={buildResult.result.txId} message="Copied">
+        <TxHashContainer>{`TxHash: ${splitTxHash(buildResult.result.txId)}`}</TxHashContainer>
+      </CopyTooltip>
     </ConfirmScreen>
   )
+}
+
+// write a function that split a txHash into segments with each segment having 16 character
+function splitTxHash(txHash: string) {
+  const chunks = []
+  for (let i = 0; i < txHash.length; i += 16) {
+    chunks.push(txHash.slice(i, i + 16))
+  }
+  return chunks.join(" ")
 }
