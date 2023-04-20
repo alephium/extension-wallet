@@ -20,7 +20,7 @@ export const createNewAccount = async (networkId: string, keyType: KeyType, grou
   }
 }
 
-export const importNewLedgerAccount =async (account: Account, hdIndex: number, networkId: string) => {
+export const importNewLedgerAccount = async (account: Account, hdIndex: number, networkId: string) => {
   console.log(`========= ${account} ${hdIndex}`)
   sendMessage({ type: "NEW_LEDGER_ACCOUNT", data: { account, hdIndex, networkId } })
   try {

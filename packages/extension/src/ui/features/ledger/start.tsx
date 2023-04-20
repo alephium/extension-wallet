@@ -14,7 +14,7 @@ import { LedgerStartIllustration } from "./assets/LedgerStart"
 import { LedgerPage } from "./LedgerPage"
 import { Steps } from "./Steps"
 import { deriveAccount } from "./utils"
-import { useAddLedgerAccount } from "../accounts/useAddAccount"
+import { addLedgerAccount, getAllLedgerAccounts } from "../accounts/useAddAccount"
 
 export const StyledButton = styled(Button)`
   width: fit-content;
@@ -24,26 +24,25 @@ export const StyledButton = styled(Button)`
 `
 
 export const LedgerStartScreen: FC = () => {
-  const { networkId, addressGroupRaw } = useParams()
+  const { networkId, group, keyType } = useParams()
   const [addressGroup, setAddressGroup] = useState<number>()
   const navigate = useNavigate()
   const [error, setError] = useState("")
   const [detecting, setDetecting] = useState(false)
-  const { addAccount } = useAddLedgerAccount(networkId ?? 'devnet')
 
   useEffect(() => {
-    if (networkId === undefined) {
-      setError(`Unknown network id`)
-    }
-
-    if (addressGroupRaw === undefined || addressGroupRaw === 'undefined') {
+    if (group === undefined || group === 'undefined') {
       setAddressGroup(undefined)
     } else {
-      setAddressGroup(parseInt(addressGroupRaw))
+      setAddressGroup(parseInt(group))
     }
-  }, [networkId, addressGroupRaw])
+  }, [group])
 
-  console.log(`====== start screen`, networkId, addressGroupRaw)
+  console.log(`====== start screen`, networkId, group, keyType)
+
+  if (networkId === undefined) {
+    return <></>
+  }
 
   {return (
     <LedgerPage>
@@ -76,9 +75,10 @@ export const LedgerStartScreen: FC = () => {
             setDetecting(true)
             setError("")
             try {
-              const account = await deriveAccount(addressGroup)
-              console.log(`===== account: ${JSON.stringify(account)}`)
-              addAccount(account, 0)
+              const ledgerAccounts = await getAllLedgerAccounts(networkId)
+              const [account, hdIndex] = await deriveAccount(ledgerAccounts, addressGroup, keyType ?? "default")
+              console.log(`===== account: ${JSON.stringify(account)}, ${hdIndex}`)
+              addLedgerAccount(networkId, account, hdIndex)
               navigate(routes.ledgerDone())
             } catch (e) {
               console.error(e)

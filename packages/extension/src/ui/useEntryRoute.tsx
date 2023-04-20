@@ -34,7 +34,7 @@ export const useEntryRoute = () => {
 
 const determineEntry = async (query: URLSearchParams) => {
   if (query.get("goto") === "ledger") {
-    return routes.ledgerEntry(query.get("networkId") ?? '', query.get("group") ?? undefined)
+    return routes.ledgerEntry(query.get("networkId") ?? '', query.get("group") ?? undefined, query.get("keyType") ?? "default")
   }
 
   const { initialized } = await isInitialized()

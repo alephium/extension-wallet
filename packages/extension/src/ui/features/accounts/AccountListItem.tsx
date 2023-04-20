@@ -3,7 +3,7 @@ import { H6, L2, P4, icons, typographyStyles } from "@argent/ui"
 import { Circle, Flex, Image, Text, Tooltip, chakra } from "@chakra-ui/react"
 import { ComponentProps, FC } from "react"
 
-import { ArgentAccountType } from "../../../shared/wallet.model"
+import { SignerType } from "../../../shared/wallet.model"
 import {
   CustomButtonCell,
   CustomButtonCellProps,
@@ -19,6 +19,7 @@ export interface AccountListItemProps extends CustomButtonCellProps {
   accountAddress: string
   networkId: string
   keyType?: KeyType
+  signerType?: SignerType
   networkName?: string
   deploying?: boolean
   upgrade?: boolean
@@ -96,6 +97,7 @@ export const AccountListItem: FC<AccountListItemProps> = ({
   accountAddress,
   networkId,
   networkName,
+  signerType,
   keyType,
   deploying,
   upgrade,
@@ -130,6 +132,21 @@ export const AccountListItem: FC<AccountListItemProps> = ({
             <H6 overflow={"hidden"} textOverflow={"ellipsis"}>
               {accountName}
             </H6>
+            {signerType === "ledger" && (
+              <L2
+                backgroundColor={"neutrals.900"}
+                px={1}
+                py={0.5}
+                textTransform="uppercase"
+                fontWeight={"extrabold"}
+                color={"neutrals.200"}
+                borderRadius={"base"}
+                border={"1px solid"}
+                borderColor={"neutrals.700"}
+              >
+                Ledger
+              </L2>
+            )}
             {keyType === "bip340-schnorr" && (
               <L2
                 backgroundColor={"neutrals.900"}

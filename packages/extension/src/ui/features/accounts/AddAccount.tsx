@@ -94,26 +94,7 @@ export const AddAccount: FC = () => {
   const { addAccount } = useAddAccount()
     
   const parsedGroup = group === "any" ? undefined : parseInt(group)
-
-  const handleAddAccount = useCallback((group: string, signMethod: string, accountType: "local" | "ledger") => {
-    const parsedKeyType = signMethod === "default" ? "default" : "bip340-schnorr"
-    if (accountType === "local") {
-      return addAccount(parsedKeyType, parsedGroup)
-    } else {
-      // openConnectLedger(parsedGroup)
-      // const newAddress = await initLedgerWindowListener()
-      // console.log(`===== ${JSON.stringify(newAddress)}`)
-      // await deployLedgerAddress(newAddress)
-      // addAddress(newAddress)
-      // connectAddress({
-      //   address: newAddress.hash,
-      //   publicKey: newAddress.publicKey,
-      //   addressIndex: newAddress.index
-      // })
-      // setAddressMetadata(newAddress.hash, { name: getValues('name'), color: getValues('color') })
-      // navigate(await recover(routes.walletAddresses.path))
-    }
-  }, [addAccount, parsedGroup])
+  const parsedKeyType = signMethod === "default" ? "default" : "bip340-schnorr"
 
   return (
     <>
@@ -131,10 +112,10 @@ export const AddAccount: FC = () => {
             icon={<StyledAlephiumLogo />}
             description="Generate a new wallet address"
             hideArrow
-            onClick={() => handleAddAccount(group, signMethod, "local")}
+            onClick={() => addAccount(parsedKeyType, parsedGroup).catch(() => setHasError(true))}
           />
           <A
-            href={`/index.html?goto=ledger&networkId=${switcherNetworkId}&group=${parsedGroup}`}
+            href={`/index.html?goto=ledger&networkId=${switcherNetworkId}&group=${parsedGroup}&keyType=${parsedKeyType}`}
             targetBlank
             onClick={async () => {
               // somehow this just works if this function is provided

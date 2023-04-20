@@ -3,7 +3,7 @@ import { useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { useAppState } from "../../app.state"
-import { selectAccount } from "../../services/backgroundAccounts"
+import { getAccounts, selectAccount } from "../../services/backgroundAccounts"
 import { recover } from "../recovery/recovery.service"
 import { createAccount } from "./accounts.service"
 import { importNewLedgerAccount } from '../../services/backgroundAccounts'
@@ -23,13 +23,14 @@ export const useAddAccount = () => {
   return { addAccount }
 }
 
-export const useAddLedgerAccount = (networkId: string) => {
-  const addAccount = useCallback(async (account: Account, hdIndex: number ) => {
-    console.log(`==== useAddLedger`, networkId, account)
-    await importNewLedgerAccount(account, hdIndex, networkId)
-    // switch background wallet to the account that was selected
-    await selectAccount({ address: account.address, networkId: networkId })
-  }, [networkId])
+export const addLedgerAccount = async (networkId: string, account: Account, hdIndex: number) => {
+  console.log(`==== useAddLedger`, networkId, account)
+  await importNewLedgerAccount(account, hdIndex, networkId)
+  // switch background wallet to the account that was selected
+  await selectAccount({ address: account.address, networkId: networkId })
+}
 
-  return { addAccount }
+export const getAllLedgerAccounts = async (networkId: string) => {
+  const accounts = await getAccounts()
+  return accounts.filter((account) => account.networkId === networkId && account.signer.type === "ledger")
 }

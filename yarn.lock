@@ -38,10 +38,10 @@
     "@alephium/web3" "^0.10.0"
     bowser "^2.11.0"
 
-"@alephium/ledger-app@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@alephium/ledger-app/-/ledger-app-0.1.2.tgz#9c4f53d28786fceca78ee3772ae1fb592b6fad77"
-  integrity sha512-kaKfK5OJPCjCRfH3PV7AYq/cB9PJ7+iPdw2AnfUjoiUd6kVZcWPs2KxPCvGcEo7Oe7F/5v+FKhyN+n8kX022gQ==
+"@alephium/ledger-app@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@alephium/ledger-app/-/ledger-app-0.1.4.tgz#e02593d6f3b86dd8e3e2a441e1c4b400e264e56d"
+  integrity sha512-KKMcKVwKx2/ySg7SREX/7+1ng3UZPsdr+PAJfHFKiyzojNgBoyzq4MzHBsVJYAJJg0+XaYev+Entkd/N/c8PKw==
   dependencies:
     "@alephium/cli" "0.10.2"
     "@alephium/web3" "0.10.2"
