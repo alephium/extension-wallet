@@ -94,6 +94,13 @@ export class Wallet {
     return signer.signAndSubmitUnsignedTx(params)
   }
 
+  async submitSignedTx(account: WalletAccount, unsignedTx: string, signature: string): Promise<void> {
+    const network = await this.getNetwork(account.networkId)
+    const nodeProvider = new NodeProvider(network.nodeUrl)
+    await nodeProvider.transactions.postTransactionsSubmit({ unsignedTx, signature})
+    return
+  }
+
   public async signMessage(
     account: WalletAccount,
     params: SignMessageParams

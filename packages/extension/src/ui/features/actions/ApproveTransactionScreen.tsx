@@ -1,12 +1,20 @@
-import { TransactionBuilder } from "@alephium/web3"
-import { FC, useEffect, useState } from "react"
+import LedgerApp from "@alephium/ledger-app"
+import { TransactionBuilder, utils } from "@alephium/web3"
+import { L1, icons } from "@argent/ui"
+import { Flex, Text } from "@chakra-ui/react"
+import { FC, useCallback, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
-import { ReviewTransactionResult, TransactionParams } from "../../../shared/actionQueue/types"
 
+import {
+  ReviewTransactionResult,
+  TransactionParams,
+} from "../../../shared/actionQueue/types"
+import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import { usePageTracking } from "../../services/analytics"
-import { useAppState } from "../../app.state"
+import { rejectAction } from "../../services/backgroundActions"
 import { Account } from "../accounts/Account"
+import { getLedgerApp } from "../ledger/utils"
 import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
 import { ConfirmPageProps } from "./DeprecatedConfirmScreen"
@@ -15,26 +23,58 @@ import { LoadingScreen } from "./LoadingScreen"
 import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import { DappHeader } from "./transaction/DappHeader"
 import { TransactionsList } from "./transaction/TransactionsList"
-import { rejectAction } from "../../services/backgroundActions"
+
+const { AlertIcon } = icons
 
 export interface ApproveTransactionScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
   actionHash: string
   transaction: TransactionParams
-  onSubmit: (result: ReviewTransactionResult | { error: string } | undefined) => void
+  onSubmit: (
+    result: ReviewTransactionResult & { signature?: string } | { error: string } | undefined,
+  ) => void
 }
 
-async function buildTransaction(nodeUrl: string, account: Account, transaction: TransactionParams): Promise<ReviewTransactionResult> {
+async function buildTransaction(
+  nodeUrl: string,
+  account: Account,
+  transaction: TransactionParams,
+): Promise<ReviewTransactionResult> {
   const builder = TransactionBuilder.from(nodeUrl)
   switch (transaction.type) {
-    case 'TRANSFER':
-      return { type: transaction.type, params: transaction.params, result: await builder.buildTransferTx(transaction.params, account.publicKey) }
-    case 'DEPLOY_CONTRACT':
-      return { type: transaction.type, params: transaction.params, result: await builder.buildDeployContractTx(transaction.params, account.publicKey) }
-    case 'EXECUTE_SCRIPT':
-      return { type: transaction.type, params: transaction.params, result: await builder.buildExecuteScriptTx(transaction.params, account.publicKey) }
-    case 'UNSIGNED_TX':
-      return { type: transaction.type, params: transaction.params, result: await builder.buildUnsignedTx(transaction.params) }
+    case "TRANSFER":
+      return {
+        type: transaction.type,
+        params: transaction.params,
+        result: await builder.buildTransferTx(
+          transaction.params,
+          account.publicKey,
+        ),
+      }
+    case "DEPLOY_CONTRACT":
+      return {
+        type: transaction.type,
+        params: transaction.params,
+        result: await builder.buildDeployContractTx(
+          transaction.params,
+          account.publicKey,
+        ),
+      }
+    case "EXECUTE_SCRIPT":
+      return {
+        type: transaction.type,
+        params: transaction.params,
+        result: await builder.buildExecuteScriptTx(
+          transaction.params,
+          account.publicKey,
+        ),
+      }
+    case "UNSIGNED_TX":
+      return {
+        type: transaction.type,
+        params: transaction.params,
+        result: await builder.buildUnsignedTx(transaction.params),
+      }
   }
 }
 
@@ -48,9 +88,17 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   usePageTracking("signTransaction", {
     networkId: selectedAccount?.networkId || "unknown",
   })
-  const [disableConfirm, setDisableConfirm] = useState(true)
-  const [buildResult, setBuildResult] = useState<ReviewTransactionResult | { error: string } | undefined>()
-  const { id: networkId, nodeUrl } = useNetwork(selectedAccount?.networkId ?? "unknown")
+  const [buildResult, setBuildResult] = useState<
+    ReviewTransactionResult | { error: string } | undefined
+  >()
+  const { id: networkId, nodeUrl } = useNetwork(
+    selectedAccount?.networkId ?? "unknown",
+  )
+
+  const useLedger =
+    selectedAccount !== undefined && selectedAccount.signer.type === "ledger"
+  const [ledgerApp, setLedgerApp] = useState<LedgerApp>()
+  const [signingWithLedger, setSigningWithLedger] = useState<boolean>(false)
 
   // TODO: handle error
   useEffect(() => {
@@ -60,7 +108,11 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       }
 
       try {
-        const buildResult = await buildTransaction(nodeUrl, selectedAccount, transaction)
+        const buildResult = await buildTransaction(
+          nodeUrl,
+          selectedAccount,
+          transaction,
+        )
         setBuildResult(buildResult)
       } catch (e: any) {
         console.error("Error building transaction", e)
@@ -70,7 +122,26 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
     build()
   }, [nodeUrl, selectedAccount, transaction])
-  
+
+  const ledgerSign = useCallback(async () => {
+    console.log(`====== connectLedger`, buildResult, useLedger, ledgerApp)
+    if (useLedger && !signingWithLedger) {
+      setSigningWithLedger(true)
+    }
+    {if (buildResult && !("error" in buildResult) && useLedger && ledgerApp === undefined) {
+      try {
+        const app = await getLedgerApp()
+        setLedgerApp(app)
+        const signature = await app.signHash(`m/44'/1234'/0'/0/0`, Buffer.from(buildResult.result.txId, 'hex'))
+        onSubmit({...buildResult, signature})
+        console.log(`========== connected`, app, signature)
+      } catch (e) {
+        console.log(`==== try again`, e)
+        setTimeout(ledgerSign, 1000)
+      }
+    }}
+  }, [signingWithLedger, buildResult, ledgerApp, useLedger, onSubmit])
+
   if (!selectedAccount) {
     return <Navigate to={routes.accounts()} />
   }
@@ -90,38 +161,55 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   return (
     <ConfirmScreen
-      confirmButtonText="Confirm"
+      confirmButtonText={signingWithLedger ? "Ledger..." : useLedger ? "Sign with Ledger" : "Sign"}
+      confirmButtonDisabled={signingWithLedger}
       rejectButtonText="Cancel"
-      confirmButtonDisabled={disableConfirm}
       selectedAccount={selectedAccount}
       onSubmit={() => {
-        onSubmit(buildResult)
+        if (useLedger) {
+          ledgerSign()
+        } else {
+          onSubmit(buildResult)
+        }
       }}
       showHeader={false}
       footer={
-        (
-          buildResult && !("error" in buildResult) && (
+        buildResult &&
+        !("error" in buildResult) && (
+          <Flex direction="column" gap="1">
+            {signingWithLedger && !ledgerApp && (
+              <Flex
+                direction="column"
+                backgroundColor="#330105"
+                boxShadow="menu"
+                py="3.5"
+                px="3.5"
+                borderRadius="xl"
+              >
+                <Flex gap="1" align="center">
+                  <Text color="errorText">
+                    <AlertIcon />
+                  </Text>
+                  <L1 color="errorText">The ledger app is not connected</L1>
+                </Flex>
+              </Flex>
+            )}
             <FeeEstimation
-              onErrorChange={setDisableConfirm}
+              onErrorChange={() => { return }}
               accountAddress={selectedAccount.address}
               networkId={selectedAccount.networkId}
               transaction={buildResult}
               actionHash={actionHash}
             />
-          )
+          </Flex>
         )
       }
       {...props}
     >
-      <DappHeader
-        transaction={transaction}
-      />
+      <DappHeader transaction={transaction} />
 
-      <TransactionsList
-        networkId={networkId}
-        transactionReview={buildResult}
-      />
+      <TransactionsList networkId={networkId} transactionReview={buildResult} />
       <AccountNetworkInfo account={selectedAccount} />
-    </ConfirmScreen >
+    </ConfirmScreen>
   )
 }

@@ -10,16 +10,22 @@ export const getLedgerTransport = async () => {
     transport = await TransportWebHID.create()
     return transport
   } catch (e) {
-    console.log('Web HID not supported.')
+    console.log('Web HID not supported.', e)
   }
 
   transport = await TransportWebUSB.create()
   return transport
 }
 
-export const deriveAccount = async (targetAddressGroup?: number) => {
+export const getLedgerApp = async () => {
   const transport = await getLedgerTransport()
   const app = new LedgerApp(transport)
+  await app.getVersion()
+  return app
+}
+
+export const deriveAccount = async (targetAddressGroup?: number) => {
+  const app = await getLedgerApp()
   const path = `m/44'/1234'/0'/0/0`
   return await app.getAccount(path, targetAddressGroup)
 }
