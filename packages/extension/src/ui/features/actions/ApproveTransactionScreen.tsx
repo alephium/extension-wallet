@@ -1,5 +1,6 @@
 import LedgerApp from "@alephium/ledger-app"
 import { TransactionBuilder, utils } from "@alephium/web3"
+import { getHDWalletPath } from '@alephium/web3-wallet';
 import { L1, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useState } from "react"
@@ -132,7 +133,8 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       try {
         const app = await getLedgerApp()
         setLedgerApp(app)
-        const signature = await app.signHash(`m/44'/1234'/0'/0/0`, Buffer.from(buildResult.result.txId, 'hex'))
+        const path = getHDWalletPath(selectedAccount.signer.keyType, selectedAccount.signer.derivationIndex)
+        const signature = await app.signHash(path, Buffer.from(buildResult.result.txId, 'hex'))
         onSubmit({...buildResult, signature})
         console.log(`========== connected`, app, signature)
       } catch (e) {

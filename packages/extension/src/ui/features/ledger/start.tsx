@@ -72,8 +72,14 @@ export const LedgerStartScreen: FC = () => {
         <StyledButton
           style={{ marginTop: 32 }}
           onClick={async () => {
-            setDetecting(true)
             setError("")
+
+            if (keyType === "bip340-schnorr") {
+              setError("Schnorr is not supported for Alephium's ledger app yet")
+              return
+            }
+
+            setDetecting(true)
             try {
               const ledgerAccounts = await getAllLedgerAccounts(networkId)
               const [account, hdIndex] = await deriveAccount(ledgerAccounts, addressGroup, keyType ?? "default")
