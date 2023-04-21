@@ -15,13 +15,11 @@ import {
 } from "../../components/InputText"
 import { Spinner } from "../../components/Spinner"
 import { showTokenId } from "../accountActivity/transform/transaction/transformTransaction"
-import { AccountCollections } from "../accountNfts/AccountCollections"
-import { Collection, Collections } from "../accountNfts/aspect.service"
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenList } from "../accountTokens/TokenList"
 import {
   TokenDetailsWithBalance,
-  useTokens,
+  useKnownTokens,
 } from "../accountTokens/tokens.state"
 
 const SearchBox = styled.form`
@@ -57,7 +55,7 @@ export const SendScreen: FC = () => {
 
   const account = useSelectedAccount()
   const currentQueryValue = watch().query
-  const tokensInNetwork = useTokens(account)
+  const tokensInNetwork = useKnownTokens(account)
   const tokenList = useCustomTokenList(tokensInNetwork, account?.networkId, currentQueryValue)
 
   if (!account) {
@@ -122,5 +120,5 @@ const useCustomTokenList = (
         token.symbol.toLowerCase().includes(queryLowercase),
     )
     return result
-  }, [query, tokenDetails])
+  }, [query, tokenDetails, networkId])
 }

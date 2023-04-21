@@ -82,13 +82,13 @@ export const useToken = (baseToken: BaseToken): Token | undefined => {
 /** error codes to suppress - will not bubble error up to parent */
 const SUPPRESS_ERROR_STATUS = [429]
 
-export const useTokensWithBalance = (
+export const useKnownTokensWithBalance = (
   account?: BaseWalletAccount,
 ): UseTokens => {
   const selectedAccount = useAccount(account)
   const { pendingTransactions } = useAccountTransactions(account)
   const pendingTransactionsLengthRef = useRef(pendingTransactions.length)
-  const tokensForAccount = useTokens(selectedAccount)
+  const tokensForAccount = useKnownTokens(selectedAccount)
 
   const {
     data,
@@ -164,9 +164,34 @@ export const useTokensWithBalance = (
   }
 }
 
-export const useTokens = (
+export const useKnownTokens = (
   account?: BaseWalletAccount,
 ): Token[] => {
+  const selectedAccount = useAccount(account)
+  const networkId = useMemo(() => {
+    return selectedAccount?.networkId ?? ""
+  }, [selectedAccount?.networkId])
+  const knownTokensInNetwork = useTokensInNetwork(networkId)
+  const userTokens = useAllTokens(account)
+
+  const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
+  for (const userToken of userTokens) {
+    if (result.findIndex((t) => t[0].id === userToken.id) === -1) { // this token is not in the show always list
+      const foundIndex = knownTokensInNetwork.findIndex((token) => token.id == userToken.id)
+      if (foundIndex !== -1) {  // in the known token list
+        result.push([knownTokensInNetwork[foundIndex], foundIndex])
+      } else if (account?.networkId === 'devnet') {
+        result.push([devnetToken(userToken), knownTokensInNetwork.length])
+      }
+    }
+  }
+
+  return result.sort((a, b) => a[1] - b[1]).map(tuple => tuple[0])
+}
+
+export const useUnknownTokens = (
+  account?: BaseWalletAccount,
+): BaseToken[] => {
   const selectedAccount = useAccount(account)
 
   const networkId = useMemo(() => {
@@ -174,6 +199,29 @@ export const useTokens = (
   }, [selectedAccount?.networkId])
 
   const knownTokensInNetwork = useTokensInNetwork(networkId)
+
+  const allTokens = useAllTokens(account)
+
+  const unknownTokens: BaseToken[] = []
+  for (const token of allTokens) {
+    const foundIndex = knownTokensInNetwork.findIndex((t) => t.id == token.id)
+    if (foundIndex === -1) {  // Must not be known tokens
+      if (unknownTokens.findIndex((t) => t.id == token.id) === -1) {
+        unknownTokens.push({ id: token.id, networkId: networkId })
+      }
+    }
+  }
+
+  return unknownTokens
+}
+
+export const useAllTokens = (
+  account?: BaseWalletAccount
+): BaseToken[] => {
+  const selectedAccount = useAccount(account)
+  const networkId = useMemo(() => {
+    return selectedAccount?.networkId ?? ""
+  }, [selectedAccount?.networkId])
 
   const {
     data
@@ -194,9 +242,9 @@ export const useTokens = (
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
       const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
 
-        for (const tokenId of tokenIds) {
-          if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
-            allTokens.push({ id: tokenId, networkId: networkId })
+      for (const tokenId of tokenIds) {
+        if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
+          allTokens.push({ id: tokenId, networkId: networkId })
         }
       }
 
@@ -213,19 +261,5 @@ export const useTokens = (
     },
   )
 
-  const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
-  const userTokens: BaseToken[] = data || []
-
-  for (const userToken of userTokens) {
-    if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
-      const foundIndex = knownTokensInNetwork.findIndex((token) => token.id == userToken.id)
-      if (foundIndex !== -1) {
-        result.push([knownTokensInNetwork[foundIndex], foundIndex])
-      } else if (account?.networkId === 'devnet') {
-        result.push([devnetToken(userToken), knownTokensInNetwork.length])
-      }
-    }
-  }
-
-  return result.sort((a, b) => a[1] - b[1]).map(tuple => tuple[0])
+  return data || [];
 }

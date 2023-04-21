@@ -19,7 +19,7 @@ import { TokenIcon } from "./TokenIcon"
 import { TokenMenuDeprecated } from "./TokenMenuDeprecated"
 import { useTokenBalanceToCurrencyValue } from "./tokenPriceHooks"
 import { toTokenView } from "./tokens.service"
-import { useTokensWithBalance } from "./tokens.state"
+import { useKnownTokensWithBalance } from "./tokens.state"
 
 const TokenScreenWrapper = styled(ColumnCenter)`
   width: 100%;
@@ -80,7 +80,7 @@ export const TokenScreen: FC = () => {
   const { tokenId } = useParams()
   const account = useSelectedAccount()
   const { tokenDetails, tokenDetailsIsInitialising, isValidating } =
-    useTokensWithBalance(account)
+    useKnownTokensWithBalance(account)
   const token = useMemo(
     () => tokenDetails.find(({ id }) => id === tokenId),
     [tokenId, tokenDetails],

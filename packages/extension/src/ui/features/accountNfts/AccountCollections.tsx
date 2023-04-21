@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom"
 
 import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
-import { useTokensWithBalance } from "../accountTokens/tokens.state"
 import { EmptyCollections } from "./EmptyCollections"
 import { NftFigure } from "./NftFigure"
 import { NftItem } from "./NftItem"
@@ -24,10 +23,8 @@ const Collections: FC<AccountCollectionsProps> = ({
   navigateToSend = false,
 }) => {
   const navigate = useNavigate()
-  const tokensWithBalances = useTokensWithBalance(account)
-  const tokenIds = tokensWithBalances.tokenDetails.map((token) => token.id)
   const network = useNetwork(account.networkId)
-  const { collections } = useCollections(tokenIds, network, account)
+  const { collections } = useCollections(network, account)
 
   return (
     <>

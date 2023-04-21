@@ -6,9 +6,9 @@ import { useNavigate } from "react-router-dom"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
-import { useNetworkFeeToken, useTokensWithBalance } from "./tokens.state"
+import { useNetworkFeeToken, useKnownTokensWithBalance } from "./tokens.state"
 
-const { AddIcon, SendIcon, PluginIcon } = icons
+const { AddIcon, SendIcon } = icons
 
 interface AccountTokensButtonsProps {
   account: Account
@@ -22,7 +22,7 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
 
   const sendToken = useNetworkFeeToken(switcherNetworkId)
   const { tokenDetails, tokenDetailsIsInitialising } =
-    useTokensWithBalance(account)
+    useKnownTokensWithBalance(account)
 
   const hasNonZeroBalance = useMemo(() => {
     return tokenDetails.some(({ balance }) => balance?.gt(0))
@@ -53,13 +53,8 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
     navigate(routes.fundingQrCode('undefined'))
   }, [navigate])
 
-  const onPlugins = useCallback(() => {
-    navigate(routes.addPlugin(account?.address))
-  }, [account?.address, navigate])
-
   const title = "Add funds"
-  const message = `You need to ${
-    "add funds to this account"
+  const message = `You need to ${"add funds to this account"
   } before you can send`
 
   return (
@@ -74,23 +69,23 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
         onConfirm={onAddFunds}
       />
       <SimpleGrid columns={sendToken ? 2 : 1} spacing={2}>
-          <Button
-          onClick={onAddFunds}
-            colorScheme={"tertiary"}
-            size="sm"
-          leftIcon={<AddIcon />}
-          >
-          Add funds
-          </Button>
-        {sendToken && (
         <Button
-            onClick={onSend}
+          onClick={onAddFunds}
           colorScheme={"tertiary"}
           size="sm"
-            leftIcon={<SendIcon />}
+          leftIcon={<AddIcon />}
         >
-            Send
+          Add funds
         </Button>
+        {sendToken && (
+          <Button
+            onClick={onSend}
+            colorScheme={"tertiary"}
+            size="sm"
+            leftIcon={<SendIcon />}
+          >
+            Send
+          </Button>
         )}
       </SimpleGrid>
     </Flex>

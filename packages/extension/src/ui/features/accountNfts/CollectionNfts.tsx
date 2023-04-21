@@ -6,7 +6,7 @@ import { Location, useLocation, useNavigate, useParams } from "react-router-dom"
 import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
 import { useSelectedAccount } from "../accounts/accounts.state"
-import { useTokensWithBalance } from "../accountTokens/tokens.state"
+import { useUnknownTokens } from "../accountTokens/tokens.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { NftFigure } from "./NftFigure"
 import { NftItem } from "./NftItem"
@@ -26,10 +26,10 @@ export const CollectionNfts: FC = () => {
 
   const navigateToSend = state?.navigateToSend || false
 
-  const tokensWithBalances = useTokensWithBalance(account)
-  const tokenIds = tokensWithBalances.tokenDetails.map((token) => token.id)
+  const unknownTokens = useUnknownTokens(account)
+  const unknownTokenIds = unknownTokens.map((t) => t.id)
   const network = useCurrentNetwork()
-  const { collection, error } = useCollection(tokenIds, network, collectionId, account)
+  const { collection, error } = useCollection(unknownTokenIds, network, collectionId, account)
 
   if (!collectionId) {
     return <></>

@@ -6,19 +6,25 @@ import { SWRConfigCommon } from "../../services/swr"
 
 import { Network } from "../../../shared/network"
 import { fetchNFTCollections, fetchNFTCollection } from "./alephium-nft.service"
+import { useUnknownTokens } from "../accountTokens/tokens.state"
 
 export const useCollections = (
-  tokenIds: string[],
   network: Network,
   account?: BaseWalletAccount,
   config?: SWRConfigCommon,
 ) => {
+  const unknownTokens = useUnknownTokens(account)
+  const unknownTokenIds = unknownTokens.map((t) => t.id)
+
   const { data: collections, ...rest } = useSWR(
-    account && [
+    account &&
+    unknownTokenIds.length > 0 &&
+    [
       getAccountIdentifier(account),
+      unknownTokenIds,
       "collections",
     ],
-    () => fetchNFTCollections(tokenIds, network),
+    () => fetchNFTCollections(unknownTokenIds, network),
     {
       refreshInterval: 60e3 /* 1 minute */,
       suspense: true,
@@ -38,9 +44,11 @@ export const useCollection = (
 ) => {
   const { data: collection, ...rest } = useSWR(
     collectionId &&
+    tokenIds.length > 0 &&
     account && [
       getAccountIdentifier(account),
       collectionId,
+      tokenIds,
       "collection",
     ],
     async () => {
