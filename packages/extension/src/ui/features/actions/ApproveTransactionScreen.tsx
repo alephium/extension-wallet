@@ -147,7 +147,6 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   }, [nodeUrl, selectedAccount, transaction])
 
   const ledgerSign = useCallback(async () => {
-    console.log(`====== connectLedger`, buildResult, useLedger, ledgerApp)
     if (selectedAccount === undefined) {
       return
     }
@@ -169,20 +168,16 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
             path,
             Buffer.from(buildResult.result.txId, "hex"),
           )
-          console.log(`======= signature`, signature)
           setLedgerState("succeeded")
           onSubmit({ ...buildResult, signature })
           await app.close()
-          console.log(`========== connected`, app, signature)
         } catch (e) {
-          console.log(`===== error`, e, ledgerState, ledgerApp)
           if (ledgerState === "detecting") {
             setLedgerState("notfound")
           }
           if (app === undefined) {
             setTimeout(ledgerSign, 1000)
           } else {
-            console.log(`======= user cancelled`)
             await app.close()
             setLedgerState("failed")
             if (onReject !== undefined) {

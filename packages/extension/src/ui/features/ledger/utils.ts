@@ -44,11 +44,9 @@ export const deriveAccount = async (existingLedgerAccounts: WalletAccount[], tar
     account.signer.keyType === keyType && isAddressGroupMatched(account, targetAddressGroup)
   )
   relevantAccounts.sort((a, b) => a.signer.derivationIndex - b.signer.derivationIndex)
-  console.log(`===== relevantAccounts`, relevantAccounts)
   for (let i = 0; i < relevantAccounts.length; i++) {
     const existingAccount = relevantAccounts[i]
     const path = getHDWalletPath(keyType, existingAccount.signer.derivationIndex + 1)
-    console.log(`===== path`, path)
     const [newAccount, hdIndex] = await app.getAccount(path, targetAddressGroup, keyType)
     if (existingLedgerAccounts.find((account) => account.address === newAccount.address) === undefined) {
       await app.close()
@@ -56,7 +54,6 @@ export const deriveAccount = async (existingLedgerAccounts: WalletAccount[], tar
     }
   }
   const path = getHDWalletPath(keyType, 0)
-  console.log(`===== path`, path)
   const result = await app.getAccount(path, targetAddressGroup, keyType)
   await app.close()
   return result

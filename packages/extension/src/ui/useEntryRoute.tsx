@@ -45,7 +45,6 @@ const determineEntry = async (query: URLSearchParams) => {
   const hasSession = await hasActiveSession()
   if (hasSession) {
     const url = window.location.href
-    console.log(`======`, url)
     return recover()
   }
   return routes.lockScreen()

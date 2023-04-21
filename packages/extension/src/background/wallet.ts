@@ -276,7 +276,6 @@ export class Wallet {
       },
       type: "alephium",
     }
-    console.log(`========= wallet`, walletAccount)
     await this.walletStore.push([walletAccount])
     await this.selectAccount(walletAccount)
     return walletAccount

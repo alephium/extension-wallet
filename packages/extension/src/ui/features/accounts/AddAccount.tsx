@@ -71,19 +71,6 @@ export const MemuSelector: FC<MenuSelectorProps> = ({ title, options, setValue }
 const groupOptions = ["any", ...Array.from(Array(TOTAL_NUMBER_OF_GROUPS).keys()).map(g => `${g}`)]
 const signOptions = ["default", "schnorr"] as const
 
-// function initLedgerWindowListener(): Promise<Address> {
-//   return new Promise((resolve)=>{
-//     async function onMessage(message: any, sender: any, sendResponse: any) {
-//       if (typeof message == 'object' && 'ledgerAddress' in message) {
-//         browser.runtime.onMessage.removeListener(onMessage)
-//         resolve(message['ledgerAddress'] as Address)
-//         sendResponse && sendResponse()
-//       }
-//     }
-//     browser.runtime.onMessage.addListener(onMessage)
-//   })
-// }
-
 export const AddAccount: FC = () => {
   const navigate = useNavigate()
   const [hasError, setHasError] = useState(false)

@@ -38,8 +38,6 @@ export const LedgerStartScreen: FC = () => {
     }
   }, [group])
 
-  console.log(`====== start screen`, networkId, group, keyType)
-
   if (networkId === undefined) {
     return <></>
   }
@@ -83,7 +81,6 @@ export const LedgerStartScreen: FC = () => {
             try {
               const ledgerAccounts = await getAllLedgerAccounts(networkId)
               const [account, hdIndex] = await deriveAccount(ledgerAccounts, addressGroup, keyType ?? "default")
-              console.log(`===== account: ${JSON.stringify(account)}, ${hdIndex}`)
               addLedgerAccount(networkId, account, hdIndex)
               navigate(routes.ledgerDone())
             } catch (e) {

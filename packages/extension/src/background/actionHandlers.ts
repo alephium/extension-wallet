@@ -45,7 +45,6 @@ export const handleActionApproval = async (
     }
 
     case "TRANSACTION": {
-      console.log(`======= transaction`, additionalData)
       const {signature, ...transaction} = additionalData as (ReviewTransactionResult & { signature?: string })
       try {
         await executeTransactionAction(
