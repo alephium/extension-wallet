@@ -16,7 +16,16 @@ export const fetchNFTCollections = async (
     try {
       const result = await explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId))
       if (result.parent) {
-        parentAndTokenIds.push([binToHex(contractIdFromAddress(result.parent)), tokenId])
+        const parentContractId = binToHex(contractIdFromAddress(result.parent))
+        if (network.id === 'devnet') {
+          const stdInterfaceId = await nodeProvider.guessStdInterfaceId(parentContractId)
+          // Guess if it implements the NFT collection standard interface
+          if (stdInterfaceId === '0002') {
+            parentAndTokenIds.push([parentContractId, tokenId])
+          }
+        } else {
+          parentAndTokenIds.push([parentContractId, tokenId])
+        }
       }
     } catch (e) {
       console.debug("Error fetching parent for token id", e)
@@ -128,7 +137,5 @@ async function getCollectionMetadata(
 }
 
 function isWhitelistedCollection(collectionId: string, networkId: string): boolean {
-  //return networkId === 'devnet' || whitelistedCollections[networkId].includes(parent)
-  // FIXME: probably should check codeHash for local devnet
-  return whitelistedCollection[networkId].includes(collectionId)
+  return networkId === 'devnet' || whitelistedCollection[networkId].includes(collectionId)
 }

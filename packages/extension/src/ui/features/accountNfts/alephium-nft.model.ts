@@ -1,17 +1,15 @@
 import { defaultNetworkIds } from "../../../shared/network/defaults"
+import { mainnetNFTCollectionsMetadata, testnetNFTCollectionsMetadata } from "@alephium/token-list"
 
 // TODO: These definitions should come from `token-list`, will remove
 const whitelistedCollectionFromTokenList = [
   {
-    "networkId": 2,
-    "collections": [
-      {
-        "id": "f1c647704b64f8041c37b0da468319b3b925e1feaff2b25ec3b2bb43a768b100"
-      },
-      {
-        "id": "5314e562be269f7e1d73cafa1bfbac1f1533b849b8387de7404e7a26a8a04800"
-      }
-    ]
+    "networkId": mainnetNFTCollectionsMetadata.networkId,
+    "collections": mainnetNFTCollectionsMetadata.nftCollections
+  },
+  {
+    "networkId": testnetNFTCollectionsMetadata.networkId,
+    "collections": testnetNFTCollectionsMetadata.nftCollections
   }
 ]
 
