@@ -42,6 +42,26 @@ const TxHashContainer = styled.div`
   border-radius: 5px;
 `
 
+const LedgerStatus = ({ledgerState}: {ledgerState: string | undefined}): JSX.Element => (
+  ledgerState === "notfound" ?
+  <Flex
+    direction="column"
+    backgroundColor="#330105"
+    boxShadow="menu"
+    py="3.5"
+    px="3.5"
+    borderRadius="xl"
+  >
+    <Flex gap="1" align="center">
+      <Text color="errorText">
+        <AlertIcon />
+      </Text>
+      <L1 color="errorText">The ledger app is not connected</L1>
+    </Flex>
+  </Flex>
+  : <></>
+)
+
 export interface ApproveTransactionScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
   actionHash: string
@@ -150,10 +170,8 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     if (selectedAccount === undefined) {
       return
     }
-    if (ledgerState === undefined) {
-      setLedgerState("detecting")
-    }
-    {
+    setLedgerState(oldState => oldState === undefined ? "detecting" : oldState)
+
       if (buildResult && !("error" in buildResult)) {
         let app: LedgerApp | undefined
         try {
@@ -172,10 +190,8 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           onSubmit({ ...buildResult, signature })
           await app.close()
         } catch (e) {
-          if (ledgerState === "detecting") {
-            setLedgerState("notfound")
-          }
           if (app === undefined) {
+            setLedgerState(oldState => oldState === undefined || oldState === "detecting" ? "notfound" : oldState)
             setTimeout(ledgerSign, 1000)
           } else {
             await app.close()
@@ -188,8 +204,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           }
         }
       }
-    }
-  }, [selectedAccount, buildResult, ledgerState, ledgerApp, useLedger, onSubmit, onReject, navigate])
+  }, [selectedAccount, buildResult, onSubmit, onReject, navigate])
 
   if (!selectedAccount) {
     return <Navigate to={routes.accounts()} />
@@ -250,23 +265,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         buildResult &&
         !("error" in buildResult) && (
           <Flex direction="column" gap="1">
-            {ledgerState === "notfound" && (
-              <Flex
-                direction="column"
-                backgroundColor="#330105"
-                boxShadow="menu"
-                py="3.5"
-                px="3.5"
-                borderRadius="xl"
-              >
-                <Flex gap="1" align="center">
-                  <Text color="errorText">
-                    <AlertIcon />
-                  </Text>
-                  <L1 color="errorText">The ledger app is not working</L1>
-                </Flex>
-              </Flex>
-            )}
+            <LedgerStatus ledgerState={ledgerState}/>
             <FeeEstimation
               onErrorChange={() => {
                 return
