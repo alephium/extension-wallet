@@ -97,7 +97,7 @@ async function getNFTs(
         { group: groupOfAddress(nftAddress) }
       )
 
-      const metadataUri = hexToString((nftState.immFields[0] as ValByteVec).value)
+      const metadataUri = hexToString((nftState.immFields[1] as ValByteVec).value)
       const metadataResponse = await fetch(metadataUri)
       const metadata = await metadataResponse.json()
       nfts.push({
