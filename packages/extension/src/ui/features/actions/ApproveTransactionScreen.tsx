@@ -172,38 +172,38 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     }
     setLedgerState(oldState => oldState === undefined ? "detecting" : oldState)
 
-      if (buildResult && !("error" in buildResult)) {
-        let app: LedgerApp | undefined
-        try {
-          app = await getLedgerApp()
-          setLedgerApp(app)
-          setLedgerState("signing")
-          const path = getHDWalletPath(
-            selectedAccount.signer.keyType,
-            selectedAccount.signer.derivationIndex,
-          )
-          const signature = await app.signHash(
-            path,
-            Buffer.from(buildResult.result.txId, "hex"),
-          )
-          setLedgerState("succeeded")
-          onSubmit({ ...buildResult, signature })
+    if (buildResult && !("error" in buildResult)) {
+      let app: LedgerApp | undefined
+      try {
+        app = await getLedgerApp()
+        setLedgerApp(app)
+        setLedgerState("signing")
+        const path = getHDWalletPath(
+          selectedAccount.signer.keyType,
+          selectedAccount.signer.derivationIndex,
+        )
+        const signature = await app.signHash(
+          path,
+          Buffer.from(buildResult.result.txId, "hex"),
+        )
+        setLedgerState("succeeded")
+        onSubmit({ ...buildResult, signature })
+        await app.close()
+      } catch (e) {
+        if (app === undefined) {
+          setLedgerState(oldState => oldState === undefined || oldState === "detecting" ? "notfound" : oldState)
+          setTimeout(ledgerSign, 1000)
+        } else {
           await app.close()
-        } catch (e) {
-          if (app === undefined) {
-            setLedgerState(oldState => oldState === undefined || oldState === "detecting" ? "notfound" : oldState)
-            setTimeout(ledgerSign, 1000)
+          setLedgerState("failed")
+          if (onReject !== undefined) {
+            onReject()
           } else {
-            await app.close()
-            setLedgerState("failed")
-            if (onReject !== undefined) {
-              onReject()
-            } else {
-              navigate(-1)
-            }
+            navigate(-1)
           }
         }
       }
+    }
   }, [selectedAccount, buildResult, onSubmit, onReject, navigate])
 
   if (!selectedAccount) {
