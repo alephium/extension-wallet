@@ -20,10 +20,8 @@ import { Collection, Collections } from "../accountNfts/aspect.service"
 import { useCollections } from "../accountNfts/useCollections"
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenList } from "../accountTokens/TokenList"
-import {
-  TokenDetailsWithBalance,
-  useTokens,
-} from "../accountTokens/tokens.state"
+import { Token } from "../../../shared/token/type"
+import { useTokens } from "../accountTokens/tokens.state"
 
 const SearchBox = styled.form`
   margin-top: 8px;
@@ -138,25 +136,25 @@ export const SendScreen: FC = () => {
 }
 
 const useCustomTokenList = (
-  tokenDetails: TokenDetailsWithBalance[],
+  tokens: Token[],
   networkId?: string,
   query?: string,
 ) => {
   return useMemo(() => {
     if (!query) {
-      return tokenDetails
+      return tokens
     }
 
     const queryLowercase = query.toLowerCase()
 
-    const result = tokenDetails.filter(
+    const result = tokens.filter(
       (token) =>
         token.name.toLowerCase().includes(queryLowercase) ||
         showTokenId(networkId ?? 'mainnet', token.id).toLowerCase().includes(queryLowercase) ||
         token.symbol.toLowerCase().includes(queryLowercase),
     )
     return result
-  }, [query, tokenDetails])
+  }, [query, tokens])
 }
 
 const useCustomCollectiblesList = (
