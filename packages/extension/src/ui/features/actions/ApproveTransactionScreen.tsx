@@ -1,11 +1,11 @@
 import LedgerApp from "@alephium/ledger-app"
 import { TransactionBuilder, utils } from "@alephium/web3"
-import { getHDWalletPath } from '@alephium/web3-wallet';
+import { getHDWalletPath } from "@alephium/web3-wallet"
 import { L1, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
-import { CopyTooltip } from "../../components/CopyTooltip"
+import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
 import {
@@ -13,6 +13,7 @@ import {
   TransactionParams,
 } from "../../../shared/actionQueue/types"
 import { useAppState } from "../../app.state"
+import { CopyTooltip } from "../../components/CopyTooltip"
 import { routes } from "../../routes"
 import { usePageTracking } from "../../services/analytics"
 import { rejectAction } from "../../services/backgroundActions"
@@ -38,7 +39,7 @@ const TxHashContainer = styled.div`
   overflow-wrap: break-word;
   font-size: 14px;
   line-height: 120%;
-  border-radius: 4px;
+  border-radius: 5px;
 `
 
 export interface ApproveTransactionScreenProps
@@ -46,7 +47,10 @@ export interface ApproveTransactionScreenProps
   actionHash: string
   transaction: TransactionParams
   onSubmit: (
-    result: ReviewTransactionResult & { signature?: string } | { error: string } | undefined,
+    result:
+      | (ReviewTransactionResult & { signature?: string })
+      | { error: string }
+      | undefined,
   ) => void
 }
 
@@ -98,8 +102,10 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   selectedAccount,
   actionHash,
   onSubmit,
+  onReject,
   ...props
 }) => {
+  const navigate = useNavigate()
   usePageTracking("signTransaction", {
     networkId: selectedAccount?.networkId || "unknown",
   })
@@ -112,7 +118,10 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   const useLedger =
     selectedAccount !== undefined && selectedAccount.signer.type === "ledger"
-  const [ledgerApp, setLedgerApp] = useState<LedgerApp | "detecting" | "notfound">()
+  const [ledgerState, setLedgerState] = useState<
+    "detecting" | "notfound" | "signing" | "succeeded" | "failed"
+  >()
+  const [ledgerApp, setLedgerApp] = useState<LedgerApp>()
 
   // TODO: handle error
   useEffect(() => {
@@ -142,26 +151,50 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     if (selectedAccount === undefined) {
       return
     }
-    if (ledgerApp === undefined) {
-      setLedgerApp("detecting")
+    if (ledgerState === undefined) {
+      setLedgerState("detecting")
     }
-    {if (buildResult && !("error" in buildResult) && typeof ledgerApp !== "object") {
-      try {
-        const app = await getLedgerApp()
-        setLedgerApp(app)
-        const path = getHDWalletPath(selectedAccount.signer.keyType, selectedAccount.signer.derivationIndex)
-        const signature = await app.signHash(path, Buffer.from(buildResult.result.txId, 'hex'))
-        onSubmit({...buildResult, signature})
-        console.log(`========== connected`, app, signature)
-      } catch (e) {
-        console.log(`==== try again`, e)
-        if (ledgerApp !== "notfound") {
-          setLedgerApp("notfound")
+    {
+      if (buildResult && !("error" in buildResult)) {
+        let app: LedgerApp | undefined
+        try {
+          app = await getLedgerApp()
+          setLedgerApp(app)
+          setLedgerState("signing")
+          const path = getHDWalletPath(
+            selectedAccount.signer.keyType,
+            selectedAccount.signer.derivationIndex,
+          )
+          const signature = await app.signHash(
+            path,
+            Buffer.from(buildResult.result.txId, "hex"),
+          )
+          console.log(`======= signature`, signature)
+          setLedgerState("succeeded")
+          onSubmit({ ...buildResult, signature })
+          await app.close()
+          console.log(`========== connected`, app, signature)
+        } catch (e) {
+          console.log(`===== error`, e, ledgerState, ledgerApp)
+          if (ledgerState === "detecting") {
+            setLedgerState("notfound")
+          }
+          if (app === undefined) {
+            setTimeout(ledgerSign, 1000)
+          } else {
+            console.log(`======= user cancelled`)
+            await app.close()
+            setLedgerState("failed")
+            if (onReject !== undefined) {
+              onReject()
+            } else {
+              navigate(-1)
+            }
+          }
         }
-        setTimeout(ledgerSign, 1000)
       }
-    }}
-  }, [selectedAccount, buildResult, ledgerApp, useLedger, onSubmit])
+    }
+  }, [selectedAccount, buildResult, ledgerState, ledgerApp, useLedger, onSubmit, onReject, navigate])
 
   if (!selectedAccount) {
     return <Navigate to={routes.accounts()} />
@@ -182,8 +215,22 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   return (
     <ConfirmScreen
-      confirmButtonText={ledgerApp !== undefined ? "Ledger Signing..." : useLedger ? "Sign with Ledger" : "Sign"}
-      confirmButtonDisabled={ledgerApp !== undefined}
+      confirmButtonText={
+        !useLedger
+          ? "Sign"
+          : ledgerState === undefined
+          ? "Sign with Ledger"
+          : (ledgerState === "detecting") || (ledgerState === "notfound")
+          ? "Ledger: Detecting"
+          : ledgerState === "signing"
+          ? "Ledger: Signing"
+          : ledgerState === "succeeded"
+          ? "Ledger: Succeeded"
+          : ledgerState === "failed"
+          ? "Ledger: Failed"
+          : ledgerState
+      }
+      confirmButtonDisabled={ledgerState !== undefined}
       rejectButtonText="Cancel"
       selectedAccount={selectedAccount}
       onSubmit={() => {
@@ -193,12 +240,22 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           onSubmit(buildResult)
         }
       }}
+      onReject={() => {
+        if (ledgerApp !== undefined) {
+          ledgerApp.close()
+        }
+        if (onReject !== undefined) {
+          onReject()
+        } else {
+          navigate(-1)
+        }
+      }}
       showHeader={false}
       footer={
         buildResult &&
         !("error" in buildResult) && (
           <Flex direction="column" gap="1">
-            {ledgerApp === "notfound" && (
+            {ledgerState === "notfound" && (
               <Flex
                 direction="column"
                 backgroundColor="#330105"
@@ -216,7 +273,9 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
               </Flex>
             )}
             <FeeEstimation
-              onErrorChange={() => { return }}
+              onErrorChange={() => {
+                return
+              }}
               accountAddress={selectedAccount.address}
               networkId={selectedAccount.networkId}
               transaction={buildResult}
@@ -232,7 +291,9 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       <TransactionsList networkId={networkId} transactionReview={buildResult} />
       <AccountNetworkInfo account={selectedAccount} />
       <CopyTooltip copyValue={buildResult.result.txId} message="Copied">
-        <TxHashContainer>{`TxHash: ${splitTxHash(buildResult.result.txId)}`}</TxHashContainer>
+        <TxHashContainer>{`TxHash: ${splitTxHash(
+          buildResult.result.txId,
+        )}`}</TxHashContainer>
       </CopyTooltip>
     </ConfirmScreen>
   )

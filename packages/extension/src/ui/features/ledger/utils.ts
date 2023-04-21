@@ -51,10 +51,13 @@ export const deriveAccount = async (existingLedgerAccounts: WalletAccount[], tar
     console.log(`===== path`, path)
     const [newAccount, hdIndex] = await app.getAccount(path, targetAddressGroup, keyType)
     if (existingLedgerAccounts.find((account) => account.address === newAccount.address) === undefined) {
+      await app.close()
       return [newAccount, hdIndex] as const
     }
   }
   const path = getHDWalletPath(keyType, 0)
   console.log(`===== path`, path)
-  return await app.getAccount(path, targetAddressGroup, keyType)
+  const result = await app.getAccount(path, targetAddressGroup, keyType)
+  await app.close()
+  return result
 }
