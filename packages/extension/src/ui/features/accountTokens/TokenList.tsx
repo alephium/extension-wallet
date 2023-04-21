@@ -35,9 +35,7 @@ export const TokenList: FC<TokenListProps> = ({
 
   const tokens: TokenDetailsWithBalance[] | undefined = tokenList || tokensForAccount.tokenDetails
   tokens.forEach(token => {
-    if (token.balance === undefined) {
-      token.balance = tokensForAccount.tokenDetails.find(td => td.id === token.id)?.balance
-    }
+    token.balance = tokensForAccount.tokenDetails.find(td => td.id === token.id)?.balance
   })
 
   return (
