@@ -101,20 +101,23 @@ export const AddAccount: FC = () => {
             hideArrow
             onClick={() => addAccount(parsedKeyType, parsedGroup).catch(() => setHasError(true))}
           />
-          <A
-            href={`/index.html?goto=ledger&networkId=${switcherNetworkId}&group=${parsedGroup}&keyType=${parsedKeyType}`}
-            targetBlank
-            onClick={async () => {
-              // somehow this just works if this function is provided
-            }}
-          >
-            <Option
-              title="Connect Ledger"
-              description="Use a Ledger hardware wallet"
-              icon={<LedgerIcon />}
-              hideArrow
-            />
-          </A>
+          {
+            parsedKeyType !== "bip340-schnorr" &&
+            <A
+              href={`/index.html?goto=ledger&networkId=${switcherNetworkId}&group=${parsedGroup}&keyType=${parsedKeyType}`}
+              targetBlank
+              onClick={async () => {
+                // somehow this just works if this function is provided
+              }}
+            >
+              <Option
+                title="Connect Ledger"
+                description="Use a Ledger hardware wallet"
+                icon={<LedgerIcon />}
+                hideArrow
+              />
+            </A>
+          }
         </OptionsWrapper>
         {hasError && (
           <FormError>
