@@ -3,6 +3,7 @@ import { NFTCollection } from "./alephium-nft.model"
 import { Network } from "../../../shared/network"
 import { addressFromContractId, binToHex, contractIdFromAddress, ExplorerProvider, groupOfAddress, hexToString, NodeProvider } from "@alephium/web3"
 import { ValByteVec } from "@alephium/web3/dist/src/api/api-alephium"
+import { pureFetch } from "../../../shared/utils/pureFetch"
 
 export const fetchNFTCollections = async (
   tokenIds: string[],
@@ -14,11 +15,11 @@ export const fetchNFTCollections = async (
   const parentAndTokenIds: [string, string][] = []
   for (const tokenId of tokenIds) {
     try {
-      const result = await explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId))
+      const result = await pureFetch(`${tokenId}-parent`, () => explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId)))
       if (result.parent) {
         const parentContractId = binToHex(contractIdFromAddress(result.parent))
         if (network.id === 'devnet') {
-          const stdInterfaceId = await nodeProvider.guessStdInterfaceId(parentContractId)
+          const stdInterfaceId = await pureFetch(`${parentContractId}-std`, () => nodeProvider.guessStdInterfaceId(parentContractId))
           // Guess if it implements the NFT collection standard interface
           if (stdInterfaceId === '0002') {
             parentAndTokenIds.push([parentContractId, tokenId])
