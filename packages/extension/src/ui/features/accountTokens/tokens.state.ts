@@ -194,9 +194,9 @@ export const useTokens = (
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
       const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
 
-        for (const tokenId of tokenIds) {
-          if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
-            allTokens.push({ id: tokenId, networkId: networkId })
+      for (const tokenId of tokenIds) {
+        if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
+          allTokens.push({ id: tokenId, networkId: networkId })
         }
       }
 
