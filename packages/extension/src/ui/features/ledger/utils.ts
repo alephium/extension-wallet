@@ -35,7 +35,7 @@ const isAddressGroupMatched = (account: WalletAccount, targetAddressGroup: numbe
 }
 
 export const deriveAccount = async (existingLedgerAccounts: WalletAccount[], targetAddressGroup: number | undefined, keyType: string) => {
-  if (keyType !== "default" && keyType !== "bip340-schnorr") {
+  if (keyType !== "default") {
     throw Error("Unsupported key type: " + keyType)
   }
 

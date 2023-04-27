@@ -60,8 +60,8 @@ export const LedgerStartScreen: FC = () => {
           steps={[
             { title: "Plug in and unlock your Ledger device" },
             {
-              title: "Open (or install) the StarkNet app",
-              description: "The StarkNet app can be installed via Ledger Live",
+              title: "Open (or install) the Alephium Ledger app",
+              description: "The Alephium Ledger app needs to be installed manually, not available in Ledger Live right now",
             },
           ]}
           style={{ marginBottom: 8 }}
@@ -90,7 +90,7 @@ export const LedgerStartScreen: FC = () => {
               }
             }
 
-            // setDetecting(false)
+            setDetecting(false)
           }}
           variant="primary"
           disabled={detecting}
