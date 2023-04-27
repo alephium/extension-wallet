@@ -53,7 +53,7 @@ export interface NostrObject {
 export interface RequestOptions {
   host: string
   address?: Address 
-  chainGroup?: number
+  addressGroup?: number
   keyType?: KeyType
   networkId?: string
 }
