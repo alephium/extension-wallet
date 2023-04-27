@@ -134,7 +134,7 @@ export const ActionScreen: FC = () => {
             })
             if (!builtTransaction || "error" in builtTransaction) {
               useAppState.setState({
-                error: `Build transaction failed: ${builtTransaction?.error || "unknown"}`,
+                error: `Transaction building failed: ${builtTransaction?.error || "unknown"}`,
                 isLoading: false,
               })
               navigate(routes.error())

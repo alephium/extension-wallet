@@ -61,6 +61,8 @@ import { ReviewRatingScreen } from "./features/userReview/ReviewRatingScreen"
 import { routes } from "./routes"
 import { useEntryRoute } from "./useEntryRoute"
 import { AddTokenScreen } from "./features/actions/AddTokenScreen"
+import { LedgerStartScreen } from "./features/ledger/start"
+import { LedgerDoneScreen } from "./features/ledger/done"
 
 const ResponsiveContainer = chakra(ResponsiveBox, {
   baseStyle: {
@@ -307,6 +309,14 @@ const fullscreenRoutes = (
       element={<ReviewFeedbackScreen />}
     />
     <Route path={routes.addAccount.path} element={<AddAccount />} />
+    <Route
+      path={routes.ledgerEntry.path}
+      element={<LedgerStartScreen />}
+    />
+    <Route
+      path={routes.ledgerDone.path}
+      element={<LedgerDoneScreen />}
+    />
   </>
 )
 

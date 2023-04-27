@@ -45,10 +45,11 @@ export const handleActionApproval = async (
     }
 
     case "TRANSACTION": {
-      const transaction = additionalData as ReviewTransactionResult
+      const {signature, ...transaction} = additionalData as (ReviewTransactionResult & { signature?: string })
       try {
         await executeTransactionAction(
           transaction,
+          signature,
           background,
           transaction.params.networkId,
         )

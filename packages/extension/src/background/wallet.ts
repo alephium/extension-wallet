@@ -10,6 +10,7 @@ import {
   publicKeyFromPrivateKey,
   groupOfAddress,
   KeyType,
+  Account,
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
@@ -91,6 +92,13 @@ export class Wallet {
   ): Promise<SignUnsignedTxResult> {
     const signer = await this.getPrivateKeySigner(account)
     return signer.signAndSubmitUnsignedTx(params)
+  }
+
+  async submitSignedTx(account: WalletAccount, unsignedTx: string, signature: string): Promise<void> {
+    const network = await this.getNetwork(account.networkId)
+    const nodeProvider = new NodeProvider(network.nodeUrl)
+    await nodeProvider.transactions.postTransactionsSubmit({ unsignedTx, signature})
+    return
   }
 
   public async signMessage(
@@ -253,6 +261,34 @@ export class Wallet {
 
       return newAndDefaultAddress
     }
+  }
+
+  public async importLedgerAccount(account: Account, hdIndex: number, networkId: string): Promise<BaseWalletAccount> {
+    const walletAccount: WalletAccount = {
+      address: account.address,
+      networkId: networkId,
+      signer: {
+        type: "ledger" as const,
+        publicKey: account.publicKey,
+        keyType: account.keyType,
+        derivationIndex: hdIndex,
+        group: groupOfAddress(account.address)
+      },
+      type: "alephium",
+    }
+    await this.walletStore.push([walletAccount])
+    await this.selectAccount(walletAccount)
+    return walletAccount
+  }
+
+  public async getAllLedgerAccount(networkId: string): Promise<BaseWalletAccount[]> {
+    const accounts = await this.walletStore.get(withHiddenSelector)
+
+    return accounts.filter((account) =>
+      account.type === "alephium" &&
+      account.signer.type === "ledger" &&
+      account.networkId === networkId
+    )
   }
 
   public async getSelectedAccount(): Promise<WalletAccount | undefined> {

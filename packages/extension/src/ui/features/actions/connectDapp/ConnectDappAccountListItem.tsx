@@ -31,6 +31,7 @@ export const ConnectDappAccountListItem: FC<IConnectDappAccountListItem> = ({
       accountAddress={account.address}
       networkId={account.networkId}
       keyType={account.signer.keyType}
+      signerType={account.signer.type}
       {...rest}
     />
   )

@@ -146,7 +146,10 @@ export const routes = {
   userReview: route("/user-review"),
   userReviewFeedback: route("/user-review/feedback"),
   error: route("/error"),
-  ledgerEntry: route("/ledger/start"),
-  ledgerSelect: route("/ledger/select"),
-  ledgerDone: route("/ledger/done"),
+  ledgerEntry: route(
+    (networkId: string, group: string | undefined, keyType: string) =>
+    `/ledger/import/start/${networkId}/${group}/${keyType}`, "/ledger/import/start/:networkId/:group/:keyType"
+  ),
+  ledgerSelect: route((group?: number) => `/ledger/import/select/${group}`, "/ledger/import/select/:group"),
+  ledgerDone: route((group?: number) => `/ledger/import/done/${group}`, "/ledger/import/done/:group"),
 }

@@ -41,7 +41,8 @@ export const setDefaultAccountNames = (accounts: Account[]) => {
   for (const account of accounts) {
     const { networkId } = account
     if (!names[networkId]?.[account.address]) {
-      const name = `Account ${
+      const prefix = account.signer.type === "ledger" ? "Ledger" : "Account"
+      const name = `${prefix} ${
         accounts.map((a) => a.address).indexOf(account.address) + 1
       }`
       names = {
