@@ -5,7 +5,7 @@
   "license": "MIT",
   "devDependencies": {
     "@alephium/get-extension-wallet": "^0.11.0",
-    "@alephium/ledger-app": "^0.1.8",
+    "@alephium/ledger-app": "^0.2.0",
     "@alephium/token-list": "0.0.7",
     "@alephium/web3": "^0.11.0",
     "@alephium/web3-test": "^0.11.0",
