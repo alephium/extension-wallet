@@ -8,7 +8,7 @@ import { Title } from "../../components/Page"
 import { Spinner } from "../../components/Spinner"
 import { StepIndicator } from "../../components/StepIndicator"
 import { routes } from "../../routes"
-import { FormError } from "../../theme/Typography"
+import { A, FormError } from "../../theme/Typography"
 import { BlackCircle } from "./assets/BlackCircle"
 import { LedgerStartIllustration } from "./assets/LedgerStart"
 import { LedgerPage } from "./LedgerPage"
@@ -61,7 +61,7 @@ export const LedgerStartScreen: FC = () => {
             { title: "Plug in and unlock your Ledger device" },
             {
               title: "Open (or install) the Alephium Ledger app",
-              description: "The Alephium Ledger app needs to be installed manually, not available in Ledger Live right now",
+              description: <>{"The Alephium Ledger app needs to be installed manually."} <A href="https://docs.alephium.org/wallet/ledger" target="_blank">More information here.</A></>,
             },
           ]}
           style={{ marginBottom: 8 }}
@@ -86,7 +86,7 @@ export const LedgerStartScreen: FC = () => {
             } catch (e) {
               console.error(e)
               if (e instanceof Error) {
-                setError(e.message)
+                setError("Alephium Ledger app is not connected, please follow the instructions above")
               }
             }
 

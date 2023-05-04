@@ -13,7 +13,7 @@ export const StepGroup = styled.div`
 
 export interface Step {
   title: string
-  description?: string
+  description?: string | JSX.Element
 }
 
 interface StepProps extends Step {
