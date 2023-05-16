@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
 import { addToken } from "../../../shared/token/storage"
-import { RequestToken, Token } from "../../../shared/token/type"
+import { Token } from "../../../shared/token/type"
 import { useAppState } from "../../app.state"
 import { Button, ButtonGroupHorizontal } from "../../components/Button"
 import { InfoCircle } from "../../components/Icons/InfoCircle"
@@ -199,7 +199,6 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
             )}
             <Button
               type="submit"
-              style={{ marginTop: "0px" }}
               disabled={!isDataComplete(compiledData)}
             >
               Continue

@@ -61,8 +61,8 @@ export interface RequestOptions {
 export interface AddNewTokenParameters {
   type: "AddNewToken";
   options: {
+    id: string;
     networkId: string;
-    address: string;
     symbol: string;
     decimals: number;
     name: string;

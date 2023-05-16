@@ -11,7 +11,7 @@ export async function handleAddTokenRequest(
   sendMessage({
     type: "REQUEST_TOKEN",
     data: {
-      id: callParams.options.address,
+      id: callParams.options.id,
       networkId: callParams.options.networkId,
       symbol: callParams.options.symbol,
       decimals: callParams.options.decimals,
