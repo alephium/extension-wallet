@@ -85,6 +85,13 @@ export const handleActionApproval = async (
       }
     }
 
+    case "REQUEST_TOKEN": {
+      return {
+        type: "APPROVE_REQUEST_TOKEN",
+        data: { actionHash },
+      }
+    }
+
     case "REQUEST_ADD_CUSTOM_NETWORK": {
       try {
         await addNetwork(action.payload)
@@ -180,6 +187,13 @@ export const handleActionRejection = async (
     case "SIGN": {
       return {
         type: "SIGNATURE_FAILURE",
+        data: { actionHash },
+      }
+    }
+
+    case "REQUEST_TOKEN": {
+      return {
+        type: "REJECT_REQUEST_TOKEN",
         data: { actionHash },
       }
     }

@@ -14,6 +14,7 @@ import {
 
 import { TransactionMeta } from "../transactions"
 import { BaseWalletAccount } from "../wallet.model"
+import { Token } from "../../shared/token/type"
 
 export interface QueueItem {
   meta: {
@@ -110,6 +111,10 @@ export type ActionItem =
   | {
       type: "SIGN"
       payload: SignMessageParams & { networkId?: string, host: string }
+    }
+  | {
+      type: "REQUEST_TOKEN"
+      payload: Token
     }
   | {
       type: "REQUEST_ADD_CUSTOM_NETWORK"

@@ -52,8 +52,20 @@ export interface NostrObject {
 
 export interface RequestOptions {
   host: string
-  address?: Address 
+  address?: Address
   addressGroup?: number
   keyType?: KeyType
   networkId?: string
+}
+
+export interface AddNewTokenParameters {
+  type: "AddNewToken";
+  options: {
+    networkId: string;
+    address: string;
+    symbol: string;
+    decimals: number;
+    name: string;
+    logoURI?: string;
+  };
 }
