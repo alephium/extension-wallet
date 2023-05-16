@@ -1,8 +1,6 @@
 import type { Network } from "../shared/network"
-import type {
-  AddStarknetChainParameters,
-  AddNewTokenParameters
-} from "./inpage.model"
+import { AddNewTokenParameters } from "@alephium/get-extension-wallet"
+import type { AddStarknetChainParameters } from "./inpage.model"
 import { sendMessage, waitForMessage } from "./messageActions"
 
 export async function handleAddTokenRequest(
@@ -11,12 +9,12 @@ export async function handleAddTokenRequest(
   sendMessage({
     type: "REQUEST_TOKEN",
     data: {
-      id: callParams.options.id,
-      networkId: callParams.options.networkId,
-      symbol: callParams.options.symbol,
-      decimals: callParams.options.decimals,
-      name: callParams.options.name,
-      logoURI: callParams.options.logoURI
+      id: callParams.id,
+      networkId: callParams.networkId,
+      symbol: callParams.symbol,
+      decimals: callParams.decimals,
+      name: callParams.name,
+      logoURI: callParams.logoURI
     },
   })
   const { actionHash } = await waitForMessage("REQUEST_TOKEN_RES", 1000)

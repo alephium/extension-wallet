@@ -57,15 +57,3 @@ export interface RequestOptions {
   keyType?: KeyType
   networkId?: string
 }
-
-export interface AddNewTokenParameters {
-  type: "AddNewToken";
-  options: {
-    id: string;
-    networkId: string;
-    symbol: string;
-    decimals: number;
-    name: string;
-    logoURI?: string;
-  };
-}

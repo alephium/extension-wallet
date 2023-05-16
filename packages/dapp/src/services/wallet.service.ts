@@ -40,17 +40,14 @@ export const addToken = async (id: string): Promise<boolean> => {
     throw Error("Alephium object not initialized")
   }
   return await alephium.request({
-    type: "addNewToken",
+    type: "AddNewToken",
     params: {
-      type: "AddNewToken",
-      options: {
-        id: id,
-        networkId: '',
-        symbol: '',
-        decimals: 0,
-        name: '',
-        logoURI: ''
-      },
+      id: id,
+      networkId: '',
+      symbol: '',
+      decimals: 0,
+      name: '',
+      logoURI: ''
     },
   })
 }
