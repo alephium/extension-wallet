@@ -226,7 +226,7 @@ export const useTokens = (
       const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
       const network = await getNetwork(networkId)
 
-      let foundOnFullNodeIndex = knownTokensInNetwork.length
+      let foundOnFullNodeIndex = knownTokensInNetwork.length + 1
       for (const userToken of userTokens || []) {
         if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
           const foundIndex = knownTokensInNetwork.findIndex((token) => token.id == userToken.id)
@@ -262,8 +262,7 @@ async function fetchTokenInfoFromFullNode(network: Network, tokenId: string): Pr
       networkId: network.id,
       name: Buffer.from(metadata.name, 'hex').toString('utf8'),
       symbol: Buffer.from(metadata.symbol, 'hex').toString('utf8'),
-      decimals: metadata.decimals,
-      logoURI: "https://raw.githubusercontent.com/alephium/tokens-meta/master/logos/TBTC.png"
+      decimals: metadata.decimals
     }
 
     return token

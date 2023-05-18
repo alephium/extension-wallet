@@ -20,6 +20,7 @@ import { TokenMenuDeprecated } from "./TokenMenuDeprecated"
 import { useTokenBalanceToCurrencyValue } from "./tokenPriceHooks"
 import { toTokenView } from "./tokens.service"
 import { useTokensWithBalance } from "./tokens.state"
+import { Ghost } from 'lucide-react'
 
 const TokenScreenWrapper = styled(ColumnCenter)`
   width: 100%;
@@ -75,6 +76,14 @@ const TokenBalanceContainer = styled(RowCentered)`
   align-items: baseline;
 `
 
+const tokenIcon = (name: string, size: number, logoURI?: string) => {
+  return logoURI ? (
+    <TokenIcon name={name} url={logoURI} size={size} />
+  ) : (
+    <Ghost size={size * 0.7} />
+  )
+}
+
 export const TokenScreen: FC = () => {
   const navigate = useNavigate()
   const { tokenId } = useParams()
@@ -104,7 +113,7 @@ export const TokenScreen: FC = () => {
       <TokenScreenWrapper>
         <TokenHeader hasCurrencyValue={!!currencyValue}>
           <ColumnCenter>
-            <TokenIcon name={name} url={logoURI} size={12} />
+            {tokenIcon(name, 12, logoURI)}
             <TokenBalanceContainer>
               <LoadingPulse
                 isLoading={isLoading}
