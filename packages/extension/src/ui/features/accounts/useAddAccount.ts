@@ -1,11 +1,12 @@
-import { KeyType } from "@alephium/web3"
+import { KeyType, Account } from "@alephium/web3"
 import { useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { useAppState } from "../../app.state"
-import { selectAccount } from "../../services/backgroundAccounts"
+import { getAccounts, selectAccount } from "../../services/backgroundAccounts"
 import { recover } from "../recovery/recovery.service"
 import { createAccount } from "./accounts.service"
+import { importNewLedgerAccount } from '../../services/backgroundAccounts'
 
 export const useAddAccount = () => {
   const navigate = useNavigate()
@@ -19,4 +20,15 @@ export const useAddAccount = () => {
   }, [navigate, switcherNetworkId])
 
   return { addAccount }
+}
+
+export const addLedgerAccount = async (networkId: string, account: Account, hdIndex: number) => {
+  await importNewLedgerAccount(account, hdIndex, networkId)
+  // switch background wallet to the account that was selected
+  await selectAccount({ address: account.address, networkId: networkId })
+}
+
+export const getAllLedgerAccounts = async (networkId: string) => {
+  const accounts = await getAccounts()
+  return accounts.filter((account) => account.networkId === networkId && account.signer.type === "ledger")
 }

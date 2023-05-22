@@ -80,7 +80,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
 
     sendMessage({
       type: "ALPH_CONNECT_DAPP",
-      data: { host: window.location.host, networkId: options.networkId, group: options.chainGroup, keyType: options.keyType },
+      data: { host: window.location.host, networkId: options.networkId, group: options.addressGroup, keyType: options.keyType },
     })
 
     const walletAccount = await walletAccountP

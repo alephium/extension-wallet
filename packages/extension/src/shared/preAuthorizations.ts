@@ -88,7 +88,7 @@ function matchAuthorizedOptions(account: PreAuthorization, options: RequestOptio
   return account.host === options.host &&
   (options.networkId === undefined || account.account.networkId === options.networkId) &&
   (options.address === undefined || account.account.address === options.address) &&
-  (options.chainGroup === undefined || groupOfAddress(account.account.address) === options.chainGroup)
+  (options.addressGroup === undefined || groupOfAddress(account.account.address) === options.addressGroup)
 }
 
 export const isPreAuthorized = async (

@@ -1,5 +1,7 @@
 import { FC, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useAppState } from "../../app.state"
+import A from "tracking-link"
 
 import {
   Button,
@@ -20,6 +22,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons"
 import { TOTAL_NUMBER_OF_GROUPS } from "@alephium/web3"
 import { useAddAccount } from "./useAddAccount"
 import { AlephiumLogo } from "../../components/Icons/ArgentXLogo"
+import { LedgerIcon } from "../../components/Icons/LedgerIcon"
 import styled from "styled-components"
 
 const StyledAlephiumLogo = styled(AlephiumLogo)`
@@ -73,14 +76,12 @@ export const AddAccount: FC = () => {
   const [hasError, setHasError] = useState(false)
   const [group, setGroup] = useState<string>(groupOptions[0])
   const [signMethod, setSignMethod] = useState<string>(signOptions[0])
+  const { switcherNetworkId } = useAppState()
 
   const { addAccount } = useAddAccount()
-
-  const handleAddAccount = useCallback((group: string, signMethod: string) => {
-    const parsedGroup = group === "any" ? undefined : parseInt(group)
-    const parsedKeyType = signMethod === "default" ? "default" : "bip340-schnorr"
-    return addAccount(parsedKeyType, parsedGroup)
-  }, [addAccount])
+    
+  const parsedGroup = group === "any" ? undefined : parseInt(group)
+  const parsedKeyType = signMethod === "default" ? "default" : "bip340-schnorr"
 
   return (
     <>
@@ -98,8 +99,25 @@ export const AddAccount: FC = () => {
             icon={<StyledAlephiumLogo />}
             description="Generate a new wallet address"
             hideArrow
-            onClick={() => handleAddAccount(group, signMethod)}
+            onClick={() => addAccount(parsedKeyType, parsedGroup).catch(() => setHasError(true))}
           />
+          {
+            parsedKeyType !== "bip340-schnorr" &&
+            <A
+              href={`/index.html?goto=ledger&networkId=${switcherNetworkId}&group=${parsedGroup}&keyType=${parsedKeyType}`}
+              targetBlank
+              onClick={async () => {
+                // somehow this just works if this function is provided
+              }}
+            >
+              <Option
+                title="Connect Ledger"
+                description="Use a Ledger hardware wallet"
+                icon={<LedgerIcon />}
+                hideArrow
+              />
+            </A>
+          }
         </OptionsWrapper>
         {hasError && (
           <FormError>

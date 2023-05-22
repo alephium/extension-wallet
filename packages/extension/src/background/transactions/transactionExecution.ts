@@ -6,6 +6,7 @@ import { addTransaction } from "./store"
 
 export const executeTransactionAction = async (
   transaction: ReviewTransactionResult,
+  signature: string | undefined,
   { wallet }: BackgroundService,
   networkId: string,
 ) => {
@@ -13,10 +14,15 @@ export const executeTransactionAction = async (
     address: transaction.params.signerAddress,
     networkId: networkId,
   })
-  await wallet.signAndSubmitUnsignedTx(account, {
-    signerAddress: account.address,
-    unsignedTx: transaction.result.unsignedTx,
-  })
+
+  if (signature === undefined) {
+    await wallet.signAndSubmitUnsignedTx(account, {
+      signerAddress: account.address,
+      unsignedTx: transaction.result.unsignedTx,
+    })
+  } else {
+    await wallet.submitSignedTx(account, transaction.result.unsignedTx, signature)
+  }
 
   if (account !== undefined) {
     addTransaction({

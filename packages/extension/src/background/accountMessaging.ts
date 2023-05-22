@@ -68,6 +68,36 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
       }
     }
 
+    case "NEW_LEDGER_ACCOUNT": {
+      if (!(await wallet.isSessionOpen())) {
+        throw Error("you need an open session")
+      }
+
+      const { account, hdIndex, networkId } = msg.data
+      try {
+        const baseAccount = await wallet.importLedgerAccount(account, hdIndex, networkId)
+        return sendMessageToUi({
+          type: "NEW_LEDGER_ACCOUNT_RES",
+          data: {
+            account: baseAccount
+          }
+        })
+      } catch (exception) {
+        const error = `${exception}`
+
+        analytics.track("createAccount", {
+          status: "failure",
+          networkId: networkId,
+          errorMessage: error,
+        })
+
+        return sendMessageToUi({
+          type: "NEW_LEDGER_ACCOUNT_REJ",
+          data: { error },
+        })
+      }
+    }
+
     case "GET_SELECTED_ACCOUNT": {
       const selectedAccount = await wallet.getSelectedAccount()
       return sendMessageToUi({

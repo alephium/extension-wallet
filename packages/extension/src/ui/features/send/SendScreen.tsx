@@ -17,10 +17,8 @@ import { Spinner } from "../../components/Spinner"
 import { showTokenId } from "../accountActivity/transform/transaction/transformTransaction"
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenList } from "../accountTokens/TokenList"
-import {
-  TokenDetailsWithBalance,
-  useKnownTokens,
-} from "../accountTokens/tokens.state"
+import { Token } from "../../../shared/token/type"
+import { useTokens, useKnownTokens } from "../accountTokens/tokens.state"
 
 const SearchBox = styled.form`
   margin-top: 8px;
@@ -102,23 +100,23 @@ export const SendScreen: FC = () => {
 }
 
 const useCustomTokenList = (
-  tokenDetails: TokenDetailsWithBalance[],
+  tokens: Token[],
   networkId?: string,
   query?: string,
 ) => {
   return useMemo(() => {
     if (!query) {
-      return tokenDetails
+      return tokens
     }
 
     const queryLowercase = query.toLowerCase()
 
-    const result = tokenDetails.filter(
+    const result = tokens.filter(
       (token) =>
         token.name.toLowerCase().includes(queryLowercase) ||
         showTokenId(networkId ?? 'mainnet', token.id).toLowerCase().includes(queryLowercase) ||
         token.symbol.toLowerCase().includes(queryLowercase),
     )
     return result
-  }, [query, tokenDetails, networkId])
+  }, [query, tokens])
 }
