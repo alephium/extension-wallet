@@ -18,7 +18,7 @@ import { showTokenId } from "../accountActivity/transform/transaction/transformT
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenList } from "../accountTokens/TokenList"
 import { Token } from "../../../shared/token/type"
-import { useTokens, useKnownTokens } from "../accountTokens/tokens.state"
+import { useKnownTokens } from "../accountTokens/tokens.state"
 
 const SearchBox = styled.form`
   margin-top: 8px;
