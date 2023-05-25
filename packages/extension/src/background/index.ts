@@ -157,8 +157,8 @@ messageStream.subscribe(async ([msg, sender]) => {
   }
 
   // forward UI messages to rest of the tabs
-  if (isSafeOrigin && hasTab(sender.tab?.id)) {
-    sendMessageToActiveTabs(msg)
+  if (isSafeOrigin && (await hasTab(sender.tab?.id))) {
+    await sendMessageToActiveTabs(msg)
   }
 
   const respond = async (msg: MessageType) => {
