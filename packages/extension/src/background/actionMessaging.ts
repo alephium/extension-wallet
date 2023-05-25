@@ -33,7 +33,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
       )
 
       if (resultMessage) {
-        respond(resultMessage)
+        return respond(resultMessage)
       }
       return
     }
@@ -50,7 +50,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
         }
         const resultMessage = await handleActionRejection(action, background)
         if (resultMessage) {
-          respond(resultMessage)
+          return respond(resultMessage)
         }
       }
       return
