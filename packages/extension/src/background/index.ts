@@ -164,9 +164,9 @@ messageStream.subscribe(async ([msg, sender]) => {
   const respond = async (msg: MessageType) => {
     console.log("respond", msg)
     if (safeMessages.includes(msg.type)) {
-      sendMessageToActiveTabsAndUi(msg, [sender.tab?.id])
+      await sendMessageToActiveTabsAndUi(msg, [sender.tab?.id])
     } else {
-      sendMessageToUi(msg)
+      await sendMessageToUi(msg)
     }
   }
 
