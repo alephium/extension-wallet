@@ -3,20 +3,22 @@
 /* eslint-disable */
 
 import {
+  Address,
   ExecuteScriptParams,
   ExecuteScriptResult,
+  HexString,
   Script,
   SignerProvider,
-  HexString,
 } from "@alephium/web3";
-import { default as TransferScriptJson } from "../transfer.ral.json";
+
+import { default as TransferScriptJson } from "../Transfer.ral.json";
 
 export namespace Transfer {
   export async function execute(
     signer: SignerProvider,
     params: ExecuteScriptParams<{
       shinyTokenId: HexString;
-      to: HexString;
+      to: Address;
       amount: bigint;
     }>
   ): Promise<ExecuteScriptResult> {
