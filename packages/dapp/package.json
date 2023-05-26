@@ -1,6 +1,6 @@
 {
   "name": "@alephium/dapp",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,15 +10,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@alephium/get-extension-wallet": "^0.12.0-test.2",
-    "@alephium/web3": "^0.12.0-test.2",
+    "@alephium/get-extension-wallet": "^0.12.4",
+    "@alephium/web3": "^0.12.4",
     "ethers": "^5.5.1",
     "next": "^13.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@alephium/cli": "^0.12.0-test.2",
+    "@alephium/cli": "^0.12.4",
     "@types/node": "18.11.18",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",

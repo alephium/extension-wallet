@@ -1,5 +1,5 @@
 Contract ShinyToken() {
-  @using(assetsInContract = true)
+  @using(assetsInContract = true, checkExternalCaller = false)
   pub fn transfer(to: Address, amount: U256) -> () {
     transferTokenFromSelf!(to, selfTokenId!(), amount)
     transferTokenFromSelf!(to, ALPH, dustAmount!())

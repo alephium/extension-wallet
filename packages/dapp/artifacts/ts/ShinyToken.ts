@@ -4,27 +4,28 @@
 
 import {
   Address,
-  Contract,
-  ContractState,
-  TestContractResult,
-  HexString,
-  ContractFactory,
-  SubscribeOptions,
-  EventSubscription,
   CallContractParams,
   CallContractResult,
-  TestContractParams,
+  Contract,
   ContractEvent,
+  ContractFactory,
+  ContractInstance,
+  ContractState,
+  EventSubscription,
+  HexString,
+  SubscribeOptions,
+  TestContractParams,
+  TestContractResult,
+  callMethod,
+  fetchContractState,
+  getContractEventsCurrentCount,
+  multicallMethods,
   subscribeContractEvent,
   subscribeContractEvents,
   testMethod,
-  callMethod,
-  multicallMethods,
-  fetchContractState,
-  ContractInstance,
-  getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as ShinyTokenContractJson } from "../shiny-token.ral.json";
+
+import { default as ShinyTokenContractJson } from "../ShinyToken.ral.json";
 
 // Custom types for the contract
 export namespace ShinyTokenTypes {
@@ -39,7 +40,7 @@ class Factory extends ContractFactory<ShinyTokenInstance, {}> {
   tests = {
     transfer: async (
       params: Omit<
-        TestContractParams<never, { to: HexString; amount: bigint }>,
+        TestContractParams<never, { to: Address; amount: bigint }>,
         "initialFields"
       >
     ): Promise<TestContractResult<null>> => {
