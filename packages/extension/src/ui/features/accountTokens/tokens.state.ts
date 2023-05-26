@@ -3,6 +3,7 @@ import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
 import useSWR from "swr"
+import useSWRImmutable from 'swr/immutable'
 import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage } from "../../../shared/storage/hooks"
@@ -175,16 +176,6 @@ export const useTokens = (
 
   const knownTokensInNetwork = useTokensInNetwork(networkId)
 
-  const swrConfig = {
-    refreshInterval: 30000,
-    shouldRetryOnError: (error: any) => {
-      const errorCode = error?.status || error?.errorCode
-      const suppressError =
-        errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
-      return suppressError
-    },
-  }
-
   const {
     data: userTokens
   } = useSWR(
@@ -211,12 +202,20 @@ export const useTokens = (
 
       return allTokens
     },
-    swrConfig
+    {
+      refreshInterval: 30000,
+      shouldRetryOnError: (error: any) => {
+        const errorCode = error?.status || error?.errorCode
+        const suppressError =
+          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
+        return suppressError
+      },
+    }
   )
 
   const {
     data: userShownTokens
-  } = useSWR(
+  } = useSWRImmutable(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
       userTokens,
@@ -246,8 +245,7 @@ export const useTokens = (
       }
 
       return result.sort((a, b) => a[1] - b[1]).map(tuple => tuple[0])
-    },
-    swrConfig
+    }
   )
 
   return userShownTokens || []
