@@ -9,7 +9,7 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
   respond,
 }) => {
   switch (msg.type) {
-    case "REQUEST_TOKEN": {
+    case "REQUEST_ADD_TOKEN": {
       const selectedAccount = await wallet.getSelectedAccount()
       const exists = await hasToken({
         networkId:
@@ -19,12 +19,12 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
 
       if (!exists) {
         const { meta } = await actionQueue.push({
-          type: "REQUEST_TOKEN",
+          type: "REQUEST_ADD_TOKEN",
           payload: msg.data,
         })
 
         return respond({
-          type: "REQUEST_TOKEN_RES",
+          type: "REQUEST_ADD_TOKEN_RES",
           data: {
             actionHash: meta.hash,
           },
@@ -32,12 +32,12 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
       }
 
       return respond({
-        type: "REQUEST_TOKEN_RES",
+        type: "REQUEST_ADD_TOKEN_RES",
         data: {},
       })
     }
 
-    case "REJECT_REQUEST_TOKEN": {
+    case "REJECT_REQUEST_ADD_TOKEN": {
       return await actionQueue.remove(msg.data.actionHash)
     }
   }

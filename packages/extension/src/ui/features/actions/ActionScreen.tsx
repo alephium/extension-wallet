@@ -102,7 +102,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "REQUEST_TOKEN":
+    case "REQUEST_ADD_TOKEN":
       return (
         <AddTokenScreen
           defaultToken={action.payload}

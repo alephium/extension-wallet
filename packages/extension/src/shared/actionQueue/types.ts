@@ -113,7 +113,7 @@ export type ActionItem =
       payload: SignMessageParams & { networkId?: string, host: string }
     }
   | {
-      type: "REQUEST_TOKEN"
+      type: "REQUEST_ADD_TOKEN"
       payload: Token
     }
   | {

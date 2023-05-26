@@ -85,9 +85,9 @@ export const handleActionApproval = async (
       }
     }
 
-    case "REQUEST_TOKEN": {
+    case "REQUEST_ADD_TOKEN": {
       return {
-        type: "APPROVE_REQUEST_TOKEN",
+        type: "APPROVE_REQUEST_ADD_TOKEN",
         data: { actionHash },
       }
     }
@@ -191,9 +191,9 @@ export const handleActionRejection = async (
       }
     }
 
-    case "REQUEST_TOKEN": {
+    case "REQUEST_ADD_TOKEN": {
       return {
-        type: "REJECT_REQUEST_TOKEN",
+        type: "REJECT_REQUEST_ADD_TOKEN",
         data: { actionHash },
       }
     }

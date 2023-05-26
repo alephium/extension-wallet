@@ -7,7 +7,7 @@ export async function handleAddTokenRequest(
   callParams: AddNewTokenParameters,
 ): Promise<boolean> {
   sendMessage({
-    type: "REQUEST_TOKEN",
+    type: "REQUEST_ADD_TOKEN",
     data: {
       id: callParams.id,
       networkId: callParams.networkId,
@@ -17,7 +17,7 @@ export async function handleAddTokenRequest(
       logoURI: callParams.logoURI
     },
   })
-  const { actionHash } = await waitForMessage("REQUEST_TOKEN_RES", 1000)
+  const { actionHash } = await waitForMessage("REQUEST_ADD_TOKEN_RES", 1000)
 
   if (!actionHash) {
     // token already exists
@@ -28,18 +28,18 @@ export async function handleAddTokenRequest(
 
   const result = await Promise.race([
     waitForMessage(
-      "APPROVE_REQUEST_TOKEN",
+      "APPROVE_REQUEST_ADD_TOKEN",
       11 * 60 * 1000,
       (x) => x.data.actionHash === actionHash,
     ),
     waitForMessage(
-      "REJECT_REQUEST_TOKEN",
+      "REJECT_REQUEST_ADD_TOKEN",
       10 * 60 * 1000,
       (x) => x.data.actionHash === actionHash,
     )
       .then(() => "error" as const)
       .catch(() => {
-        sendMessage({ type: "REJECT_REQUEST_TOKEN", data: { actionHash } })
+        sendMessage({ type: "REJECT_REQUEST_ADD_TOKEN", data: { actionHash } })
         return "timeout" as const
       }),
   ])
