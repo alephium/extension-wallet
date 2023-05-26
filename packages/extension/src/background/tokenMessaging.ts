@@ -11,9 +11,9 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
   switch (msg.type) {
     case "REQUEST_ADD_TOKEN": {
       const selectedAccount = await wallet.getSelectedAccount()
+      const networkId = msg.data.networkId ?? selectedAccount?.networkId ?? defaultNetwork.id
       const exists = await hasToken({
-        networkId:
-          selectedAccount?.networkId ?? msg.data.networkId ?? defaultNetwork.id,
+        networkId: networkId,
         id: msg.data.id,
       })
 
