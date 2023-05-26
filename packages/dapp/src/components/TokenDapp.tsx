@@ -10,6 +10,7 @@ import {
   withdrawMintedToken
 } from "../services/token.service"
 import {
+  addToken,
   getExplorerBaseUrl,
   signMessage,
 } from "../services/wallet.service"
@@ -30,6 +31,7 @@ export const TokenDapp: FC<{
   const [lastTransactionHash, setLastTransactionHash] = useState("")
   const [transactionStatus, setTransactionStatus] = useState<Status>("idle")
   const [transactionError, setTransactionError] = useState("")
+  const [addTokenError, setAddTokenError] = useState("")
   const [transferTokenAddress, setTransferTokenAddress] = useState("")
   const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>([])
   const [alphBalance, setAlphBalance] = useState<{ balance: string, lockedBalance: string } | undefined>()
@@ -262,7 +264,30 @@ export const TokenDapp: FC<{
                   }
                 />
                 <code>{selectedTokenBalance?.value.balance.balance.toString()}</code>
+                <code>
+                  <button
+                    className="flat"
+                    style={{ marginLeft: ".6em" }}
+                    onClick={async () => {
+                      try {
+                        if (selectedTokenBalance?.value.id) {
+                          const result = await addToken(selectedTokenBalance?.value.id)
+                          if (result) {
+                            setAddTokenError("")
+                          } else {
+                            setAddTokenError("Token exists")
+                          }
+                        }
+                      } catch (error: any) {
+                        setAddTokenError(error.message)
+                      }
+                    }}
+                  >
+                    Add to wallet
+                  </button>
+                </code>
               </div>
+              <span className="error-message">{addTokenError}</span>
             </>
           ) : <div>No tokens</div>
         }
@@ -315,7 +340,6 @@ export const TokenDapp: FC<{
 
               <input type="submit" />
             </form>
-
           )
         }
         <form onSubmit={handleTransferSubmit}>

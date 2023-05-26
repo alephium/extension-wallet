@@ -16,6 +16,7 @@ import { EXTENSION_IS_POPUP } from "../browser/constants"
 import { focusExtensionTab, useExtensionIsInTab } from "../browser/tabs"
 import { useActions } from "./actions.state"
 import { AddNetworkScreen } from "./AddNetworkScreen"
+import { AddTokenScreen } from "./AddTokenScreen"
 import { ApproveSignatureScreen } from "./ApproveSignatureScreen"
 import { ApproveTransactionScreen } from "./ApproveTransactionScreen"
 import { ConnectDappScreen } from "./connectDapp/ConnectDappScreen"
@@ -97,6 +98,16 @@ export const ActionScreen: FC = () => {
             }
             closePopupIfLastAction()
           }}
+          onReject={onReject}
+        />
+      )
+
+    case "REQUEST_ADD_TOKEN":
+      return (
+        <AddTokenScreen
+          defaultToken={action.payload}
+          hideBackButton
+          onSubmit={onSubmit}
           onReject={onReject}
         />
       )

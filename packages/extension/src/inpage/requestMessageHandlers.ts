@@ -1,9 +1,58 @@
 import type { Network } from "../shared/network"
-import type {
-  AddStarknetChainParameters,
-  WatchAssetParameters,
-} from "./inpage.model"
+import { AddNewTokenParameters } from "@alephium/get-extension-wallet"
+import type { AddStarknetChainParameters } from "./inpage.model"
 import { sendMessage, waitForMessage } from "./messageActions"
+
+export async function handleAddTokenRequest(
+  callParams: AddNewTokenParameters,
+): Promise<boolean> {
+  sendMessage({
+    type: "REQUEST_ADD_TOKEN",
+    data: {
+      id: callParams.id,
+      networkId: callParams.networkId,
+      symbol: callParams.symbol,
+      decimals: callParams.decimals,
+      name: callParams.name,
+      logoURI: callParams.logoURI
+    },
+  })
+  const { actionHash } = await waitForMessage("REQUEST_ADD_TOKEN_RES", 1000)
+
+  if (!actionHash) {
+    // token already exists
+    return false
+  }
+
+  sendMessage({ type: "ALPH_OPEN_UI" })
+
+  const result = await Promise.race([
+    waitForMessage(
+      "APPROVE_REQUEST_ADD_TOKEN",
+      11 * 60 * 1000,
+      (x) => x.data.actionHash === actionHash,
+    ),
+    waitForMessage(
+      "REJECT_REQUEST_ADD_TOKEN",
+      10 * 60 * 1000,
+      (x) => x.data.actionHash === actionHash,
+    )
+      .then(() => "error" as const)
+      .catch(() => {
+        sendMessage({ type: "REJECT_REQUEST_ADD_TOKEN", data: { actionHash } })
+        return "timeout" as const
+      }),
+  ])
+
+  if (result === "error") {
+    throw Error("User abort")
+  }
+  if (result === "timeout") {
+    throw Error("User action timed out")
+  }
+
+  return true
+}
 
 export async function handleAddNetworkRequest(
   callParams: AddStarknetChainParameters,
