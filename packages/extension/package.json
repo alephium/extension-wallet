@@ -84,7 +84,7 @@
     "@argent/stack-router": "^0.7.1",
     "@argent/ui": "^0.7.1",
     "@chakra-ui/icons": "^2.0.15",
-    "@chakra-ui/react": "2.4.9",
+    "@chakra-ui/react": "2.5.1",
     "@extend-chrome/messages": "^1.2.2",
     "@google/model-viewer": "^2.0.0",
     "@mui/icons-material": "^5.3.1",
