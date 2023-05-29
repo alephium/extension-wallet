@@ -28,7 +28,7 @@
     "dev": "lerna run dev --parallel",
     "dev:ui": "lerna run dev:ui --parallel",
     "build-storybook": "lerna run build-storybook --",
-    "clean": "rm -rf packages/extension/dist packages/get-extension-wallet/dist packages/dapp/dist packages/ui/dist packages/extension/node_modules packages/get-extension-wallet/node_modules packages/dapp/node_modules packages/ui/node_modules",
+    "clean": "rm -rf node_modules packages/extension/dist packages/get-extension-wallet/dist packages/dapp/dist packages/ui/dist packages/extension/node_modules packages/get-extension-wallet/node_modules packages/dapp/node_modules packages/dapp/.next packages/ui/node_modules packages/storybook/node_modules",
     "build": "lerna run build --stream",
     "build:sourcemaps": "GEN_SOURCE_MAPS=true lerna run build",
     "lint": "lerna run lint --stream",
