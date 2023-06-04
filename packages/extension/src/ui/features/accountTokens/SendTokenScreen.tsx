@@ -1,7 +1,7 @@
 import { ALPH_TOKEN_ID, convertAlphAmountWithDecimals, convertAmountWithDecimals, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
 import { BuildSweepAddressTransactionsResult } from "@alephium/web3/dist/src/api/api-alephium"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
-import { utils } from "ethers"
+import { BigNumber, utils } from "ethers"
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
@@ -230,6 +230,8 @@ export const SendTokenScreen: FC = () => {
     Account | AddressBookContact
   >()
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false)
+  const [parsedInputAmount, setParsedInputAmount] = useState<BigNumber>()
+  const [isFractionalComponentExceedsDecimals, setIsFractionalComponentExceedsDecimals] = useState(false)
   const { accountNames } = useAccountMetadata()
 
   const accountName = useMemo(
@@ -344,30 +346,51 @@ export const SendTokenScreen: FC = () => {
 
   const showSaveAddressButton = validRecipientAddress && !recipientInAddressBook
 
+  const parseInputAmount = (amount?: string, decimals?: number) => {
+    if (amount) {
+      try {
+        const result = parseAmount(amount, decimals ?? 18)
+        setIsFractionalComponentExceedsDecimals(false)
+        return result
+      } catch (e: any) {
+        if (e.message.startsWith('fractional component exceeds decimals')) {
+          setIsFractionalComponentExceedsDecimals(true)
+          console.error("e", e.mesage)
+        } else {
+          throw e
+        }
+      }
+    }
+
+    return parseAmount("0", decimals)
+  }
+
   useEffect(() => {
     if (maxClicked && maxFee && token) {
       setMaxInputAmount(token, maxFee)
     }
+
+    if (token) {
+      setParsedInputAmount(parseInputAmount(inputAmount, token.decimals))
+    }
+
     // dont add token as dependency as the reference can change
-  }, [maxClicked, maxFee, setMaxInputAmount, token?.id, token?.networkId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [maxClicked, maxFee, setMaxInputAmount, token?.id, token?.networkId, inputAmount]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!token) {
     return <Navigate to={routes.accounts()} />
   }
-
   const { id, name, symbol, balance, decimals, logoURI } = toTokenView(token)
-
-  const parsedInputAmount = inputAmount
-    ? parseAmount(inputAmount, decimals)
-    : parseAmount("0", decimals)
 
   const parsedTokenBalance = tokenWithBalance?.balance || parseAmount("0", decimals)
 
   const isInputAmountGtBalance =
-    parsedInputAmount.gt(tokenWithBalance?.balance?.toString() ?? 0) ||
-    (feeToken?.id === token.id &&
-      (inputAmount === balance ||
-        parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
+    parsedInputAmount && (
+      parsedInputAmount.gt(tokenWithBalance?.balance?.toString() ?? 0) ||
+      (feeToken?.id === token.id &&
+        (inputAmount === balance ||
+          parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
+    )
 
   const handleMaxClick = () => {
     setMaxClicked(true)
@@ -399,7 +422,8 @@ export const SendTokenScreen: FC = () => {
     !isDirty ||
     isSubmitting ||
     (submitCount > 0 && !isDirty) ||
-    isInputAmountGtBalance // Balance: 1234, maxInput: 1231, , maxFee: 3, updatedInput: 1233
+    isInputAmountGtBalance ||
+    isFractionalComponentExceedsDecimals
 
   return (
     <>
@@ -496,6 +520,9 @@ export const SendTokenScreen: FC = () => {
                 </StyledControlledInput>
                 {inputAmount && isInputAmountGtBalance && (
                   <FormError>Insufficient balance</FormError>
+                )}
+                {isFractionalComponentExceedsDecimals && (
+                  <FormError>Fractional component exceeds decimals</FormError>
                 )}
                 {errors.amount ? (
                   errors.amount.message ? (
