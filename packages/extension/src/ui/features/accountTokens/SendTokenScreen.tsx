@@ -230,7 +230,6 @@ export const SendTokenScreen: FC = () => {
     Account | AddressBookContact
   >()
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false)
-  const [parsedInputAmount, setParsedInputAmount] = useState<BigNumber>()
   const [formError, setFormError] = useState<string | undefined>(undefined)
   const { accountNames } = useAccountMetadata()
 
@@ -373,7 +372,7 @@ export const SendTokenScreen: FC = () => {
 
     if (token) {
       const { balance, decimals } = toTokenView(token)
-      setParsedInputAmount(parseInputAmount(inputAmount, decimals))
+      const parsedInputAmount = parseInputAmount(inputAmount, decimals)
 
       const isInputAmountGtBalance =
         parsedInputAmount && (
