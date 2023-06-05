@@ -370,16 +370,16 @@ export const SendTokenScreen: FC = () => {
       setMaxInputAmount(token, maxFee)
     }
 
-    if (tokenWithBalance) {
+    if (tokenWithBalance?.balance) {
       const { id, balance, decimals } = toTokenView(tokenWithBalance)
       const parsedInputAmount = parseInputAmount(inputAmount, decimals)
 
       const isInputAmountGtBalance =
         parsedInputAmount && (
-          parsedInputAmount.gt(tokenWithBalance.balance ?? 0) ||
+          parsedInputAmount.gt(tokenWithBalance.balance) ||
           (feeToken?.id === id &&
             (inputAmount === balance ||
-              parsedInputAmount.add(maxFee?.toString() ?? 0).gt(tokenWithBalance.balance ?? 0)))
+              parsedInputAmount.add(maxFee?.toString() ?? 0).gt(tokenWithBalance.balance)))
         )
 
       if (isInputAmountGtBalance) {
