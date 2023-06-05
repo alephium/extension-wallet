@@ -370,16 +370,16 @@ export const SendTokenScreen: FC = () => {
       setMaxInputAmount(token, maxFee)
     }
 
-    if (token) {
-      const { balance, decimals } = toTokenView(token)
+    if (tokenWithBalance) {
+      const { id, balance, decimals } = toTokenView(tokenWithBalance)
       const parsedInputAmount = parseInputAmount(inputAmount, decimals)
 
       const isInputAmountGtBalance =
         parsedInputAmount && (
-          parsedInputAmount.gt(tokenWithBalance?.balance?.toString() ?? 0) ||
-          (feeToken?.id === token.id &&
+          parsedInputAmount.gt(tokenWithBalance.balance ?? 0) ||
+          (feeToken?.id === id &&
             (inputAmount === balance ||
-              parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
+              parsedInputAmount.add(maxFee?.toString() ?? 0).gt(tokenWithBalance.balance ?? 0)))
         )
 
       if (isInputAmountGtBalance) {
@@ -397,16 +397,14 @@ export const SendTokenScreen: FC = () => {
     // dont add token as dependency as the reference can change
   }, [maxClicked, maxFee, setMaxInputAmount, token?.id, token?.networkId, inputAmount]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!token) {
+  if (!tokenWithBalance) {
     return <Navigate to={routes.accounts()} />
   }
-  const { id, name, symbol, balance, logoURI } = toTokenView(token)
-
-  const parsedTokenBalance = tokenWithBalance?.balance || BigNumber.from(0)
+  const { id, name, symbol, balance, decimals, logoURI } = toTokenView(tokenWithBalance)
 
   const handleMaxClick = () => {
     setMaxClicked(true)
-    setMaxInputAmount(token, maxFee)
+    setMaxInputAmount(tokenWithBalance, maxFee)
   }
 
   const handleAddressSelect = (account?: Account | AddressBookContact) => {
@@ -480,7 +478,7 @@ export const SendTokenScreen: FC = () => {
                     destination = {
                       address: recipient,
                       attoAlphAmount: DUST_AMOUNT,
-                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, token.decimals) ?? '?' }]
+                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, decimals) ?? '?' }]
                     }
                   }
 
@@ -521,7 +519,7 @@ export const SendTokenScreen: FC = () => {
                       </CurrencyValueText>
                     ) : (
                       <>
-                        <InputTokenSymbol>{token.symbol}</InputTokenSymbol>
+                        <InputTokenSymbol>{symbol}</InputTokenSymbol>
                         <StyledMaxButton type="button" onClick={handleMaxClick}>
                           {"MAX"}
                         </StyledMaxButton>
