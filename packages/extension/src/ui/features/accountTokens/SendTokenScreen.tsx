@@ -351,11 +351,11 @@ export const SendTokenScreen: FC = () => {
     // dont add token as dependency as the reference can change
   }, [maxClicked, maxFee, setMaxInputAmount, token?.id, token?.networkId]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!token) {
+  if (!tokenWithBalance) {
     return <Navigate to={routes.accounts()} />
   }
 
-  const { id, name, symbol, balance, decimals, logoURI } = toTokenView(token)
+  const { id, name, symbol, balance, decimals, logoURI } = toTokenView(tokenWithBalance)
 
   const parsedInputAmount = inputAmount
     ? parseAmount(inputAmount, decimals)
@@ -365,13 +365,13 @@ export const SendTokenScreen: FC = () => {
 
   const isInputAmountGtBalance =
     parsedInputAmount.gt(tokenWithBalance?.balance?.toString() ?? 0) ||
-    (feeToken?.id === token.id &&
+    (feeToken?.id === tokenWithBalance.id &&
       (inputAmount === balance ||
         parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
 
   const handleMaxClick = () => {
     setMaxClicked(true)
-    setMaxInputAmount(token, maxFee)
+    setMaxInputAmount(tokenWithBalance, maxFee)
   }
 
   const handleAddressSelect = (account?: Account | AddressBookContact) => {
@@ -417,7 +417,7 @@ export const SendTokenScreen: FC = () => {
         <>
           <ColumnCenter>
             <H3>Send {symbol}</H3>
-            <BalanceText>{`${balance} ${symbol}`}</BalanceText>
+            <BalanceText>{`${parsedInputAmount} ${symbol}`}</BalanceText>
           </ColumnCenter>
           <StyledForm
             onSubmit={handleSubmit(async ({ amount, recipient }) => {
@@ -445,7 +445,7 @@ export const SendTokenScreen: FC = () => {
                     destination = {
                       address: recipient,
                       attoAlphAmount: DUST_AMOUNT,
-                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, token.decimals) ?? '?' }]
+                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, decimals) ?? '?' }]
                     }
                   }
 
@@ -486,7 +486,7 @@ export const SendTokenScreen: FC = () => {
                       </CurrencyValueText>
                     ) : (
                       <>
-                        <InputTokenSymbol>{token.symbol}</InputTokenSymbol>
+                        <InputTokenSymbol>{symbol}</InputTokenSymbol>
                         <StyledMaxButton type="button" onClick={handleMaxClick}>
                           {"MAX"}
                         </StyledMaxButton>
