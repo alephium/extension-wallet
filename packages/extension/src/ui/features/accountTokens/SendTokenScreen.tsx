@@ -231,7 +231,7 @@ export const SendTokenScreen: FC = () => {
   >()
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false)
   const [parsedInputAmount, setParsedInputAmount] = useState<BigNumber>()
-  const [isFractionalComponentExceedsDecimals, setIsFractionalComponentExceedsDecimals] = useState(false)
+  const [formError, setFormError] = useState<string | undefined>(undefined)
   const { accountNames } = useAccountMetadata()
 
   const accountName = useMemo(
@@ -346,24 +346,25 @@ export const SendTokenScreen: FC = () => {
 
   const showSaveAddressButton = validRecipientAddress && !recipientInAddressBook
 
-  const parseInputAmount = (amount?: string, decimals?: number) => {
-    if (amount) {
-      try {
-        const result = parseAmount(amount, decimals ?? 18)
-        setIsFractionalComponentExceedsDecimals(false)
-        return result
-      } catch (e: any) {
-        if (e.message.startsWith('fractional component exceeds decimals')) {
-          setIsFractionalComponentExceedsDecimals(true)
-          console.error("e", e.mesage)
-        } else {
-          throw e
+  const parseInputAmount = useCallback(
+    (amount?: string, decimals?: number) => {
+      if (amount) {
+        try {
+          const result = parseAmount(amount, decimals ?? 18)
+          setFormError(undefined)
+          return result
+        } catch (e: any) {
+          console.error("e", e.message)
+          if (e.message.startsWith('fractional component exceeds decimals')) {
+            setFormError('Fractional component exceeds decimals')
+          } else {
+            setFormError(e.message)
+          }
         }
       }
-    }
 
-    return parseAmount("0", decimals)
-  }
+      return BigNumber.from(0)
+    }, [])
 
   useEffect(() => {
     if (maxClicked && maxFee && token) {
@@ -371,26 +372,38 @@ export const SendTokenScreen: FC = () => {
     }
 
     if (token) {
-      setParsedInputAmount(parseInputAmount(inputAmount, token.decimals))
-    }
+      const { balance, decimals } = toTokenView(token)
+      setParsedInputAmount(parseInputAmount(inputAmount, decimals))
 
+      const isInputAmountGtBalance =
+        parsedInputAmount && (
+          parsedInputAmount.gt(tokenWithBalance?.balance?.toString() ?? 0) ||
+          (feeToken?.id === token.id &&
+            (inputAmount === balance ||
+              parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
+        )
+
+      if (isInputAmountGtBalance) {
+        setFormError('Insufficient balance')
+      }
+
+      if (errors.amount) {
+        if (errors.amount.message) {
+          setFormError(errors.amount.message)
+        } else {
+          setFormError('Incorrect Amount')
+        }
+      }
+    }
     // dont add token as dependency as the reference can change
   }, [maxClicked, maxFee, setMaxInputAmount, token?.id, token?.networkId, inputAmount]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!token) {
     return <Navigate to={routes.accounts()} />
   }
-  const { id, name, symbol, balance, decimals, logoURI } = toTokenView(token)
+  const { id, name, symbol, balance, logoURI } = toTokenView(token)
 
-  const parsedTokenBalance = tokenWithBalance?.balance || parseAmount("0", decimals)
-
-  const isInputAmountGtBalance =
-    parsedInputAmount && (
-      parsedInputAmount.gt(tokenWithBalance?.balance?.toString() ?? 0) ||
-      (feeToken?.id === token.id &&
-        (inputAmount === balance ||
-          parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
-    )
+  const parsedTokenBalance = tokenWithBalance?.balance || BigNumber.from(0)
 
   const handleMaxClick = () => {
     setMaxClicked(true)
@@ -422,8 +435,7 @@ export const SendTokenScreen: FC = () => {
     !isDirty ||
     isSubmitting ||
     (submitCount > 0 && !isDirty) ||
-    isInputAmountGtBalance ||
-    isFractionalComponentExceedsDecimals
+    !!formError
 
   return (
     <>
@@ -518,19 +530,9 @@ export const SendTokenScreen: FC = () => {
                     )}
                   </InputGroupAfter>
                 </StyledControlledInput>
-                {inputAmount && isInputAmountGtBalance && (
-                  <FormError>Insufficient balance</FormError>
+                {!!formError && (
+                  <FormError>{formError}</FormError>
                 )}
-                {isFractionalComponentExceedsDecimals && (
-                  <FormError>Fractional component exceeds decimals</FormError>
-                )}
-                {errors.amount ? (
-                  errors.amount.message ? (
-                    <FormError>{errors.amount.message}</FormError>
-                  ) : (
-                    <FormError>Incorrect Amount</FormError>
-                  )
-                ) : undefined}
               </div>
 
               <div>
