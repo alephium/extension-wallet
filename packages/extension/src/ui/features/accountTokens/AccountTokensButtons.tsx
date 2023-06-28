@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
-import { useNetworkFeeToken, useKnownTokensWithBalance } from "./tokens.state"
+import { useNetworkFeeToken, useKnownFungibleTokensWithBalance } from "./tokens.state"
 
 const { AddIcon, SendIcon } = icons
 
@@ -22,7 +22,7 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
 
   const sendToken = useNetworkFeeToken(switcherNetworkId)
   const { tokenDetails, tokenDetailsIsInitialising } =
-    useKnownTokensWithBalance(account)
+    useKnownFungibleTokensWithBalance(account)
 
   const hasNonZeroBalance = useMemo(() => {
     return tokenDetails.some(({ balance }) => balance?.gt(0))

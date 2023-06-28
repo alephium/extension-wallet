@@ -83,13 +83,13 @@ export const useToken = (baseToken: BaseToken): Token | undefined => {
 /** error codes to suppress - will not bubble error up to parent */
 const SUPPRESS_ERROR_STATUS = [429]
 
-export const useKnownTokensWithBalance = (
+export const useKnownFungibleTokensWithBalance = (
   account?: BaseWalletAccount,
 ): UseTokens => {
   const selectedAccount = useAccount(account)
   const { pendingTransactions } = useAccountTransactions(account)
   const pendingTransactionsLengthRef = useRef(pendingTransactions.length)
-  const tokensForAccount = useKnownTokens(selectedAccount)
+  const tokensForAccount = useKnownFungibleTokens(selectedAccount)
 
   const {
     data,
@@ -165,7 +165,7 @@ export const useKnownTokensWithBalance = (
   }
 }
 
-export const useKnownTokens = (
+export const useKnownFungibleTokens = (
   account?: BaseWalletAccount,
 ): Token[] => {
   const selectedAccount = useAccount(account)
@@ -173,7 +173,7 @@ export const useKnownTokens = (
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
   const knownTokensInNetwork = useTokensInNetwork(networkId)
-  const userTokens = useAllTokens(account)
+  const userTokens = useAllFungibleTokens(account)
 
   const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
   for (const userToken of userTokens) {
@@ -216,52 +216,16 @@ export const useUnknownTokens = (
   return unknownTokens
 }
 
-export const useAllTokens = (
+export const useAllFungibleTokens = (
   account?: BaseWalletAccount
 ): BaseToken[] => {
+  const userTokens = useAllTokens(account)
   const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
 
   const knownTokensInNetwork = useTokensInNetwork(networkId)
-
-  const {
-    data: userTokens
-  } = useSWR(
-    // skip if no account selected
-    selectedAccount && [
-      getAccountIdentifier(selectedAccount),
-      "accountTokens",
-    ],
-    async () => {
-      if (!selectedAccount) {
-        return
-      }
-
-      const allTokens: BaseToken[] = []
-      const network = await getNetwork(networkId)
-      const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-      const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
-
-      for (const tokenId of tokenIds) {
-        if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
-          allTokens.push({ id: tokenId, networkId: networkId })
-        }
-      }
-
-      return allTokens
-    },
-    {
-      refreshInterval: 30000,
-      shouldRetryOnError: (error: any) => {
-        const errorCode = error?.status || error?.errorCode
-        const suppressError =
-          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
-        return suppressError
-      },
-    }
-  )
 
   const {
     data: userShownTokens
@@ -282,7 +246,7 @@ export const useAllTokens = (
           if (foundIndex !== -1) {
             result.push([knownTokensInNetwork[foundIndex], foundIndex])
           } else {
-            const token = await fetchTokenInfoFromFullNode(network, userToken.id)
+            const token = await fetchFungibleTokenFromFullNode(network, userToken.id)
             if (token) {
               addToken(token)
               result.push([token, foundOnFullNodeIndex])
@@ -301,7 +265,56 @@ export const useAllTokens = (
   return userShownTokens || []
 }
 
-async function fetchTokenInfoFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
+export const useAllTokens = (
+  account?: BaseWalletAccount
+): BaseToken[] => {
+  const selectedAccount = useAccount(account)
+  const networkId = useMemo(() => {
+    return selectedAccount?.networkId ?? ""
+  }, [selectedAccount?.networkId])
+
+  const {
+    data: userTokens
+  } = useSWR(
+    // skip if no account selected
+    selectedAccount && [
+      getAccountIdentifier(selectedAccount),
+      "accountTokens",
+    ],
+    async () => {
+      if (!selectedAccount) {
+        return
+      }
+
+      const allTokens: BaseToken[] = []
+      const network = await getNetwork(networkId)
+      const nodeProvider = new NodeProvider(network.nodeUrl)
+      const addressBalance = await nodeProvider.addresses.getAddressesAddressBalance(selectedAccount.address)
+      const tokenIds: string[] = (addressBalance.tokenBalances || []).map((token) => token.id)
+
+      for (const tokenId of tokenIds) {
+        if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
+          allTokens.push({ id: tokenId, networkId: networkId })
+        }
+      }
+
+      return allTokens
+    },
+    {
+      refreshInterval: 30000,
+      shouldRetryOnError: (error: any) => {
+        const errorCode = error?.status || error?.errorCode
+        const suppressError =
+          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
+        return suppressError
+      },
+    }
+  )
+
+  return userTokens || []
+}
+
+async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
     const metadata = await nodeProvider.fetchFungibleTokenMetaData(tokenId)

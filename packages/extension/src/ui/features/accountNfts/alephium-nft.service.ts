@@ -18,13 +18,11 @@ export const fetchNFTCollections = async (
       const result = await pureFetch(`${tokenId}-parent`, () => explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId)))
       if (result.parent) {
         const parentContractId = binToHex(contractIdFromAddress(result.parent))
-        if (network.id === 'devnet') {
-          const stdInterfaceId = await pureFetch(`${parentContractId}-std`, () => nodeProvider.guessStdInterfaceId(parentContractId))
-          // Guess if it implements the NFT collection standard interface
-          if (stdInterfaceId === '0002') {
-            parentAndTokenIds.push([parentContractId, tokenId])
-          }
-        } else {
+        const parentStdInterfaceId = await pureFetch(`${parentContractId}-std`, () => nodeProvider.guessStdInterfaceId(parentContractId))
+        const tokenStdInterfaceId = await pureFetch(`${tokenId}-std`, () => nodeProvider.guessStdInterfaceId(tokenId))
+
+        // Guess if parent implements the NFT collection standard interface and child implements the NFT standard interface
+        if (parentStdInterfaceId === '0002' && tokenStdInterfaceId === '0003') {
           parentAndTokenIds.push([parentContractId, tokenId])
         }
       }
@@ -49,16 +47,18 @@ export const fetchNFTCollections = async (
 
   const collections: NFTCollection[] = []
   for (const whitelistedCollectionId in tokenIdsByWhitelistedNFTCollections) {
-    const collectionAddress = addressFromContractId(whitelistedCollectionId)
-    const nftIds = tokenIdsByWhitelistedNFTCollections[whitelistedCollectionId]
-    const collectionMetadata = await getCollectionMetadata(collectionAddress, nodeProvider)
-    const nfts: NFT[] = await getNFTs(whitelistedCollectionId, nftIds, nodeProvider)
-
-    collections.push({
-      id: whitelistedCollectionId,
-      metadata: collectionMetadata,
-      nfts: nfts
-    })
+    try {
+      const nftIds = tokenIdsByWhitelistedNFTCollections[whitelistedCollectionId]
+      const collectionMetadata = await getCollectionMetadata(whitelistedCollectionId, nodeProvider)
+      const nfts: NFT[] = await getNFTs(whitelistedCollectionId, nftIds, nodeProvider)
+      collections.push({
+        id: whitelistedCollectionId,
+        metadata: collectionMetadata,
+        nfts: nfts
+      })
+    } catch (e) {
+      console.log(`Error fetching NFT collection ${whitelistedCollectionId}`, e)
+    }
   }
 
   return collections
@@ -73,22 +73,27 @@ export const fetchNFTCollection = async (
     return undefined
   }
 
-  const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-  const nodeProvider = new NodeProvider(network.nodeUrl)
-  const collectionAddress = addressFromContractId(collectionId)
-  const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
-  const nftIds = subContracts && tokenIds.filter((tokenId) => subContracts.includes(addressFromContractId(tokenId)))
+  try {
+    const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+    const nodeProvider = new NodeProvider(network.nodeUrl)
+    const collectionAddress = addressFromContractId(collectionId)
+    const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
+    const nftIds = subContracts && tokenIds.filter((tokenId) => subContracts.includes(addressFromContractId(tokenId)))
 
-  if (!nftIds) {
+    if (!nftIds) {
+      return undefined
+    }
+
+    const collectionMetadata = await getCollectionMetadata(collectionId, nodeProvider)
+    const nfts: NFT[] = await getNFTs(collectionId, nftIds, nodeProvider)
+    return {
+      id: collectionId,
+      metadata: collectionMetadata,
+      nfts: nfts
+    }
+  } catch (e) {
+    console.log(`Error fetching NFT collection ${collectionId}`, e)
     return undefined
-  }
-
-  const collectionMetadata = await getCollectionMetadata(collectionAddress, nodeProvider)
-  const nfts: NFT[] = await getNFTs(collectionId, nftIds, nodeProvider)
-  return {
-    id: collectionId,
-    metadata: collectionMetadata,
-    nfts: nfts
   }
 }
 
@@ -100,15 +105,9 @@ async function getNFTs(
   const nfts: NFT[] = [];
 
   for (const nftId of nftIds) {
-    const nftAddress = addressFromContractId(nftId)
     try {
-      const nftState = await nodeProvider.contracts.getContractsAddressState(
-        nftAddress,
-        { group: groupOfAddress(nftAddress) }
-      )
-
-      const metadataUri = hexToString((nftState.immFields[1] as ValByteVec).value)
-      const metadataResponse = await fetch(metadataUri)
+      const nftMetadata = nodeProvider.fetchNFTMetaData(nftId)
+      const metadataResponse = await fetch((await nftMetadata).tokenUri)
       const metadata = await metadataResponse.json()
       nfts.push({
         id: nftId,
@@ -124,9 +123,10 @@ async function getNFTs(
 }
 
 async function getCollectionMetadata(
-  collectionAddress: string,
+  collectionId: string,
   nodeProvider: NodeProvider
 ) {
+  const collectionAddress = addressFromContractId(collectionId)
   const collectionState = await nodeProvider.contracts.getContractsAddressState(
     collectionAddress,
     { group: groupOfAddress(collectionAddress) }
@@ -138,5 +138,6 @@ async function getCollectionMetadata(
 }
 
 function isWhitelistedCollection(collectionId: string, networkId: string): boolean {
-  return networkId === 'devnet' || whitelistedCollection[networkId].includes(collectionId)
+  return true
+  //return networkId === 'devnet' || networkId === 'testnet' || whitelistedCollection[networkId].includes(collectionId)
 }
