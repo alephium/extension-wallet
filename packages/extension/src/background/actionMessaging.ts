@@ -14,7 +14,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
   switch (msg.type) {
     case "GET_ACTIONS": {
       const actions = await actionQueue.getAll()
-      return sendMessageToUi({
+      return await sendMessageToUi({
         type: "GET_ACTIONS_RES",
         data: actions,
       })
@@ -33,7 +33,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
       )
 
       if (resultMessage) {
-        respond(resultMessage)
+        await respond(resultMessage)
       }
       return
     }
@@ -50,7 +50,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
         }
         const resultMessage = await handleActionRejection(action, background)
         if (resultMessage) {
-          respond(resultMessage)
+          await respond(resultMessage)
         }
       }
       return
@@ -62,7 +62,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
         payload: msg.data,
       })
 
-      return respond({
+      return await respond({
         type: "ALPH_SIGN_MESSAGE_RES",
         data: {
           actionHash: meta.hash,

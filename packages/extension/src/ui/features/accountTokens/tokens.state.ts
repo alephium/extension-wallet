@@ -1,12 +1,13 @@
-import { ExplorerProvider } from "@alephium/web3"
+import { ExplorerProvider, NodeProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
 import useSWR from "swr"
-import { getNetwork } from "../../../shared/network"
+import useSWRImmutable from 'swr/immutable'
+import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage } from "../../../shared/storage/hooks"
-import { tokenStore } from "../../../shared/token/storage"
+import { addToken, tokenStore } from "../../../shared/token/storage"
 import { BaseToken, Token } from "../../../shared/token/type"
 import { equalToken } from "../../../shared/token/utils"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
@@ -223,8 +224,10 @@ export const useAllTokens = (
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
 
+  const knownTokensInNetwork = useTokensInNetwork(networkId)
+
   const {
-    data
+    data: userTokens
   } = useSWR(
     // skip if no account selected
     selectedAccount && [
@@ -237,8 +240,7 @@ export const useAllTokens = (
       }
 
       const allTokens: BaseToken[] = []
-
-      const network = await getNetwork(selectedAccount.networkId)
+      const network = await getNetwork(networkId)
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
       const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
 
@@ -252,14 +254,68 @@ export const useAllTokens = (
     },
     {
       refreshInterval: 30000,
-      shouldRetryOnError: (error) => {
+      shouldRetryOnError: (error: any) => {
         const errorCode = error?.status || error?.errorCode
         const suppressError =
           errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
         return suppressError
       },
-    },
+    }
   )
 
-  return data || [];
+  const {
+    data: userShownTokens
+  } = useSWRImmutable(
+    selectedAccount && [
+      getAccountIdentifier(selectedAccount),
+      userTokens,
+      "accountShownTokens",
+    ],
+    async () => {
+      const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
+      const network = await getNetwork(networkId)
+
+      let foundOnFullNodeIndex = knownTokensInNetwork.length + 1
+      for (const userToken of userTokens || []) {
+        if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
+          const foundIndex = knownTokensInNetwork.findIndex((token) => token.id == userToken.id)
+          if (foundIndex !== -1) {
+            result.push([knownTokensInNetwork[foundIndex], foundIndex])
+          } else {
+            const token = await fetchTokenInfoFromFullNode(network, userToken.id)
+            if (token) {
+              addToken(token)
+              result.push([token, foundOnFullNodeIndex])
+              foundOnFullNodeIndex++
+            } else if (account?.networkId === 'devnet') {
+              result.push([devnetToken(userToken), knownTokensInNetwork.length])
+            }
+          }
+        }
+      }
+
+      return result.sort((a, b) => a[1] - b[1]).map(tuple => tuple[0])
+    }
+  )
+
+  return userShownTokens || []
+}
+
+async function fetchTokenInfoFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
+  const nodeProvider = new NodeProvider(network.nodeUrl)
+  try {
+    const metadata = await nodeProvider.fetchStdTokenMetaData(tokenId)
+    const token: Token = {
+      id: tokenId,
+      networkId: network.id,
+      name: Buffer.from(metadata.name, 'hex').toString('utf8'),
+      symbol: Buffer.from(metadata.symbol, 'hex').toString('utf8'),
+      decimals: metadata.decimals
+    }
+
+    return token
+  } catch (e) {
+    console.debug(`Failed to fetch token metadata for ${tokenId}`, e)
+    return undefined
+  }
 }

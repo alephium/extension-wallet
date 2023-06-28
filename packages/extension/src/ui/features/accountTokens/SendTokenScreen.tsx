@@ -1,7 +1,7 @@
 import { ALPH_TOKEN_ID, convertAlphAmountWithDecimals, convertAmountWithDecimals, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
 import { BuildSweepAddressTransactionsResult } from "@alephium/web3/dist/src/api/api-alephium"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
-import { utils } from "ethers"
+import { BigNumber, utils } from "ethers"
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
@@ -230,6 +230,7 @@ export const SendTokenScreen: FC = () => {
     Account | AddressBookContact
   >()
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false)
+  const [formError, setFormError] = useState<string | undefined>(undefined)
   const { accountNames } = useAccountMetadata()
 
   const accountName = useMemo(
@@ -344,34 +345,66 @@ export const SendTokenScreen: FC = () => {
 
   const showSaveAddressButton = validRecipientAddress && !recipientInAddressBook
 
+  const parseInputAmount = useCallback(
+    (amount?: string, decimals?: number) => {
+      if (amount) {
+        try {
+          const result = parseAmount(amount, decimals ?? 18)
+          setFormError(undefined)
+          return result
+        } catch (e: any) {
+          console.error("e", e.message)
+          if (e.message.startsWith('fractional component exceeds decimals')) {
+            setFormError('Fractional component exceeds decimals')
+          } else {
+            setFormError(e.message)
+          }
+        }
+      }
+
+      return BigNumber.from(0)
+    }, [])
+
   useEffect(() => {
     if (maxClicked && maxFee && token) {
       setMaxInputAmount(token, maxFee)
     }
-    // dont add token as dependency as the reference can change
-  }, [maxClicked, maxFee, setMaxInputAmount, token?.id, token?.networkId]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!token) {
+    if (tokenWithBalance?.balance) {
+      const { id, balance, decimals } = toTokenView(tokenWithBalance)
+      const parsedInputAmount = parseInputAmount(inputAmount, decimals)
+
+      const isInputAmountGtBalance =
+        parsedInputAmount && (
+          parsedInputAmount.gt(tokenWithBalance.balance) ||
+          (feeToken?.id === id &&
+            (inputAmount === balance ||
+              parsedInputAmount.add(maxFee?.toString() ?? 0).gt(tokenWithBalance.balance)))
+        )
+
+      if (isInputAmountGtBalance) {
+        setFormError('Insufficient balance')
+      }
+
+      if (errors.amount) {
+        if (errors.amount.message) {
+          setFormError(errors.amount.message)
+        } else {
+          setFormError('Incorrect Amount')
+        }
+      }
+    }
+    // dont add token as dependency as the reference can change
+  }, [maxClicked, maxFee, setMaxInputAmount, token?.id, token?.networkId, inputAmount]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!tokenWithBalance) {
     return <Navigate to={routes.accounts()} />
   }
-
-  const { id, name, symbol, balance, decimals, logoURI } = toTokenView(token)
-
-  const parsedInputAmount = inputAmount
-    ? parseAmount(inputAmount, decimals)
-    : parseAmount("0", decimals)
-
-  const parsedTokenBalance = tokenWithBalance?.balance || parseAmount("0", decimals)
-
-  const isInputAmountGtBalance =
-    parsedInputAmount.gt(tokenWithBalance?.balance?.toString() ?? 0) ||
-    (feeToken?.id === token.id &&
-      (inputAmount === balance ||
-        parsedInputAmount.add(maxFee?.toString() ?? 0).gt(parsedTokenBalance)))
+  const { id, name, symbol, balance, decimals, logoURI } = toTokenView(tokenWithBalance)
 
   const handleMaxClick = () => {
     setMaxClicked(true)
-    setMaxInputAmount(token, maxFee)
+    setMaxInputAmount(tokenWithBalance, maxFee)
   }
 
   const handleAddressSelect = (account?: Account | AddressBookContact) => {
@@ -399,7 +432,7 @@ export const SendTokenScreen: FC = () => {
     !isDirty ||
     isSubmitting ||
     (submitCount > 0 && !isDirty) ||
-    isInputAmountGtBalance // Balance: 1234, maxInput: 1231, , maxFee: 3, updatedInput: 1233
+    !!formError
 
   return (
     <>
@@ -445,7 +478,7 @@ export const SendTokenScreen: FC = () => {
                     destination = {
                       address: recipient,
                       attoAlphAmount: DUST_AMOUNT,
-                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, token.decimals) ?? '?' }]
+                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, decimals) ?? '?' }]
                     }
                   }
 
@@ -486,7 +519,7 @@ export const SendTokenScreen: FC = () => {
                       </CurrencyValueText>
                     ) : (
                       <>
-                        <InputTokenSymbol>{token.symbol}</InputTokenSymbol>
+                        <InputTokenSymbol>{symbol}</InputTokenSymbol>
                         <StyledMaxButton type="button" onClick={handleMaxClick}>
                           {"MAX"}
                         </StyledMaxButton>
@@ -494,16 +527,9 @@ export const SendTokenScreen: FC = () => {
                     )}
                   </InputGroupAfter>
                 </StyledControlledInput>
-                {inputAmount && isInputAmountGtBalance && (
-                  <FormError>Insufficient balance</FormError>
+                {!!formError && (
+                  <FormError>{formError}</FormError>
                 )}
-                {errors.amount ? (
-                  errors.amount.message ? (
-                    <FormError>{errors.amount.message}</FormError>
-                  ) : (
-                    <FormError>Incorrect Amount</FormError>
-                  )
-                ) : undefined}
               </div>
 
               <div>

@@ -52,7 +52,7 @@ export interface NostrObject {
 
 export interface RequestOptions {
   host: string
-  address?: Address 
+  address?: Address
   addressGroup?: number
   keyType?: KeyType
   networkId?: string

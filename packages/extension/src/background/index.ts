@@ -31,6 +31,7 @@ import { initOnboarding } from "./onboarding"
 import { handlePreAuthorizationMessage } from "./preAuthorizationMessaging"
 import { handleRecoveryMessage } from "./recoveryMessaging"
 import { handleSessionMessage } from "./sessionMessaging"
+import { handleTokenMessaging } from "./tokenMessaging"
 import { initBadgeText } from "./transactions/badgeText"
 import { transactionTracker } from "./transactions/tracking"
 import { handleTransactionMessage } from "./transactions/transactionMessaging"
@@ -80,6 +81,7 @@ const handlers = [
   handleRecoveryMessage,
   handleSessionMessage,
   handleTransactionMessage,
+  handleTokenMessaging
 ] as Array<HandleMessage<MessageType>>
 
 getAccounts()
@@ -94,6 +96,7 @@ const safeMessages: MessageType["type"][] = [
   "ALPH_EXECUTE_TRANSACTION",
   "ALPH_OPEN_UI",
   "ALPH_SIGN_MESSAGE",
+  "REQUEST_ADD_TOKEN",
   "REQUEST_ADD_CUSTOM_NETWORK",
   "REQUEST_SWITCH_CUSTOM_NETWORK",
   "REQUEST_DECLARE_CONTRACT",
@@ -106,9 +109,9 @@ const safeMessages: MessageType["type"][] = [
   "SIGNATURE_FAILURE",
   "IS_PREAUTHORIZED_RES",
   "REMOVE_PREAUTHORIZATION_RES",
-  "REQUEST_TOKEN_RES",
-  "APPROVE_REQUEST_TOKEN",
-  "REJECT_REQUEST_TOKEN",
+  "REQUEST_ADD_TOKEN_RES",
+  "APPROVE_REQUEST_ADD_TOKEN",
+  "REJECT_REQUEST_ADD_TOKEN",
   "REQUEST_ADD_CUSTOM_NETWORK_RES",
   "APPROVE_REQUEST_ADD_CUSTOM_NETWORK",
   "REJECT_REQUEST_ADD_CUSTOM_NETWORK",
@@ -157,16 +160,16 @@ messageStream.subscribe(async ([msg, sender]) => {
   }
 
   // forward UI messages to rest of the tabs
-  if (isSafeOrigin && hasTab(sender.tab?.id)) {
-    sendMessageToActiveTabs(msg)
+  if (isSafeOrigin && (await hasTab(sender.tab?.id))) {
+    await sendMessageToActiveTabs(msg)
   }
 
   const respond = async (msg: MessageType) => {
     console.log("respond", msg)
     if (safeMessages.includes(msg.type)) {
-      sendMessageToActiveTabsAndUi(msg, [sender.tab?.id])
+      await sendMessageToActiveTabsAndUi(msg, [sender.tab?.id])
     } else {
-      sendMessageToUi(msg)
+      await sendMessageToUi(msg)
     }
   }
 

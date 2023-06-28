@@ -1,4 +1,5 @@
 {
+  "fullNodeVersion": "v2.3.3",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -10,7 +11,7 @@
   "infos": {
     "ShinyToken": {
       "sourceFile": "shiny-token.ral",
-      "sourceCodeHash": "f3127fc222b6e142fc68e7fe43412d2246ac84f05e3e19d0c3bd9d3167ccb945",
+      "sourceCodeHash": "c58caad9fbb72a7929f8d5dcedaccde8c9deb2f3a9a1c6d32a9541e20139e0a1",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "eb751581aa1fc6da7377f792446d49817a6627c1c41b30d1f83cb6ebb57492fa",
       "warnings": []

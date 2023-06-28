@@ -1,6 +1,6 @@
 {
   "name": "@argent/ui",
-  "version": "0.7.0",
+  "version": "0.7.2",
   "license": "MIT",
   "private": true,
   "files": [
@@ -16,7 +16,7 @@
     }
   },
   "devDependencies": {
-    "@chakra-ui/cli": "^2.1.8",
+    "@chakra-ui/cli": "2.3.0",
     "@svgr/core": "^6.5.0",
     "@svgr/plugin-jsx": "^6.5.0",
     "@svgr/plugin-prettier": "^6.5.0",
@@ -42,7 +42,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@chakra-ui/react": "2.4.9",
+    "@chakra-ui/react": "2.5.1",
     "@emotion/styled": "^11.10.4",
     "@ethersproject/wordlists": "^5.7.0",
     "framer-motion": "^8.0.2",

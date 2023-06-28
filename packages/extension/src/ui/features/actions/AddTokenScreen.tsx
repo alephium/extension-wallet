@@ -199,7 +199,6 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
             )}
             <Button
               type="submit"
-              style={{ marginTop: "0px" }}
               disabled={!isDataComplete(compiledData)}
             >
               Continue
