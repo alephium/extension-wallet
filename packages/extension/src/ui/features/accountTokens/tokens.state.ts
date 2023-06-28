@@ -254,7 +254,7 @@ export const useTokens = (
 async function fetchTokenInfoFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
-    const metadata = await nodeProvider.fetchStdTokenMetaData(tokenId)
+    const metadata = await nodeProvider.fetchFungibleTokenMetaData(tokenId)
     const token: Token = {
       id: tokenId,
       networkId: network.id,
