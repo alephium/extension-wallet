@@ -3,7 +3,7 @@ import { NFTCollection } from "./alephium-nft.model"
 import { Network } from "../../../shared/network"
 import { addressFromContractId, binToHex, contractIdFromAddress, ExplorerProvider, groupOfAddress, hexToString, NodeProvider } from "@alephium/web3"
 import { ValByteVec } from "@alephium/web3/dist/src/api/api-alephium"
-import { pureFetch } from "../../../shared/utils/pureFetch"
+import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
 
 export const fetchNFTCollections = async (
   tokenIds: string[],
@@ -15,11 +15,11 @@ export const fetchNFTCollections = async (
   const parentAndTokenIds: [string, string][] = []
   for (const tokenId of tokenIds) {
     try {
-      const result = await pureFetch(`${tokenId}-parent`, () => explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId)))
+      const result = await fetchImmutable(`${tokenId}-parent`, () => explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId)))
       if (result.parent) {
         const parentContractId = binToHex(contractIdFromAddress(result.parent))
-        const parentStdInterfaceId = await pureFetch(`${parentContractId}-std`, () => nodeProvider.guessStdInterfaceId(parentContractId))
-        const tokenStdInterfaceId = await pureFetch(`${tokenId}-std`, () => nodeProvider.guessStdInterfaceId(tokenId))
+        const parentStdInterfaceId = await fetchImmutable(`${parentContractId}-std`, () => nodeProvider.guessStdInterfaceId(parentContractId))
+        const tokenStdInterfaceId = await fetchImmutable(`${tokenId}-std`, () => nodeProvider.guessStdInterfaceId(tokenId))
 
         // Guess if parent implements the NFT collection standard interface and child implements the NFT standard interface
         if (parentStdInterfaceId === '0002' && tokenStdInterfaceId === '0003') {
@@ -27,7 +27,7 @@ export const fetchNFTCollections = async (
         }
       }
     } catch (e) {
-      console.debug("Error fetching parent for token id", e)
+      console.error("Error fetching parent for token id", e)
     }
   }
 
@@ -115,7 +115,7 @@ async function getNFTs(
         metadata: metadata
       })
     } catch (e) {
-      console.debug("Error fetching NFT", nftId)
+      console.error("Error fetching NFT", nftId)
     }
   }
 
@@ -127,16 +127,18 @@ async function getCollectionMetadata(
   nodeProvider: NodeProvider
 ) {
   const collectionAddress = addressFromContractId(collectionId)
-  const collectionState = await nodeProvider.contracts.getContractsAddressState(
-    collectionAddress,
-    { group: groupOfAddress(collectionAddress) }
-  )
-
-  const metadataUri = hexToString((collectionState.immFields[1] as ValByteVec).value)
+  const callResult = await nodeProvider.contracts.postContractsCallContract({
+    address: collectionAddress,
+    group: groupOfAddress(collectionAddress),
+    methodIndex: 0 // the method index of `getColletionUri` is 0 in the NFT collection standart
+  })
+  const metadataUri = hexToString((callResult.returns[0] as ValByteVec).value)
+  console.log("collection metadata uri", metadataUri)
   const metadataResponse = await fetch(metadataUri)
   return await metadataResponse.json()
 }
 
+// Not sure we should have a whitelisted NFT collections, disable for now
 function isWhitelistedCollection(collectionId: string, networkId: string): boolean {
   return true
   //return networkId === 'devnet' || networkId === 'testnet' || whitelistedCollection[networkId].includes(collectionId)

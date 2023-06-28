@@ -137,7 +137,7 @@ export const SendNftScreen: FC = () => {
   const formValues = watch()
   const inputRecipient = formValues.recipient
 
-  const validateStarknetAddress = useCallback(
+  const validateAddress = useCallback(
     (addr: string) => isValidAddress(addr),
     [],
   )
@@ -267,7 +267,7 @@ export const SendNftScreen: FC = () => {
                       }}
                       onlyAddressHex
                       onChange={(e: any) => {
-                        if (validateStarknetAddress(e.target.value)) {
+                        if (validateAddress(e.target.value)) {
                           const account = addressBook.contacts.find((c) =>
                             isEqualAddress(c.address, e.target.value),
                           )
