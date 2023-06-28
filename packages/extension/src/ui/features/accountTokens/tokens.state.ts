@@ -1,4 +1,4 @@
-import { ExplorerProvider, NodeProvider } from "@alephium/web3"
+import { NodeProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
@@ -15,6 +15,7 @@ import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { useAccount } from "../accounts/accounts.state"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { fetchAllTokensBalance } from "./tokens.service"
+import { sortBy } from "lodash"
 
 export interface TokenDetailsWithBalance extends Token {
   balance?: BigNumber
@@ -187,7 +188,7 @@ export const useKnownFungibleTokens = (
     }
   }
 
-  return result.sort((a, b) => a[1] - b[1]).map(tuple => tuple[0])
+  return sortBy(result, (a) => a[1]).map(tuple => tuple[0])
 }
 
 export const useUnknownTokens = (
@@ -258,7 +259,7 @@ export const useAllFungibleTokens = (
         }
       }
 
-      return result.sort((a, b) => a[1] - b[1]).map(tuple => tuple[0])
+      return sortBy(result, (a) => a[1]).map(tuple => tuple[0])
     }
   )
 

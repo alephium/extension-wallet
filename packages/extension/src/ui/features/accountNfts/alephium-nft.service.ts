@@ -32,8 +32,7 @@ export const fetchNFTCollections = async (
   }
 
   const tokenIdsByWhitelistedNFTCollections = parentAndTokenIds.reduce((acc, parentAndTokenId) => {
-    const parent = parentAndTokenId[0]
-    const tokenId = parentAndTokenId[1]
+    const [parent, tokenId] = parentAndTokenId
     if (!!parent && !!tokenId && isWhitelistedCollection(parent, network.id)) {
       if (acc[parent]) {
         acc[parent].push(tokenId)
