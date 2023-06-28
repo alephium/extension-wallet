@@ -27,7 +27,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Build the wallet
         run: |
-          yarn
+          yarn install --frozen-lockfile
           yarn run build
       - name: Zip the extension wallet
         run: |
