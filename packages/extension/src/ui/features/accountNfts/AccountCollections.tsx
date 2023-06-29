@@ -52,6 +52,7 @@ const Collections: FC<AccountCollectionsProps> = ({
                 name={collection.metadata.name}
                 thumbnailSrc={collection.metadata.image}
                 total={collection.nfts.length}
+                unverifiedCollection={!collection.verified}
               />
             </NftFigure>
           ))}

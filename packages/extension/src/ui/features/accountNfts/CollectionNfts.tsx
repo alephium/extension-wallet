@@ -76,21 +76,21 @@ export const CollectionNfts: FC = () => {
               }
               borderRadius="lg"
             />
-            <H4>{collection?.metadata.name || "Loading..."}</H4>
-            {!collection.verified && (
-              <>
-                <Tooltip label={"Unverified collection"} shouldWrapChildren={true}>
-                  <Circle
-                    position={"absolute"}
-                    top={30}
-                    size={16}
-                  >
-                    <WarningIconRounded />
-                  </Circle>
-                </Tooltip>
-              </>
-            )}
+            <Flex
+              gap="1"
+              justifyContent="center"
+              alignItems="center"
+            >
 
+              <H4>{collection?.metadata.name || "Loading..."}</H4>
+              {!collection.verified && (
+                <>
+                  <Tooltip label={"Unverified Collection"} shouldWrapChildren={true}>
+                    <WarningIconRounded width={16} height={16} style={{ marginBottom: '12px', paddingLeft: 0 }} />
+                  </Tooltip>
+                </>
+              )}
+            </Flex>
           </Flex>
 
           <SimpleGrid

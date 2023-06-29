@@ -45,7 +45,7 @@ export const TokenIcon: FC<TokenIconProps> = ({ name, url, size, verified, ...re
         />
       </Circle>
       {!verified && (
-        <Tooltip label={"Unverified token"} shouldWrapChildren={true}>
+        <Tooltip label={"Unverified Token"} shouldWrapChildren={true}>
           <Circle
             overflow={"hidden"}
             position={"absolute"}
