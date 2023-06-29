@@ -30,9 +30,9 @@ export const fetchNFTCollections = async (
     }
   }
 
-  const tokenIdsByWhitelistedNFTCollections = parentAndTokenIds.reduce((acc, parentAndTokenId) => {
+  const tokenIdsByNFTCollections = parentAndTokenIds.reduce((acc, parentAndTokenId) => {
     const [parent, tokenId] = parentAndTokenId
-    if (!!parent && !!tokenId && isWhitelistedCollection(parent, network.id)) {
+    if (!!parent && !!tokenId) {
       if (acc[parent]) {
         acc[parent].push(tokenId)
       } else {
@@ -44,18 +44,19 @@ export const fetchNFTCollections = async (
   }, {} as Record<string, string[]>)
 
   const collections: NFTCollection[] = []
-  for (const whitelistedCollectionId in tokenIdsByWhitelistedNFTCollections) {
+  for (const collectionId in tokenIdsByNFTCollections) {
     try {
-      const nftIds = tokenIdsByWhitelistedNFTCollections[whitelistedCollectionId]
-      const collectionMetadata = await getCollectionMetadata(whitelistedCollectionId, nodeProvider)
-      const nfts: NFT[] = await getNFTs(whitelistedCollectionId, nftIds, nodeProvider)
+      const nftIds = tokenIdsByNFTCollections[collectionId]
+      const collectionMetadata = await getCollectionMetadata(collectionId, nodeProvider)
+      const nfts: NFT[] = await getNFTs(collectionId, nftIds, nodeProvider)
       collections.push({
-        id: whitelistedCollectionId,
+        id: collectionId,
         metadata: collectionMetadata,
-        nfts: nfts
+        nfts: nfts,
+        verified: isWhitelistedCollection(collectionId, network.id)
       })
     } catch (e) {
-      console.log(`Error fetching NFT collection ${whitelistedCollectionId}`, e)
+      console.log(`Error fetching NFT collection ${collectionId}`, e)
     }
   }
 
@@ -67,10 +68,6 @@ export const fetchNFTCollection = async (
   tokenIds: string[],
   network: Network,
 ): Promise<NFTCollection | undefined> => {
-  if (!isWhitelistedCollection(collectionId, network.id)) {
-    return undefined
-  }
-
   try {
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
     const nodeProvider = new NodeProvider(network.nodeUrl)
@@ -87,7 +84,8 @@ export const fetchNFTCollection = async (
     return {
       id: collectionId,
       metadata: collectionMetadata,
-      nfts: nfts
+      nfts: nfts,
+      verified: isWhitelistedCollection(collectionId, network.id)
     }
   } catch (e) {
     console.log(`Error fetching NFT collection ${collectionId}`, e)
@@ -129,8 +127,6 @@ async function getCollectionMetadata(
   return await metadataResponse.json()
 }
 
-// Not sure we should have a whitelisted NFT collections, disable for now
 function isWhitelistedCollection(collectionId: string, networkId: string): boolean {
-  return true
-  //return networkId === 'devnet' || networkId === 'testnet' || whitelistedCollection[networkId].includes(collectionId)
+  return networkId === 'devnet' || whitelistedCollection[networkId].includes(collectionId)
 }

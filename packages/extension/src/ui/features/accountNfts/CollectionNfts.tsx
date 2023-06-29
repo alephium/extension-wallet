@@ -1,7 +1,8 @@
 import { BarBackButton, H1, H4, H6, NavigationContainer } from "@argent/ui"
-import { Flex, Image, SimpleGrid } from "@chakra-ui/react"
+import { Tooltip, Circle, Flex, Image, SimpleGrid } from "@chakra-ui/react"
 import { FC } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
 
 import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
@@ -76,7 +77,22 @@ export const CollectionNfts: FC = () => {
               borderRadius="lg"
             />
             <H4>{collection?.metadata.name || "Loading..."}</H4>
+            {!collection.verified && (
+              <>
+                <Tooltip label={"Unverified collection"} shouldWrapChildren={true}>
+                  <Circle
+                    position={"absolute"}
+                    top={30}
+                    size={16}
+                  >
+                    <WarningIconRounded />
+                  </Circle>
+                </Tooltip>
+              </>
+            )}
+
           </Flex>
+
           <SimpleGrid
             gridTemplateColumns="repeat(auto-fill, 158px)"
             gap="3"

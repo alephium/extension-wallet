@@ -1,4 +1,4 @@
-import { Circle, Image } from "@chakra-ui/react"
+import { Circle, Image, Tooltip } from "@chakra-ui/react"
 import { ComponentProps, FC } from "react"
 
 import { generateAvatarImage } from "../../../shared/avatarImage"
@@ -45,15 +45,17 @@ export const TokenIcon: FC<TokenIconProps> = ({ name, url, size, verified, ...re
         />
       </Circle>
       {!verified && (
-        <Circle
-          overflow={"hidden"}
-          position={"absolute"}
-          right={0}
-          top={0}
-          size={Math.min(32, Math.round((size as number * 12) / 36))}
-        >
-          <WarningIconRounded />
-        </Circle>
+        <Tooltip label={"Unverified token"} shouldWrapChildren={true}>
+          <Circle
+            overflow={"hidden"}
+            position={"absolute"}
+            right={0}
+            top={0}
+            size={Math.min(32, Math.round((size as number * 12) / 36))}
+          >
+            <WarningIconRounded />
+          </Circle>
+        </Tooltip>
       )}
     </Circle>
   )

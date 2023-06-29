@@ -34,6 +34,7 @@ export interface NFTCollection {
   id: string
   metadata: NFTCollectionMeta
   nfts: NFT[]
+  verified: boolean
 }
 
 export type NFTCollections = NFTCollection[]
