@@ -47,7 +47,7 @@ import { TokenMenuDeprecated } from "../accountTokens/TokenMenuDeprecated"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { useYupValidationResolver } from "../settings/useYupValidationResolver"
 import { useCollection } from "./useCollections"
-import { ALPH_TOKEN_ID, convertAlphAmountWithDecimals, convertAmountWithDecimals, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
+import { Destination, DUST_AMOUNT } from "@alephium/web3"
 import { sendTransferTransaction } from "../../services/transactions"
 
 export const NftImageContainer = styled.div`

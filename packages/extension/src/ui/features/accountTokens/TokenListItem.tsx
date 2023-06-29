@@ -37,13 +37,13 @@ export const TokenListItem: FC<TokenListItemProps> = ({
   errorMessage,
   ...rest
 }) => {
-  const { name, logoURI, symbol } = toTokenView(token)
+  const { name, logoURI, symbol, verified } = toTokenView(token)
   const displayBalance = prettifyTokenBalance(token)
   const displayCurrencyValue = prettifyCurrencyValue(currencyValue)
   const isNoCurrencyVariant = variant === "no-currency"
   return (
     <CustomButtonCell {...rest}>
-      <TokenIcon size={8} url={logoURI} name={name} />
+      <TokenIcon size={8} url={logoURI} name={name} verified={verified} />
       <Flex
         flexGrow={1}
         alignItems="center"

@@ -1,7 +1,6 @@
 import { defaultNetworkIds } from "../../../shared/network/defaults"
 import { mainnetNFTCollectionsMetadata, testnetNFTCollectionsMetadata } from "@alephium/token-list"
 
-// TODO: These definitions should come from `token-list`, will remove
 const whitelistedCollectionFromTokenList = [
   {
     "networkId": mainnetNFTCollectionsMetadata.networkId,

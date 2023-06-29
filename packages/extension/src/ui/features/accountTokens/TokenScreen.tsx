@@ -76,9 +76,9 @@ const TokenBalanceContainer = styled(RowCentered)`
   align-items: baseline;
 `
 
-const tokenIcon = (name: string, size: number, logoURI?: string) => {
+const tokenIcon = (name: string, size: number, logoURI?: string, verified?: boolean) => {
   return logoURI ? (
-    <TokenIcon name={name} url={logoURI} size={size} />
+    <TokenIcon name={name} url={logoURI} size={size} verified={verified} />
   ) : (
     <Ghost size={size * 0.7} />
   )
@@ -100,7 +100,7 @@ export const TokenScreen: FC = () => {
     return <Navigate to={routes.accounts()} />
   }
 
-  const { id, name, symbol, logoURI } = toTokenView(token)
+  const { id, name, symbol, logoURI, verified } = toTokenView(token)
   const displayBalance = prettifyTokenBalance(token, false)
   const isLoading = isValidating || tokenDetailsIsInitialising
 
@@ -113,7 +113,7 @@ export const TokenScreen: FC = () => {
       <TokenScreenWrapper>
         <TokenHeader hasCurrencyValue={!!currencyValue}>
           <ColumnCenter>
-            {tokenIcon(name, 12, logoURI)}
+            {tokenIcon(name, 12, logoURI, verified)}
             <TokenBalanceContainer>
               <LoadingPulse
                 isLoading={isLoading}

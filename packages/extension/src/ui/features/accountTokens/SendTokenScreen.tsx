@@ -400,7 +400,7 @@ export const SendTokenScreen: FC = () => {
   if (!tokenWithBalance) {
     return <Navigate to={routes.accounts()} />
   }
-  const { id, name, symbol, balance, decimals, logoURI } = toTokenView(tokenWithBalance)
+  const { id, name, symbol, balance, decimals, logoURI, verified } = toTokenView(tokenWithBalance)
 
   const handleMaxClick = () => {
     setMaxClicked(true)
@@ -510,7 +510,7 @@ export const SendTokenScreen: FC = () => {
                   style={{ padding: "17px 16px 17px 57px" }}
                 >
                   <InputGroupBefore>
-                    <TokenIcon name={name} url={logoURI} size={8} />
+                    <TokenIcon name={name} url={logoURI} size={8} verified={verified} />
                   </InputGroupBefore>
                   <InputGroupAfter>
                     {inputAmount ? (
