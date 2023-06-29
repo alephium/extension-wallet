@@ -1,4 +1,3 @@
-import { binToHex, contractIdFromAddress } from "@alephium/web3"
 import { BarBackButton, NavigationContainer } from "@argent/ui"
 import { FC, useCallback, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -48,6 +47,8 @@ import { TokenMenuDeprecated } from "../accountTokens/TokenMenuDeprecated"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { useYupValidationResolver } from "../settings/useYupValidationResolver"
 import { useCollection } from "./useCollections"
+import { ALPH_TOKEN_ID, convertAlphAmountWithDecimals, convertAmountWithDecimals, Destination, DUST_AMOUNT, NodeProvider } from "@alephium/web3"
+import { sendTransferTransaction } from "../../services/transactions"
 
 export const NftImageContainer = styled.div`
   width: 96px;
@@ -84,20 +85,21 @@ export const SendNftSchema: Schema<SendNftInput> = object().required().shape({
 
 export const SendNftScreen: FC = () => {
   const navigate = useNavigate()
-  const { contractAddress, tokenId } = useParams()
+  const { nftCollectionId, nftId } = useParams()
   const account = useSelectedAccount()
   const network = useCurrentNetwork()
 
+  console.log("tokenId", nftId)
   const { collection } = useCollection(
-    tokenId && [tokenId] || [],
+    nftId && [nftId] || [],
     network,
-    contractAddress && binToHex(contractIdFromAddress(contractAddress)),
+    nftCollectionId,
     account
   )
 
   const nft = collection && collection.nfts.find(
     ({ collectionId, id }) =>
-      collectionId === contractAddress && id === tokenId,
+      collectionId === nftCollectionId && id === nftId,
   )
 
   const resolver = useYupValidationResolver(SendNftSchema)
@@ -163,15 +165,27 @@ export const SendNftScreen: FC = () => {
 
   const showSaveAddressButton = validRecipientAddress && !recipientInAddressBook
 
-  if (!account || !nft || !contractAddress || !tokenId) {
+  if (!account || !nft || !nftCollectionId || !nftId) {
     return <Navigate to={routes.accounts()} />
   }
 
   const disableSubmit = isSubmitting || (submitCount > 0 && !isDirty)
 
   const onSubmit = async ({ recipient }: SendNftInput) => {
-    console.log("on submit")
-    navigate(routes.accountActivity(), { replace: true })
+    const destination: Destination = {
+      address: recipient,
+      attoAlphAmount: DUST_AMOUNT,
+      tokens: [{ id: nftId as string, amount: BigInt(1) }]
+    }
+
+    sendTransferTransaction({
+      signerAddress: account.address,
+      signerKeyType: account.signer.keyType,
+      networkId: account.networkId,
+      destinations: [destination],
+    })
+
+    navigate(routes.accountCollections())
   }
 
   const handleAddressSelect = (account?: Account | AddressBookContact) => {

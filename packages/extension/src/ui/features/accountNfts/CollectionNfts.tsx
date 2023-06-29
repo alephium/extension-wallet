@@ -1,7 +1,7 @@
 import { BarBackButton, H1, H4, H6, NavigationContainer } from "@argent/ui"
 import { Flex, Image, SimpleGrid } from "@chakra-ui/react"
 import { FC } from "react"
-import { Location, useLocation, useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
@@ -12,20 +12,10 @@ import { NftFigure } from "./NftFigure"
 import { NftItem } from "./NftItem"
 import { useCollection } from "./useCollections"
 
-interface LocationWithState extends Location {
-  state: {
-    navigateToSend?: boolean
-  }
-}
-
 export const CollectionNfts: FC = () => {
   const { collectionId } = useParams<{ collectionId: string }>()
   const account = useSelectedAccount()
   const navigate = useNavigate()
-  const { state } = useLocation() as LocationWithState
-
-  const navigateToSend = state?.navigateToSend || false
-
   const unknownTokens = useUnknownTokens(account)
   const unknownTokenIds = unknownTokens.map((t) => t.id)
   const network = useCurrentNetwork()
@@ -97,11 +87,7 @@ export const CollectionNfts: FC = () => {
               <NftFigure
                 key={`${nft.collectionId}-${nft.id}`}
                 onClick={() =>
-                  navigate(
-                    navigateToSend
-                      ? routes.sendNft(nft.collectionId, nft.id)
-                      : routes.accountNft(nft.collectionId, nft.id),
-                  )
+                  navigate(routes.sendNft(nft.collectionId, nft.id))
                 }
               >
                 <NftItem

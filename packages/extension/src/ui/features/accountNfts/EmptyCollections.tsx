@@ -1,28 +1,7 @@
-import { Button, H5, L2, P3, icons, logos } from "@argent/ui"
-import { Box, Flex, SimpleGrid, Text } from "@chakra-ui/react"
-import { FC, ReactNode } from "react"
+import { H5, icons } from "@argent/ui"
+import { Flex, Text } from "@chakra-ui/react"
+import { FC } from "react"
 const { NftIcon } = icons
-
-const ButtonLink: FC<{ href: string; icon: ReactNode; title: string }> = ({
-  icon,
-  href,
-  title,
-}) => (
-  <Box>
-    <Button
-      h="56px"
-      mb="2"
-      as={"a"}
-      rounded="3xl"
-      href={href}
-      title={title}
-      target="_blank"
-    >
-      <Text fontSize="3xl">{icon}</Text>
-    </Button>
-    <L2>{title}</L2>
-  </Box>
-)
 
 const EmptyCollections: FC<{ networkId: string }> = () => (
   <Flex

@@ -79,9 +79,9 @@ export const routes = {
     "/send-token/:tokenId",
   ),
   sendNft: route(
-    (contractAddress: string, tokenId: string) =>
-      `/account/send-nft/${contractAddress}/${tokenId}`,
-    `/account/send-nft/:contractAddress/:tokenId`,
+    (nftCollectionId: string, nftId: string) =>
+      `/account/send-nft/${nftCollectionId}/${nftId}`,
+    `/account/send-nft/:nftCollectionId/:nftId`,
   ),
   transactionDetail: route(
     (txHash: string) => `/account/activity/transaction-detail/${txHash}`,
