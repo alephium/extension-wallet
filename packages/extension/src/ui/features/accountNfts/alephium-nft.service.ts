@@ -1,8 +1,7 @@
 import { whitelistedCollection, NFT } from "./alephium-nft.model"
 import { NFTCollection } from "./alephium-nft.model"
 import { Network } from "../../../shared/network"
-import { addressFromContractId, binToHex, contractIdFromAddress, ExplorerProvider, groupOfAddress, hexToString, NodeProvider } from "@alephium/web3"
-import { ValByteVec } from "@alephium/web3/dist/src/api/api-alephium"
+import { addressFromContractId, binToHex, contractIdFromAddress, ExplorerProvider, NodeProvider } from "@alephium/web3"
 import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
 
 export const fetchNFTCollections = async (
@@ -125,15 +124,8 @@ async function getCollectionMetadata(
   collectionId: string,
   nodeProvider: NodeProvider
 ) {
-  const collectionAddress = addressFromContractId(collectionId)
-  const callResult = await nodeProvider.contracts.postContractsCallContract({
-    address: collectionAddress,
-    group: groupOfAddress(collectionAddress),
-    methodIndex: 0 // the method index of `getColletionUri` is 0 in the NFT collection standart
-  })
-  const metadataUri = hexToString((callResult.returns[0] as ValByteVec).value)
-  console.log("collection metadata uri", metadataUri)
-  const metadataResponse = await fetch(metadataUri)
+  const metadata = await nodeProvider.fetchNFTCollectionMetaData(collectionId)
+  const metadataResponse = await fetch(metadata.collectionUri)
   return await metadataResponse.json()
 }
 
