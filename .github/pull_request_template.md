@@ -19,6 +19,13 @@ ie:
 - [ ] Tests updated (if needed)
 - [ ] All tests are passing locally
 
+### Manual Tests
+
+- [ ] Transfer ALPH, Token, and NFT
+- [ ] Display of Token/NFT metadata
+- [ ] Works with the simple dApp within the repository (yarn run dev)
+- [ ] Ledger support
+
 Please keep your pull request as small as possible. If you need to make multiple changes, please create separate pull requests for each change. Create a draft pull request if you need early feedback. This will mark the pull request as a work in progress and prevent it from being reviewed or merged until you are ready.
 
 Please move drafts to the ready for review (regular PR) when you are ready to start the review process and other developers will pick it up from there.
