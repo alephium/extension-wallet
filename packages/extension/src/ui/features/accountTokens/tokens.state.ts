@@ -166,30 +166,46 @@ export const useKnownFungibleTokensWithBalance = (
   }
 }
 
-export const useUnknownTokens = (
+export const useNonFungibleTokens = (
   account?: BaseWalletAccount,
 ): BaseToken[] => {
   const selectedAccount = useAccount(account)
-
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
+  const cachedFungibleTokens = useTokensInNetwork(networkId)
+  const allUserTokens = useAllTokens(account)
 
-  const knownTokensInNetwork = useTokensInNetwork(networkId)
+  const {
+    data: nonFungibleTokens
+  } = useSWRImmutable(
+    selectedAccount && [
+      getAccountIdentifier(selectedAccount),
+      allUserTokens,
+      "accountNonFungibleTokens",
+    ],
+    async () => {
+      const network = await getNetwork(networkId)
+      const nodeProvider = new NodeProvider(network.nodeUrl)
 
-  const allTokens = useAllTokens(account)
-
-  const unknownTokens: BaseToken[] = []
-  for (const token of allTokens) {
-    const foundIndex = knownTokensInNetwork.findIndex((t) => t.id == token.id)
-    if (foundIndex === -1) {  // Must not be known tokens
-      if (unknownTokens.findIndex((t) => t.id == token.id) === -1) {
-        unknownTokens.push({ id: token.id, networkId: networkId })
+      const nonFungibleTokens: BaseToken[] = []
+      for (const token of allUserTokens) {
+        const foundIndex = cachedFungibleTokens.findIndex((t) => t.id == token.id)
+        if (foundIndex === -1) {  // Must not be known fungible tokens
+          if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
+            const tokenType = await nodeProvider.guessStdTokenType(token.id)
+            if (tokenType === 'non-fungible') {
+              nonFungibleTokens.push({ id: token.id, networkId: networkId })
+            }
+          }
+        }
       }
-    }
-  }
 
-  return unknownTokens
+      return nonFungibleTokens
+    }
+  )
+
+  return nonFungibleTokens || []
 }
 
 export const useFungibleTokens = (
@@ -209,7 +225,7 @@ export const useFungibleTokens = (
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
       allUserTokens,
-      "accountShownTokens",
+      "accountFungibleTokens",
     ],
     async () => {
       const result = cachedTokens.filter((token) => token.showAlways).map(t => [t, -1] as [Token, number])

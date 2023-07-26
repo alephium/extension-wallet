@@ -5,23 +5,22 @@ import { addressFromContractId, binToHex, contractIdFromAddress, ExplorerProvide
 import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
 
 export const fetchNFTCollections = async (
-  tokenIds: string[],
+  nonFungibleTokenIds: string[],
   network: Network
 ): Promise<NFTCollection[]> => {
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
   const nodeProvider = new NodeProvider(network.nodeUrl)
 
   const parentAndTokenIds: [string, string][] = []
-  for (const tokenId of tokenIds) {
+  for (const tokenId of nonFungibleTokenIds) {
     try {
       const result = await fetchImmutable(`${tokenId}-parent`, () => explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId)))
       if (result.parent) {
         const parentContractId = binToHex(contractIdFromAddress(result.parent))
         const parentStdInterfaceId = await fetchImmutable(`${parentContractId}-std`, () => nodeProvider.guessStdInterfaceId(parentContractId))
-        const tokenStdInterfaceId = await fetchImmutable(`${tokenId}-std`, () => nodeProvider.guessStdInterfaceId(tokenId))
 
-        // Guess if parent implements the NFT collection standard interface and child implements the NFT standard interface
-        if (parentStdInterfaceId === '0002' && tokenStdInterfaceId === '0003') {
+        // Guess if parent implements the NFT collection standard interface
+        if (parentStdInterfaceId === '0002') {
           parentAndTokenIds.push([parentContractId, tokenId])
         }
       }

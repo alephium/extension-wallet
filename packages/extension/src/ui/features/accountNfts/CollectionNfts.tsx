@@ -1,5 +1,5 @@
 import { BarBackButton, H1, H4, H6, NavigationContainer } from "@argent/ui"
-import { Tooltip, Circle, Flex, Image, SimpleGrid } from "@chakra-ui/react"
+import { Tooltip, Flex, Image, SimpleGrid } from "@chakra-ui/react"
 import { FC } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
@@ -7,7 +7,7 @@ import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
 import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
 import { useSelectedAccount } from "../accounts/accounts.state"
-import { useUnknownTokens } from "../accountTokens/tokens.state"
+import { useNonFungibleTokens } from "../accountTokens/tokens.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { NftFigure } from "./NftFigure"
 import { NftItem } from "./NftItem"
@@ -17,7 +17,7 @@ export const CollectionNfts: FC = () => {
   const { collectionId } = useParams<{ collectionId: string }>()
   const account = useSelectedAccount()
   const navigate = useNavigate()
-  const unknownTokens = useUnknownTokens(account)
+  const unknownTokens = useNonFungibleTokens(account)
   const unknownTokenIds = unknownTokens.map((t) => t.id)
   const network = useCurrentNetwork()
   const { collection, error } = useCollection(unknownTokenIds, network, collectionId, account)
