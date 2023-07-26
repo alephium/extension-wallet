@@ -30,7 +30,7 @@ import { addressSchema, isEqualAddress } from "../../services/addresses"
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenMenu } from "../accountTokens/TokenMenu"
 import { useCurrentNetwork } from "../networks/useNetworks"
-import { useCollection } from "./useCollections"
+import { useNFTCollection } from "./useNFTCollections"
 const { SwapIcon } = icons
 
 const { SendIcon } = icons
@@ -48,7 +48,7 @@ export const NftScreen: FC = () => {
   const account = useSelectedAccount()
   const network = useCurrentNetwork()
 
-  const { collection } = useCollection(
+  const { collection } = useNFTCollection(
     tokenId && [tokenId] || [],
     network,
     contractAddress,

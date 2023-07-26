@@ -24,19 +24,6 @@ const NftItem: FC<NftItemProps> = ({ logoSrc, name, thumbnailSrc, total, unverif
       }}
     >
       <NftThumbnailImage src={thumbnailSrc} />
-      {(unverifiedCollection === true) && (
-        <Tooltip label={"Unverified Collection"}>
-          <Circle
-            overflow={"hidden"}
-            position={"absolute"}
-            left={110}
-            bottom={110}
-            size={16}
-          >
-            <WarningIconRounded />
-          </Circle>
-        </Tooltip>
-      )}
       {logoSrc && (
         <Box
           bg="neutrals.800"
@@ -52,7 +39,19 @@ const NftItem: FC<NftItemProps> = ({ logoSrc, name, thumbnailSrc, total, unverif
         </Box>
       )}
     </Box>
-
+    {(unverifiedCollection === true) && (
+      <Tooltip label={"Unverified Collection"}>
+        <Circle
+          overflow={"hidden"}
+          position={"absolute"}
+          left={120}
+          bottom={150}
+          size={16}
+        >
+          <WarningIconRounded />
+        </Circle>
+      </Tooltip>
+    )}
     <Box
       as="figcaption"
       display="flex"

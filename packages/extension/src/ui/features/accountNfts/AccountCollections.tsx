@@ -8,7 +8,7 @@ import { Account } from "../accounts/Account"
 import { EmptyCollections } from "./EmptyCollections"
 import { NftFigure } from "./NftFigure"
 import { NftItem } from "./NftItem"
-import { useCollections } from "./useCollections"
+import { useNFTCollections } from "./useNFTCollections"
 import { useNetwork } from "../networks/useNetworks"
 import { Spinner } from "../../components/Spinner"
 
@@ -24,7 +24,7 @@ const Collections: FC<AccountCollectionsProps> = ({
 }) => {
   const navigate = useNavigate()
   const network = useNetwork(account.networkId)
-  const { collections } = useCollections(network, account)
+  const { collections } = useNFTCollections(network, account)
 
   return (
     <>

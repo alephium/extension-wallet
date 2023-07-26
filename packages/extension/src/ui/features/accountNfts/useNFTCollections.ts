@@ -8,7 +8,7 @@ import { Network } from "../../../shared/network"
 import { fetchNFTCollections, fetchNFTCollection } from "./alephium-nft.service"
 import { useNonFungibleTokens } from "../accountTokens/tokens.state"
 
-export const useCollections = (
+export const useNFTCollections = (
   network: Network,
   account?: BaseWalletAccount,
   config?: SWRConfigCommon,
@@ -35,7 +35,7 @@ export const useCollections = (
   return { collections: collections || [], ...rest }
 }
 
-export const useCollection = (
+export const useNFTCollection = (
   tokenIds: string[],
   network: Network,
   collectionId?: string,

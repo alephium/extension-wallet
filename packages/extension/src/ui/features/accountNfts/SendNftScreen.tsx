@@ -46,7 +46,7 @@ import {
 import { TokenMenuDeprecated } from "../accountTokens/TokenMenuDeprecated"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { useYupValidationResolver } from "../settings/useYupValidationResolver"
-import { useCollection } from "./useCollections"
+import { useNFTCollection } from "./useNFTCollections"
 import { Destination, DUST_AMOUNT } from "@alephium/web3"
 import { sendTransferTransaction } from "../../services/transactions"
 
@@ -90,7 +90,7 @@ export const SendNftScreen: FC = () => {
   const network = useCurrentNetwork()
 
   console.log("tokenId", nftId)
-  const { collection } = useCollection(
+  const { collection } = useNFTCollection(
     nftId && [nftId] || [],
     network,
     nftCollectionId,

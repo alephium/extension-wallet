@@ -11,7 +11,7 @@ import { useNonFungibleTokens } from "../accountTokens/tokens.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { NftFigure } from "./NftFigure"
 import { NftItem } from "./NftItem"
-import { useCollection } from "./useCollections"
+import { useNFTCollection } from "./useNFTCollections"
 
 export const CollectionNfts: FC = () => {
   const { collectionId } = useParams<{ collectionId: string }>()
@@ -20,7 +20,7 @@ export const CollectionNfts: FC = () => {
   const unknownTokens = useNonFungibleTokens(account)
   const unknownTokenIds = unknownTokens.map((t) => t.id)
   const network = useCurrentNetwork()
-  const { collection, error } = useCollection(unknownTokenIds, network, collectionId, account)
+  const { collection, error } = useNFTCollection(unknownTokenIds, network, collectionId, account)
 
   if (!collectionId) {
     return <></>
