@@ -8,7 +8,7 @@ import { ErrorBoundaryFallback } from "../../components/ErrorBoundaryFallback"
 import { formatDate } from "../../services/dates"
 import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { useKnownFungibleTokens } from "../accountTokens/tokens.state"
+import { useFungibleTokens } from "../accountTokens/tokens.state"
 import { useNetwork } from "../networks/useNetworks"
 import { AccountActivity } from "./AccountActivity"
 import { PendingTransactionsContainer } from "./PendingTransactions"
@@ -56,7 +56,7 @@ const PAGE_SIZE = 10
 export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
   account,
 }) => {
-  const tokens = useKnownFungibleTokens(account)
+  const tokens = useFungibleTokens(account)
 
   const { explorerApiUrl } = useNetwork(account.networkId)
   const { data, setSize } = useAlephiumExplorerAccountTransactionsInfinite(

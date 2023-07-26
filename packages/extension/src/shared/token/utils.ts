@@ -1,28 +1,23 @@
 import defaultTokens from "../../assets/default-tokens.json"
 import { isEqualTokenId } from "../../ui/services/token"
 import { BaseToken, Token } from "./type"
-import { mainnetTokensMetadata, testnetTokensMetadata, TokenList } from "@alephium/token-list"
+import { mainnetTokensMetadata, testnetTokensMetadata, TokenList, ALPH } from "@alephium/token-list"
 import { defaultNetworkIds } from "../network/defaults"
-import { ALPH_TOKEN_ID } from "@alephium/web3"
 
 export const equalToken = (a: BaseToken, b: BaseToken) =>
   a.networkId === b.networkId && isEqualTokenId(a.id, b.id)
 
-const knownTokensFromAlephiumTokenList: Token[] =
-  [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
-
 const alphTokens: Token[] = defaultNetworkIds.map((networkId) => {
   return {
-    "id": ALPH_TOKEN_ID,
-    "name": "Alephium",
-    "symbol": "ALPH",
-    "decimals": 18,
+    ...ALPH,
     "networkId": networkId,
     "logoURI": "https://raw.githubusercontent.com/alephium/alephium-brand-guide/a4680dc86d6061a8d08468ebb42d659ab74db64a/logos/light/Logo-Icon.svg",
     "showAlways": true,
     verified: true
   }
 })
+
+const knownTokensFromAlephiumTokenList: Token[] = [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
 
 export const knownAlephiumTokens = alphTokens.concat(knownTokensFromAlephiumTokenList)
 

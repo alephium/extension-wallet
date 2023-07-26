@@ -18,7 +18,7 @@ import { showTokenId } from "../accountActivity/transform/transaction/transformT
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenList } from "../accountTokens/TokenList"
 import { Token } from "../../../shared/token/type"
-import { useKnownFungibleTokens } from "../accountTokens/tokens.state"
+import { useFungibleTokens } from "../accountTokens/tokens.state"
 
 const SearchBox = styled.form`
   margin-top: 8px;
@@ -53,8 +53,8 @@ export const SendScreen: FC = () => {
 
   const account = useSelectedAccount()
   const currentQueryValue = watch().query
-  const tokensInNetwork = useKnownFungibleTokens(account)
-  const tokenList = useCustomTokenList(tokensInNetwork, account?.networkId, currentQueryValue)
+  const fungibleTokens = useFungibleTokens(account)
+  const tokenList = useCustomTokenList(fungibleTokens, account?.networkId, currentQueryValue)
 
   if (!account) {
     return <></>
@@ -118,5 +118,5 @@ const useCustomTokenList = (
         token.symbol.toLowerCase().includes(queryLowercase),
     )
     return result
-  }, [query, tokens])
+  }, [query, tokens, networkId])
 }

@@ -90,7 +90,7 @@ export const useKnownFungibleTokensWithBalance = (
   const selectedAccount = useAccount(account)
   const { pendingTransactions } = useAccountTransactions(account)
   const pendingTransactionsLengthRef = useRef(pendingTransactions.length)
-  const tokensForAccount = useKnownFungibleTokens(selectedAccount)
+  const fungibleTokens = useFungibleTokens(selectedAccount)
 
   const {
     data,
@@ -109,12 +109,12 @@ export const useKnownFungibleTokensWithBalance = (
       }
 
       const balances = await fetchAllTokensBalance(
-        tokensForAccount.map((t) => t.id),
+        fungibleTokens.map((t) => t.id),
         selectedAccount,
       )
 
       return {
-        tokensForAccount,
+        fungibleTokens,
         balances
       }
     },
@@ -148,7 +148,7 @@ export const useKnownFungibleTokensWithBalance = (
   }, [mutate, pendingTransactions.length])
 
   const tokenDetails = useMemo(() => {
-    return (data?.tokensForAccount || [])
+    return (data?.fungibleTokens || [])
       .map((token) => ({
         ...token,
         balance: data?.balances[token.id] ?? BigNumber.from(0),
@@ -164,31 +164,6 @@ export const useKnownFungibleTokensWithBalance = (
     isValidating,
     error,
   }
-}
-
-export const useKnownFungibleTokens = (
-  account?: BaseWalletAccount,
-): Token[] => {
-  const selectedAccount = useAccount(account)
-  const networkId = useMemo(() => {
-    return selectedAccount?.networkId ?? ""
-  }, [selectedAccount?.networkId])
-  const knownTokensInNetwork = useTokensInNetwork(networkId)
-  const userTokens = useAllFungibleTokens(account)
-
-  const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
-  for (const userToken of userTokens) {
-    if (result.findIndex((t) => t[0].id === userToken.id) === -1) { // this token is not in the show always list
-      const foundIndex = knownTokensInNetwork.findIndex((token) => token.id == userToken.id)
-      if (foundIndex !== -1) {  // in the known token list
-        result.push([knownTokensInNetwork[foundIndex], foundIndex])
-      } else if (account?.networkId === 'devnet') {
-        result.push([devnetToken(userToken), knownTokensInNetwork.length])
-      }
-    }
-  }
-
-  return sortBy(result, (a) => a[1]).map(tuple => tuple[0])
 }
 
 export const useUnknownTokens = (
@@ -217,43 +192,41 @@ export const useUnknownTokens = (
   return unknownTokens
 }
 
-export const useAllFungibleTokens = (
+export const useFungibleTokens = (
   account?: BaseWalletAccount
-): BaseToken[] => {
-  const userTokens = useAllTokens(account)
+): Token[] => {
+  const allUserTokens = useAllTokens(account)
   const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
 
-  const knownTokensInNetwork = useTokensInNetwork(networkId)
+  const cachedTokens = useTokensInNetwork(networkId)
 
   const {
-    data: userShownTokens
+    data: fungibleTokens
   } = useSWRImmutable(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
-      userTokens,
+      allUserTokens,
       "accountShownTokens",
     ],
     async () => {
-      const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
+      const result = cachedTokens.filter((token) => token.showAlways).map(t => [t, -1] as [Token, number])
       const network = await getNetwork(networkId)
 
-      let foundOnFullNodeIndex = knownTokensInNetwork.length + 1
-      for (const userToken of userTokens || []) {
+      let foundOnFullNodeIndex = cachedTokens.length + 1
+      for (const userToken of allUserTokens || []) {
         if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
-          const foundIndex = knownTokensInNetwork.findIndex((token) => token.id == userToken.id)
+          const foundIndex = cachedTokens.findIndex((token) => token.id == userToken.id)
           if (foundIndex !== -1) {
-            result.push([knownTokensInNetwork[foundIndex], foundIndex])
+            result.push([cachedTokens[foundIndex], foundIndex])
           } else {
             const token = await fetchFungibleTokenFromFullNode(network, userToken.id)
             if (token) {
               addToken(token)
               result.push([token, foundOnFullNodeIndex])
               foundOnFullNodeIndex++
-            } else if (account?.networkId === 'devnet') {
-              result.push([devnetToken(userToken), knownTokensInNetwork.length])
             }
           }
         }
@@ -263,7 +236,7 @@ export const useAllFungibleTokens = (
     }
   )
 
-  return userShownTokens || []
+  return fungibleTokens || []
 }
 
 export const useAllTokens = (
@@ -318,13 +291,19 @@ export const useAllTokens = (
 async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
+    const tokenType = await nodeProvider.guessStdTokenType(tokenId)
+    if (tokenType !== 'non-fungible') {
+      return undefined
+    }
+
     const metadata = await nodeProvider.fetchFungibleTokenMetaData(tokenId)
     const token: Token = {
       id: tokenId,
       networkId: network.id,
       name: Buffer.from(metadata.name, 'hex').toString('utf8'),
       symbol: Buffer.from(metadata.symbol, 'hex').toString('utf8'),
-      decimals: metadata.decimals
+      decimals: metadata.decimals,
+      verified: false
     }
 
     return token
