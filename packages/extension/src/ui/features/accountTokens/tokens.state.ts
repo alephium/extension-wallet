@@ -292,7 +292,7 @@ async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string)
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
     const tokenType = await nodeProvider.guessStdTokenType(tokenId)
-    if (tokenType !== 'non-fungible') {
+    if (tokenType !== 'fungible') {
       return undefined
     }
 
