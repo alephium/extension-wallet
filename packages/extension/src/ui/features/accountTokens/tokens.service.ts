@@ -23,23 +23,26 @@ const formatTokenBalanceToCharLength =
     (balance: BigNumberish = 0, decimals = 18): string => {
       const balanceBn = BigNumber.from(balance)
       const balanceFullString = utils.formatUnits(balanceBn, decimals)
-
       // show max ${length} characters or what's needed to show everything before the decimal point
-      const balanceString = balanceFullString.slice(
-        0,
-        Math.max(length, balanceFullString.indexOf(".")),
-      )
 
-      // make sure seperator is not the last character, if so remove it
-      // remove unnecessary 0s from the end, except for ".0"
-      let cleanedBalanceString = balanceString
-        .replace(/\.$/, "")
-        .replace(/0+$/, "")
-      if (cleanedBalanceString.endsWith(".")) {
-        cleanedBalanceString += "0"
+      let result = balanceFullString
+      if (decimals > 0) {
+        const balanceString = balanceFullString.slice(
+          0,
+          Math.max(length, balanceFullString.indexOf(".")),
+        )
+
+        // make sure seperator is not the last character, if so remove it
+        // remove unnecessary 0s from the end, except for ".0"
+        result = balanceString
+          .replace(/\.$/, "")
+          .replace(/0+$/, "")
+        if (result.endsWith(".")) {
+          result += "0"
+        }
       }
 
-      return cleanedBalanceString
+      return result
     }
 
 export const formatTokenBalance = formatTokenBalanceToCharLength(9)
