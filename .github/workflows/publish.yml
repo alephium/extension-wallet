@@ -25,20 +25,33 @@ jobs:
         with:
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
-      - name: Build the wallet
+      - name: Build and create the Firefox extension wallet zip file
         run: |
+          export MANIFEST_VERSION=v2
+          yarn clean
           yarn install --frozen-lockfile
           yarn run build
-      - name: Zip the extension wallet
-        run: |
           pushd packages/extension
-          cp -r dist alephium-extension-wallet
-          zip -r alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip alephium-extension-wallet
-          sha256sum "alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip" > "alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip.checksum"
+          cp -r dist alephium-extension-wallet-firefox
+          zip -r alephium-extension-wallet-firefox-${{ steps.get_version.outputs.VERSION }}.zip alephium-extension-wallet-firefox
+          sha256sum "alephium-extension-wallet-firefox-${{ steps.get_version.outputs.VERSION }}.zip" > "alephium-extension-wallet-firefox-${{ steps.get_version.outputs.VERSION }}.zip.checksum"
+          popd
+      - name: Build and create the Chrome extension wallet zip file
+        run: |
+          export MANIFEST_VERSION=v3
+          yarn clean
+          yarn install --frozen-lockfile
+          yarn run build
+          pushd packages/extension
+          cp -r dist alephium-extension-wallet-chrome
+          zip -r alephium-extension-wallet-chrome-${{ steps.get_version.outputs.VERSION }}.zip alephium-extension-wallet-chrome
+          sha256sum "alephium-extension-wallet-chrome-${{ steps.get_version.outputs.VERSION }}.zip" > "alephium-extension-wallet-chrome-${{ steps.get_version.outputs.VERSION }}.zip.checksum"
           popd
       - name: Publish the zipped extension wallet
         uses: softprops/action-gh-release@v0.1.14
         with:
           files: |
-            packages/extension/alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip
-            packages/extension/alephium-extension-wallet-${{ steps.get_version.outputs.VERSION }}.zip.checksum
+            packages/extension/alephium-extension-wallet-chrome-${{ steps.get_version.outputs.VERSION }}.zip
+            packages/extension/alephium-extension-wallet-chrome-${{ steps.get_version.outputs.VERSION }}.zip.checksum
+            packages/extension/alephium-extension-wallet-firefox-${{ steps.get_version.outputs.VERSION }}.zip
+            packages/extension/alephium-extension-wallet-firefox-${{ steps.get_version.outputs.VERSION }}.zip.checksum
