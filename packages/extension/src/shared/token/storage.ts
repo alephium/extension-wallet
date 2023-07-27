@@ -45,3 +45,17 @@ export async function removeToken(token: BaseToken) {
   await assertSchema(baseTokenSchema, token)
   return tokenStore.remove((t) => equalToken(t, token))
 }
+
+
+export async function migrateTokens() {
+  console.log("Migrating tokens")
+  const allTokens = await tokenStore.get()
+
+  for (const token of allTokens) {
+    if (token.verified === undefined) {
+      await removeToken(token)
+      const verified = knownAlephiumTokens.findIndex((knownToken) => knownToken.id === token.id) !== -1
+      await addToken({ verified, ...token })
+    }
+  }
+}

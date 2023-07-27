@@ -2,6 +2,7 @@ import { ThemeProvider as ArgentTheme, SetDarkMode } from "@argent/ui"
 import { ThemeProvider as MuiThemeProvider } from "@mui/material"
 import { FC, Suspense } from "react"
 import { SWRConfig } from "swr"
+import { migrateTokens } from "../shared/token/storage"
 
 import AppErrorBoundaryFallback from "./AppErrorBoundaryFallback"
 import { AppRoutes } from "./AppRoutes"
@@ -18,6 +19,8 @@ import { ThemeProvider, muiTheme } from "./theme"
 export const App: FC = () => {
   useTracking()
   useSentryInit()
+  // Migrate tokens
+  migrateTokens()
 
   return (
     <SoftReloadProvider>
