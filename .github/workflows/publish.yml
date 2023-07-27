@@ -27,11 +27,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Build and create the Firefox extension wallet zip file
         run: |
-          yarn clean
-          zip -r alephium-extension-wallet-firefox-src-${{ steps.get_version.outputs.VERSION }}.zip .
-          sha256sum "alephium-extension-wallet-firefox-src-${{ steps.get_version.outputs.VERSION }}.zip" > "alephium-extension-wallet-firefox-src-${{ steps.get_version.outputs.VERSION }}.zip.checksum"
           export MANIFEST_VERSION=v2
-          yarn
+          yarn clean
+          yarn install --frozen-lockfile
           yarn run build
           pushd packages/extension
           cp -r dist alephium-extension-wallet-firefox
@@ -40,9 +38,9 @@ jobs:
           popd
       - name: Build and create the Chrome extension wallet zip file
         run: |
-          yarn clean
           export MANIFEST_VERSION=v3
-          yarn
+          yarn clean
+          yarn install --frozen-lockfile
           yarn run build
           pushd packages/extension
           cp -r dist alephium-extension-wallet-chrome
@@ -57,5 +55,3 @@ jobs:
             packages/extension/alephium-extension-wallet-chrome-${{ steps.get_version.outputs.VERSION }}.zip.checksum
             packages/extension/alephium-extension-wallet-firefox-${{ steps.get_version.outputs.VERSION }}.zip
             packages/extension/alephium-extension-wallet-firefox-${{ steps.get_version.outputs.VERSION }}.zip.checksum
-            packages/extension/alephium-extension-wallet-firefox-src-${{ steps.get_version.outputs.VERSION }}.zip
-            packages/extension/alephium-extension-wallet-firefox-src-${{ steps.get_version.outputs.VERSION }}.zip.checksum

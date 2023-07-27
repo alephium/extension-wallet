@@ -42,7 +42,7 @@ export const TokenField: FC<ITokenField> = ({
     <Field>
       <FieldKey>{label}</FieldKey>
       <FieldValue>
-        {token && <TokenIcon url={token.logoURI} name={token.name} size={6} />}
+        {token && <TokenIcon url={token.logoURI} name={token.name} size={6} verified={token.verified} />}
         <LeftPaddedField>{displayAmount}</LeftPaddedField>
       </FieldValue>
     </Field>

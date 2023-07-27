@@ -15,4 +15,5 @@ export interface Token extends Required<RequestToken> {
   description?: string
   logoURI?: string
   showAlways?: boolean
+  verified?: boolean
 }

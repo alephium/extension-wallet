@@ -1,4 +1,5 @@
 import { BarBackButton, NavigationContainer } from "@argent/ui"
+import { Ghost } from "lucide-react"
 import { FC, useMemo } from "react"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
@@ -19,8 +20,7 @@ import { TokenIcon } from "./TokenIcon"
 import { TokenMenuDeprecated } from "./TokenMenuDeprecated"
 import { useTokenBalanceToCurrencyValue } from "./tokenPriceHooks"
 import { toTokenView } from "./tokens.service"
-import { useTokensWithBalance } from "./tokens.state"
-import { Ghost } from 'lucide-react'
+import { useKnownFungibleTokensWithBalance } from "./tokens.state"
 
 const TokenScreenWrapper = styled(ColumnCenter)`
   width: 100%;
@@ -76,9 +76,9 @@ const TokenBalanceContainer = styled(RowCentered)`
   align-items: baseline;
 `
 
-const tokenIcon = (name: string, size: number, logoURI?: string) => {
+const tokenIcon = (name: string, size: number, logoURI?: string, verified?: boolean) => {
   return logoURI ? (
-    <TokenIcon name={name} url={logoURI} size={size} />
+    <TokenIcon name={name} url={logoURI} size={size} verified={verified} />
   ) : (
     <Ghost size={size * 0.7} />
   )
@@ -89,7 +89,7 @@ export const TokenScreen: FC = () => {
   const { tokenId } = useParams()
   const account = useSelectedAccount()
   const { tokenDetails, tokenDetailsIsInitialising, isValidating } =
-    useTokensWithBalance(account)
+    useKnownFungibleTokensWithBalance(account)
   const token = useMemo(
     () => tokenDetails.find(({ id }) => id === tokenId),
     [tokenId, tokenDetails],
@@ -100,7 +100,7 @@ export const TokenScreen: FC = () => {
     return <Navigate to={routes.accounts()} />
   }
 
-  const { id, name, symbol, logoURI } = toTokenView(token)
+  const { id, name, symbol, logoURI, verified } = toTokenView(token)
   const displayBalance = prettifyTokenBalance(token, false)
   const isLoading = isValidating || tokenDetailsIsInitialising
 
@@ -113,7 +113,7 @@ export const TokenScreen: FC = () => {
       <TokenScreenWrapper>
         <TokenHeader hasCurrencyValue={!!currencyValue}>
           <ColumnCenter>
-            {tokenIcon(name, 12, logoURI)}
+            {tokenIcon(name, 12, logoURI, verified)}
             <TokenBalanceContainer>
               <LoadingPulse
                 isLoading={isLoading}

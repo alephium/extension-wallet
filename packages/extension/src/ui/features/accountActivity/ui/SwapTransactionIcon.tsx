@@ -33,6 +33,7 @@ export const SwapTransactionIcon: FC<SwapTransactionIconProps> = ({
           position={"absolute"}
           left={0}
           top={0}
+          verified={toToken.verified}
         />
       )}
       <TokenIcon
@@ -42,6 +43,7 @@ export const SwapTransactionIcon: FC<SwapTransactionIconProps> = ({
         position={"absolute"}
         right={0}
         bottom={0}
+        verified={toToken.verified}
       />
     </Square>
   )

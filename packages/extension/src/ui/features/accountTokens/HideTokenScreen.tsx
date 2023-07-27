@@ -66,7 +66,7 @@ export const HideTokenScreen: FC = () => {
       onSubmit={handleSubmit}
     >
       <TokenTitle>
-        <TokenIcon url={logoURI} name={name} size={12} />
+        <TokenIcon url={logoURI} name={name} size={12} verified={token.verified} />
         <TokenName>{name}</TokenName>
       </TokenTitle>
       {error && <FormError>{error}</FormError>}

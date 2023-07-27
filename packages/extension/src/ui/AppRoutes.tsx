@@ -9,6 +9,9 @@ import { ResponsiveBox } from "./components/Responsive"
 import { TransactionDetailScreen } from "./features/accountActivity/TransactionDetailScreen"
 import { AccountEditScreen } from "./features/accountEdit/AccountEditScreen"
 import { AccountListHiddenScreen } from "./features/accounts/AccountListHiddenScreen"
+import { CollectionNfts } from "./features/accountNfts/CollectionNfts"
+import { NftScreen } from "./features/accountNfts/NftScreen"
+import { SendNftScreen } from "./features/accountNfts/SendNftScreen"
 import { AccountListScreen } from "./features/accounts/AccountListScreen"
 import { AccountScreen } from "./features/accounts/AccountScreen"
 import { AddAlephiumAccountScreen } from "./features/accounts/AddAlephiumAccountScreen"
@@ -104,6 +107,16 @@ const nonWalletRoutes = (
 
 const walletRoutes = (
   <>
+    <Route
+      presentation="modal"
+      path={routes.accountNft.path}
+      element={<NftScreen />}
+    />
+    <Route
+      presentation="push"
+      path={routes.collectionNfts.path}
+      element={<CollectionNfts />}
+    />
     <Route
       presentation="modal"
       path={routes.networkWarning.path}
@@ -223,6 +236,7 @@ const walletRoutes = (
     />
     <Route path={routes.sendScreen.path} element={<SendScreen />} />
     <Route path={routes.sendToken.path} element={<SendTokenScreen />} />
+    <Route path={routes.sendNft.path} element={<SendNftScreen />} />
     <Route
       presentation="push"
       path={routes.accountsHidden.path}

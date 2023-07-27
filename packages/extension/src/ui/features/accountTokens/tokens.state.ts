@@ -1,4 +1,4 @@
-import { ExplorerProvider, NodeProvider } from "@alephium/web3"
+import { NodeProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
@@ -15,6 +15,7 @@ import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { useAccount } from "../accounts/accounts.state"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { fetchAllTokensBalance } from "./tokens.service"
+import { sortBy } from "lodash"
 
 export interface TokenDetailsWithBalance extends Token {
   balance?: BigNumber
@@ -83,13 +84,13 @@ export const useToken = (baseToken: BaseToken): Token | undefined => {
 /** error codes to suppress - will not bubble error up to parent */
 const SUPPRESS_ERROR_STATUS = [429]
 
-export const useTokensWithBalance = (
+export const useKnownFungibleTokensWithBalance = (
   account?: BaseWalletAccount,
 ): UseTokens => {
   const selectedAccount = useAccount(account)
   const { pendingTransactions } = useAccountTransactions(account)
   const pendingTransactionsLengthRef = useRef(pendingTransactions.length)
-  const tokensForAccount = useTokens(selectedAccount)
+  const fungibleTokens = useFungibleTokens(selectedAccount)
 
   const {
     data,
@@ -108,12 +109,12 @@ export const useTokensWithBalance = (
       }
 
       const balances = await fetchAllTokensBalance(
-        tokensForAccount.map((t) => t.id),
+        fungibleTokens.map((t) => t.id),
         selectedAccount,
       )
 
       return {
-        tokensForAccount,
+        fungibleTokens,
         balances
       }
     },
@@ -147,7 +148,7 @@ export const useTokensWithBalance = (
   }, [mutate, pendingTransactions.length])
 
   const tokenDetails = useMemo(() => {
-    return (data?.tokensForAccount || [])
+    return (data?.fungibleTokens || [])
       .map((token) => ({
         ...token,
         balance: data?.balances[token.id] ?? BigNumber.from(0),
@@ -165,16 +166,102 @@ export const useTokensWithBalance = (
   }
 }
 
-export const useTokens = (
+export const useNonFungibleTokens = (
   account?: BaseWalletAccount,
-): Token[] => {
+): BaseToken[] => {
   const selectedAccount = useAccount(account)
+  const networkId = useMemo(() => {
+    return selectedAccount?.networkId ?? ""
+  }, [selectedAccount?.networkId])
+  const cachedFungibleTokens = useTokensInNetwork(networkId)
+  const allUserTokens = useAllTokens(account)
 
+  const {
+    data: nonFungibleTokens
+  } = useSWRImmutable(
+    selectedAccount && [
+      getAccountIdentifier(selectedAccount),
+      allUserTokens,
+      "accountNonFungibleTokens",
+    ],
+    async () => {
+      const network = await getNetwork(networkId)
+      const nodeProvider = new NodeProvider(network.nodeUrl)
+
+      const nonFungibleTokens: BaseToken[] = []
+      for (const token of allUserTokens) {
+        const foundIndex = cachedFungibleTokens.findIndex((t) => t.id == token.id)
+        if (foundIndex === -1) {  // Must not be known fungible tokens
+          if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
+            const tokenType = await nodeProvider.guessStdTokenType(token.id)
+            if (tokenType === 'non-fungible') {
+              nonFungibleTokens.push({ id: token.id, networkId: networkId })
+            }
+          }
+        }
+      }
+
+      return nonFungibleTokens
+    }
+  )
+
+  return nonFungibleTokens || []
+}
+
+export const useFungibleTokens = (
+  account?: BaseWalletAccount
+): Token[] => {
+  const allUserTokens = useAllTokens(account)
+  const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
 
-  const knownTokensInNetwork = useTokensInNetwork(networkId)
+  const cachedTokens = useTokensInNetwork(networkId)
+
+  const {
+    data: fungibleTokens
+  } = useSWRImmutable(
+    selectedAccount && [
+      getAccountIdentifier(selectedAccount),
+      allUserTokens,
+      "accountFungibleTokens",
+    ],
+    async () => {
+      const result = cachedTokens.filter((token) => token.showAlways).map(t => [t, -1] as [Token, number])
+      const network = await getNetwork(networkId)
+
+      let foundOnFullNodeIndex = cachedTokens.length + 1
+      for (const userToken of allUserTokens || []) {
+        if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
+          const foundIndex = cachedTokens.findIndex((token) => token.id == userToken.id)
+          if (foundIndex !== -1) {
+            result.push([cachedTokens[foundIndex], foundIndex])
+          } else {
+            const token = await fetchFungibleTokenFromFullNode(network, userToken.id)
+            if (token) {
+              addToken(token)
+              result.push([token, foundOnFullNodeIndex])
+              foundOnFullNodeIndex++
+            }
+          }
+        }
+      }
+
+      return sortBy(result, (a) => a[1]).map(tuple => tuple[0])
+    }
+  )
+
+  return fungibleTokens || []
+}
+
+export const useAllTokens = (
+  account?: BaseWalletAccount
+): BaseToken[] => {
+  const selectedAccount = useAccount(account)
+  const networkId = useMemo(() => {
+    return selectedAccount?.networkId ?? ""
+  }, [selectedAccount?.networkId])
 
   const {
     data: userTokens
@@ -191,8 +278,9 @@ export const useTokens = (
 
       const allTokens: BaseToken[] = []
       const network = await getNetwork(networkId)
-      const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-      const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(selectedAccount.address)
+      const nodeProvider = new NodeProvider(network.nodeUrl)
+      const addressBalance = await nodeProvider.addresses.getAddressesAddressBalance(selectedAccount.address)
+      const tokenIds: string[] = (addressBalance.tokenBalances || []).map((token) => token.id)
 
       for (const tokenId of tokenIds) {
         if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
@@ -213,54 +301,25 @@ export const useTokens = (
     }
   )
 
-  const {
-    data: userShownTokens
-  } = useSWRImmutable(
-    selectedAccount && [
-      getAccountIdentifier(selectedAccount),
-      userTokens,
-      "accountShownTokens",
-    ],
-    async () => {
-      const result = knownTokensInNetwork.filter((network) => network.showAlways).map(t => [t, -1] as [Token, number])
-      const network = await getNetwork(networkId)
-
-      let foundOnFullNodeIndex = knownTokensInNetwork.length + 1
-      for (const userToken of userTokens || []) {
-        if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
-          const foundIndex = knownTokensInNetwork.findIndex((token) => token.id == userToken.id)
-          if (foundIndex !== -1) {
-            result.push([knownTokensInNetwork[foundIndex], foundIndex])
-          } else {
-            const token = await fetchTokenInfoFromFullNode(network, userToken.id)
-            if (token) {
-              addToken(token)
-              result.push([token, foundOnFullNodeIndex])
-              foundOnFullNodeIndex++
-            } else if (account?.networkId === 'devnet') {
-              result.push([devnetToken(userToken), knownTokensInNetwork.length])
-            }
-          }
-        }
-      }
-
-      return result.sort((a, b) => a[1] - b[1]).map(tuple => tuple[0])
-    }
-  )
-
-  return userShownTokens || []
+  return userTokens || []
 }
 
-async function fetchTokenInfoFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
+async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
+    const tokenType = await nodeProvider.guessStdTokenType(tokenId)
+    if (tokenType !== 'fungible') {
+      return undefined
+    }
+
     const metadata = await nodeProvider.fetchFungibleTokenMetaData(tokenId)
     const token: Token = {
       id: tokenId,
       networkId: network.id,
       name: Buffer.from(metadata.name, 'hex').toString('utf8'),
       symbol: Buffer.from(metadata.symbol, 'hex').toString('utf8'),
-      decimals: metadata.decimals
+      decimals: metadata.decimals,
+      verified: false
     }
 
     return token
