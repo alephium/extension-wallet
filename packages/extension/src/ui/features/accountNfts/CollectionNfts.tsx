@@ -96,7 +96,7 @@ export const CollectionNfts: FC = () => {
           <SimpleGrid
             gridTemplateColumns="repeat(auto-fill, 158px)"
             gap="3"
-            mx="4"
+            mx="3"
             py={6}
           >
             {collection.nfts.map((nft) => (
