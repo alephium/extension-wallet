@@ -101,8 +101,8 @@ async function getNFTs(
 
   for (const nftId of nftIds) {
     try {
-      const nftMetadata = nodeProvider.fetchNFTMetaData(nftId)
-      const metadataResponse = await fetch((await nftMetadata).tokenUri)
+      const nftMetadata = await nodeProvider.fetchNFTMetaData(nftId)
+      const metadataResponse = await fetch(nftMetadata.tokenUri)
       const metadata = await metadataResponse.json()
       nfts.push({
         id: nftId,
