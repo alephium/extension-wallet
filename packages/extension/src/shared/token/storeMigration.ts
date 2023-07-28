@@ -1,13 +1,15 @@
+import { removeToken, tokenStore } from "./storage"
+import { equalToken, tokensFromAlephiumTokenList } from "./utils"
+import { Token } from "./type"
+
 export async function migrateTokens() {
   try {
-    const needsMigration = window.localStorage.getItem('core:tokens')
-    if (!needsMigration) {
-      return
+    const allTokens: Token[] = await tokenStore.get()
+    for (const token of allTokens) {
+      if (tokensFromAlephiumTokenList.findIndex((knownToken) => equalToken(knownToken, token)) !== -1) {
+        removeToken(token)
+      }
     }
-
-    // We also stored tokens fetched from full node in `core:tokens` in v0.8.0.
-    // Maybe we should start from a clean slate.
-    window.localStorage.removeItem('core:tokens')
   } catch (e) {
     console.error(e)
   }

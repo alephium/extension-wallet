@@ -5,7 +5,7 @@ import { BaseToken, Token } from "./type"
 import { equalToken, tokensFromAlephiumTokenList } from "./utils"
 
 export const tokenStore = new ArrayStorage([] as Token[], {
-  namespace: "core:tokens-v2",
+  namespace: "core:tokens",
   areaName: "local",
   compare: equalToken,
 })
