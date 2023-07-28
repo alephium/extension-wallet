@@ -43,7 +43,7 @@ export const addToken = async (id: string): Promise<boolean> => {
     type: "AddNewToken",
     params: {
       id: id,
-      networkId: '',
+      networkId: 'devnet',
       symbol: '',
       decimals: 0,
       name: '',
