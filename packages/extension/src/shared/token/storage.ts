@@ -48,7 +48,7 @@ export async function removeToken(token: BaseToken) {
 
 
 export async function migrateTokens() {
-  console.log("Migrating tokens")
+  console.debug("Migrating tokens")
   const allTokens = await tokenStore.get()
 
   for (const token of allTokens) {

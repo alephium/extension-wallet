@@ -182,7 +182,7 @@ export const useNonFungibleTokens = (
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
       allUserTokens,
-      "accountNonFungibleTokens",
+      "selectedAccountNonFungibleTokens",
     ],
     async () => {
       const network = await getNetwork(networkId)
@@ -218,14 +218,13 @@ export const useFungibleTokens = (
   }, [selectedAccount?.networkId])
 
   const cachedTokens = useTokensInNetwork(networkId)
-
   const {
     data: fungibleTokens
   } = useSWRImmutable(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
       allUserTokens,
-      "accountFungibleTokens",
+      "selectedAccountFungibleTokens",
     ],
     async () => {
       const result = cachedTokens.filter((token) => token.showAlways).map(t => [t, -1] as [Token, number])
