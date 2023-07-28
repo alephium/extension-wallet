@@ -4,6 +4,7 @@ import browser from "webextension-polyfill"
 import { Wallet } from "../../background/wallet"
 import { walletStore } from "../../shared/wallet/walletStore"
 import { migrateWalletAccounts } from "../account/storeMigration"
+import { migrateTokens } from "../token/storeMigration"
 
 export async function migrateWallet() {
   await Promise.allSettled([
@@ -11,6 +12,7 @@ export async function migrateWallet() {
     migrateDiscoveredOnce(),
     migrateSelected(),
     migrateWalletAccounts(),
+    migrateTokens()
   ])
 }
 
