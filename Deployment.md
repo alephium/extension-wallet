@@ -3,6 +3,8 @@
 ## How to release?
 
 1. Update version number, tag the release, and wait for Github to build the artifacts
+2. Run the extension wallet locally with previous version of the artifact
+3. Unzip the new version of generated artifacts, unpack it to the same directory as the previous version to reuse the storage
 2. Test the generated artifacts locally with fresh installation by checking
   1. Transfer ALP, Token, and NFT
   2. Display of Token/NFT metadata
