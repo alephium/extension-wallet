@@ -108,7 +108,7 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
       setTokenDecimals(found.decimals || 0)
       setLogoURI(found.logoURI || "")
     }
-  }, [tokenId, tokensInNetwork])
+  }, [tokenId])
 
   const compiledData = {
     id: tokenId,

@@ -7,7 +7,7 @@ import { defaultNetworkIds } from "../network/defaults"
 export const equalToken = (a: BaseToken, b: BaseToken) =>
   a.networkId === b.networkId && isEqualTokenId(a.id, b.id)
 
-const alphTokens: Token[] = defaultNetworkIds.map((networkId) => {
+export const alphTokens: Token[] = defaultNetworkIds.map((networkId) => {
   return {
     ...ALPH,
     "networkId": networkId,
@@ -17,9 +17,9 @@ const alphTokens: Token[] = defaultNetworkIds.map((networkId) => {
   }
 })
 
-const knownTokensFromAlephiumTokenList: Token[] = [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
-
-export const knownAlephiumTokens = alphTokens.concat(knownTokensFromAlephiumTokenList)
+export const tokensFromAlephiumTokenList: Token[] = alphTokens.concat(
+  [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
+)
 
 export const dustALPHAmount = BigInt(1000000000000000)
 

@@ -7,9 +7,9 @@ import useSWRImmutable from 'swr/immutable'
 import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage } from "../../../shared/storage/hooks"
-import { addToken, tokenStore } from "../../../shared/token/storage"
+import { addToken, removeToken, tokenStore } from "../../../shared/token/storage"
 import { BaseToken, Token } from "../../../shared/token/type"
-import { equalToken } from "../../../shared/token/utils"
+import { alphTokens, equalToken, tokensFromAlephiumTokenList } from "../../../shared/token/utils"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { useAccount } from "../accounts/accounts.state"
@@ -32,21 +32,13 @@ const networkIdSelector = memoize(
   (networkId: string) => (token: Token) => token.networkId === networkId,
 )
 
-const feeTokenSelector = memoize(
-  (networkId: string) => (token: Token) =>
-    token.networkId === networkId && token.symbol === "ALPH",
-)
-
 export const getNetworkFeeToken = async (networkId: string) => {
-  const [feeToken] = await tokenStore.get(feeTokenSelector(networkId))
+  const feeToken = alphTokens.find((token) => token.networkId === networkId)
   return feeToken ?? null
 }
 
 export const useNetworkFeeToken = (networkId?: string) => {
-  const [feeToken] = useArrayStorage(
-    tokenStore,
-    networkId ? feeTokenSelector(networkId) : () => false,
-  )
+  const feeToken = alphTokens.find((token) => token.networkId === networkId)
   return feeToken ?? null
 }
 
@@ -55,8 +47,22 @@ const tokenSelector = memoize(
   (baseToken) => getAccountIdentifier({ networkId: baseToken.networkId, address: baseToken.id }),
 )
 
-export const useTokensInNetwork = (networkId: string) =>
-  useArrayStorage(tokenStore, networkIdSelector(networkId))
+export const useTokensInNetwork = (networkId: string) => {
+  const tokensFromTokenList: Token[] = tokensFromAlephiumTokenList.filter(networkIdSelector(networkId))
+  const tokens: Token[] = useArrayStorage(tokenStore, networkIdSelector(networkId))
+
+  const result: Token[] = tokensFromTokenList
+  for (const token of tokens) {
+    if (tokensFromTokenList.findIndex((t) => equalToken(t, token)) === -1) {
+      result.push(token)
+    } else {
+      // Remove manually added token when it is already in the token list
+      removeToken(token)
+    }
+  }
+  return result
+}
+
 
 export const devnetTokenSymbol = (baseToken: { id: string }): string => {
   return baseToken.id.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase()
@@ -74,7 +80,13 @@ export const devnetToken = (baseToken: BaseToken): Token => {
 }
 
 export const useToken = (baseToken: BaseToken): Token | undefined => {
+  const tokenFromTokenList = tokensFromAlephiumTokenList.find((t) => equalToken(t, baseToken))
   const [token] = useArrayStorage(tokenStore, tokenSelector(baseToken))
+
+  if (tokenFromTokenList) {
+    return tokenFromTokenList
+  }
+
   if (token === undefined && baseToken.networkId === 'devnet') {
     return devnetToken(baseToken)
   }
@@ -218,13 +230,13 @@ export const useFungibleTokens = (
   }, [selectedAccount?.networkId])
 
   const cachedTokens = useTokensInNetwork(networkId)
-
   const {
     data: fungibleTokens
   } = useSWRImmutable(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
       allUserTokens,
+      cachedTokens,
       "accountFungibleTokens",
     ],
     async () => {
