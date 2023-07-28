@@ -7,7 +7,7 @@ import useSWRImmutable from 'swr/immutable'
 import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage } from "../../../shared/storage/hooks"
-import { removeToken, tokenStore } from "../../../shared/token/storage"
+import { addToken, removeToken, tokenStore } from "../../../shared/token/storage"
 import { BaseToken, Token } from "../../../shared/token/type"
 import { alphTokens, equalToken, tokensFromAlephiumTokenList } from "../../../shared/token/utils"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
@@ -252,6 +252,7 @@ export const useFungibleTokens = (
           } else {
             const token = await fetchFungibleTokenFromFullNode(network, userToken.id)
             if (token) {
+              addToken(token)
               result.push([token, foundOnFullNodeIndex])
               foundOnFullNodeIndex++
             }
