@@ -1,5 +1,18 @@
 # Deployment
 
+## How to release?
+
+1. Update version number, tag the release, and wait for Github to build the artifacts
+2. Run the extension wallet locally with previous version of the artifact
+3. Unzip the new version of generated artifacts, unpack it to the same directory as the previous version to reuse the storage
+2. Test the generated artifacts locally with fresh installation by checking
+  1. Transfer ALP, Token, and NFT
+  2. Display of Token/NFT metadata
+  3. Works with the simple dApp within the repository (yarn run dev)
+  4. Ledger support
+
+## Argent-X Legacy
+
 We automated some parts of the release process to make things easier. This file lists the necessary steps to release the latest version of the application:
 
 - Check and ensure the previous release branch `release/vX.Y.Z` was merged into `main`
