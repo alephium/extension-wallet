@@ -182,7 +182,7 @@ export const useNonFungibleTokens = (
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
       allUserTokens,
-      "selectedAccountNonFungibleTokens",
+      "accountNonFungibleTokens",
     ],
     async () => {
       const network = await getNetwork(networkId)
@@ -224,7 +224,8 @@ export const useFungibleTokens = (
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
       allUserTokens,
-      "selectedAccountFungibleTokens",
+      cachedTokens,
+      "accountFungibleTokens",
     ],
     async () => {
       const result = cachedTokens.filter((token) => token.showAlways).map(t => [t, -1] as [Token, number])
