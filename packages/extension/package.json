@@ -6,7 +6,7 @@
   "devDependencies": {
     "@alephium/get-extension-wallet": "^0.14.2",
     "@alephium/ledger-app": "^0.2.1",
-    "@alephium/token-list": "0.0.9",
+    "@alephium/token-list": "0.0.10",
     "@alephium/web3": "^0.14.2",
     "@alephium/web3-test": "^0.14.2",
     "@alephium/web3-wallet": "^0.14.2",
