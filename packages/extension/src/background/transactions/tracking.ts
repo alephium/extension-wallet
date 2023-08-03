@@ -6,6 +6,7 @@ import { accountsEqual } from "../../shared/wallet.service"
 import { getTransactionsUpdate } from "./sources/onchain"
 import { getTransactionHistory } from "./sources/voyager"
 import { transactionsStore } from "./store"
+import { partition } from "lodash"
 
 export interface TransactionTracker {
   loadHistory: (accountsToPopulate: WalletAccount[]) => Promise<void>
@@ -28,7 +29,11 @@ export const transactionTracker: TransactionTracker = {
       // is smart enough to filter for just the pending transactions, as the rest needs no update
       allTransactions,
     )
-    await transactionsStore.push(updatedTransactions)
+    const [toBeRemoved, toBeKept] = partition(updatedTransactions, (tx) => tx.status === "REMOVED_FROM_MEMPOOL")
+    if (toBeRemoved.length > 0) {
+      await transactionsStore.remove((tx) => toBeRemoved.some((toBeRemovedTx) => tx.hash === toBeRemovedTx.hash))
+    }
+    await transactionsStore.push(toBeKept)
     const hasPendingTransactions =
       getInFlightTransactions(allTransactions).length > 0
     return hasPendingTransactions

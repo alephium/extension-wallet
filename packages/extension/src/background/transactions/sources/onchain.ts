@@ -15,10 +15,21 @@ export async function getTransactionsUpdate(transactions: Transaction[]) {
     transactionsToCheck.map(async (transaction) => {
       const network = await getNetwork(transaction.account.networkId)
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-      const updatedTransaction = await explorerProvider.transactions.getTransactionsTransactionHash(transaction.hash)
-
-      const status = updatedTransaction.type === "Accepted" ? "ACCEPTED_ON_CHAIN" : "ACCEPTED_ON_MEMPOOL"
-      return { ...transaction, status }
+      const txDate = new Date(transaction.timestamp)
+      const txCreatedSinceInMinutes = (new Date().valueOf() - txDate.valueOf()) / 1000 / 60
+      try {
+        const updatedTransaction = await explorerProvider.transactions.getTransactionsTransactionHash(transaction.hash)
+        const status = updatedTransaction.type === "Accepted" ? "ACCEPTED_ON_CHAIN" : "ACCEPTED_ON_MEMPOOL"
+        return { ...transaction, status }
+      } catch (exception: any) {
+        // If the transaction is not found and it has been created for more than 2 minutes
+        // we can assume it has been removed from the mempool
+        if (exception.message.includes("not found") && txCreatedSinceInMinutes >= 2) {
+          return { ...transaction, status: 'REMOVED_FROM_MEMPOOL' }
+        } else {
+          throw exception
+        }
+      }
     })
   )
 
