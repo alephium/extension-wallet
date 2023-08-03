@@ -22,6 +22,8 @@ export async function getTransactionsUpdate(transactions: Transaction[]) {
         const status = updatedTransaction.type === "Accepted" ? "ACCEPTED_ON_CHAIN" : "ACCEPTED_ON_MEMPOOL"
         return { ...transaction, status }
       } catch (exception: any) {
+        // If the transaction is not found and it has been created for more than 2 minutes
+        // we can assume it has been removed from the mempool
         if (exception.message.endsWith("not found") && txCreatedSinceInMinutes >= 2) {
           return { ...transaction, status: 'REMOVED_FROM_MEMPOOL' }
         } else {
