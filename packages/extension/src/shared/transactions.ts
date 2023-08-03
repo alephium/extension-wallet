@@ -5,7 +5,7 @@ import { ReviewTransactionResult } from "./actionQueue/types"
 import { WalletAccount } from "./wallet.model"
 import { AlephiumExplorerTransaction } from "./explorer/type"
 
-export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_MEMPOOL' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED';
+export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_MEMPOOL' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED' | 'REMOVED_FROM_MEMPOOL';
 
 // Global Constants for Transactions
 export const SUCCESS_STATUSES: Status[] = [
