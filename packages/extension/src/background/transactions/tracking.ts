@@ -30,7 +30,9 @@ export const transactionTracker: TransactionTracker = {
       allTransactions,
     )
     const [toBeRemoved, toBeKept] = partition(updatedTransactions, (tx) => tx.status === "REMOVED_FROM_MEMPOOL")
-    await transactionsStore.remove((tx) => toBeRemoved.some((toBeRemovedTx) => tx.hash === toBeRemovedTx.hash))
+    if (toBeRemoved.length > 0) {
+      await transactionsStore.remove((tx) => toBeRemoved.some((toBeRemovedTx) => tx.hash === toBeRemovedTx.hash))
+    }
     await transactionsStore.push(toBeKept)
     const hasPendingTransactions =
       getInFlightTransactions(allTransactions).length > 0
