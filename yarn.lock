@@ -52,10 +52,10 @@
     "@alephium/web3-wallet" "^0.14.0"
     "@ledgerhq/hw-transport" "6.27.10"
 
-"@alephium/token-list@0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@alephium/token-list/-/token-list-0.0.10.tgz#6c394c74dd7ca206fe967db64f4947dfef0b1ea2"
-  integrity sha512-HzPETn+JBykR761YdC5zr1rB/2ui5AHMwaFYer5UuhtVnV8Hlzspe/Pp+5zXmILGtx4u2PWjDEoqHRIuejcXlA==
+"@alephium/token-list@0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@alephium/token-list/-/token-list-0.0.11.tgz#33108187d61c661523abaaf7ea6b59e96ee8c2d1"
+  integrity sha512-LTaAwtvlfw8B26hPsxuVex9GdlO47p4TgKwb9kal5mY4/aH78PSpsEgf1goCpIYTkeX6T5RGir1YcpnUOywLRA==
   dependencies:
     cross-fetch "^3.1.8"
 
