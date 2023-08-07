@@ -60,21 +60,22 @@ export async function removeToken(token: BaseToken) {
   return tokenStore.remove((t) => equalToken(t, token))
 }
 
-export async function fetchTokenList() {
+export async function updateTokenList() {
   try {
     const mainnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/mainnet.json')
     const testnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/testnet.json')
     const tokenList = [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
+    await tokenListStore.remove((t) => true)
     await tokenListStore.push(alphTokens.concat(tokenList))
   } catch (e) {
-    console.error('Error fetching token list', e)
+    console.error('Error updating token list', e)
   }
 }
 
 export async function getTokenList() {
   const result = await tokenListStore.get()
   if (result.length === 0) {
-    await fetchTokenList()
+    await updateTokenList()
     return tokenListStore.get()
   } else {
     return result

@@ -6,7 +6,7 @@ import { ActionItem } from "../shared/actionQueue/types"
 import { MessageType, messageStream } from "../shared/messages"
 import { getNetwork } from "../shared/network"
 import { migratePreAuthorizations } from "../shared/preAuthorizations"
-import { fetchTokenList } from "../shared/token/storage"
+import { updateTokenList } from "../shared/token/storage"
 import { delay } from "../shared/utils/delay"
 import { migrateWallet } from "../shared/wallet/storeMigration"
 import { walletStore } from "../shared/wallet/walletStore"
@@ -19,7 +19,7 @@ import {
   sendMessageToActiveTabsAndUi,
   sendMessageToUi,
 } from "./activeTabs"
-import { setTransactionTrackerHistoryAlarm, setTransactionTrackerUpdateAlarm, tokenListUpdateAlarm, transactionTrackerHistoryAlarm, transactionTrackerUpdateAlarm } from "./alarms"
+import { setTokenListUpdateAlarm, setTransactionTrackerHistoryAlarm, setTransactionTrackerUpdateAlarm, tokenListUpdateAlarm, transactionTrackerHistoryAlarm, transactionTrackerUpdateAlarm } from "./alarms"
 import {
   BackgroundService,
   HandleMessage,
@@ -40,6 +40,8 @@ import { Wallet, sessionStore } from "./wallet"
 
 setTransactionTrackerHistoryAlarm()
 setTransactionTrackerUpdateAlarm()
+setTokenListUpdateAlarm()
+
 browser.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === transactionTrackerHistoryAlarm) {
     console.info("~> fetching transaction history")
@@ -68,8 +70,8 @@ browser.alarms.onAlarm.addListener(async (alarm) => {
   }
 
   if (alarm.name === tokenListUpdateAlarm) {
-    console.info("~> fetching token list")
-    await fetchTokenList()
+    console.info("~> update token list")
+    await updateTokenList()
   }
 })
 
