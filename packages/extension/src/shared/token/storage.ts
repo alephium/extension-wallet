@@ -1,11 +1,18 @@
+import { TokenList } from "@alephium/token-list"
 import * as yup from "yup"
 import { ArrayStorage } from "../storage"
 import { assertSchema } from "../utils/schema"
 import { BaseToken, Token } from "./type"
-import { equalToken, tokensFromAlephiumTokenList } from "./utils"
+import { alphTokens, convertTokenList, equalToken } from "./utils"
 
 export const tokenStore = new ArrayStorage([] as Token[], {
   namespace: "core:tokens",
+  areaName: "local",
+  compare: equalToken,
+})
+
+export const tokenListStore = new ArrayStorage(alphTokens, {
+  namespace: "core:token-list",
   areaName: "local",
   compare: equalToken,
 })
@@ -38,7 +45,8 @@ export async function addToken(token: Token) {
 
 export async function hasToken(token: BaseToken) {
   await assertSchema(baseTokenSchema, token)
-  const tokenListHit = tokensFromAlephiumTokenList.find((t) => equalToken(t, token))
+  const tokenList = await getTokenList()
+  const tokenListHit = tokenList.find((t) => equalToken(t, token))
   if (tokenListHit) {
     return Boolean(tokenListHit)
   }
@@ -50,4 +58,34 @@ export async function hasToken(token: BaseToken) {
 export async function removeToken(token: BaseToken) {
   await assertSchema(baseTokenSchema, token)
   return tokenStore.remove((t) => equalToken(t, token))
+}
+
+export async function fetchTokenList() {
+  try {
+    const mainnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/mainnet.json')
+    const testnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/testnet.json')
+    const tokenList = [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
+    await tokenListStore.push(alphTokens.concat(tokenList))
+  } catch (e) {
+    console.error('Error fetching token list', e)
+  }
+}
+
+export async function getTokenList() {
+  const result = await tokenListStore.get()
+  if (result.length === 0) {
+    await fetchTokenList()
+    return tokenListStore.get()
+  } else {
+    return result
+  }
+}
+
+async function fetchTokenListByUrl(url: string): Promise<TokenList> {
+  const response = await fetch(url)
+  if (response.ok) {
+    return await response.json()
+  } else {
+    throw new Error(`Failed to fetch token list from ${url}`)
+  }
 }

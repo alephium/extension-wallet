@@ -1,7 +1,7 @@
 import defaultTokens from "../../assets/default-tokens.json"
 import { isEqualTokenId } from "../../ui/services/token"
 import { BaseToken, Token } from "./type"
-import { mainnetTokensMetadata, testnetTokensMetadata, TokenList, ALPH } from "@alephium/token-list"
+import { TokenList, ALPH } from "@alephium/token-list"
 import { defaultNetworkIds } from "../network/defaults"
 
 export const equalToken = (a: BaseToken, b: BaseToken) =>
@@ -17,17 +17,13 @@ export const alphTokens: Token[] = defaultNetworkIds.map((networkId) => {
   }
 })
 
-export const tokensFromAlephiumTokenList: Token[] = alphTokens.concat(
-  [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
-)
-
 export const dustALPHAmount = BigInt(1000000000000000)
 
 export const minimumALPHAmount = (tokenNums: number) => {
   return dustALPHAmount + BigInt(tokenNums * 100 * 1000000000)
 }
 
-function convertTokenList(tokenList: TokenList): Token[] {
+export function convertTokenList(tokenList: TokenList): Token[] {
   return tokenList.tokens.flatMap((token) => {
     const networkId = defaultNetworkIds[tokenList.networkId]
     if (networkId) {

@@ -7,9 +7,9 @@ import useSWRImmutable from 'swr/immutable'
 import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage } from "../../../shared/storage/hooks"
-import { addToken, removeToken, tokenStore } from "../../../shared/token/storage"
+import { addToken, removeToken, tokenListStore, tokenStore } from "../../../shared/token/storage"
 import { BaseToken, Token } from "../../../shared/token/type"
-import { alphTokens, equalToken, tokensFromAlephiumTokenList } from "../../../shared/token/utils"
+import { alphTokens, equalToken } from "../../../shared/token/utils"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { useAccount } from "../accounts/accounts.state"
@@ -48,7 +48,7 @@ const tokenSelector = memoize(
 )
 
 export const useTokensInNetwork = (networkId: string) => {
-  const tokensFromTokenList: Token[] = tokensFromAlephiumTokenList.filter(networkIdSelector(networkId))
+  const tokensFromTokenList: Token[] = useArrayStorage(tokenListStore, networkIdSelector(networkId))
   const tokens: Token[] = useArrayStorage(tokenStore, networkIdSelector(networkId))
 
   const result: Token[] = tokensFromTokenList
@@ -80,7 +80,7 @@ export const devnetToken = (baseToken: BaseToken): Token => {
 }
 
 export const useToken = (baseToken: BaseToken): Token | undefined => {
-  const tokenFromTokenList = tokensFromAlephiumTokenList.find((t) => equalToken(t, baseToken))
+  const [tokenFromTokenList] = useArrayStorage(tokenListStore, tokenSelector(baseToken))
   const [token] = useArrayStorage(tokenStore, tokenSelector(baseToken))
 
   if (tokenFromTokenList) {
