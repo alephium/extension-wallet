@@ -19,5 +19,5 @@ export interface Token extends Required<RequestToken> {
 }
 
 export interface TokenListToken extends Token {
-  refreshedAt?: number
+  updatedAt?: number
 }

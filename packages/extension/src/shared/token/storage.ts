@@ -62,19 +62,23 @@ export async function removeToken(token: BaseToken) {
 }
 
 export async function updateTokenList() {
-  try {
-    const now = new Date()
-    const nonAlphTokenList = await tokenListStore.get((t) => t.id !== ALPH_TOKEN_ID)
+  const now = new Date()
+  const nonAlphTokenList = await tokenListStore.get((t) => t.id !== ALPH_TOKEN_ID)
 
-    if (nonAlphTokenList[0]?.refreshedAt) {
-      const refreshedSinceInMinutes = (now.valueOf() - nonAlphTokenList[0].refreshedAt) / 1000 / 60
-      // Refresh token list at most every hour
-      if (refreshedSinceInMinutes < 59) {
-        console.log(`Skip updating token list, last updated ${refreshedSinceInMinutes} minutes ago`)
-        return
-      }
+  if (nonAlphTokenList[0]?.updatedAt) {
+    const updatedSinceInMinutes = (now.valueOf() - nonAlphTokenList[0].updatedAt) / 1000 / 60
+    // Update token list at most every hour
+    if (updatedSinceInMinutes < 59) {
+      console.log(`Skip updating token list, last updated ${updatedSinceInMinutes} minutes ago`)
+      return
     }
+  }
 
+  updateTokenListNow()
+}
+
+export async function updateTokenListNow() {
+  try {
     const mainnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/mainnet.json')
     const testnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/testnet.json')
     const tokenList = [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
