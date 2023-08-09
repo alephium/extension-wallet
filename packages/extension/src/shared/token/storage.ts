@@ -1,9 +1,9 @@
 import { TokenList } from "@alephium/token-list"
 import { ALPH_TOKEN_ID } from "@alephium/web3"
 import * as yup from "yup"
-import { ArrayStorage } from "../storage"
+import { ArrayStorage, ObjectStorage } from "../storage"
 import { assertSchema } from "../utils/schema"
-import { BaseToken, Token, TokenListToken } from "./type"
+import { BaseToken, Token, TokenListTokens } from "./type"
 import { alphTokens, convertTokenList, equalToken } from "./utils"
 
 export const tokenStore = new ArrayStorage([] as Token[], {
@@ -12,10 +12,9 @@ export const tokenStore = new ArrayStorage([] as Token[], {
   compare: equalToken,
 })
 
-export const tokenListStore = new ArrayStorage(alphTokens as TokenListToken[], {
+export const tokenListStore = new ObjectStorage<TokenListTokens>({ tokens: alphTokens } as TokenListTokens, {
   namespace: "core:token-list",
-  areaName: "local",
-  compare: equalToken,
+  areaName: "local"
 })
 
 export const baseTokenSchema: yup.Schema<BaseToken> = yup
@@ -63,10 +62,10 @@ export async function removeToken(token: BaseToken) {
 
 export async function updateTokenList() {
   const now = new Date()
-  const nonAlphTokenList = await tokenListStore.get((t) => t.id !== ALPH_TOKEN_ID)
+  const tokenListTokens = await tokenListStore.get()
 
-  if (nonAlphTokenList[0]?.updatedAt) {
-    const updatedSinceInMinutes = (now.valueOf() - nonAlphTokenList[0].updatedAt) / 1000 / 60
+  if (tokenListTokens.updatedAt) {
+    const updatedSinceInMinutes = (now.valueOf() - tokenListTokens.updatedAt) / 1000 / 60
     // Update token list at most every hour
     if (updatedSinceInMinutes < 59) {
       console.log(`Skip updating token list, last updated ${updatedSinceInMinutes} minutes ago`)
@@ -78,24 +77,24 @@ export async function updateTokenList() {
 }
 
 export async function updateTokenListNow() {
+  const now = new Date().valueOf()
   try {
     const mainnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/mainnet.json')
     const testnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/testnet.json')
     const tokenList = [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
-    await tokenListStore.remove((t) => true)
-    await tokenListStore.push(alphTokens.concat(tokenList))
+    await tokenListStore.set({ updatedAt: now, tokens: tokenList })
   } catch (e) {
     console.error('Error updating token list', e)
   }
 }
 
 export async function getTokenList() {
-  const result = await tokenListStore.get()
-  if (result.length === 0) {
+  const tokenListTokens = await tokenListStore.get()
+  if (tokenListTokens.tokens.length === 0) {
     await updateTokenList()
-    return tokenListStore.get()
+    return (await tokenListStore.get()).tokens
   } else {
-    return result
+    return tokenListTokens.tokens
   }
 }
 

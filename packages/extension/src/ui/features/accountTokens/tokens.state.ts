@@ -6,9 +6,9 @@ import useSWR from "swr"
 import useSWRImmutable from 'swr/immutable'
 import { getNetwork, Network } from "../../../shared/network"
 
-import { useArrayStorage } from "../../../shared/storage/hooks"
+import { useArrayStorage, useObjectStorage } from "../../../shared/storage/hooks"
 import { addToken, removeToken, tokenListStore, tokenStore } from "../../../shared/token/storage"
-import { BaseToken, Token } from "../../../shared/token/type"
+import { BaseToken, Token, TokenListTokens } from "../../../shared/token/type"
 import { alphTokens, equalToken } from "../../../shared/token/utils"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
@@ -48,12 +48,12 @@ const tokenSelector = memoize(
 )
 
 export const useTokensInNetwork = (networkId: string) => {
-  const tokensFromTokenList: Token[] = useArrayStorage(tokenListStore, networkIdSelector(networkId))
+  const tokenListTokens: TokenListTokens = useObjectStorage(tokenListStore)
   const tokens: Token[] = useArrayStorage(tokenStore, networkIdSelector(networkId))
 
-  const result: Token[] = tokensFromTokenList
+  const result: Token[] = tokenListTokens.tokens
   for (const token of tokens) {
-    if (tokensFromTokenList.findIndex((t) => equalToken(t, token)) === -1) {
+    if (tokenListTokens.tokens.findIndex((t) => equalToken(t, token)) === -1) {
       result.push(token)
     } else {
       // Remove manually added token when it is already in the token list
@@ -80,9 +80,10 @@ export const devnetToken = (baseToken: BaseToken): Token => {
 }
 
 export const useToken = (baseToken: BaseToken): Token | undefined => {
-  const [tokenFromTokenList] = useArrayStorage(tokenListStore, tokenSelector(baseToken))
+  const tokenListTokens = useObjectStorage(tokenListStore)
   const [token] = useArrayStorage(tokenStore, tokenSelector(baseToken))
 
+  const tokenFromTokenList = tokenListTokens.tokens.find((t) => equalToken(t, baseToken))
   if (tokenFromTokenList) {
     return tokenFromTokenList
   }
