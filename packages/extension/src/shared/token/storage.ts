@@ -74,7 +74,7 @@ export async function updateTokenList() {
     }
   }
 
-  updateTokenListNow()
+  await updateTokenListNow()
 }
 
 export async function updateTokenListNow() {
