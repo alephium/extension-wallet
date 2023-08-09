@@ -6,6 +6,7 @@ import { ActionItem } from "../shared/actionQueue/types"
 import { MessageType, messageStream } from "../shared/messages"
 import { getNetwork } from "../shared/network"
 import { migratePreAuthorizations } from "../shared/preAuthorizations"
+import { updateTokenList } from "../shared/token/storage"
 import { delay } from "../shared/utils/delay"
 import { migrateWallet } from "../shared/wallet/storeMigration"
 import { walletStore } from "../shared/wallet/walletStore"
@@ -18,7 +19,7 @@ import {
   sendMessageToActiveTabsAndUi,
   sendMessageToUi,
 } from "./activeTabs"
-import { setTransactionTrackerHistoryAlarm, setTransactionTrackerUpdateAlarm } from "./alarms"
+import { setTokenListUpdateAlarm, setTransactionTrackerHistoryAlarm, setTransactionTrackerUpdateAlarm, tokenListUpdateAlarm, transactionTrackerHistoryAlarm, transactionTrackerUpdateAlarm } from "./alarms"
 import {
   BackgroundService,
   HandleMessage,
@@ -39,12 +40,15 @@ import { Wallet, sessionStore } from "./wallet"
 
 setTransactionTrackerHistoryAlarm()
 setTransactionTrackerUpdateAlarm()
+setTokenListUpdateAlarm()
+
 browser.alarms.onAlarm.addListener(async (alarm) => {
-  if (alarm.name === "core:transactionTracker:history") {
+  if (alarm.name === transactionTrackerHistoryAlarm) {
     console.info("~> fetching transaction history")
     await transactionTracker.loadHistory(await getAccounts())
   }
-  if (alarm.name === "core:transactionTracker:update") {
+
+  if (alarm.name === transactionTrackerUpdateAlarm) {
     console.info("~> fetching transaction updates")
     let hasInFlightTransactions = await transactionTracker.update()
 
@@ -63,6 +67,11 @@ browser.alarms.onAlarm.addListener(async (alarm) => {
       runs++
       hasInFlightTransactions = await transactionTracker.update()
     }
+  }
+
+  if (alarm.name === tokenListUpdateAlarm) {
+    console.info("~> update token list")
+    await updateTokenList()
   }
 })
 

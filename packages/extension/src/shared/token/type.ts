@@ -17,3 +17,8 @@ export interface Token extends Required<RequestToken> {
   showAlways?: boolean
   verified?: boolean
 }
+
+export interface TokenListTokens {
+  updatedAt?: number,
+  tokens: Token[]
+}
