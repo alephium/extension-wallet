@@ -63,7 +63,7 @@ export const useTokensInNetwork = (networkId: string) => {
     if (tokenListTokens.tokens.findIndex((t) => equalToken(t, token)) === -1) {
       result.push(token)
     } else {
-      // Remove manually added token when it is already in the token list
+      // Remove token if it is already in the token list
       removeToken(token)
     }
   }
