@@ -47,29 +47,31 @@ const tokenSelector = memoize(
   (baseToken) => getAccountIdentifier({ networkId: baseToken.networkId, address: baseToken.id }),
 )
 
-export const useTokensInNetwork = (networkId: string) => {
+export const useTokensInNetwork = (networkId: string): Token[] => {
   const tokenListTokens: TokenListTokens = useObjectStorage(tokenListStore)
   const tokens: Token[] = useArrayStorage(tokenStore, networkIdSelector(networkId))
-  const result: Token[] = []
 
-  // Push all tokens from token list that are in the network
-  for (const t of tokenListTokens.tokens) {
-    if (t.networkId == networkId) {
-      result.push({ verified: true, ...t })
-    }
-  }
+  return useMemo(() => {
+    const result: Token[] = []
 
-  for (const token of tokens) {
-    if (tokenListTokens.tokens.findIndex((t) => equalToken(t, token)) === -1) {
-      result.push(token)
-    } else {
-      // Remove token if it is already in the token list
-      removeToken(token)
+    // Push all tokens from token list that are in the network
+    for (const t of tokenListTokens.tokens) {
+      if (t.networkId == networkId) {
+        result.push({ verified: true, ...t })
+      }
     }
-  }
-  return result
+
+    for (const token of tokens) {
+      if (tokenListTokens.tokens.findIndex((t) => equalToken(t, token)) === -1) {
+        result.push(token)
+      } else {
+        // Remove token if it is already in the token list
+        removeToken(token)
+      }
+    }
+    return result
+  }, [tokenListTokens, tokens, networkId])
 }
-
 
 export const devnetTokenSymbol = (baseToken: { id: string }): string => {
   return baseToken.id.replace(/[^a-zA-Z]/gi, '').slice(0, 4).toUpperCase()
