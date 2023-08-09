@@ -1,5 +1,8 @@
 import browser from "webextension-polyfill"
 
+// For Chrome, the minimum effective delayInMinutes and periodInMinutes is 1 minute
+// Reference: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/alarms/create#parameters
+
 export const transactionTrackerHistoryAlarm = "core:transactionTracker:history"
 export async function refreshTransactionTrackerHistoryAlarm() {
   await browser.alarms.clear(transactionTrackerHistoryAlarm)
@@ -19,8 +22,8 @@ export async function refreshTransactionTrackerUpdateAlarm() {
 }
 export function setTransactionTrackerUpdateAlarm() {
   browser.alarms.create(transactionTrackerUpdateAlarm, {
-    delayInMinutes: 0.05,
-    periodInMinutes: 0.5, // fetch transaction updates of existing transactions every half minute from onchain
+    delayInMinutes: 1,
+    periodInMinutes: 1  // fetch transaction updates of existing transactions every minute from onchain
   })
 }
 
@@ -32,7 +35,7 @@ export async function refreshTokenListUpdateAlarm() {
 }
 export function setTokenListUpdateAlarm() {
   browser.alarms.create(tokenListUpdateAlarm, {
-    delayInMinutes: 0.02,
-    periodInMinutes: 60, // fetch token list updates every hour
+    delayInMinutes: 1,
+    periodInMinutes: 60 // fetch token list updates every hour
   })
 }
