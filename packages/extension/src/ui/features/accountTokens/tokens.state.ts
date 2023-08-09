@@ -50,8 +50,15 @@ const tokenSelector = memoize(
 export const useTokensInNetwork = (networkId: string) => {
   const tokenListTokens: TokenListTokens = useObjectStorage(tokenListStore)
   const tokens: Token[] = useArrayStorage(tokenStore, networkIdSelector(networkId))
+  const result: Token[] = []
 
-  const result: Token[] = tokenListTokens.tokens
+  // Push all tokens from token list that are in the network
+  for (const t of tokenListTokens.tokens) {
+    if (t.networkId == networkId) {
+      result.push({ verified: true, ...t })
+    }
+  }
+
   for (const token of tokens) {
     if (tokenListTokens.tokens.findIndex((t) => equalToken(t, token)) === -1) {
       result.push(token)

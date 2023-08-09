@@ -27,7 +27,7 @@ export function convertTokenList(tokenList: TokenList): Token[] {
   const tokens = tokenList.tokens.flatMap((token) => {
     const networkId = defaultNetworkIds[tokenList.networkId]
     if (networkId) {
-      return [{ networkId, verified: true, ...token }]
+      return [{ networkId, ...token }]
     } else {
       return []
     }

@@ -1,5 +1,4 @@
 import { TokenList } from "@alephium/token-list"
-import { ALPH_TOKEN_ID } from "@alephium/web3"
 import * as yup from "yup"
 import { ArrayStorage, ObjectStorage } from "../storage"
 import { assertSchema } from "../utils/schema"
@@ -82,20 +81,15 @@ export async function updateTokenListNow() {
     const mainnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/mainnet.json')
     const testnetTokensMetadata = await fetchTokenListByUrl('https://raw.githubusercontent.com/alephium/token-list/master/tokens/testnet.json')
     const tokenList = [mainnetTokensMetadata, testnetTokensMetadata].flatMap(convertTokenList)
-    await tokenListStore.set({ updatedAt: now, tokens: tokenList })
+    await tokenListStore.set({ updatedAt: now, tokens: alphTokens.concat(tokenList) })
   } catch (e) {
     console.error('Error updating token list', e)
   }
 }
 
-export async function getTokenList() {
+export async function getTokenList(): Promise<Token[]> {
   const tokenListTokens = await tokenListStore.get()
-  if (tokenListTokens.tokens.length === 0) {
-    await updateTokenList()
-    return (await tokenListStore.get()).tokens
-  } else {
-    return tokenListTokens.tokens
-  }
+  return tokenListTokens.tokens.map((t) => ({ ...t, verified: true }))
 }
 
 async function fetchTokenListByUrl(url: string): Promise<TokenList> {
