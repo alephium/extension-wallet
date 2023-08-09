@@ -260,7 +260,7 @@ export const useFungibleTokens = (
           } else {
             const token = await fetchFungibleTokenFromFullNode(network, userToken.id)
             if (token) {
-              addToken(token)
+              addToken(token, false)
               result.push([token, foundOnFullNodeIndex])
               foundOnFullNodeIndex++
             }

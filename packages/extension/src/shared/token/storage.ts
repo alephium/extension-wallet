@@ -37,9 +37,9 @@ export const tokenSchema: yup.Schema<Token> = baseTokenSchema
     verified: yup.boolean()
   })
 
-export async function addToken(token: Token) {
+export async function addToken(token: Token, verified: boolean) {
   await assertSchema(tokenSchema, token)
-  return tokenStore.push({ verified: true, ...token })
+  return tokenStore.push({ verified, ...token })
 }
 
 export async function hasToken(token: BaseToken) {

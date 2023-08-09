@@ -140,7 +140,7 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
             e.preventDefault()
             if (isDataComplete(compiledData)) {
               try {
-                await addToken(compiledData)
+                await addToken(compiledData, true)
                 onSubmit?.()
                 navigate(routes.accountTokens())
               } catch (e) {
