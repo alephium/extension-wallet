@@ -220,7 +220,7 @@ export const SendNftScreen: FC = () => {
       <NavigationContainer
         leftButton={<BarBackButton />}
         rightButton={
-          <TokenMenuDeprecated tokenId={nft.id} />
+          <TokenMenuDeprecated tokenId={nft.id} canHideToken={false} />
         }
         scrollContent={nft.metadata.name}
       >
