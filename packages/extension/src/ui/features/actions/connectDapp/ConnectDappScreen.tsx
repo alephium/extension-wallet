@@ -1,7 +1,7 @@
 import { KeyType } from "@alephium/web3"
 import { Flex } from "@chakra-ui/react"
 import { L2 } from "@argent/ui"
-import { FC, useCallback, useMemo, useState } from "react"
+import { FC, useCallback, useEffect, useMemo, useState } from "react"
 import styled from "styled-components"
 
 import {
@@ -17,6 +17,7 @@ import { Account } from "../../accounts/Account"
 import { AccountListItemProps } from "../../accounts/AccountListItem"
 import {
   getAccountName,
+  getDefaultAccountNameByIndex,
   useAccountMetadata,
 } from "../../accounts/accountMetadata.state"
 import { useAccounts, useAccountsOnNetwork, useSelectedAccount } from "../../accounts/accounts.state"
@@ -29,6 +30,10 @@ import {
 import { DappIcon } from "./DappIcon"
 import { useDappDisplayAttributes } from "./useDappDisplayAttributes"
 import { Wallet } from "../../../../background/wallet"
+import { Option } from "../../../components/Options"
+import { AlephiumLogo } from "../../../components/Icons/ArgentXLogo"
+import { createAccount } from "../../accounts/accounts.service"
+import { useAppState } from "../../../app.state"
 
 interface ConnectDappProps extends Omit<ConfirmPageProps, "onSubmit"> {
   onConnect: (selectedAccount?: Account) => void
@@ -110,6 +115,7 @@ export const ConnectDappAccountSelect: FC<IConnectDappAccountSelect> = ({
       accounts={accountItems}
       selectedAccount={selectedAccountItem}
       onSelectedAccountChange={onSelectedAccountItemChange}
+      key={selectedAccountItem?.accountAddress}
     />
   )
 }
@@ -205,6 +211,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   keyType,
   ...rest
 }) => {
+  const { switcherNetworkId } = useAppState()
   let initiallySelectedAccount = useSelectedAccount()
   if (initiallySelectedAccount && !Wallet.checkAccount(initiallySelectedAccount, networkId, keyType, group)) {
     initiallySelectedAccount = undefined
@@ -239,6 +246,14 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
       return account
     }
   }, [visibleAccountsForGroup, connectedAccount])
+
+  const { setAccountName } = useAccountMetadata()
+
+  const generateAccount = useCallback(async () => {
+    const account = await createAccount(networkId ?? switcherNetworkId, keyType ?? 'default', undefined, group)
+    setAccountName(account.networkId, account.address, getDefaultAccountNameByIndex(account, 0))
+    setConnectedAccount(account)
+  }, [keyType, networkId, group, switcherNetworkId, setAccountName])
 
   const onSelectedAccountChange = useCallback((account: BaseWalletAccount) => {
     setConnectedAccount(account)
@@ -306,15 +321,30 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
           </>
         ) : (
           <>
-            <WarningText>No matched account found! Please create an account for: 
+            <WarningText>There are no accounts in the required group and network,
               {group !== undefined && <Label text={`Group: ${group}`}/>}
               {group !== undefined && networkId !== undefined && ' and '}
-              {networkId !== undefined && <Label text={`${networkId}`}/>}
+              {networkId !== undefined && <Label text={`Network: ${networkId}`}/>}.
+              Please generate a new account first.
             </WarningText>
             <HR />
+            <Option
+              title="Create new Alephium account"
+              icon={<StyledAlephiumLogo />}
+              description="Generate a new wallet address"
+              hideArrow
+              onClick={() => generateAccount()}
+            />
           </>
         )
       }
     </DeprecatedConfirmScreen>
   )
 }
+
+const StyledAlephiumLogo = styled(AlephiumLogo)`
+  font-size: 20px;
+  color: ${({ theme }) => theme.primary};
+  width: 1.5em;
+  height: 1.5em;
+`

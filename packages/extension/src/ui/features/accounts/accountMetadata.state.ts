@@ -35,16 +35,18 @@ export const getAccountName = (
   accountNames: Record<string, Record<string, string>>,
 ): string => accountNames[networkId]?.[address] || defaultAccountName
 
+export const getDefaultAccountNameByIndex = (account: Account, index: number): string => {
+  const prefix = account.signer.type === "ledger" ? "Ledger" : "Account"
+  return `${prefix} ${index + 1}`
+}
+
 export const setDefaultAccountNames = (accounts: Account[]) => {
   const { accountNames } = useAccountMetadata.getState()
   let names = accountNames
   for (const account of accounts) {
     const { networkId } = account
     if (!names[networkId]?.[account.address]) {
-      const prefix = account.signer.type === "ledger" ? "Ledger" : "Account"
-      const name = `${prefix} ${
-        accounts.map((a) => a.address).indexOf(account.address) + 1
-      }`
+      const name = getDefaultAccountNameByIndex(account, accounts.map((a) => a.address).indexOf(account.address))
       names = {
         ...names,
         [networkId]: { ...names[networkId], [account.address]: name },
