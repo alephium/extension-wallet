@@ -37,7 +37,7 @@ const Collections: FC<AccountCollectionsProps> = ({
           gridTemplateColumns="repeat(auto-fill, 158px)"
           gap="3"
           py={4}
-          mx="4"
+          mx="3"
         >
           {collections.map((collection) => (
             <NftFigure

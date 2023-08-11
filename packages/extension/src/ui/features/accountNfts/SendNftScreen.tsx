@@ -279,7 +279,6 @@ export const SendNftScreen: FC = () => {
                         paddingRight: "50px",
                         borderRadius: addressBookOpen ? "8px 8px 0 0" : "8px",
                       }}
-                      onlyAddressHex
                       onChange={(e: any) => {
                         if (validateAddress(e.target.value)) {
                           const account = addressBook.contacts.find((c) =>
