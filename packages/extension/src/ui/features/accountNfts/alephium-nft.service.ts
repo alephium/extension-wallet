@@ -62,6 +62,32 @@ export const fetchNFTCollections = async (
   return collections
 }
 
+async function getNftIds(
+  collectionAddress: string,
+  tokenIds: string[],
+  explorerProvider: ExplorerProvider,
+  finalNftIds: string[] = [],
+  page = 1
+): Promise<string[]> {
+  const pageSize = 100
+  const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress, { page, limit: pageSize })
+
+  if (!subContracts) {
+    return finalNftIds
+  }
+
+  const nftIds = tokenIds.filter((tokenId) => subContracts.includes(addressFromContractId(tokenId)))
+  if (nftIds.length > 0) {
+    finalNftIds.push(...nftIds)
+  }
+
+  if (subContracts.length < pageSize) {
+    return finalNftIds
+  } else {
+    return getNftIds(collectionAddress, tokenIds, explorerProvider, finalNftIds, page + 1)
+  }
+}
+
 export const fetchNFTCollection = async (
   collectionId: string,
   tokenIds: string[],
@@ -71,8 +97,7 @@ export const fetchNFTCollection = async (
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
     const nodeProvider = new NodeProvider(network.nodeUrl)
     const collectionAddress = addressFromContractId(collectionId)
-    const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
-    const nftIds = subContracts && tokenIds.filter((tokenId) => subContracts.includes(addressFromContractId(tokenId)))
+    const nftIds = await getNftIds(collectionAddress, tokenIds, explorerProvider)
 
     if (!nftIds) {
       return undefined
