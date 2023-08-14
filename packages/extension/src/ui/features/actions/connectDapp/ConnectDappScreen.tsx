@@ -321,11 +321,9 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
           </>
         ) : (
           <>
-            <WarningText>There are no accounts in the required group and network,
-              {group !== undefined && <Label text={`Group: ${group}`}/>}
-              {group !== undefined && networkId !== undefined && ' and '}
-              {networkId !== undefined && <Label text={`Network: ${networkId}`}/>}.
-              Please generate a new account first.
+            <WarningText>
+              There are no accounts on {networkId !== undefined && <Label text={`${networkId}`}/>} for
+              group {group !== undefined && <Label text={`${group}`}/>}. Please generate a new account first.
             </WarningText>
             <HR />
             <Option

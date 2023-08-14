@@ -78,7 +78,7 @@ export interface ApproveTransactionScreenProps
   ) => void
 }
 
-async function addTokenToBalances(balances: Map<string, BigNumber>, tokenId: string, amount: BigNumber) {
+function addTokenToBalances(balances: Map<string, BigNumber>, tokenId: string, amount: BigNumber) {
   const tokenBalance = balances.get(tokenId)
   if (tokenBalance === undefined) {
     balances.set(tokenId, amount)
@@ -127,7 +127,6 @@ async function checkBalances(nodeProvider: NodeProvider, address: string, transa
       }
       break
     case 'UNSIGNED_TX':
-      // TODO: how to check balances for unsigned tx?
       return
   }
   addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(minimalGasFee))
