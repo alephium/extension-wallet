@@ -34,6 +34,7 @@ import { Option } from "../../../components/Options"
 import { AlephiumLogo } from "../../../components/Icons/ArgentXLogo"
 import { createAccount } from "../../accounts/accounts.service"
 import { useAppState } from "../../../app.state"
+import { getAccounts, accountsOnNetwork } from "../../../services/backgroundAccounts"
 
 interface ConnectDappProps extends Omit<ConfirmPageProps, "onSubmit"> {
   onConnect: (selectedAccount?: Account) => void
@@ -250,8 +251,12 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   const { setAccountName } = useAccountMetadata()
 
   const generateAccount = useCallback(async () => {
-    const account = await createAccount(networkId ?? switcherNetworkId, keyType ?? 'default', undefined, group)
-    setAccountName(account.networkId, account.address, getDefaultAccountNameByIndex(account, 0))
+    const allAccounts = await getAccounts(true)
+    const selectedNetworkId = networkId ?? switcherNetworkId
+    const walletAccounts = accountsOnNetwork(allAccounts, selectedNetworkId)
+    const accountIndex = walletAccounts.length
+    const account = await createAccount(selectedNetworkId, keyType ?? 'default', undefined, group)
+    setAccountName(account.networkId, account.address, getDefaultAccountNameByIndex(account, accountIndex))
     setConnectedAccount(account)
   }, [keyType, networkId, group, switcherNetworkId, setAccountName])
 
