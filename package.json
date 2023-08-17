@@ -9,7 +9,7 @@
     "bundlewatch": "^0.3.3",
     "husky": "^8.0.0",
     "import-sort-style-module": "^6.0.0",
-    "lerna": "^6.0.0",
+    "lerna": "^7.1.5",
     "lint-staged": ">=10",
     "patch-package": "^6.4.7",
     "prettier": ">=2",
