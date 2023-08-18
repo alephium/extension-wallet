@@ -97,7 +97,12 @@ async function getBalances(nodeProvider: NodeProvider, address: string): Promise
   return balances
 }
 
-async function checkBalances(nodeProvider: NodeProvider, address: string, transaction: TransactionParams, networkId: string) {
+async function checkBalances(
+  nodeProvider: NodeProvider,
+  address: string,
+  transaction: TransactionParams,
+  networkId: string
+): Promise<string | undefined> {
   const expectedBalances: Map<string, BigNumber> = new Map()
   switch (transaction.type) {
     case 'TRANSFER':
@@ -144,18 +149,34 @@ async function checkBalances(nodeProvider: NodeProvider, address: string, transa
       const tokenDecimals = tokenInfo?.decimals ?? 0
       const expectedStr = prettifyTokenAmount(amount.toBigInt(), tokenDecimals)
       const haveStr = prettifyTokenAmount((tokenBalance ?? zero).toBigInt(), tokenDecimals)
-      throw new Error(`Insufficient token ${tokenSymbol}, expected at least ${expectedStr}, got ${haveStr}`)
+      return `Insufficient token ${tokenSymbol}, expected at least ${expectedStr}, got ${haveStr}`
     }
   }
+  return undefined
 }
 
-async function buildTransaction(
+async function tryBuildTransaction(
   nodeUrl: string,
   account: Account,
   transaction: TransactionParams
 ): Promise<ReviewTransactionResult> {
   const builder = TransactionBuilder.from(nodeUrl)
-  await checkBalances(builder.nodeProvider, account.address, transaction, account.networkId)
+  try {
+    return await buildTransaction(builder, account, transaction)
+  } catch (error) {
+    const errMsg = await checkBalances(builder.nodeProvider, account.address, transaction, account.networkId)
+    if (errMsg !== undefined) {
+      throw new Error(errMsg)
+    }
+    throw error
+  }
+}
+
+async function buildTransaction(
+  builder: TransactionBuilder,
+  account: Account,
+  transaction: TransactionParams
+): Promise<ReviewTransactionResult> {
   switch (transaction.type) {
     case "TRANSFER":
       return {
@@ -227,7 +248,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       }
 
       try {
-        const buildResult = await buildTransaction(
+        const buildResult = await tryBuildTransaction(
           nodeUrl,
           selectedAccount,
           transaction
