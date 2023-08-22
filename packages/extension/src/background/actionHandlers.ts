@@ -101,7 +101,7 @@ export const handleActionApproval = async (
       } catch (error) {
         return {
           type: 'SIGNATURE_FAILURE',
-          data: { actionHash }
+          data: { actionHash, error: `${error}` }
         }
       }
     }

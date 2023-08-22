@@ -214,12 +214,26 @@ export const ActionScreen: FC = () => {
           onSubmit={async () => {
             await approveAction(action)
             useAppState.setState({ isLoading: true })
-            await waitForMessage(
-              'ALPH_SIGN_UNSIGNED_TX_RES',
-              ({ data }) => data.actionHash === action.meta.hash,
-            )
-            closePopupIfLastAction()
-            useAppState.setState({ isLoading: false })
+            const result = await Promise.race([
+              waitForMessage(
+                'ALPH_SIGN_UNSIGNED_TX_RES',
+                ({ data }) => data.actionHash === action.meta.hash,
+              ),
+              waitForMessage(
+                'SIGNATURE_FAILURE',
+                ({ data }) => data.actionHash === action.meta.hash,
+              ),
+            ])
+            if ("error" in result) {
+              useAppState.setState({
+                error: `Sign unsigned tx failed: ${result.error}`,
+                isLoading: false,
+              })
+              navigate(routes.error())
+            } else {
+              closePopupIfLastAction()
+              useAppState.setState({ isLoading: false })
+            }
           }}
           onReject={onReject}
           selectedAccount={signerAccount}

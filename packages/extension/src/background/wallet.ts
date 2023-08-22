@@ -114,7 +114,7 @@ export class Wallet {
     params: SignUnsignedTxParams
   ): Promise<SignUnsignedTxResult> {
     const signer = await this.getPrivateKeySigner(account)
-    return signer.signUnsignedTx(params)
+    return await signer.signUnsignedTx(params)
   }
 
   public async getPrivateKeySigner(account: WalletAccount): Promise<PrivateKeyWallet> {

@@ -22,7 +22,7 @@ export type ActionMessage =
   | { type: "ALPH_SIGN_RES"; data: { actionHash: string } }
   | { type: "ALPH_SIGN_UNSIGNED_TX"; data: SignUnsignedTxParams & { networkId?: string, host: string } }
   | { type: "ALPH_SIGN_UNSIGNED_TX_RES"; data: { result: SignUnsignedTxResult; actionHash: string } }
-  | { type: "SIGNATURE_FAILURE"; data: { actionHash: string } }
+  | { type: "SIGNATURE_FAILURE"; data: { actionHash: string, error?: string } }
   | {
       type: "SIGNATURE_SUCCESS"
       data: { signature: string; actionHash: string }
