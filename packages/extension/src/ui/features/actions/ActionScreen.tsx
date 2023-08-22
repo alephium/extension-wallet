@@ -18,6 +18,7 @@ import { useActions } from "./actions.state"
 import { AddNetworkScreen } from "./AddNetworkScreen"
 import { AddTokenScreen } from "./AddTokenScreen"
 import { ApproveSignatureScreen } from "./ApproveSignatureScreen"
+import { ApproveSignUnsignedTxScreen } from "./ApproveSignUnsignedTxScreen"
 import { ApproveTransactionScreen } from "./ApproveTransactionScreen"
 import { ConnectDappScreen } from "./connectDapp/ConnectDappScreen"
 
@@ -31,7 +32,7 @@ export const ActionScreen: FC = () => {
   const isLastAction = actions.length === 1
   const signerAccount = useAccount(action.type === 'TRANSACTION' && selectedAccount
     ? { address: action.payload.params.signerAddress, networkId: action.payload.params.networkId ?? selectedAccount.networkId }
-    : action.type === 'SIGN' && selectedAccount
+    : (action.type === 'SIGN' || action.type === 'SIGN_UNSIGNED_TX') && selectedAccount
       ? { address: action.payload.signerAddress, networkId: action.payload.networkId ?? selectedAccount.networkId }
       : undefined
   )
@@ -198,6 +199,25 @@ export const ActionScreen: FC = () => {
             await analytics.track("signedMessage", {
               networkId: selectedAccount?.networkId || "unknown",
             })
+            closePopupIfLastAction()
+            useAppState.setState({ isLoading: false })
+          }}
+          onReject={onReject}
+          selectedAccount={signerAccount}
+        />
+      )
+
+    case 'SIGN_UNSIGNED_TX':
+      return (
+        <ApproveSignUnsignedTxScreen
+          params={action.payload}
+          onSubmit={async () => {
+            await approveAction(action)
+            useAppState.setState({ isLoading: true })
+            await waitForMessage(
+              'ALPH_SIGN_UNSIGNED_TX_RES',
+              ({ data }) => data.actionHash === action.meta.hash,
+            )
             closePopupIfLastAction()
             useAppState.setState({ isLoading: false })
           }}

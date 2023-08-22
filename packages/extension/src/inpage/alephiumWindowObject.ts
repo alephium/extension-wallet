@@ -174,8 +174,40 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     return { ...result, signature: 'Unsupported' }
   }
 
-  signUnsignedTx = async (_params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
-    throw Error('Coming soon')
+  signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
+    this.#checkParams(params)
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    sendMessage({ type: 'ALPH_SIGN_UNSIGNED_TX', data: { ...params, networkId: this.connectedNetworkId, host: window.location.host } })
+    const { actionHash } = await waitForMessage("ALPH_SIGN_RES", USER_ACTION_TIMEOUT)
+
+    sendMessage({ type: "ALPH_OPEN_UI" })
+
+    const result = await Promise.race([
+      waitForMessage(
+        'ALPH_SIGN_UNSIGNED_TX_RES',
+        USER_ACTION_TIMEOUT_LONGER,
+      ),
+      waitForMessage(
+        "SIGNATURE_FAILURE",
+        USER_ACTION_TIMEOUT,
+        (x) => x.data.actionHash === actionHash,
+      )
+        .then(() => "error" as const)
+        .catch(() => {
+          sendMessage({ type: "SIGNATURE_FAILURE", data: { actionHash } })
+          return "timeout" as const
+        }),
+    ])
+
+    if (result === "error") {
+      throw Error("User abort")
+    }
+    if (result === "timeout") {
+      throw Error("User action timed out")
+    }
+
+    return result.result
   }
 
   signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
@@ -187,7 +219,7 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     sendMessage({ type: "ALPH_SIGN_MESSAGE", data: { ...params, networkId: this.connectedNetworkId, host: window.location.host } })
-    const { actionHash } = await waitForMessage("ALPH_SIGN_MESSAGE_RES", USER_ACTION_TIMEOUT)
+    const { actionHash } = await waitForMessage("ALPH_SIGN_RES", USER_ACTION_TIMEOUT)
 
     const resultP = Promise.race([
       waitForMessage(

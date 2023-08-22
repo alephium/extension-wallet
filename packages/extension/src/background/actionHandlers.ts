@@ -85,6 +85,27 @@ export const handleActionApproval = async (
       }
     }
 
+    case 'SIGN_UNSIGNED_TX': {
+      try {
+        const account = await wallet.getAccount({ address: action.payload.signerAddress, networkId: action.payload.networkId })
+        if (!account) {
+          throw Error("No selected account")
+        }
+
+        const result = await wallet.signUnsignedTx(account, action.payload)
+
+        return {
+          type: 'ALPH_SIGN_UNSIGNED_TX_RES',
+          data: { actionHash, result }
+        }
+      } catch (error) {
+        return {
+          type: 'SIGNATURE_FAILURE',
+          data: { actionHash }
+        }
+      }
+    }
+
     case "REQUEST_ADD_TOKEN": {
       return {
         type: "APPROVE_REQUEST_ADD_TOKEN",
@@ -185,6 +206,13 @@ export const handleActionRejection = async (
     }
 
     case "SIGN": {
+      return {
+        type: "SIGNATURE_FAILURE",
+        data: { actionHash },
+      }
+    }
+
+    case "SIGN_UNSIGNED_TX": {
       return {
         type: "SIGNATURE_FAILURE",
         data: { actionHash },

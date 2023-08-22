@@ -1,7 +1,7 @@
 import type { typedData } from "starknet"
 
 import { ExtensionActionItem, TransactionResult } from "../actionQueue/types"
-import { SignMessageParams } from "@alephium/web3"
+import { SignMessageParams, SignUnsignedTxParams, SignUnsignedTxResult } from "@alephium/web3"
 
 export type ActionMessage =
   | { type: "GET_ACTIONS" }
@@ -19,7 +19,9 @@ export type ActionMessage =
     }
   | { type: "REJECT_ACTION"; data: { actionHash: string | string[] } }
   | { type: "ALPH_SIGN_MESSAGE"; data: SignMessageParams & { networkId?: string, host: string } }
-  | { type: "ALPH_SIGN_MESSAGE_RES"; data: { actionHash: string } }
+  | { type: "ALPH_SIGN_RES"; data: { actionHash: string } }
+  | { type: "ALPH_SIGN_UNSIGNED_TX"; data: SignUnsignedTxParams & { networkId?: string, host: string } }
+  | { type: "ALPH_SIGN_UNSIGNED_TX_RES"; data: { result: SignUnsignedTxResult; actionHash: string } }
   | { type: "SIGNATURE_FAILURE"; data: { actionHash: string } }
   | {
       type: "SIGNATURE_SUCCESS"

@@ -63,10 +63,24 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
       })
 
       return await respond({
-        type: "ALPH_SIGN_MESSAGE_RES",
+        type: "ALPH_SIGN_RES",
         data: {
           actionHash: meta.hash,
         },
+      })
+    }
+
+    case "ALPH_SIGN_UNSIGNED_TX": {
+      const { meta } = await actionQueue.push({
+        type: 'SIGN_UNSIGNED_TX',
+        payload: msg.data
+      })
+
+      return await respond({
+        type: 'ALPH_SIGN_RES',
+        data: {
+          actionHash: meta.hash
+        }
       })
     }
 
