@@ -1,4 +1,4 @@
-import { SignUnsignedTxParams } from "@alephium/web3"
+import { binToHex, hexToBinUnsafe, SignUnsignedTxParams } from "@alephium/web3"
 import { H6, H2, P4, CopyTooltip } from "@argent/ui"
 import { FC } from "react"
 
@@ -6,6 +6,8 @@ import { ConfirmPageProps } from "./DeprecatedConfirmScreen"
 import { Box, Flex, VStack } from "@chakra-ui/react"
 import { ConfirmScreen } from "./ConfirmScreen"
 import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
+import blake from 'blakejs'
+import { TxHashContainer } from "./TxHashContainer"
 
 interface ApproveSignUnsignedTxScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
@@ -19,6 +21,7 @@ export const ApproveSignUnsignedTxScreen: FC<ApproveSignUnsignedTxScreenProps> =
   selectedAccount,
   ...props
 }) => {
+  const txId = binToHex(blake.blake2b(hexToBinUnsafe(params.unsignedTx), undefined, 32))
   return (
     <ConfirmScreen
       confirmButtonText="Sign"
@@ -47,6 +50,7 @@ export const ApproveSignUnsignedTxScreen: FC<ApproveSignUnsignedTxScreenProps> =
       { selectedAccount &&
         <AccountNetworkInfo account={selectedAccount}/>
       }
+      <TxHashContainer txId={txId}/>
       {
         <VStack
           borderRadius="xl"

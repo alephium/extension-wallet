@@ -5,6 +5,7 @@ import {
   Address,
   ExplorerProvider,
   groupOfAddress,
+  isHexString,
   KeyType,
   NetworkId,
   networkIds,
@@ -176,6 +177,10 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
 
   signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
     this.#checkParams(params)
+
+    if (!isHexString(params.unsignedTx)) {
+      throw new Error('Invalid unsigned tx')
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     sendMessage({ type: 'ALPH_SIGN_UNSIGNED_TX', data: { ...params, networkId: this.connectedNetworkId, host: window.location.host } })

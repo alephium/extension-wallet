@@ -6,7 +6,6 @@ import { Flex, Text } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
-import styled from "styled-components"
 
 import {
   ReviewTransactionResult,
@@ -27,20 +26,9 @@ import { LoadingScreen } from "./LoadingScreen"
 import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import { DappHeader } from "./transaction/DappHeader"
 import { TransactionsList } from "./transaction/TransactionsList"
+import { TxHashContainer } from "./TxHashContainer"
 
 const { AlertIcon } = icons
-
-const TxHashContainer = styled.div`
-  margin-top: 1px;
-  background: ${({ theme }) => theme.neutrals800};
-  border: 1px solid ${({ theme }) => theme.bg2};
-  color: ${({ theme }) => theme.text4};
-  padding: 9px 13px 8px;
-  overflow-wrap: break-word;
-  font-size: 14px;
-  line-height: 120%;
-  border-radius: 5px;
-`
 
 const LedgerStatus = ({ledgerState}: {ledgerState: string | undefined}): JSX.Element => (
   ledgerState === "notfound" ?
@@ -284,20 +272,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
       <TransactionsList networkId={networkId} transactionReview={buildResult} />
       <AccountNetworkInfo account={selectedAccount} />
-      <CopyTooltip copyValue={buildResult.result.txId} message="Copied">
-        <TxHashContainer>{`TxHash: ${splitTxHash(
-          buildResult.result.txId,
-        )}`}</TxHashContainer>
-      </CopyTooltip>
+      <TxHashContainer txId={buildResult.result.txId}></TxHashContainer>
     </ConfirmScreen>
   )
-}
-
-// write a function that split a txHash into segments with each segment having 16 character
-function splitTxHash(txHash: string) {
-  const chunks = []
-  for (let i = 0; i < txHash.length; i += 16) {
-    chunks.push(txHash.slice(i, i + 16))
-  }
-  return chunks.join(" ")
 }
