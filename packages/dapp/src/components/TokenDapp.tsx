@@ -13,9 +13,10 @@ import {
   addToken,
   getExplorerBaseUrl,
   signMessage,
+  signUnsignedTx,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
-import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3, MessageHasher, prettifyAttoAlphAmount } from "@alephium/web3"
+import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3, MessageHasher, prettifyAttoAlphAmount, isHexString } from "@alephium/web3"
 
 type Status = "idle" | "approve" | "pending" | "success" | "failure"
 
@@ -27,6 +28,8 @@ export const TokenDapp: FC<{
   const [transferAmount, setTransferAmount] = useState("")
   const [shortText, setShortText] = useState("")
   const [messageHasher, setMessageHasher] = useState<MessageHasher>("alephium")
+  const [unsignedTx, setUnsignedTx] = useState("")
+  const [txSignature, setTxSignature] = useState("")
   const [lastSig, setLastSig] = useState<string>()
   const [lastTransactionHash, setLastTransactionHash] = useState("")
   const [transactionStatus, setTransactionStatus] = useState<Status>("idle")
@@ -205,6 +208,26 @@ export const TokenDapp: FC<{
       console.log(result)
 
       setLastSig(result.signature)
+      setTransactionStatus("success")
+    } catch (e) {
+      console.error(e)
+      setTransactionStatus("idle")
+    }
+  }
+
+  const handleSignUnsignedTxSubmit = async (e: React.FormEvent) => {
+    try {
+      if (unsignedTx === '' || !isHexString(unsignedTx)) {
+        throw new Error(`Invalid unsigned tx, expect a hex string`)
+      }
+      e.preventDefault()
+      setTransactionStatus("approve")
+
+      console.log("sign unsigned tx", unsignedTx)
+      const result = await signUnsignedTx(unsignedTx)
+      console.log(result)
+
+      setTxSignature(result.signature)
       setTransactionStatus("success")
     } catch (e) {
       console.error(e)
@@ -411,6 +434,37 @@ export const TokenDapp: FC<{
             id="signature"
             name="signature"
             value={lastSig}
+            readOnly
+          />
+        </form>
+      </div>
+      <div className="columns">
+        <form onSubmit={handleSignUnsignedTxSubmit}>
+          <h2 className={styles.title}>Sign Unsigned Tx</h2>
+
+          <div className="columns">
+            <label htmlFor="short-text">Unsigned Tx</label>
+            <input
+              type="text"
+              id="short-text"
+              name="short-text"
+              value={unsignedTx}
+              onChange={(e) => setUnsignedTx(e.target.value)}
+            />
+          </div>
+
+          <input type="submit" value="Sign" />
+        </form>
+        <form>
+          <h2 className={styles.title}>Sign results</h2>
+
+          {/* Label and textarea for value r */}
+          <label htmlFor="r">Signature</label>
+          <textarea
+            className={styles.textarea}
+            id="signature"
+            name="signature"
+            value={txSignature}
             readOnly
           />
         </form>
