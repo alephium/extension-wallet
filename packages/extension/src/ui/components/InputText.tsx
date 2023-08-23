@@ -310,7 +310,10 @@ export const TextAreaAlt = styled(TextareaAutosize)`
   ${InputCssAlt}
   resize: none;
   width: 100%;
-  ${scrollbarStyle}
+  ${scrollbarStyle};
+  &::placeholder {
+    color: ${({ theme }) => theme.text2};
+  }
 `
 
 export type InputTextAreaProps = Omit<TextareaAutosizeProps, "ref" | "as">
