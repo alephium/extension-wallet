@@ -109,8 +109,12 @@ export type ActionItem =
       payload: TransactionParams
     }
   | {
-      type: "SIGN"
+      type: "SIGN_MESSAGE"
       payload: SignMessageParams & { networkId?: string, host: string }
+    }
+  | {
+      type: "SIGN_UNSIGNED_TX"
+      payload: SignUnsignedTxParams & { networkId?: string, host: string }
     }
   | {
       type: "REQUEST_ADD_TOKEN"
