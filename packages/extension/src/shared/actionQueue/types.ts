@@ -109,7 +109,7 @@ export type ActionItem =
       payload: TransactionParams
     }
   | {
-      type: "SIGN"
+      type: "SIGN_MESSAGE"
       payload: SignMessageParams & { networkId?: string, host: string }
     }
   | {

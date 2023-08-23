@@ -32,7 +32,7 @@ export const ActionScreen: FC = () => {
   const isLastAction = actions.length === 1
   const signerAccount = useAccount(action.type === 'TRANSACTION' && selectedAccount
     ? { address: action.payload.params.signerAddress, networkId: action.payload.params.networkId ?? selectedAccount.networkId }
-    : (action.type === 'SIGN' || action.type === 'SIGN_UNSIGNED_TX') && selectedAccount
+    : (action.type === 'SIGN_MESSAGE' || action.type === 'SIGN_UNSIGNED_TX') && selectedAccount
       ? { address: action.payload.signerAddress, networkId: action.payload.networkId ?? selectedAccount.networkId }
       : undefined
   )
@@ -185,7 +185,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "SIGN":
+    case "SIGN_MESSAGE":
       return (
         <ApproveSignatureScreen
           dataToSign={action.payload}
@@ -193,7 +193,7 @@ export const ActionScreen: FC = () => {
             await approveAction(action)
             useAppState.setState({ isLoading: true })
             await waitForMessage(
-              "SIGNATURE_SUCCESS",
+              "ALPH_SIGN_MESSAGE_SUCCESS",
               ({ data }) => data.actionHash === action.meta.hash,
             )
             await analytics.track("signedMessage", {
@@ -216,11 +216,11 @@ export const ActionScreen: FC = () => {
             useAppState.setState({ isLoading: true })
             const result = await Promise.race([
               waitForMessage(
-                'ALPH_SIGN_UNSIGNED_TX_RES',
+                'ALPH_SIGN_UNSIGNED_TX_SUCCESS',
                 ({ data }) => data.actionHash === action.meta.hash,
               ),
               waitForMessage(
-                'SIGNATURE_FAILURE',
+                'ALPH_SIGN_UNSIGNED_TX_FAILURE',
                 ({ data }) => data.actionHash === action.meta.hash,
               ),
             ])
