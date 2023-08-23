@@ -5,6 +5,7 @@ import {
   Address,
   ExplorerProvider,
   groupOfAddress,
+  isHexString,
   KeyType,
   NetworkId,
   networkIds,
@@ -174,8 +175,44 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     return { ...result, signature: 'Unsupported' }
   }
 
-  signUnsignedTx = async (_params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
-    throw Error('Coming soon')
+  signUnsignedTx = async (params: SignUnsignedTxParams): Promise<SignUnsignedTxResult> => {
+    this.#checkParams(params)
+
+    if (!isHexString(params.unsignedTx)) {
+      throw new Error('Invalid unsigned tx')
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    sendMessage({ type: 'ALPH_SIGN_UNSIGNED_TX', data: { ...params, networkId: this.connectedNetworkId, host: window.location.host } })
+    const { actionHash } = await waitForMessage("ALPH_SIGN_UNSIGNED_TX_RES", USER_ACTION_TIMEOUT)
+
+    sendMessage({ type: "ALPH_OPEN_UI" })
+
+    const result = await Promise.race([
+      waitForMessage(
+        'ALPH_SIGN_UNSIGNED_TX_SUCCESS',
+        USER_ACTION_TIMEOUT_LONGER,
+      ),
+      waitForMessage(
+        "ALPH_SIGN_UNSIGNED_TX_FAILURE",
+        USER_ACTION_TIMEOUT,
+        (x) => x.data.actionHash === actionHash,
+      )
+        .then(() => "error" as const)
+        .catch(() => {
+          sendMessage({ type: "ALPH_SIGN_UNSIGNED_TX_FAILURE", data: { actionHash } })
+          return "timeout" as const
+        }),
+    ])
+
+    if (result === "error") {
+      throw Error("User abort")
+    }
+    if (result === "timeout") {
+      throw Error("User action timed out")
+    }
+
+    return result.result
   }
 
   signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
@@ -191,17 +228,17 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
 
     const resultP = Promise.race([
       waitForMessage(
-        "SIGNATURE_SUCCESS",
+        "ALPH_SIGN_MESSAGE_SUCCESS",
         USER_ACTION_TIMEOUT_LONGER,
       ),
       waitForMessage(
-        "SIGNATURE_FAILURE",
+        "ALPH_SIGN_MESSAGE_FAILURE",
         USER_ACTION_TIMEOUT,
         (x) => x.data.actionHash === actionHash,
       )
         .then(() => "error" as const)
         .catch(() => {
-          sendMessage({ type: "SIGNATURE_FAILURE", data: { actionHash } })
+          sendMessage({ type: "ALPH_SIGN_MESSAGE_FAILURE", data: { actionHash } })
           return "timeout" as const
         }),
     ])

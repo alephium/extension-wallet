@@ -58,7 +58,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
 
     case "ALPH_SIGN_MESSAGE": {
       const { meta } = await actionQueue.push({
-        type: "SIGN",
+        type: "SIGN_MESSAGE",
         payload: msg.data,
       })
 
@@ -70,7 +70,25 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
       })
     }
 
-    case "SIGNATURE_FAILURE": {
+    case "ALPH_SIGN_UNSIGNED_TX": {
+      const { meta } = await actionQueue.push({
+        type: 'SIGN_UNSIGNED_TX',
+        payload: msg.data
+      })
+
+      return await respond({
+        type: 'ALPH_SIGN_UNSIGNED_TX_RES',
+        data: {
+          actionHash: meta.hash
+        }
+      })
+    }
+
+    case "ALPH_SIGN_MESSAGE_FAILURE": {
+      return await actionQueue.remove(msg.data.actionHash)
+    }
+
+    case "ALPH_SIGN_UNSIGNED_TX_FAILURE": {
       return await actionQueue.remove(msg.data.actionHash)
     }
   }

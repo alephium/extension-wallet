@@ -31,7 +31,7 @@ export const notifyAboutCompletedTransactions: TransactionUpdateListener =
         if (!account.hidden) {
           await decrementTransactionsBeforeReview()
           // Make sure the id is different for mempol tx and onchain tx
-          sentTransactionNotification(hash + (status === "ACCEPTED_ON_CHAIN" ? ' ' : ''), status, meta)
+          sentTransactionNotification(hash + (status === "ACCEPTED_ON_CHAIN" ? ' ' : ''), status, account.networkId, meta)
         }
       }
     }

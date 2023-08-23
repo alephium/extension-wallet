@@ -18,6 +18,7 @@ import { useActions } from "./actions.state"
 import { AddNetworkScreen } from "./AddNetworkScreen"
 import { AddTokenScreen } from "./AddTokenScreen"
 import { ApproveSignatureScreen } from "./ApproveSignatureScreen"
+import { ApproveSignUnsignedTxScreen } from "./ApproveSignUnsignedTxScreen"
 import { ApproveTransactionScreen } from "./ApproveTransactionScreen"
 import { ConnectDappScreen } from "./connectDapp/ConnectDappScreen"
 
@@ -31,7 +32,7 @@ export const ActionScreen: FC = () => {
   const isLastAction = actions.length === 1
   const signerAccount = useAccount(action.type === 'TRANSACTION' && selectedAccount
     ? { address: action.payload.params.signerAddress, networkId: action.payload.params.networkId ?? selectedAccount.networkId }
-    : action.type === 'SIGN' && selectedAccount
+    : (action.type === 'SIGN_MESSAGE' || action.type === 'SIGN_UNSIGNED_TX') && selectedAccount
       ? { address: action.payload.signerAddress, networkId: action.payload.networkId ?? selectedAccount.networkId }
       : undefined
   )
@@ -184,7 +185,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "SIGN":
+    case "SIGN_MESSAGE":
       return (
         <ApproveSignatureScreen
           dataToSign={action.payload}
@@ -192,7 +193,7 @@ export const ActionScreen: FC = () => {
             await approveAction(action)
             useAppState.setState({ isLoading: true })
             await waitForMessage(
-              "SIGNATURE_SUCCESS",
+              "ALPH_SIGN_MESSAGE_SUCCESS",
               ({ data }) => data.actionHash === action.meta.hash,
             )
             await analytics.track("signedMessage", {
@@ -200,6 +201,39 @@ export const ActionScreen: FC = () => {
             })
             closePopupIfLastAction()
             useAppState.setState({ isLoading: false })
+          }}
+          onReject={onReject}
+          selectedAccount={signerAccount}
+        />
+      )
+
+    case 'SIGN_UNSIGNED_TX':
+      return (
+        <ApproveSignUnsignedTxScreen
+          params={action.payload}
+          onSubmit={async () => {
+            await approveAction(action)
+            useAppState.setState({ isLoading: true })
+            const result = await Promise.race([
+              waitForMessage(
+                'ALPH_SIGN_UNSIGNED_TX_SUCCESS',
+                ({ data }) => data.actionHash === action.meta.hash,
+              ),
+              waitForMessage(
+                'ALPH_SIGN_UNSIGNED_TX_FAILURE',
+                ({ data }) => data.actionHash === action.meta.hash,
+              ),
+            ])
+            if ("error" in result) {
+              useAppState.setState({
+                error: `Sign unsigned tx failed: ${result.error}`,
+                isLoading: false,
+              })
+              navigate(routes.error())
+            } else {
+              closePopupIfLastAction()
+              useAppState.setState({ isLoading: false })
+            }
           }}
           onReject={onReject}
           selectedAccount={signerAccount}

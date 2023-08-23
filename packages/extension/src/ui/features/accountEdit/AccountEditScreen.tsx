@@ -30,6 +30,7 @@ import { getNetworkAccountImageUrl } from "../accounts/accounts.service"
 import { useAccount } from "../accounts/accounts.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { AccountEditName } from "./AccountEditName"
+import { Button, CopyTooltip } from "@argent/ui"
 
 const { ExpandIcon, HideIcon, PluginIcon, AlertIcon, CopyIcon } = icons
 
@@ -130,6 +131,18 @@ export const AccountEditScreen: FC = () => {
             >
               <AddressCopyButton address={accountAddress} />
             </Center>
+            { account !== undefined &&
+              <Center
+                border={"1px solid"}
+                borderColor={"border"}
+                borderTop={"none"}
+                borderBottomLeftRadius="lg"
+                borderBottomRightRadius="lg"
+                p={2}
+              >
+                <PublicKeyCopyButton publicKey={account.publicKey}/>
+              </Center>
+            }
             { account !== undefined && account.signer.keyType === "bip340-schnorr" &&
               <Center
                 border={"1px solid"}
@@ -170,4 +183,25 @@ export const AccountEditScreen: FC = () => {
       </NavigationContainer>
     </>
   )
+}
+
+const PublicKeyCopyButton: FC<{ publicKey: string }> = ({ publicKey }) => {
+  return (
+    <CopyTooltip prompt={'Click to copy public key'} copyValue={publicKey}>
+      <Button
+        size="3xs"
+        color={"white50"}
+        bg={"transparent"}
+        _hover={{ bg: "neutrals.700", color: "text" }}
+      >
+        {`Public Key: ${shortPublicKey(publicKey)}`}
+      </Button>
+    </CopyTooltip>
+  )
+}
+
+const shortPublicKey = (publicKey: string) => {
+  const start = publicKey.slice(0, 6)
+  const end = publicKey.slice(-6)
+  return `${start}...${end}`
 }
