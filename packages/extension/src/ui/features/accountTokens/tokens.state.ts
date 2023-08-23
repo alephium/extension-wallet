@@ -94,7 +94,7 @@ export const useToken = (baseToken: BaseToken): Token | undefined => {
 
   const tokenFromTokenList = tokenListTokens.tokens.find((t) => equalToken(t, baseToken))
   if (tokenFromTokenList) {
-    return tokenFromTokenList
+    return { ...tokenFromTokenList, verified: true }
   }
 
   if (token === undefined && baseToken.networkId === 'devnet') {

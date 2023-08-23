@@ -43,15 +43,20 @@ export async function addToken(token: Token, verified: boolean) {
 }
 
 export async function hasToken(token: BaseToken) {
+  const result = await getToken(token)
+  return Boolean(result)
+}
+
+export async function getToken(token: BaseToken) {
   await assertSchema(baseTokenSchema, token)
   const tokenList = await getTokenList()
   const tokenListHit = tokenList.find((t) => equalToken(t, token))
   if (tokenListHit) {
-    return Boolean(tokenListHit)
+    return tokenListHit
   }
 
   const [hit] = await tokenStore.get((t) => equalToken(t, token))
-  return Boolean(hit)
+  return hit
 }
 
 export async function removeToken(token: BaseToken) {
