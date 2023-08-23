@@ -22,7 +22,6 @@ export const TxHashContainer: FC<{ txId: string }> = ({ txId }) => {
   )
 }
 
-// write a function that split a txHash into segments with each segment having 16 character
 function splitTxHash(txHash: string) {
   const chunks = []
   for (let i = 0; i < txHash.length; i += 16) {
