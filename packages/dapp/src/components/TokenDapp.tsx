@@ -217,9 +217,6 @@ export const TokenDapp: FC<{
 
   const handleSignUnsignedTxSubmit = async (e: React.FormEvent) => {
     try {
-      if (unsignedTx === '' || !isHexString(unsignedTx)) {
-        throw new Error(`Invalid unsigned tx, expect a hex string`)
-      }
       e.preventDefault()
       setTransactionStatus("approve")
 
