@@ -21,7 +21,7 @@ export const AddressCopyButton: FC<AddressCopyButtonProps> = ({ address, type, t
         bg={"transparent"}
         _hover={{ bg: "neutrals.700", color: "text" }}
       >
-        {`${title ?? "Address"}: ${formatTruncatedAddress(address)}`}
+        {`${title ?? "Address"}: ${formatTruncatedAddress(address, 6)}`}
       </Button>
     </CopyTooltip>
   )

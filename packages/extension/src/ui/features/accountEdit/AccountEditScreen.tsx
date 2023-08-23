@@ -201,7 +201,7 @@ const PublicKeyCopyButton: FC<{ publicKey: string }> = ({ publicKey }) => {
 }
 
 const shortPublicKey = (publicKey: string) => {
-  const start = publicKey.slice(0, 4)
-  const end = publicKey.slice(-4)
+  const start = publicKey.slice(0, 6)
+  const end = publicKey.slice(-6)
   return `${start}...${end}`
 }
