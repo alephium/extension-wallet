@@ -36,11 +36,11 @@ export type TransactionMessage =
   | { type: "ALPH_EXECUTE_TRANSACTION_RES"; data: { actionHash: string } }
   | { type: "TRANSACTION_UPDATES"; data: Transaction[] }
   | {
-      type: "TRANSACTION_SUBMITTED"
+      type: "ALPH_TRANSACTION_SUBMITTED"
       data: { result: ReviewTransactionResult["result"]; actionHash: string }
     }
   | {
-      type: "TRANSACTION_FAILED"
+      type: "ALPH_TRANSACTION_FAILED"
       data: { actionHash: string; error?: string }
     }
   | { type: "ESTIMATE_TRANSACTION_FEE"; data: Call | Call[] }
