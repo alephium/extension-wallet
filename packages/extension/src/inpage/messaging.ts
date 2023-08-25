@@ -5,10 +5,10 @@ import { RequestOptions } from "./inpage.model"
 export const getIsPreauthorized = async (options: RequestOptions) => {
   try {
     sendMessage({
-      type: "IS_PREAUTHORIZED",
+      type: "ALPH_IS_PREAUTHORIZED",
       data: options,
     })
-    const isPreauthorized = await waitForMessage("IS_PREAUTHORIZED_RES", 1000)
+    const isPreauthorized = await waitForMessage("ALPH_IS_PREAUTHORIZED_RES", 1000)
     return isPreauthorized
   } catch (e) {
     // ignore timeout or other error
@@ -19,10 +19,10 @@ export const getIsPreauthorized = async (options: RequestOptions) => {
 export const removePreAuthorization = async () => {
   try {
     sendMessage({
-      type: "REMOVE_PREAUTHORIZATION",
+      type: "ALPH_REMOVE_PREAUTHORIZATION",
       data: window.location.host,
     })
-    await waitForMessage("REMOVE_PREAUTHORIZATION_RES", 1000)
+    await waitForMessage("ALPH_REMOVE_PREAUTHORIZATION_RES", 1000)
   } catch (e) {
     console.error("Remove pre authorization failed", e)
   }

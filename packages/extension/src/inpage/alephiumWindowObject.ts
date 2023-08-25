@@ -83,8 +83,8 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
     this.#checkTabFocused()
 
     const walletAccountP = Promise.race([
-      waitForMessage("CONNECT_DAPP_RES", USER_ACTION_TIMEOUT),
-      waitForMessage("REJECT_PREAUTHORIZATION", USER_ACTION_TIMEOUT).then(
+      waitForMessage("ALPH_CONNECT_DAPP_RES", USER_ACTION_TIMEOUT),
+      waitForMessage("ALPH_REJECT_PREAUTHORIZATION", USER_ACTION_TIMEOUT).then(
         () => "USER_ABORTED" as const,
       ),
     ])
@@ -300,18 +300,18 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
 
     const result = await Promise.race([
       waitForMessage(
-        "TRANSACTION_SUBMITTED",
+        "ALPH_TRANSACTION_SUBMITTED",
         USER_ACTION_TIMEOUT_LONGER,
         (x) => x.data.actionHash === actionHash,
       ),
       waitForMessage(
-        "TRANSACTION_FAILED",
+        "ALPH_TRANSACTION_FAILED",
         USER_ACTION_TIMEOUT,
         (x) => x.data.actionHash === actionHash,
       )
         .then(() => "error" as const)
         .catch(() => {
-          sendMessage({ type: "TRANSACTION_FAILED", data: { actionHash } })
+          sendMessage({ type: "ALPH_TRANSACTION_FAILED", data: { actionHash } })
           return "timeout" as const
         }),
     ])

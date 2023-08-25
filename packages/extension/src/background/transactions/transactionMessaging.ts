@@ -133,7 +133,7 @@ export const handleTransactionMessage: HandleMessage<
       }
     }
 
-    case "TRANSACTION_FAILED": {
+    case "ALPH_TRANSACTION_FAILED": {
       return await actionQueue.remove(msg.data.actionHash)
     }
   }

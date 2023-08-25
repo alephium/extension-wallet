@@ -41,7 +41,7 @@ export const handleActionApproval = async (
       await preAuthorize(selectedAccount, host)
 
       const walletAccountWithNetwork = await withNetwork(selectedAccount)
-      return { type: "CONNECT_DAPP_RES", data: walletAccountWithNetwork }
+      return { type: "ALPH_CONNECT_DAPP_RES", data: walletAccountWithNetwork }
     }
 
     case "TRANSACTION": {
@@ -57,12 +57,12 @@ export const handleActionApproval = async (
         await refreshTransactionTrackerUpdateAlarm()
 
         return {
-          type: "TRANSACTION_SUBMITTED",
+          type: "ALPH_TRANSACTION_SUBMITTED",
           data: { result: transaction.result, actionHash },
         }
       } catch (error: unknown) {
         return {
-          type: "TRANSACTION_FAILED",
+          type: "ALPH_TRANSACTION_FAILED",
           data: { actionHash, error: `${error}` },
         }
       }
@@ -190,7 +190,7 @@ export const handleActionRejection = async (
   switch (action.type) {
     case "CONNECT_DAPP": {
       return {
-        type: "REJECT_PREAUTHORIZATION",
+        type: "ALPH_REJECT_PREAUTHORIZATION",
         data: {
           host: action.payload.host,
           actionHash,
@@ -200,7 +200,7 @@ export const handleActionRejection = async (
 
     case "TRANSACTION": {
       return {
-        type: "TRANSACTION_FAILED",
+        type: "ALPH_TRANSACTION_FAILED",
         data: { actionHash },
       }
     }

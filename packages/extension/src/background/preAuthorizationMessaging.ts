@@ -48,7 +48,7 @@ export const handlePreAuthorizationMessage: HandleMessage<
         const authorizedAccount = await wallet.getAccount(authorized.account)
         const walletAccountWithNetwork = await withNetwork(authorizedAccount)
         return respond({
-          type: "CONNECT_DAPP_RES",
+          type: "ALPH_CONNECT_DAPP_RES",
           data: walletAccountWithNetwork,
         })
       }
@@ -56,14 +56,14 @@ export const handlePreAuthorizationMessage: HandleMessage<
       return openUi()
     }
 
-    case "IS_PREAUTHORIZED": {
+    case "ALPH_IS_PREAUTHORIZED": {
       const valid = await isPreAuthorized(msg.data)
-      return respond({ type: "IS_PREAUTHORIZED_RES", data: valid })
+      return respond({ type: "ALPH_IS_PREAUTHORIZED_RES", data: valid })
     }
 
-    case "REMOVE_PREAUTHORIZATION": {
+    case "ALPH_REMOVE_PREAUTHORIZATION": {
       await removePreAuthorization(msg.data)
-      return respond({ type: "REMOVE_PREAUTHORIZATION_RES" })
+      return respond({ type: "ALPH_REMOVE_PREAUTHORIZATION_RES" })
     }
   }
 

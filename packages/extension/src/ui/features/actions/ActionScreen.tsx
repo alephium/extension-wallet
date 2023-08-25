@@ -87,7 +87,7 @@ export const ActionScreen: FC = () => {
               selectAccount(selectedAccount)
               // continue with approval with selected account
               await approveAction(action)
-              await waitForMessage("CONNECT_DAPP_RES")
+              await waitForMessage("ALPH_CONNECT_DAPP_RES")
               useAppState.setState({ isLoading: false })
             }
             closePopupIfLastAction()
@@ -155,11 +155,11 @@ export const ActionScreen: FC = () => {
               useAppState.setState({ isLoading: true })
               const result = await Promise.race([
                 waitForMessage(
-                  "TRANSACTION_SUBMITTED",
+                  "ALPH_TRANSACTION_SUBMITTED",
                   ({ data }) => data.actionHash === action.meta.hash,
                 ),
                 waitForMessage(
-                  "TRANSACTION_FAILED",
+                  "ALPH_TRANSACTION_FAILED",
                   ({ data }) => data.actionHash === action.meta.hash,
                 ),
               ])
