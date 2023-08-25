@@ -28,7 +28,7 @@ export const handlePreAuthorizationMessage: HandleMessage<
         openUi()
         return
       }
-      const authorized = await getPreAuthorized(msg.data.host)
+      const authorized = await getPreAuthorized(msg.data)
 
       if (sender.tab?.id) {
         addTab({
