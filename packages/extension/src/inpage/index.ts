@@ -70,7 +70,7 @@ window.addEventListener(
     }
 
     if (data.type === "DISCONNECT_ACCOUNT") {
-      await (alephium as any)._disconnect()
+      await alephium.disconnect()
     }
   },
 )
