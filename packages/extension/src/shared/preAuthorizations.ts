@@ -1,4 +1,4 @@
-import { groupOfAddress } from "@alephium/web3"
+import { groupOfAddress, KeyType } from "@alephium/web3"
 import { isArray, pick } from "lodash-es"
 import browser from "webextension-polyfill"
 import { RequestOptions } from "../inpage/inpage.model"
@@ -79,8 +79,10 @@ export const getPreAuthorizations = () => {
   return preAuthorizeStore.get()
 }
 
-export const getPreAuthorized = async (host: string) => {
-  const hits = await preAuthorizeStore.get((x) => x.host === host)
+export const getPreAuthorized = async (options: { host: string, networkId?: string, group?: number, keyType?: KeyType }) => {
+  const hits = await preAuthorizeStore.get((x) =>
+    matchAuthorizedOptions(x, options)
+  )
   return hits.length === 0 ? undefined : hits[0]
 }
 

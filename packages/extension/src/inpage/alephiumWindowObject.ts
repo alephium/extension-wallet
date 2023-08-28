@@ -258,15 +258,17 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   }
 
   async disconnect(): Promise<void> {
-    this.#connectedAccount = undefined
-    this.#connectedNetworkId = undefined
-    this.#nodeProvider = undefined
-    this.#explorerProvider = undefined
-    await removePreAuthorization()
-    if (this.onDisconnected !== undefined) {
-      await this.onDisconnected()
+    if (this.#connectedAccount) {
+      this.#connectedAccount = undefined
+      this.#connectedNetworkId = undefined
+      this.#nodeProvider = undefined
+      this.#explorerProvider = undefined
+      await removePreAuthorization()
+      if (this.onDisconnected !== undefined) {
+        await this.onDisconnected()
+      }
+      this.onDisconnected = undefined
     }
-    this.onDisconnected = undefined
   }
 
   #checkTabFocused() {
