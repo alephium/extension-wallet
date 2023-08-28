@@ -1,4 +1,4 @@
-import { difference } from "lodash-es"
+import { differenceWith, isEqual } from "lodash-es"
 
 import { PreAuthorisationMessage } from "../shared/messages/PreAuthorisationMessage"
 import { getPreAuthorized, isPreAuthorized, preAuthorizeStore, removePreAuthorization } from "../shared/preAuthorizations"
@@ -9,7 +9,7 @@ import { HandleMessage } from "./background"
 import { openUi } from "./openUi"
 
 preAuthorizeStore.subscribe(async (_, changeSet) => {
-  const removed = difference(changeSet.oldValue ?? [], changeSet.newValue ?? [])
+  const removed = differenceWith(changeSet.oldValue ?? [], changeSet.newValue ?? [], isEqual)
   for (const preAuthorization of removed) {
     await sendMessageToHost(
       { type: "DISCONNECT_ACCOUNT" },
