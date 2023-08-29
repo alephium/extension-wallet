@@ -6,18 +6,18 @@ import {
   prettifyCurrencyValue,
   prettifyTokenBalance,
 } from "../../../shared/token/price"
+import { TokenWithBalance } from "../../../shared/token/type"
 import { CustomButtonCell } from "../../components/CustomButtonCell"
 import { LoadingPulse } from "../../components/LoadingPulse"
 import { TokenIcon } from "./TokenIcon"
 import { toTokenView } from "./tokens.service"
-import { TokenDetailsWithBalance } from "./tokens.state"
 
 const { AlertIcon } = icons
 
 export type TokenListItemVariant = "default" | "no-currency"
 
 export interface TokenListItemProps extends ComponentProps<typeof Button> {
-  token: TokenDetailsWithBalance
+  token: TokenWithBalance
   variant?: TokenListItemVariant
   isLoading?: boolean
   currencyValue: string | undefined

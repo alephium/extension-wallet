@@ -56,7 +56,7 @@ const PAGE_SIZE = 10
 export const AccountActivityLoader: FC<AccountActivityContainerProps> = ({
   account,
 }) => {
-  const tokens = useFungibleTokens(account)
+  const { tokenDetails: tokens } = useFungibleTokens(account)
 
   const { explorerApiUrl } = useNetwork(account.networkId)
   const { data, setSize } = useAlephiumExplorerAccountTransactionsInfinite(

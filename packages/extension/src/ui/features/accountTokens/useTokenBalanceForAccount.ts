@@ -3,8 +3,8 @@ import { get } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
 import useSWR, { SWRConfiguration } from "swr"
 
-import { getTokenBalanceForAccount } from "../../../shared/token/getTokenBalance"
-import { Token } from "../../../shared/token/type"
+import { getTokenBalanceForAccount } from "../../../shared/token/balance"
+import { Token, TokenWithBalance } from "../../../shared/token/type"
 import { IS_DEV } from "../../../shared/utils/dev"
 import { coerceErrorToString } from "../../../shared/utils/error"
 import { isNumeric } from "../../../shared/utils/number"
@@ -12,7 +12,6 @@ import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { isEqualTokenId } from "../../services/token"
 import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { TokenDetailsWithBalance } from "./tokens.state"
 
 interface UseTokenBalanceForAccountArgs {
   token?: Token
@@ -25,7 +24,7 @@ interface UseTokenBalanceForAccountArgs {
  * Get the individual token balance for the account, using Multicall if available
  * This will automatically mutate when the number of pending transactions decreases
  */
-
+// Look at this
 export const useTokenBalanceForAccount = (
   { token, account, shouldReturnError = false }: UseTokenBalanceForAccountArgs,
   config?: SWRConfiguration,
@@ -35,11 +34,11 @@ export const useTokenBalanceForAccount = (
   const key =
     token && account
       ? [
-          getAccountIdentifier(account),
-          "balanceOf",
-          token.id,
-          token.networkId,
-        ]
+        getAccountIdentifier(account),
+        "balanceOf",
+        token.id,
+        token.networkId,
+      ]
       : null
   const { data, mutate, ...rest } = useSWR<string | TokenBalanceErrorMessage | undefined>(
     key,
@@ -86,7 +85,7 @@ export const useTokenBalanceForAccount = (
         },
       }
     }
-    const tokenWithBalance: TokenDetailsWithBalance = {
+    const tokenWithBalance: TokenWithBalance = {
       ...token,
     }
     let errorMessage: TokenBalanceErrorMessage | undefined

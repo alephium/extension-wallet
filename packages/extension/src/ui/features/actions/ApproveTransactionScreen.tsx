@@ -1,23 +1,23 @@
 import LedgerApp from "@alephium/ledger-app"
-import { ALPH_TOKEN_ID, NodeProvider, ONE_ALPH, prettifyTokenAmount, TransactionBuilder, utils } from "@alephium/web3"
+import { ALPH_TOKEN_ID, ONE_ALPH, prettifyTokenAmount, TransactionBuilder } from "@alephium/web3"
 import { getHDWalletPath } from "@alephium/web3-wallet"
 import { L1, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
-import { BigNumber } from "ethers"
 
 import {
   ReviewTransactionResult,
   TransactionParams,
 } from "../../../shared/actionQueue/types"
+import { BaseTokenWithBalance } from "../../../shared/token/type"
 import { useAppState } from "../../app.state"
-import { CopyTooltip } from "../../components/CopyTooltip"
 import { routes } from "../../routes"
 import { usePageTracking } from "../../services/analytics"
 import { rejectAction } from "../../services/backgroundActions"
 import { Account } from "../accounts/Account"
+import { useAllTokens } from "../accountTokens/tokens.state"
 import { getLedgerApp } from "../ledger/utils"
 import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
@@ -27,31 +27,34 @@ import { LoadingScreen } from "./LoadingScreen"
 import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import { DappHeader } from "./transaction/DappHeader"
 import { TransactionsList } from "./transaction/TransactionsList"
-import { getToken } from "../../../shared/token/storage"
 import { TxHashContainer } from "./TxHashContainer"
+import { getToken } from "../../../shared/token/storage"
+import { BigNumber } from "ethers"
+import { addTokenToBalances } from "../../../shared/token/balance"
 
 const { AlertIcon } = icons
-const minimalGasFee = BigInt(20000) * BigInt(100000000000)
 
-const LedgerStatus = ({ledgerState}: {ledgerState: string | undefined}): JSX.Element => (
+const LedgerStatus = ({ ledgerState }: { ledgerState: string | undefined }): JSX.Element => (
   ledgerState === "notfound" ?
-  <Flex
-    direction="column"
-    backgroundColor="#330105"
-    boxShadow="menu"
-    py="3.5"
-    px="3.5"
-    borderRadius="xl"
-  >
-    <Flex gap="1" align="center">
-      <Text color="errorText">
-        <AlertIcon />
-      </Text>
-      <L1 color="errorText">The ledger app is not connected</L1>
+    <Flex
+      direction="column"
+      backgroundColor="#330105"
+      boxShadow="menu"
+      py="3.5"
+      px="3.5"
+      borderRadius="xl"
+    >
+      <Flex gap="1" align="center">
+        <Text color="errorText">
+          <AlertIcon />
+        </Text>
+        <L1 color="errorText">The ledger app is not connected</L1>
+      </Flex>
     </Flex>
-  </Flex>
-  : <></>
+    : <></>
 )
+
+const minimalGasFee = BigInt(20000) * BigInt(100000000000)
 
 export interface ApproveTransactionScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
@@ -65,85 +68,9 @@ export interface ApproveTransactionScreenProps
   ) => void
 }
 
-function addTokenToBalances(balances: Map<string, BigNumber>, tokenId: string, amount: BigNumber) {
-  const tokenBalance = balances.get(tokenId)
-  if (tokenBalance === undefined) {
-    balances.set(tokenId, amount)
-  } else {
-    balances.set(tokenId, tokenBalance.add(amount))
-  }
-}
-
-async function getBalances(nodeProvider: NodeProvider, address: string): Promise<Map<string, BigNumber>> {
-  const result = await nodeProvider.addresses.getAddressesAddressBalance(address)
-  const balances = new Map<string, BigNumber>()
-  balances.set(ALPH_TOKEN_ID, BigNumber.from(result.balance))
-  if (result.tokenBalances !== undefined) {
-    result.tokenBalances.forEach((token) => addTokenToBalances(balances, token.id, BigNumber.from(token.amount)) )
-  }
-  return balances
-}
-
-async function checkBalances(
-  nodeProvider: NodeProvider,
-  address: string,
-  transaction: TransactionParams,
-  networkId: string
-): Promise<string | undefined> {
-  const expectedBalances: Map<string, BigNumber> = new Map()
-  switch (transaction.type) {
-    case 'TRANSFER':
-      transaction.params.destinations.forEach((destination) => {
-        addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(destination.attoAlphAmount))
-        if (destination.tokens !== undefined) {
-          destination.tokens.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
-        }
-      })
-      break
-    case 'DEPLOY_CONTRACT':
-      addTokenToBalances(expectedBalances, ALPH_TOKEN_ID,
-        transaction.params.initialAttoAlphAmount !== undefined
-          ? BigNumber.from(transaction.params.initialAttoAlphAmount)
-          : BigNumber.from(ONE_ALPH)
-      )
-      if (transaction.params.initialTokenAmounts !== undefined) {
-        transaction.params.initialTokenAmounts.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
-      }
-      break
-    case 'EXECUTE_SCRIPT':
-      if (transaction.params.attoAlphAmount !== undefined) {
-        addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(transaction.params.attoAlphAmount))
-      }
-      if (transaction.params.tokens !== undefined) {
-        transaction.params.tokens.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
-      }
-      break
-    case 'UNSIGNED_TX':
-      return
-  }
-  addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(minimalGasFee))
-
-  const balances = await getBalances(nodeProvider, address)
-  const zero = BigNumber.from(0)
-  for (const [tokenId, amount] of expectedBalances) {
-    if (zero.eq(amount)) {
-      continue
-    }
-    const tokenBalance = balances.get(tokenId)
-    if (tokenBalance === undefined || tokenBalance.lt(amount)) {
-      const tokenInfo = await getToken({ id: tokenId, networkId })
-      const tokenSymbol = tokenInfo?.symbol ?? tokenId
-      const tokenDecimals = tokenInfo?.decimals ?? 0
-      const expectedStr = prettifyTokenAmount(amount.toBigInt(), tokenDecimals)
-      const haveStr = prettifyTokenAmount((tokenBalance ?? zero).toBigInt(), tokenDecimals)
-      return `Insufficient token ${tokenSymbol}, expected at least ${expectedStr}, got ${haveStr}`
-    }
-  }
-  return undefined
-}
-
 async function tryBuildTransaction(
   nodeUrl: string,
+  tokensWithBalance: BaseTokenWithBalance[],
   account: Account,
   transaction: TransactionParams
 ): Promise<ReviewTransactionResult> {
@@ -151,7 +78,7 @@ async function tryBuildTransaction(
   try {
     return await buildTransaction(builder, account, transaction)
   } catch (error) {
-    const errMsg = await checkBalances(builder.nodeProvider, account.address, transaction, account.networkId)
+    const errMsg = await checkBalances(tokensWithBalance, transaction, account.networkId)
     if (errMsg !== undefined) {
       throw new Error(errMsg)
     }
@@ -201,6 +128,63 @@ async function buildTransaction(
   }
 }
 
+export async function checkBalances(
+  tokensWithBalance: BaseTokenWithBalance[],
+  transaction: TransactionParams,
+  networkId: string
+): Promise<string | undefined> {
+  const expectedBalances: Map<string, BigNumber> = new Map()
+  switch (transaction.type) {
+    case 'TRANSFER':
+      transaction.params.destinations.forEach((destination) => {
+        addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(destination.attoAlphAmount))
+        if (destination.tokens !== undefined) {
+          destination.tokens.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
+        }
+      })
+      break
+    case 'DEPLOY_CONTRACT':
+      addTokenToBalances(expectedBalances, ALPH_TOKEN_ID,
+        transaction.params.initialAttoAlphAmount !== undefined
+          ? BigNumber.from(transaction.params.initialAttoAlphAmount)
+          : BigNumber.from(ONE_ALPH)
+      )
+      if (transaction.params.initialTokenAmounts !== undefined) {
+        transaction.params.initialTokenAmounts.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
+      }
+      break
+    case 'EXECUTE_SCRIPT':
+      if (transaction.params.attoAlphAmount !== undefined) {
+        addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(transaction.params.attoAlphAmount))
+      }
+      if (transaction.params.tokens !== undefined) {
+        transaction.params.tokens.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
+      }
+      break
+    case 'UNSIGNED_TX':
+      return
+  }
+  addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(minimalGasFee))
+
+  const zero = BigNumber.from(0)
+  for (const [tokenId, amount] of expectedBalances) {
+    if (zero.eq(amount)) {
+      continue
+    }
+    const token = tokensWithBalance.find((t) => t.id === tokenId)
+    const tokenBalance = token?.balance
+    if (tokenBalance === undefined || tokenBalance.lt(amount)) {
+      const tokenInfo = await getToken({ id: tokenId, networkId })
+      const tokenSymbol = tokenInfo?.symbol ?? tokenId
+      const tokenDecimals = tokenInfo?.decimals ?? 0
+      const expectedStr = prettifyTokenAmount(amount.toBigInt(), tokenDecimals)
+      const haveStr = prettifyTokenAmount((tokenBalance ?? zero).toBigInt(), tokenDecimals)
+      return `Insufficient token ${tokenSymbol}, expected at least ${expectedStr}, got ${haveStr}`
+    }
+  }
+  return undefined
+}
+
 export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   transaction,
   selectedAccount,
@@ -226,17 +210,19 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     "detecting" | "notfound" | "signing" | "succeeded" | "failed"
   >()
   const [ledgerApp, setLedgerApp] = useState<LedgerApp>()
+  const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokens()
 
   // TODO: handle error
   useEffect(() => {
     const build = async () => {
-      if (selectedAccount === undefined) {
+      if (selectedAccount === undefined || tokenDetailsIsInitialising) {
         return
       }
 
       try {
         const buildResult = await tryBuildTransaction(
           nodeUrl,
+          allUserTokens,
           selectedAccount,
           transaction
         )
@@ -248,7 +234,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     }
 
     build()
-  }, [nodeUrl, selectedAccount, transaction])
+  }, [nodeUrl, selectedAccount, transaction, tokenDetailsIsInitialising])
 
   const ledgerSign = useCallback(async () => {
     if (selectedAccount === undefined) {
@@ -313,16 +299,16 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         !useLedger
           ? "Sign"
           : ledgerState === undefined
-          ? "Sign with Ledger"
-          : (ledgerState === "detecting") || (ledgerState === "notfound")
-          ? "Ledger: Detecting"
-          : ledgerState === "signing"
-          ? "Ledger: Signing"
-          : ledgerState === "succeeded"
-          ? "Ledger: Succeeded"
-          : ledgerState === "failed"
-          ? "Ledger: Failed"
-          : ledgerState
+            ? "Sign with Ledger"
+            : (ledgerState === "detecting") || (ledgerState === "notfound")
+              ? "Ledger: Detecting"
+              : ledgerState === "signing"
+                ? "Ledger: Signing"
+                : ledgerState === "succeeded"
+                  ? "Ledger: Succeeded"
+                  : ledgerState === "failed"
+                    ? "Ledger: Failed"
+                    : ledgerState
       }
       confirmButtonDisabled={ledgerState !== undefined}
       rejectButtonText="Cancel"
@@ -349,7 +335,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         buildResult &&
         !("error" in buildResult) && (
           <Flex direction="column" gap="1">
-            <LedgerStatus ledgerState={ledgerState}/>
+            <LedgerStatus ledgerState={ledgerState} />
             <FeeEstimation
               onErrorChange={() => {
                 return

@@ -2,10 +2,11 @@ import { BigNumber, BigNumberish } from "@ethersproject/bignumber"
 import { utils } from "ethers"
 import useSWR from "swr"
 
-import { getTokenBalanceForAccount } from "../../../shared/token/getTokenBalance"
+import { getTokenBalanceForAccount } from "../../../shared/token/balance"
+import { TokenWithBalance } from "../../../shared/token/type"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { Account } from "../accounts/Account"
-import { TokenDetailsWithBalance, getNetworkFeeToken } from "./tokens.state"
+import { getNetworkFeeToken } from "./tokens.state"
 
 export interface TokenView {
   id: string
@@ -54,7 +55,7 @@ export const toTokenView = ({
   decimals,
   balance,
   ...rest
-}: TokenDetailsWithBalance): TokenView => {
+}: TokenWithBalance): TokenView => {
   const decimalsNumber = decimals ?? 18
   return {
     name,
@@ -111,40 +112,6 @@ export const toTokenView = ({
 //   return BigNumber.from(uint256.uint256ToBN(result.balance).toString())
 // }
 
-export type BalancesMap = Record<string, BigNumber | undefined>
-
-export const fetchAllTokensBalance = async (
-  tokenIds: string[],
-  account: Account,
-) => {
-  const response = await Promise.allSettled(
-    tokenIds.map((tokenId) => {
-      return getTokenBalanceForAccount(tokenId, account)
-    }),
-  )
-  return tokenIds.reduce<BalancesMap>((acc, addr, i) => {
-    const balance = response[i]
-    return {
-      ...acc,
-      [addr]:
-        balance.status === "fulfilled"
-          ? BigNumber.from(balance.value)
-          : undefined, // Error will be surfaced to user by useTokenBalanceForAccount()
-    }
-  }, {})
-}
-
-export const fetchFeeTokenBalance = async (
-  account: Account,
-): Promise<BigNumber> => {
-  const token = await getNetworkFeeToken(account.networkId)
-  if (!token) {
-    return BigNumber.from(0)
-  }
-  const balance = await getTokenBalanceForAccount(token.id, account)
-  return BigNumber.from(balance)
-}
-
 export const useFeeTokenBalance = (account?: Account) => {
   const accountIdentifier = account && getAccountIdentifier(account)
 
@@ -162,4 +129,15 @@ export const useFeeTokenBalance = (account?: Account) => {
   )
 
   return { feeTokenBalance, feeTokenBalanceError, feeTokenBalanceValidating }
+}
+
+const fetchFeeTokenBalance = async (
+  account: Account,
+): Promise<BigNumber> => {
+  const token = await getNetworkFeeToken(account.networkId)
+  if (!token) {
+    return BigNumber.from(0)
+  }
+  const balance = await getTokenBalanceForAccount(token.id, account)
+  return BigNumber.from(balance)
 }

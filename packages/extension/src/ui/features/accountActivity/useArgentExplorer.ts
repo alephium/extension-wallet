@@ -43,9 +43,9 @@ export const useArgentExplorerTransaction = ({
   return useConditionallyEnabledSWR<IExplorerTransaction>(
     Boolean(apiNetwork && argentExplorerEnabled),
     hash &&
-      apiNetwork &&
-      ARGENT_EXPLORER_BASE_URL &&
-      urlJoin(ARGENT_EXPLORER_BASE_URL, "transactions", apiNetwork, hash),
+    apiNetwork &&
+    ARGENT_EXPLORER_BASE_URL &&
+    urlJoin(ARGENT_EXPLORER_BASE_URL, "transactions", apiNetwork, hash),
     argentApiFetcher,
   )
 }

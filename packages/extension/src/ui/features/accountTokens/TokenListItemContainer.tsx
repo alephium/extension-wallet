@@ -1,13 +1,13 @@
 import { FC } from "react"
+import { TokenWithBalance } from "../../../shared/token/type"
 
 import { Account } from "../accounts/Account"
 import { TokenListItem, TokenListItemProps } from "./TokenListItem"
 import { useTokenBalanceToCurrencyValue } from "./tokenPriceHooks"
-import { TokenDetailsWithBalance } from "./tokens.state"
 
 export interface TokenListItemContainerProps
   extends Omit<TokenListItemProps, "currencyValue"> {
-  tokenWithBalance: TokenDetailsWithBalance
+  tokenWithBalance: TokenWithBalance
   account: Account
 }
 

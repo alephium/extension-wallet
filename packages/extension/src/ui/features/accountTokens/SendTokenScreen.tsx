@@ -11,6 +11,7 @@ import { Schema, object } from "yup"
 import { AddressBookContact } from "../../../shared/addressBook"
 import { inputAmountSchema, parseAmount } from "../../../shared/token/amount"
 import { prettifyCurrencyValue } from "../../../shared/token/price"
+import { TokenWithBalance } from "../../../shared/token/type"
 import { AddContactBottomSheet } from "../../components/AddContactBottomSheet"
 import { Button, ButtonTransparent } from "../../components/Button"
 import Column, { ColumnCenter } from "../../components/Column"
@@ -54,7 +55,6 @@ import { TokenMenuDeprecated } from "./TokenMenuDeprecated"
 import { useTokenUnitAmountToCurrencyValue } from "./tokenPriceHooks"
 import { formatTokenBalance, toTokenView } from "./tokens.service"
 import {
-  TokenDetailsWithBalance,
   useNetworkFeeToken,
   useToken
 } from "./tokens.state"
@@ -269,7 +269,7 @@ export const SendTokenScreen: FC = () => {
   const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
 
   const setMaxInputAmount = useCallback(
-    (token: TokenDetailsWithBalance, maxFee?: string) => {
+    (token: TokenWithBalance, maxFee?: string) => {
       const tokenDecimals = token.decimals ?? 18
       const tokenBalance = formatTokenBalance(token.balance, tokenDecimals)
 
