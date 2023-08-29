@@ -166,15 +166,15 @@ export const useFungibleTokens = (
     data: fungibleTokens,
     isValidating,
     error
-  } = useSWRImmutable(
+  } = useSWR(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
-      allUserTokens,
+      allUserTokens.map((t) => { return { id: t.id, balance: t.balance.toString() } }),
       cachedTokens,
       "accountFungibleTokens",
     ],
     async () => {
-      const result = cachedTokens.filter((token) => token.showAlways).map(t => [t, -1] as [TokenWithBalance, number])
+      const result: [TokenWithBalance, number][] = []
       const network = await getNetwork(networkId)
 
       let foundOnFullNodeIndex = cachedTokens.length + 1
@@ -182,7 +182,8 @@ export const useFungibleTokens = (
         if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
           const foundIndex = cachedTokens.findIndex((token) => token.id == userToken.id)
           if (foundIndex !== -1) {
-            result.push([{ balance: userToken.balance, ...cachedTokens[foundIndex] }, foundIndex])
+            const index = cachedTokens[foundIndex].showAlways ? -1 : foundIndex
+            result.push([{ balance: userToken.balance, ...cachedTokens[foundIndex] }, index])
           } else {
             const token = await fetchFungibleTokenFromFullNode(network, userToken.id)
             if (token) {
