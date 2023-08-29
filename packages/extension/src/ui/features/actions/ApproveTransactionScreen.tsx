@@ -299,16 +299,16 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         !useLedger
           ? "Sign"
           : ledgerState === undefined
-            ? "Sign with Ledger"
-            : (ledgerState === "detecting") || (ledgerState === "notfound")
-              ? "Ledger: Detecting"
-              : ledgerState === "signing"
-                ? "Ledger: Signing"
-                : ledgerState === "succeeded"
-                  ? "Ledger: Succeeded"
-                  : ledgerState === "failed"
-                    ? "Ledger: Failed"
-                    : ledgerState
+          ? "Sign with Ledger"
+          : (ledgerState === "detecting") || (ledgerState === "notfound")
+          ? "Ledger: Detecting"
+          : ledgerState === "signing"
+          ? "Ledger: Signing"
+          : ledgerState === "succeeded"
+          ? "Ledger: Succeeded"
+          : ledgerState === "failed"
+          ? "Ledger: Failed"
+          : ledgerState
       }
       confirmButtonDisabled={ledgerState !== undefined}
       rejectButtonText="Cancel"
