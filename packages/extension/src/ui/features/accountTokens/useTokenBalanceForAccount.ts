@@ -24,7 +24,6 @@ interface UseTokenBalanceForAccountArgs {
  * Get the individual token balance for the account, using Multicall if available
  * This will automatically mutate when the number of pending transactions decreases
  */
-// Look at this
 export const useTokenBalanceForAccount = (
   { token, account, shouldReturnError = false }: UseTokenBalanceForAccountArgs,
   config?: SWRConfiguration,

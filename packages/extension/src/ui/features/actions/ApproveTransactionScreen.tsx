@@ -210,7 +210,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     "detecting" | "notfound" | "signing" | "succeeded" | "failed"
   >()
   const [ledgerApp, setLedgerApp] = useState<LedgerApp>()
-  const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokens()
+  const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokens(selectedAccount)
 
   // TODO: handle error
   useEffect(() => {

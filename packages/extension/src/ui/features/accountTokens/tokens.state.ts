@@ -166,7 +166,7 @@ export const useFungibleTokens = (
     data: fungibleTokens,
     isValidating,
     error
-  } = useSWR(
+  } = useSWRImmutable(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
       allUserTokens.map((t) => { return { id: t.id, balance: t.balance.toString() } }),
@@ -274,9 +274,9 @@ export const useAllTokens = (
 
   const tokenDetailsIsInitialising = !error && !userTokens
 
-  // refetch when number of pending transactions goes down
+  // refetch when number of pending transactions goes up
   useEffect(() => {
-    if (pendingTransactionsLengthRef.current > pendingTransactions.length) {
+    if (pendingTransactionsLengthRef.current < pendingTransactions.length) {
       mutate()
     }
     pendingTransactionsLengthRef.current = pendingTransactions.length

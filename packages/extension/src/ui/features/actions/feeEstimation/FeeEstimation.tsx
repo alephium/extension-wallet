@@ -1,13 +1,13 @@
 import { prettifyAttoAlphAmount } from "@alephium/web3"
-import { L1, L2, P4, icons } from "@argent/ui"
-import { Flex, Text } from "@chakra-ui/react"
-import { Collapse } from "@mui/material"
+import { P4 } from "@argent/ui"
+import { Flex } from "@chakra-ui/react"
 import Tippy from "@tippyjs/react"
 import { FC } from "react"
+import { alphTokenInNetwork } from "../../../../shared/token/utils"
 
 import { Tooltip } from "../../../components/CopyTooltip"
 import { useAccount } from "../../accounts/accounts.state"
-import { useFeeTokenBalance } from "../../accountTokens/tokens.service"
+import { useTokenBalanceForAccount } from "../../accountTokens/useTokenBalanceForAccount"
 import { useExtensionIsInTab } from "../../browser/tabs"
 import {
   LoadingInput,
@@ -26,7 +26,8 @@ export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
   const enoughBalance = true
   const extensionInTab = useExtensionIsInTab()
   const account = useAccount({ address: accountAddress, networkId })
-  const { feeTokenBalance } = useFeeTokenBalance(account)
+  const { tokenWithBalance } = useTokenBalanceForAccount({ token: alphTokenInNetwork(networkId), account })
+  const feeTokenBalance = tokenWithBalance?.balance
 
   return (
     <Flex direction="column" gap="1">
