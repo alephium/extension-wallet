@@ -81,7 +81,7 @@ export const getPreAuthorizations = () => {
 
 export const getPreAuthorized = async (options: { host: string, networkId?: string, group?: number, keyType?: KeyType }) => {
   const hits = await preAuthorizeStore.get((x) =>
-    matchAuthorizedOptions(x, options)
+    matchAuthorizedOptions(x, { ...options, addressGroup: options.group })
   )
   return hits.length === 0 ? undefined : hits[0]
 }
