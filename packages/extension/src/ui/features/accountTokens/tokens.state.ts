@@ -16,6 +16,7 @@ import { useAccount } from "../accounts/accounts.state"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { sortBy } from "lodash"
 import { addTokenToBalances } from "../../../shared/token/balance"
+import { Transaction, compareTransactions } from "../../../shared/transactions"
 
 type UseTokens = UseTokensBase<TokenWithBalance>
 type UseBaseTokens = UseTokensBase<BaseTokenWithBalance>
@@ -218,7 +219,7 @@ export const useAllTokens = (
   }, [selectedAccount?.networkId])
 
   const { pendingTransactions } = useAccountTransactions(account)
-  const pendingTransactionsLengthRef = useRef(pendingTransactions.length)
+  const pendingTransactionsRef = useRef(pendingTransactions)
 
   const {
     data: userTokens,
@@ -274,13 +275,14 @@ export const useAllTokens = (
 
   const tokenDetailsIsInitialising = !error && !userTokens
 
-  // refetch when number of pending transactions goes up
+  // refetch when there are new pending transactions
   useEffect(() => {
-    if (pendingTransactionsLengthRef.current < pendingTransactions.length) {
+    if (hasNewPendingTx(pendingTransactionsRef.current, pendingTransactions)) {
       mutate()
     }
-    pendingTransactionsLengthRef.current = pendingTransactions.length
-  }, [mutate, pendingTransactions.length])
+
+    pendingTransactionsRef.current = pendingTransactions
+  }, [mutate, pendingTransactions])
 
   return {
     tokenDetails: userTokens || [],
@@ -288,6 +290,20 @@ export const useAllTokens = (
     isValidating,
     error,
   }
+}
+
+function hasNewPendingTx(prevTxs: Transaction[], newTxs: Transaction[]): boolean {
+  if (prevTxs.length < newTxs.length) {
+    return true
+  }
+
+  for (const tx of newTxs) {
+    if (prevTxs.findIndex((t) => compareTransactions(t, tx)) === -1) {
+      return true
+    }
+  }
+
+  return false
 }
 
 async function getBalances(nodeProvider: NodeProvider, address: string): Promise<Map<string, BigNumber>> {
