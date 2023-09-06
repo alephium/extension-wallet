@@ -162,16 +162,16 @@ export const useFungibleTokens = (
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
 
+  const sortedTokenIds = allUserTokens.map((t) => t.id).sort()
   const cachedTokens = useTokensInNetwork(networkId)
   const {
     data: fungibleTokens,
     isValidating,
     error
-  } = useSWRImmutable(
+  } = useSWR(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
-      allUserTokens.map((t) => { return { id: t.id, balance: t.balance.toString() } }),
-      cachedTokens,
+      sortedTokenIds,
       "accountFungibleTokens",
     ],
     async () => {
@@ -197,6 +197,15 @@ export const useFungibleTokens = (
       }
 
       return sortBy(result, (a) => a[1]).map(tuple => tuple[0])
+    },
+    {
+      refreshInterval: 30000,
+      shouldRetryOnError: (error: any) => {
+        const errorCode = error?.status || error?.errorCode
+        const suppressError =
+          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
+        return suppressError
+      },
     }
   )
 

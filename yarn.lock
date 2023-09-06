@@ -16,13 +16,13 @@
     jest "^28.1.3"
     prettier "^2.8.7"
 
-"@alephium/cli@^0.18.3":
-  version "0.18.3"
-  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-0.18.3.tgz#8341ae482c4ef85679fdfbbe09eba3b549739d18"
-  integrity sha512-vfyY2GC+ys85+NpDiwOn5ZrUKq1C/3kz/mzjC9gr9MmAgoLoOGHanOBgxYD4hp8M8A7mWCAwS9m9sae2Ir66aA==
+"@alephium/cli@^0.21.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-0.21.1.tgz#c41396b8d2d669c2a8f748a6fe21f663c4973919"
+  integrity sha512-J853YSCXQ8vxSMVXGuT1Q79aDLYzYNq7sa1RM2G8sw0jpiO6S3X6rV6nIMyEECmpyK28puS2dYWi8JAWq8iERg==
   dependencies:
-    "@alephium/web3" "^0.18.3"
-    "@alephium/web3-wallet" "^0.18.3"
+    "@alephium/web3" "^0.21.1"
+    "@alephium/web3-wallet" "^0.21.1"
     commander "^9.5.0"
     cross-fetch "^3.1.5"
     crypto-js "^4.1.1"
@@ -34,12 +34,12 @@
     prettier "^2.8.7"
     yaml "^2.3.1"
 
-"@alephium/get-extension-wallet@^0.18.3":
-  version "0.18.3"
-  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-0.18.3.tgz#2eb0e33e6581f695fd834c02016a33d845c49e7d"
-  integrity sha512-6lJ5QB3qZ7JmnCU7XdQFamRjqRmdtc2ey4v8nVqaWwChS+WdAuwovFE5smhIRlPGOdCHvWh6TNiI66jv0gIV4Q==
+"@alephium/get-extension-wallet@^0.21.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-0.21.1.tgz#37e6ee28232ca93a402ddd14ec158eb73e96bc64"
+  integrity sha512-NcGJhm35dncsnFT/5X0SONi3EJ2BqJB2akFNiPKJ3YSlmd3YBoFhugq+01KIC/cfy53eaJ9RtWriLo35tKGV4A==
   dependencies:
-    "@alephium/web3" "^0.18.3"
+    "@alephium/web3" "^0.21.1"
     bowser "^2.11.0"
 
 "@alephium/ledger-app@^0.2.1":
@@ -68,13 +68,13 @@
     "@alephium/web3" "^0.14.0"
     "@alephium/web3-wallet" "^0.14.0"
 
-"@alephium/web3-test@^0.18.3":
-  version "0.18.3"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-0.18.3.tgz#eb6865f65d9f07bca91a5287d1df7a46d6fd4a59"
-  integrity sha512-6M0v+M74LIBs4+i46rLALc3tbHy9Tcx5iGS+kF+G0QlhQ3kddZyCZkNEgSJU5tTaS6zPLIFftO636ZDDQXXbzg==
+"@alephium/web3-test@^0.21.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-0.21.1.tgz#232c2231c13286c499a00d46b2dbf3799a2bb01f"
+  integrity sha512-w2H9wyM6US2ybAuRRzpw+hImNHRVy/4+b72BQVCU4qesjJJNxhDi1XOCYekaOBf+3u0QDZjjAO5ynjd4Eq9NUw==
   dependencies:
-    "@alephium/web3" "^0.18.3"
-    "@alephium/web3-wallet" "^0.18.3"
+    "@alephium/web3" "^0.21.1"
+    "@alephium/web3-wallet" "^0.21.1"
 
 "@alephium/web3-wallet@^0.14.0":
   version "0.14.0"
@@ -90,12 +90,12 @@
     elliptic "6.5.4"
     fs-extra "10.0.1"
 
-"@alephium/web3-wallet@^0.18.3":
-  version "0.18.3"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.18.3.tgz#31b8cd7ee274e3c17e4395792ea73b38d1a70860"
-  integrity sha512-H99eZ10gcHFhB64+68XzWDWQr+Hg4SwixXdhm9QxlONqOBQR5lqftgj7FpmFdMBB66snn1j5FdpVtjZjOMHQSA==
+"@alephium/web3-wallet@^0.21.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.21.1.tgz#de7cabb8bd69df7384b84216b867ccef6392eb35"
+  integrity sha512-3aM9XUGtty7b2KaOpzMPp8+xVLe1pks0vufZ0UlZXe9PuehkWYm+iA6cXnBGLIJS1vw0hhXaxcbFGps5Jw9R5Q==
   dependencies:
-    "@alephium/web3" "^0.18.3"
+    "@alephium/web3" "^0.21.1"
     "@noble/secp256k1" "1.7.1"
     "@types/node" "^16.18.23"
     bip32 "3.1.0"
@@ -122,10 +122,10 @@
     eventemitter3 "^4.0.7"
     path-browserify "^1.0.1"
 
-"@alephium/web3@^0.18.3":
-  version "0.18.3"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.18.3.tgz#421af26b83aa41edca622e5c0c454489be008cc0"
-  integrity sha512-u+yu0C2im5lfMCjYv27F6Vfx8KkYyu6DsPwGvlhucCh7RdyT8nWiMxySkKU36fPfIEtWuL6HLE9umluBEoNfPA==
+"@alephium/web3@^0.21.1":
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.21.1.tgz#c03d40456d940c744de25a2bbdf1658132ed6fcc"
+  integrity sha512-isdrMBeVSrlYcKhAqXx8jC0Ec3zDF4ud3fR7huhQ05BMFMjSu0txTUFbuHxOZ70n1SwC5Klorlg+/k0UHZYoMg==
   dependencies:
     "@noble/secp256k1" "1.7.1"
     base-x "4.0.0"
@@ -138,6 +138,7 @@
     elliptic "6.5.4"
     eventemitter3 "^4.0.7"
     path-browserify "^1.0.1"
+    stream-browserify "^3.0.0"
 
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
