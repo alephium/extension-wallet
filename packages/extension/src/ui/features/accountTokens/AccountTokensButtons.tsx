@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
-import { useNetworkFeeToken, useKnownFungibleTokensWithBalance } from "./tokens.state"
+import { useNetworkFeeToken, useFungibleTokens } from "./tokens.state"
 
 const { AddIcon, SendIcon } = icons
 
@@ -21,8 +21,7 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
   const { switcherNetworkId } = useAppState()
 
   const sendToken = useNetworkFeeToken(switcherNetworkId)
-  const { tokenDetails, tokenDetailsIsInitialising } =
-    useKnownFungibleTokensWithBalance(account)
+  const { tokenDetails, tokenDetailsIsInitialising } = useFungibleTokens(account)
 
   const hasNonZeroBalance = useMemo(() => {
     return tokenDetails.some(({ balance }) => balance?.gt(0))
@@ -55,7 +54,7 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
 
   const title = "Add funds"
   const message = `You need to ${"add funds to this account"
-  } before you can send`
+    } before you can send`
 
   return (
     <Flex gap={2} mx={"auto"}>

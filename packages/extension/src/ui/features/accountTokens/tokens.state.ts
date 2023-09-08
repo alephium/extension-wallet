@@ -1,4 +1,4 @@
-import { NodeProvider } from "@alephium/web3"
+import { ALPH_TOKEN_ID, NodeProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
@@ -8,21 +8,21 @@ import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage, useObjectStorage } from "../../../shared/storage/hooks"
 import { addToken, removeToken, tokenListStore, tokenStore } from "../../../shared/token/storage"
-import { BaseToken, Token, TokenListTokens } from "../../../shared/token/type"
+import { BaseToken, BaseTokenWithBalance, Token, TokenListTokens, TokenWithBalance } from "../../../shared/token/type"
 import { alphTokens, equalToken } from "../../../shared/token/utils"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { useAccount } from "../accounts/accounts.state"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { fetchAllTokensBalance } from "./tokens.service"
 import { sortBy } from "lodash"
+import { addTokenToBalances } from "../../../shared/token/balance"
+import { Transaction, compareTransactions } from "../../../shared/transactions"
 
-export interface TokenDetailsWithBalance extends Token {
-  balance?: BigNumber
-}
+type UseTokens = UseTokensBase<TokenWithBalance>
+type UseBaseTokens = UseTokensBase<BaseTokenWithBalance>
 
-interface UseTokens {
-  tokenDetails: TokenDetailsWithBalance[]
+interface UseTokensBase<T> {
+  tokenDetails: T[]
   tokenDetailsIsInitialising: boolean
   isValidating: boolean
   error?: any
@@ -106,119 +106,43 @@ export const useToken = (baseToken: BaseToken): Token | undefined => {
 /** error codes to suppress - will not bubble error up to parent */
 const SUPPRESS_ERROR_STATUS = [429]
 
-export const useKnownFungibleTokensWithBalance = (
-  account?: BaseWalletAccount,
-): UseTokens => {
-  const selectedAccount = useAccount(account)
-  const { pendingTransactions } = useAccountTransactions(account)
-  const pendingTransactionsLengthRef = useRef(pendingTransactions.length)
-  const fungibleTokens = useFungibleTokens(selectedAccount)
-
-  const {
-    data,
-    isValidating,
-    error: maybeSuppressError,
-    mutate,
-  } = useSWR(
-    // skip if no account selected
-    selectedAccount && [
-      getAccountIdentifier(selectedAccount),
-      "accountTokenBalances",
-    ],
-    async () => {
-      if (!selectedAccount) {
-        return
-      }
-
-      const balances = await fetchAllTokensBalance(
-        fungibleTokens.map((t) => t.id),
-        selectedAccount,
-      )
-
-      return {
-        fungibleTokens,
-        balances
-      }
-    },
-    {
-      refreshInterval: 30000,
-      shouldRetryOnError: (error) => {
-        const errorCode = error?.status || error?.errorCode
-        const suppressError =
-          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
-        return suppressError
-      },
-    },
-  )
-
-  const error = useMemo(() => {
-    const errorCode =
-      maybeSuppressError?.status || maybeSuppressError?.errorCode
-    if (!SUPPRESS_ERROR_STATUS.includes(errorCode)) {
-      return maybeSuppressError
-    }
-  }, [maybeSuppressError])
-
-  const tokenDetailsIsInitialising = !error && !data
-
-  // refetch when number of pending transactions goes down
-  useEffect(() => {
-    if (pendingTransactionsLengthRef.current > pendingTransactions.length) {
-      mutate()
-    }
-    pendingTransactionsLengthRef.current = pendingTransactions.length
-  }, [mutate, pendingTransactions.length])
-
-  const tokenDetails = useMemo(() => {
-    return (data?.fungibleTokens || [])
-      .map((token) => ({
-        ...token,
-        balance: data?.balances[token.id] ?? BigNumber.from(0),
-      }))
-      .filter(
-        (token) => token.showAlways || (token.balance && token.balance.gt(0)),
-      )
-  }, [data])
-
-  return {
-    tokenDetails,
-    tokenDetailsIsInitialising,
-    isValidating,
-    error,
-  }
-}
-
 export const useNonFungibleTokens = (
   account?: BaseWalletAccount,
-): BaseToken[] => {
+): BaseTokenWithBalance[] => {
   const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
   const cachedFungibleTokens = useTokensInNetwork(networkId)
-  const allUserTokens = useAllTokens(account)
+  const { tokenDetails: allUserTokens } = useAllTokens(account)
+
+  const potentialNonFungibleTokens: BaseTokenWithBalance[] = []
+  for (const token of allUserTokens) {
+    const foundIndex = cachedFungibleTokens.findIndex((t) => t.id == token.id)
+    if (foundIndex === -1) {
+      potentialNonFungibleTokens.push(token)
+    }
+  }
+  const sortedPotentialNonFungibleTokensIds = potentialNonFungibleTokens.map((t) => t.id).sort()
 
   const {
     data: nonFungibleTokens
   } = useSWRImmutable(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
-      allUserTokens,
+      sortedPotentialNonFungibleTokensIds,
       "accountNonFungibleTokens",
     ],
     async () => {
       const network = await getNetwork(networkId)
       const nodeProvider = new NodeProvider(network.nodeUrl)
 
-      const nonFungibleTokens: BaseToken[] = []
-      for (const token of allUserTokens) {
-        const foundIndex = cachedFungibleTokens.findIndex((t) => t.id == token.id)
-        if (foundIndex === -1) {  // Must not be known fungible tokens
-          if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
-            const tokenType = await nodeProvider.guessStdTokenType(token.id)
-            if (tokenType === 'non-fungible') {
-              nonFungibleTokens.push({ id: token.id, networkId: networkId })
-            }
+      const nonFungibleTokens: BaseTokenWithBalance[] = []
+      for (const token of potentialNonFungibleTokens) {
+        if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
+          const tokenType = await nodeProvider.guessStdTokenType(token.id)
+          if (tokenType === 'non-fungible') {
+            nonFungibleTokens.push({ id: token.id, networkId: networkId, balance: token.balance })
           }
         }
       }
@@ -232,25 +156,32 @@ export const useNonFungibleTokens = (
 
 export const useFungibleTokens = (
   account?: BaseWalletAccount
-): Token[] => {
-  const allUserTokens = useAllTokens(account)
+): UseTokens => {
+  const {
+    tokenDetails: allUserTokens,
+    tokenDetailsIsInitialising: allUserTokensIsInitialising,
+    isValidating: allUserTokensIsValidating,
+    error: allUserTokensError
+  } = useAllTokens(account)
   const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
 
+  const sortedTokenIds = allUserTokens.map((t) => t.id).sort()
   const cachedTokens = useTokensInNetwork(networkId)
   const {
-    data: fungibleTokens
-  } = useSWRImmutable(
+    data: fungibleTokens,
+    isValidating,
+    error
+  } = useSWR(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
-      allUserTokens,
-      cachedTokens,
+      sortedTokenIds,
       "accountFungibleTokens",
     ],
     async () => {
-      const result = cachedTokens.filter((token) => token.showAlways).map(t => [t, -1] as [Token, number])
+      const result: [TokenWithBalance, number][] = []
       const network = await getNetwork(networkId)
 
       let foundOnFullNodeIndex = cachedTokens.length + 1
@@ -258,12 +189,13 @@ export const useFungibleTokens = (
         if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
           const foundIndex = cachedTokens.findIndex((token) => token.id == userToken.id)
           if (foundIndex !== -1) {
-            result.push([cachedTokens[foundIndex], foundIndex])
+            const index = cachedTokens[foundIndex].showAlways ? -1 : foundIndex
+            result.push([{ balance: userToken.balance, ...cachedTokens[foundIndex] }, index])
           } else {
             const token = await fetchFungibleTokenFromFullNode(network, userToken.id)
             if (token) {
               addToken(token, false)
-              result.push([token, foundOnFullNodeIndex])
+              result.push([{ balance: userToken.balance, ...token }, foundOnFullNodeIndex])
               foundOnFullNodeIndex++
             }
           }
@@ -271,22 +203,44 @@ export const useFungibleTokens = (
       }
 
       return sortBy(result, (a) => a[1]).map(tuple => tuple[0])
+    },
+    {
+      refreshInterval: 30000,
+      shouldRetryOnError: (error: any) => {
+        const errorCode = error?.status || error?.errorCode
+        const suppressError =
+          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
+        return suppressError
+      },
     }
   )
 
-  return fungibleTokens || []
+  const tokenDetailsIsInitialising = !error && !fungibleTokens
+
+  return {
+    tokenDetails: fungibleTokens || [],
+    tokenDetailsIsInitialising: allUserTokensIsInitialising && tokenDetailsIsInitialising,
+    isValidating: allUserTokensIsValidating || isValidating,
+    error: allUserTokensError || error
+  }
 }
 
 export const useAllTokens = (
   account?: BaseWalletAccount
-): BaseToken[] => {
+): UseBaseTokens => {
   const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
 
+  const { pendingTransactions } = useAccountTransactions(account)
+  const pendingTransactionsRef = useRef(pendingTransactions)
+
   const {
-    data: userTokens
+    data: userTokens,
+    isValidating,
+    error: maybeSuppressError,
+    mutate,
   } = useSWR(
     // skip if no account selected
     selectedAccount && [
@@ -298,15 +252,18 @@ export const useAllTokens = (
         return
       }
 
-      const allTokens: BaseToken[] = []
+      const allTokens: BaseTokenWithBalance[] = []
       const network = await getNetwork(networkId)
       const nodeProvider = new NodeProvider(network.nodeUrl)
-      const addressBalance = await nodeProvider.addresses.getAddressesAddressBalance(selectedAccount.address)
-      const tokenIds: string[] = (addressBalance.tokenBalances || []).map((token) => token.id)
+      const tokenBalances = await getBalances(nodeProvider, selectedAccount.address)
 
-      for (const tokenId of tokenIds) {
+      for (const tokenId of tokenBalances.keys()) {
         if (allTokens.findIndex((t) => t.id == tokenId) === -1) {
-          allTokens.push({ id: tokenId, networkId: networkId })
+          allTokens.push({
+            id: tokenId,
+            networkId: networkId,
+            balance: BigNumber.from(tokenBalances.get(tokenId))
+          })
         }
       }
 
@@ -323,7 +280,55 @@ export const useAllTokens = (
     }
   )
 
-  return userTokens || []
+  const error = useMemo(() => {
+    const errorCode =
+      maybeSuppressError?.status || maybeSuppressError?.errorCode
+    if (!SUPPRESS_ERROR_STATUS.includes(errorCode)) {
+      return maybeSuppressError
+    }
+  }, [maybeSuppressError])
+
+  const tokenDetailsIsInitialising = !error && !userTokens
+
+  // refetch when there are new pending transactions
+  useEffect(() => {
+    if (hasNewPendingTx(pendingTransactionsRef.current, pendingTransactions)) {
+      mutate()
+    }
+
+    pendingTransactionsRef.current = pendingTransactions
+  }, [mutate, pendingTransactions])
+
+  return {
+    tokenDetails: userTokens || [],
+    tokenDetailsIsInitialising,
+    isValidating,
+    error,
+  }
+}
+
+function hasNewPendingTx(prevTxs: Transaction[], newTxs: Transaction[]): boolean {
+  if (prevTxs.length < newTxs.length) {
+    return true
+  }
+
+  for (const tx of newTxs) {
+    if (prevTxs.findIndex((t) => compareTransactions(t, tx)) === -1) {
+      return true
+    }
+  }
+
+  return false
+}
+
+async function getBalances(nodeProvider: NodeProvider, address: string): Promise<Map<string, BigNumber>> {
+  const result = await nodeProvider.addresses.getAddressesAddressBalance(address)
+  const balances = new Map<string, BigNumber>()
+  balances.set(ALPH_TOKEN_ID, BigNumber.from(result.balance))
+  if (result.tokenBalances !== undefined) {
+    result.tokenBalances.forEach((token) => addTokenToBalances(balances, token.id, BigNumber.from(token.amount)))
+  }
+  return balances
 }
 
 async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {

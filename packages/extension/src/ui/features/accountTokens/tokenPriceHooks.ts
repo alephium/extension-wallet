@@ -19,12 +19,11 @@ import {
   lookupTokenPriceDetails,
   sumTokenBalancesToCurrencyValue,
 } from "../../../shared/token/price"
-import { Token } from "../../../shared/token/type"
+import { Token, TokenWithBalance } from "../../../shared/token/type"
 import { isNumeric } from "../../../shared/utils/number"
 import { argentApiFetcher } from "../../services/argentApiFetcher"
 import { useConditionallyEnabledSWR, withPolling } from "../../services/swr"
 import { useIsMainnet } from "../networks/useNetworks"
-import { TokenDetailsWithBalance } from "./tokens.state"
 
 /** @returns true if API is enabled, app is on mainnet and the user has enabled Argent services */
 
@@ -77,7 +76,7 @@ export const usePriceAndTokenData = ARGENT_API_ENABLED
 /** @returns individual price details for the token */
 
 export const useTokenPriceDetails = (
-  token?: Token | TokenDetailsWithBalance,
+  token?: TokenWithBalance,
   usePriceAndTokenDataImpl = usePriceAndTokenData,
 ) => {
   const { pricesData, tokenData } = usePriceAndTokenDataImpl()
@@ -102,7 +101,7 @@ export const useTokenPriceDetails = (
  */
 
 export const useTokenUnitAmountToCurrencyValue = (
-  token?: Token | TokenDetailsWithBalance,
+  token?: Token,
   unitAmount?: BigNumberish,
   usePriceAndTokenDataImpl = usePriceAndTokenData,
 ) => {
@@ -124,7 +123,7 @@ export const useTokenUnitAmountToCurrencyValue = (
  */
 
 export const useTokenAmountToCurrencyValue = (
-  token?: Token | TokenDetailsWithBalance,
+  token?: Token,
   amount?: BigNumberish,
   usePriceAndTokenDataImpl = usePriceAndTokenData,
 ) => {
@@ -155,7 +154,7 @@ export const useTokenAmountToCurrencyValue = (
  */
 
 export const useTokenBalanceToCurrencyValue = (
-  token?: TokenDetailsWithBalance,
+  token?: TokenWithBalance,
   usePriceAndTokenDataImpl = usePriceAndTokenData,
 ) => {
   return useTokenAmountToCurrencyValue(
@@ -172,7 +171,7 @@ export const useTokenBalanceToCurrencyValue = (
  */
 
 export const useSumTokenBalancesToCurrencyValue = (
-  tokens: TokenDetailsWithBalance[],
+  tokens: TokenWithBalance[],
   usePriceAndTokenDataImpl = usePriceAndTokenData,
 ) => {
   const { pricesData, tokenData } = usePriceAndTokenDataImpl()

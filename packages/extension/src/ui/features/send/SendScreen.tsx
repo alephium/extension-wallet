@@ -53,7 +53,7 @@ export const SendScreen: FC = () => {
 
   const account = useSelectedAccount()
   const currentQueryValue = watch().query
-  const fungibleTokens = useFungibleTokens(account)
+  const { tokenDetails: fungibleTokens } = useFungibleTokens(account)
   const tokenList = useCustomTokenList(fungibleTokens, account?.networkId, currentQueryValue)
 
   if (!account) {

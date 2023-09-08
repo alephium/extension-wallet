@@ -1,6 +1,7 @@
 import { explorer, ExplorerProvider, ALPH_TOKEN_ID } from "@alephium/web3"
 import { getNetwork } from "../network"
 import { BaseWalletAccount } from "../wallet.model"
+import { BigNumber } from "ethers"
 
 /**
  * Get balance of token at account address on network.
@@ -21,4 +22,13 @@ export const getTokenBalanceForAccount = async (
   }
 
   return result.balance
+}
+
+export function addTokenToBalances(balances: Map<string, BigNumber>, tokenId: string, amount: BigNumber) {
+  const tokenBalance = balances.get(tokenId)
+  if (tokenBalance === undefined) {
+    balances.set(tokenId, amount)
+  } else {
+    balances.set(tokenId, tokenBalance.add(amount))
+  }
 }

@@ -7,7 +7,7 @@ import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { AddressCopyButtonMain } from "../../components/AddressCopyButton"
 import { AccountStatus } from "../accounts/accounts.service"
 import { useSumTokenBalancesToCurrencyValue } from "./tokenPriceHooks"
-import { useKnownFungibleTokensWithBalance } from "./tokens.state"
+import { useFungibleTokens } from "./tokens.state"
 
 interface AccountSubheaderProps {
   status: AccountStatus
@@ -20,7 +20,7 @@ export const AccountTokensHeader: FC<AccountSubheaderProps> = ({
   account,
   accountName
 }) => {
-  const { tokenDetails } = useKnownFungibleTokensWithBalance(account)
+  const { tokenDetails } = useFungibleTokens(account)
   const sumCurrencyValue = useSumTokenBalancesToCurrencyValue(tokenDetails)
   const accountAddress = account.address
 

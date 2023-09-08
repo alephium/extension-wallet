@@ -1,7 +1,6 @@
-import { Token } from "@alephium/extension/src/shared/token/type"
+import { Token, TokenWithBalance } from "@alephium/extension/src/shared/token/type"
 import { parsedDefaultTokens } from "@alephium/extension/src/shared/token/utils"
 import { TokenListItem } from "@alephium/extension/src/ui/features/accountTokens/TokenListItem"
-import { TokenDetailsWithBalance } from "@alephium/extension/src/ui/features/accountTokens/tokens.state"
 import { CellStack } from "@argent/ui"
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { BigNumber } from "ethers"
@@ -31,7 +30,7 @@ const testToken = tokenWithSymbol("TEST")
 const tokenWithBalance = (
   balance?: number | string,
   token = ethToken,
-): TokenDetailsWithBalance => {
+): TokenWithBalance => {
   return {
     ...token,
     balance: balance ? BigNumber.from(balance) : undefined,

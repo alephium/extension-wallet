@@ -2,13 +2,12 @@ import CurrencyConversionNumber from "bignumber.js"
 import { BigNumber, BigNumberish, utils } from "ethers"
 import { uint256 } from "starknet"
 
-import { TokenDetailsWithBalance } from "../../ui/features/accountTokens/tokens.state"
 import {
   isNumeric,
   prettifyCurrencyNumber,
   prettifyTokenNumber,
 } from "../utils/number"
-import { BaseToken } from "./type"
+import { BaseToken, TokenWithBalance } from "./type"
 
 const { UINT_256_MAX } = uint256
 
@@ -71,7 +70,7 @@ export const lookupTokenPriceDetails = ({
 
 export interface ISumTokenBalancesToCurrencyValue {
   /** the tokens to sum */
-  tokens: TokenDetailsWithBalance[]
+  tokens: TokenWithBalance[]
   /** reponse from `/tokens/prices` endpoint */
   pricesData: ApiPriceDataResponse
   /** reponse from `/tokens/info` endpoint */
@@ -177,7 +176,7 @@ export const prettifyCurrencyValue = (
  */
 
 export const prettifyTokenBalance = (
-  token: TokenDetailsWithBalance,
+  token: TokenWithBalance,
   withSymbol = true,
 ) => {
   const { balance, decimals, symbol } = token

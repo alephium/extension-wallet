@@ -1,6 +1,6 @@
 import defaultTokens from "../../assets/default-tokens.json"
 import { isEqualTokenId } from "../../ui/services/token"
-import { BaseToken, Token, TokenListTokens } from "./type"
+import { BaseToken, Token } from "./type"
 import { TokenList, ALPH } from "@alephium/token-list"
 import { defaultNetworkIds } from "../network/defaults"
 
@@ -16,6 +16,10 @@ export const alphTokens: Token[] = defaultNetworkIds.map((networkId) => {
     verified: true
   }
 })
+
+export function alphTokenInNetwork(networkId: string) {
+  return alphTokens.find((t) => t.networkId === networkId)
+}
 
 export const dustALPHAmount = BigInt(1000000000000000)
 

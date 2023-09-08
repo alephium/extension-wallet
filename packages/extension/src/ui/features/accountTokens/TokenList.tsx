@@ -1,7 +1,7 @@
 import { FC, Suspense } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { Token } from "../../../shared/token/type"
+import { Token, TokenWithBalance } from "../../../shared/token/type"
 import { ErrorBoundary } from "../../components/ErrorBoundary"
 import ErrorBoundaryFallbackWithCopyError from "../../components/ErrorBoundaryFallbackWithCopyError"
 import { routes } from "../../routes"
@@ -9,7 +9,7 @@ import { useSelectedAccount } from "../accounts/accounts.state"
 import { NewTokenButton } from "./NewTokenButton"
 import { TokenListItemVariant } from "./TokenListItem"
 import { TokenListItemContainer } from "./TokenListItemContainer"
-import { useKnownFungibleTokensWithBalance, TokenDetailsWithBalance } from "./tokens.state"
+import { useFungibleTokens } from "./tokens.state"
 
 interface TokenListProps {
   tokenList?: Token[]
@@ -28,12 +28,12 @@ export const TokenList: FC<TokenListProps> = ({
 }) => {
   const navigate = useNavigate()
   const account = useSelectedAccount()
-  const tokensForAccount = useKnownFungibleTokensWithBalance(account)
+  const tokensForAccount = useFungibleTokens(account)
   if (!account) {
     return null
   }
 
-  const tokens: TokenDetailsWithBalance[] | undefined = tokenList || tokensForAccount.tokenDetails
+  const tokens: TokenWithBalance[] | undefined = tokenList || tokensForAccount.tokenDetails
   tokens.forEach(token => {
     token.balance = tokensForAccount.tokenDetails.find(td => td.id === token.id)?.balance
   })
