@@ -7,7 +7,7 @@ import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
 import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
 import { useSelectedAccount } from "../accounts/accounts.state"
-import { useNonFungibleTokens } from "../accountTokens/tokens.state"
+import { useNonFungibleTokensWithBalance } from "../accountTokens/tokens.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { NftFigure } from "./NftFigure"
 import { NftItem } from "./NftItem"
@@ -17,7 +17,7 @@ export const CollectionNfts: FC = () => {
   const { collectionId } = useParams<{ collectionId: string }>()
   const account = useSelectedAccount()
   const navigate = useNavigate()
-  const unknownTokens = useNonFungibleTokens(account)
+  const unknownTokens = useNonFungibleTokensWithBalance(account)
   const unknownTokenIds = unknownTokens.map((t) => t.id)
   const network = useCurrentNetwork()
   const { collection, error } = useNFTCollection(unknownTokenIds, network, collectionId, account)

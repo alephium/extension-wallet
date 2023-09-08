@@ -6,14 +6,14 @@ import { SWRConfigCommon } from "../../services/swr"
 
 import { Network } from "../../../shared/network"
 import { fetchNFTCollections, fetchNFTCollection } from "./alephium-nft.service"
-import { useNonFungibleTokens } from "../accountTokens/tokens.state"
+import { useNonFungibleTokensWithBalance } from "../accountTokens/tokens.state"
 
 export const useNFTCollections = (
   network: Network,
   account?: BaseWalletAccount,
   config?: SWRConfigCommon,
 ) => {
-  const nonFungibleTokens = useNonFungibleTokens(account)
+  const nonFungibleTokens = useNonFungibleTokensWithBalance(account)
   const nonFungibleTokenIds = nonFungibleTokens.map((t) => t.id)
 
   const { data: collections, ...rest } = useSWR(

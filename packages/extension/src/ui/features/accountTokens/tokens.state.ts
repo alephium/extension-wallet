@@ -106,7 +106,7 @@ export const useToken = (baseToken: BaseToken): Token | undefined => {
 /** error codes to suppress - will not bubble error up to parent */
 const SUPPRESS_ERROR_STATUS = [429]
 
-export const useNonFungibleTokens = (
+export const useNonFungibleTokensWithBalance = (
   account?: BaseWalletAccount,
 ): BaseTokenWithBalance[] => {
   const selectedAccount = useAccount(account)
