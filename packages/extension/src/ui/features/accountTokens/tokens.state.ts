@@ -116,21 +116,21 @@ export const useNonFungibleTokens = (
   const cachedFungibleTokens = useTokensInNetwork(networkId)
   const { tokenDetails: allUserTokens } = useAllTokens(account)
 
-  const potentialFungibleTokens: BaseTokenWithBalance[] = []
+  const potentialNonFungibleTokens: BaseTokenWithBalance[] = []
   for (const token of allUserTokens) {
     const foundIndex = cachedFungibleTokens.findIndex((t) => t.id == token.id)
     if (foundIndex === -1) {
-      potentialFungibleTokens.push(token)
+      potentialNonFungibleTokens.push(token)
     }
   }
-  const sortedPotentialFungibleTokensIds = potentialFungibleTokens.map((t) => t.id).sort()
+  const sortedPotentialNonFungibleTokensIds = potentialNonFungibleTokens.map((t) => t.id).sort()
 
   const {
     data: nonFungibleTokens
   } = useSWRImmutable(
     selectedAccount && [
       getAccountIdentifier(selectedAccount),
-      sortedPotentialFungibleTokensIds,
+      sortedPotentialNonFungibleTokensIds,
       "accountNonFungibleTokens",
     ],
     async () => {
@@ -138,7 +138,7 @@ export const useNonFungibleTokens = (
       const nodeProvider = new NodeProvider(network.nodeUrl)
 
       const nonFungibleTokens: BaseTokenWithBalance[] = []
-      for (const token of potentialFungibleTokens) {
+      for (const token of potentialNonFungibleTokens) {
         if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
           const tokenType = await nodeProvider.guessStdTokenType(token.id)
           if (tokenType === 'non-fungible') {
