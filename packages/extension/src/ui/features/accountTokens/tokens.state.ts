@@ -114,7 +114,7 @@ export const useNonFungibleTokens = (
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
   const cachedFungibleTokens = useTokensInNetwork(networkId)
-  const { tokenDetails: allUserTokens } = useAllTokens(account)
+  const { tokenDetails: allUserTokens } = useAllTokensWithBalance(account)
 
   const potentialNonFungibleTokens: BaseTokenWithBalance[] = []
   for (const token of allUserTokens) {
@@ -162,7 +162,7 @@ export const useFungibleTokens = (
     tokenDetailsIsInitialising: allUserTokensIsInitialising,
     isValidating: allUserTokensIsValidating,
     error: allUserTokensError
-  } = useAllTokens(account)
+  } = useAllTokensWithBalance(account)
   const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
@@ -225,7 +225,7 @@ export const useFungibleTokens = (
   }
 }
 
-export const useAllTokens = (
+export const useAllTokensWithBalance = (
   account?: BaseWalletAccount
 ): UseBaseTokens => {
   const selectedAccount = useAccount(account)
