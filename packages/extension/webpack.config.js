@@ -149,6 +149,7 @@ module.exports = {
             loader: "tsx",
           }),
         ],
+        usedExports: true,
         splitChunks: {
           chunks(chunk) {
             return chunk.name === 'main';
