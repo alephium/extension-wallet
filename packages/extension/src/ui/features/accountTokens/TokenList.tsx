@@ -9,7 +9,7 @@ import { useSelectedAccount } from "../accounts/accounts.state"
 import { NewTokenButton } from "./NewTokenButton"
 import { TokenListItemVariant } from "./TokenListItem"
 import { TokenListItemContainer } from "./TokenListItemContainer"
-import { useFungibleTokens } from "./tokens.state"
+import { useFungibleTokensWithBalance } from "./tokens.state"
 
 interface TokenListProps {
   tokenList?: Token[]
@@ -28,7 +28,7 @@ export const TokenList: FC<TokenListProps> = ({
 }) => {
   const navigate = useNavigate()
   const account = useSelectedAccount()
-  const tokensForAccount = useFungibleTokens(account)
+  const tokensForAccount = useFungibleTokensWithBalance(account)
   if (!account) {
     return null
   }

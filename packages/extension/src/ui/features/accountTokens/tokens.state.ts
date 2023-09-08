@@ -154,7 +154,7 @@ export const useNonFungibleTokens = (
   return nonFungibleTokens || []
 }
 
-export const useFungibleTokens = (
+export const useFungibleTokensWithBalance = (
   account?: BaseWalletAccount
 ): UseTokensWithBalance => {
   const {
