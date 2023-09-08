@@ -18,8 +18,8 @@ import { sortBy } from "lodash"
 import { addTokenToBalances } from "../../../shared/token/balance"
 import { Transaction, compareTransactions } from "../../../shared/transactions"
 
-type UseTokens = UseTokensBase<TokenWithBalance>
-type UseBaseTokens = UseTokensBase<BaseTokenWithBalance>
+type UseTokensWithBalance = UseTokensBase<TokenWithBalance>
+type UseBaseTokensWithBalance = UseTokensBase<BaseTokenWithBalance>
 
 interface UseTokensBase<T> {
   tokenDetails: T[]
@@ -156,7 +156,7 @@ export const useNonFungibleTokens = (
 
 export const useFungibleTokens = (
   account?: BaseWalletAccount
-): UseTokens => {
+): UseTokensWithBalance => {
   const {
     tokenDetails: allUserTokens,
     tokenDetailsIsInitialising: allUserTokensIsInitialising,
@@ -227,7 +227,7 @@ export const useFungibleTokens = (
 
 export const useAllTokensWithBalance = (
   account?: BaseWalletAccount
-): UseBaseTokens => {
+): UseBaseTokensWithBalance => {
   const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
