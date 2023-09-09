@@ -7,7 +7,6 @@ import { MessageType, messageStream } from "../shared/messages"
 import { getNetwork } from "../shared/network"
 import { migratePreAuthorizations } from "../shared/preAuthorizations"
 import { updateTokenList } from "../shared/token/storage"
-import { delay } from "../shared/utils/delay"
 import { migrateWallet } from "../shared/wallet/storeMigration"
 import { walletStore } from "../shared/wallet/walletStore"
 import { handleAccountMessage } from "./accountMessaging"
@@ -19,7 +18,7 @@ import {
   sendMessageToActiveTabsAndUi,
   sendMessageToUi,
 } from "./activeTabs"
-import { setTokenListUpdateAlarm, setTransactionTrackerHistoryAlarm, setTransactionTrackerUpdateAlarm, tokenListUpdateAlarm, transactionTrackerHistoryAlarm, transactionTrackerUpdateAlarm } from "./alarms"
+import { setTokenListUpdateAlarm, setTransactionTrackerHistoryAlarm, tokenListUpdateAlarm, transactionTrackerHistoryAlarm } from "./alarms"
 import {
   BackgroundService,
   HandleMessage,
@@ -36,37 +35,17 @@ import { handleTokenMessaging } from "./tokenMessaging"
 import { initBadgeText } from "./transactions/badgeText"
 import { transactionTracker } from "./transactions/tracking"
 import { handleTransactionMessage } from "./transactions/transactionMessaging"
+import { transactionWatcher } from "./transactions/transactionWatcher"
 import { Wallet, sessionStore } from "./wallet"
 
 setTransactionTrackerHistoryAlarm()
-setTransactionTrackerUpdateAlarm()
+transactionWatcher.start()
 setTokenListUpdateAlarm()
 
 browser.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === transactionTrackerHistoryAlarm) {
     console.info("~> fetching transaction history")
     await transactionTracker.loadHistory(await getAccounts())
-  }
-
-  if (alarm.name === transactionTrackerUpdateAlarm) {
-    console.info("~> fetching transaction updates")
-    let hasInFlightTransactions = await transactionTracker.update()
-
-    // the config below will run transaction updates 7x per minute, if there are in-flight transactions
-    // it will update on second 0, 15, 30 and 45
-    const maxRetries = 6 // max 3 retries
-    const waitTimeInS = 7.5 // wait 7.5 seconds between retries
-
-    let runs = 0
-    while (hasInFlightTransactions && runs < maxRetries) {
-      console.info(`~> waiting ${waitTimeInS}s for transaction updates`)
-      await delay(waitTimeInS * 1000)
-      console.info(
-        "~> fetching transaction updates as pending transactions were detected",
-      )
-      runs++
-      hasInFlightTransactions = await transactionTracker.update()
-    }
   }
 
   if (alarm.name === tokenListUpdateAlarm) {

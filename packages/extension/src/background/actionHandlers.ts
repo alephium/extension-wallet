@@ -9,11 +9,11 @@ import { addNetwork, getNetworks } from "../shared/network"
 import { preAuthorize } from "../shared/preAuthorizations"
 import { isEqualWalletAddress, withNetwork } from "../shared/wallet.service"
 import { assertNever } from "../ui/services/assertNever"
-import { refreshTransactionTrackerUpdateAlarm } from "./alarms"
 import { analytics } from "./analytics"
 import { BackgroundService } from "./background"
 import { openUi } from "./openUi"
 import { executeTransactionAction } from "./transactions/transactionExecution"
+import { transactionWatcher } from "./transactions/transactionWatcher"
 
 export const handleActionApproval = async (
   action: ExtQueueItem<ActionItem>,
@@ -54,7 +54,7 @@ export const handleActionApproval = async (
           transaction.params.networkId,
         )
 
-        await refreshTransactionTrackerUpdateAlarm()
+        transactionWatcher.refresh()
 
         return {
           type: "ALPH_TRANSACTION_SUBMITTED",
