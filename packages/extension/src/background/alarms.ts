@@ -16,17 +16,12 @@ export function setTransactionTrackerHistoryAlarm() {
 }
 
 export const transactionTrackerUpdateAlarm = "core:transactionTracker:update"
-export async function refreshTransactionTrackerUpdateAlarm() {
-  await browser.alarms.clear(transactionTrackerUpdateAlarm)
-  setTransactionTrackerUpdateAlarm()
-}
 export function setTransactionTrackerUpdateAlarm() {
   browser.alarms.create(transactionTrackerUpdateAlarm, {
     delayInMinutes: 1,
-    periodInMinutes: 1  // fetch transaction updates of existing transactions every minute from onchain
+    periodInMinutes: 1
   })
 }
-
 
 export const tokenListUpdateAlarm = "core:tokenList:update"
 export async function refreshTokenListUpdateAlarm() {

@@ -1,6 +1,6 @@
 import { uniqWith } from "lodash-es"
 
-import { getInFlightTransactions } from "../../shared/transactions"
+import { compareTransactions, getInFlightTransactions, TRANSACTION_STATUSES_TO_TRACK } from "../../shared/transactions"
 import { WalletAccount } from "../../shared/wallet.model"
 import { accountsEqual } from "../../shared/wallet.service"
 import { getTransactionsUpdate } from "./sources/onchain"
@@ -25,6 +25,7 @@ export const transactionTracker: TransactionTracker = {
   },
   async update() {
     const allTransactions = await transactionsStore.get()
+    const pendingTransactions = getInFlightTransactions(allTransactions)
     const updatedTransactions = await getTransactionsUpdate(
       // is smart enough to filter for just the pending transactions, as the rest needs no update
       allTransactions,
@@ -34,8 +35,11 @@ export const transactionTracker: TransactionTracker = {
       await transactionsStore.remove((tx) => toBeRemoved.some((toBeRemovedTx) => tx.hash === toBeRemovedTx.hash))
     }
     await transactionsStore.push(toBeKept)
-    const hasPendingTransactions =
-      getInFlightTransactions(allTransactions).length > 0
+
+    const hasPendingTransactions = pendingTransactions.some((pendingTx) => {
+      const updatedTx = updatedTransactions.find((tx) => compareTransactions(pendingTx, tx))
+      return updatedTx === undefined || TRANSACTION_STATUSES_TO_TRACK.includes(updatedTx.status)
+    })
     return hasPendingTransactions
   },
 }
