@@ -7,6 +7,7 @@ import { MessageType, messageStream } from "../shared/messages"
 import { getNetwork } from "../shared/network"
 import { migratePreAuthorizations } from "../shared/preAuthorizations"
 import { updateTokenList } from "../shared/token/storage"
+import { delay } from "../shared/utils/delay"
 import { migrateWallet } from "../shared/wallet/storeMigration"
 import { walletStore } from "../shared/wallet/walletStore"
 import { handleAccountMessage } from "./accountMessaging"
@@ -18,7 +19,7 @@ import {
   sendMessageToActiveTabsAndUi,
   sendMessageToUi,
 } from "./activeTabs"
-import { setTokenListUpdateAlarm, setTransactionTrackerHistoryAlarm, tokenListUpdateAlarm, transactionTrackerHistoryAlarm } from "./alarms"
+import { setTokenListUpdateAlarm, setTransactionTrackerHistoryAlarm, setTransactionTrackerUpdateAlarm, tokenListUpdateAlarm, transactionTrackerHistoryAlarm, transactionTrackerUpdateAlarm } from "./alarms"
 import {
   BackgroundService,
   HandleMessage,
@@ -35,17 +36,21 @@ import { handleTokenMessaging } from "./tokenMessaging"
 import { initBadgeText } from "./transactions/badgeText"
 import { transactionTracker } from "./transactions/tracking"
 import { handleTransactionMessage } from "./transactions/transactionMessaging"
-import { transactionWatcher } from "./transactions/transactionWatcher"
 import { Wallet, sessionStore } from "./wallet"
 
 setTransactionTrackerHistoryAlarm()
-transactionWatcher.start()
+setTransactionTrackerUpdateAlarm()
 setTokenListUpdateAlarm()
 
 browser.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === transactionTrackerHistoryAlarm) {
     console.info("~> fetching transaction history")
     await transactionTracker.loadHistory(await getAccounts())
+  }
+
+  if (alarm.name === transactionTrackerUpdateAlarm) {
+    console.info("~> fetching transaction updates")
+    await transactionTracker.update()
   }
 
   if (alarm.name === tokenListUpdateAlarm) {
