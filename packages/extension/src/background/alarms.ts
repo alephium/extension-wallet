@@ -19,7 +19,7 @@ export const transactionTrackerUpdateAlarm = "core:transactionTracker:update"
 export function setTransactionTrackerUpdateAlarm() {
   browser.alarms.create(transactionTrackerUpdateAlarm, {
     delayInMinutes: 1,
-    periodInMinutes: 1  // fetch transaction updates of existing transactions every minute from onchain
+    periodInMinutes: 1
   })
 }
 
