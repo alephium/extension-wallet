@@ -9,6 +9,8 @@ import { useArrayStorage } from "./storage/hooks"
 import { BaseWalletAccount } from "./wallet.model"
 import { accountsEqual } from "./wallet.service"
 
+const CONNECTION_EXPIRY = 7 * 24 * 60 // 7 days in minutes
+
 interface PreAuthorization {
   account: BaseWalletAccount
   host: string
@@ -53,6 +55,29 @@ export const migratePreAuthorizations = async () => {
   }
 }
 
+const getConnectionAlarmName = (host: string) => {
+  return `alph:connection:${host}`
+}
+
+const connectionExpiryListner = (alarm: browser.alarms.Alarm) => {
+  if (alarm.name.startsWith('alph:connection:')) {
+    const host = alarm.name.split(':')[2]
+    removePreAuthorization(host)
+  }
+}
+
+export const setConnectionExpiryAlarm = async (host: string) => {
+  if (!browser.alarms.onAlarm.hasListener(connectionExpiryListner)) {
+    browser.alarms.onAlarm.addListener(connectionExpiryListner)
+  }
+
+  const alarmName = getConnectionAlarmName(host)
+  await browser.alarms.clear(alarmName)
+  browser.alarms.create(alarmName, {
+    delayInMinutes: CONNECTION_EXPIRY,
+  })
+}
+
 export const preAuthorize = async (
   account: BaseWalletAccount,
   host: string,
@@ -61,6 +86,8 @@ export const preAuthorize = async (
     account,
     host,
   })
+
+  await setConnectionExpiryAlarm(host)
 }
 
 export const removePreAuthorization = async (
@@ -73,6 +100,7 @@ export const removePreAuthorization = async (
     }
     return x.host === host
   })
+  await browser.alarms.clear(getConnectionAlarmName(host))
 }
 
 export const getPreAuthorizations = () => {
