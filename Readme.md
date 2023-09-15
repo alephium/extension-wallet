@@ -33,6 +33,16 @@ yarn      # setup dependencies
 yarn dev  # run build process for all packages in watch mode
 ```
 
+## Name Service Integration
+
+The wallet devs look forward to integrate any community name service projects, but there are some essential requirements:
+* **Open Source and Testing**: Your contracts must be open source, and they should have proper tests that cover the important functions.
+* **Offchain resolving**: Your services should provide convenient name&address resolving via full node endpoints.
+* **Onchain resolving**: Your project should support onchain resolving for any group on the chain. It doesn't need to be enabled by default, but it should be available in the contract logic.
+    * For instance, the [name service PoC](https://github.com/Lbqds/alephium-ans/blob/master/contracts/registrars/primary_registrar.ral#L21-L51) supports this with credential token. By default, users don't need to mint such token so
+    it won't affect UX.
+* **Standard Interface**: Your project should have a standard interface for onchain resolution. This makes it easier for other dapps to integrate with your service seamlessly.
+
 ## Credits
 
 We have built this project on top of [Argent X](https://github.com/argentlabs/argent-x)'s codebase. We would like to take this opportunity to thank all the [contributors](https://github.com/argentlabs/argent-x/graphs/contributors) of the Argent X project ❤️
