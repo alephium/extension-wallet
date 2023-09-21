@@ -17,10 +17,10 @@ export const fetchNFTCollections = async (
       const result = await fetchImmutable(`${tokenId}-parent`, () => explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId)))
       if (result.parent) {
         const parentContractId = binToHex(contractIdFromAddress(result.parent))
-        const parentStdInterfaceId = await fetchImmutable(`${parentContractId}-std`, () => nodeProvider.guessStdInterfaceId(parentContractId))
+        const isFollowNFTCollectionStd = await fetchImmutable(`${parentContractId}-std`, () => nodeProvider.guessFollowsNFTCollectionStd(parentContractId))
 
         // Guess if parent implements the NFT collection standard interface
-        if (parentStdInterfaceId === '0002') {
+        if (isFollowNFTCollectionStd) {
           parentAndTokenIds.push([parentContractId, tokenId])
         }
       }
