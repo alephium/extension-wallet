@@ -20,7 +20,7 @@ export const fetchNFTCollections = async (
         const parentStdInterfaceId = await fetchImmutable(`${parentContractId}-std`, () => nodeProvider.guessStdInterfaceId(parentContractId))
 
         // Guess if parent implements the NFT collection standard interface
-        if (parentStdInterfaceId === '0002') {
+        if (parentStdInterfaceId?.startsWith('0002')) {
           parentAndTokenIds.push([parentContractId, tokenId])
         }
       }
