@@ -7,10 +7,10 @@ import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
 import { EmptyCollections } from "./EmptyCollections"
 import { NftFigure } from "./NftFigure"
-import { NftItem } from "./NftItem"
-import { useNFTCollections } from "./useNFTCollections"
+import { useCollectionAndNFTs } from "./useNFTCollections"
 import { useNetwork } from "../networks/useNetworks"
 import { Spinner } from "../../components/Spinner"
+import { NftCollectionItem } from "./NftCollectionItem"
 
 interface AccountCollectionsProps {
   account: Account
@@ -24,35 +24,35 @@ const Collections: FC<AccountCollectionsProps> = ({
 }) => {
   const navigate = useNavigate()
   const network = useNetwork(account.networkId)
-  const { collections } = useNFTCollections(network, account)
+  const { collectionAndNfts } = useCollectionAndNFTs(network, account)
+  const collectionIds = Object.keys(collectionAndNfts)
 
   return (
     <>
-      {collections.length === 0 && (
+      {collectionIds.length === 0 && (
         <EmptyCollections networkId={account.networkId} />
       )}
 
-      {collections.length > 0 && (
+      {collectionIds.length > 0 && (
         <SimpleGrid
           gridTemplateColumns="repeat(auto-fill, 158px)"
           gap="3"
           py={4}
           mx="3"
         >
-          {collections.map((collection) => (
+          {collectionIds.map((collectionId) => (
             <NftFigure
-              key={collection.id}
+              key={collectionId}
               onClick={() => {
-                navigate(routes.collectionNfts(collection.id), {
+                navigate(routes.collectionNfts(collectionId), {
                   state: { navigateToSend },
                 })
               }}
             >
-              <NftItem
-                name={collection.metadata.name}
-                thumbnailSrc={collection.metadata.image}
-                total={collection.nfts.length}
-                unverifiedCollection={!collection.verified}
+              <NftCollectionItem
+                collectionId={collectionId}
+                network={network}
+                account={account}
               />
             </NftFigure>
           ))}

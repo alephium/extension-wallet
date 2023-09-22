@@ -7,20 +7,17 @@ import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
 import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
 import { useSelectedAccount } from "../accounts/accounts.state"
-import { useNonFungibleTokensWithBalance } from "../accountTokens/tokens.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
+import { Nft } from "./NFT"
 import { NftFigure } from "./NftFigure"
-import { NftItem } from "./NftItem"
 import { useNFTCollection } from "./useNFTCollections"
 
 export const CollectionNfts: FC = () => {
   const { collectionId } = useParams<{ collectionId: string }>()
   const account = useSelectedAccount()
   const navigate = useNavigate()
-  const unknownTokens = useNonFungibleTokensWithBalance(account)
-  const unknownTokenIds = unknownTokens.map((t) => t.id)
   const network = useCurrentNetwork()
-  const { collection, error } = useNFTCollection(unknownTokenIds, network, collectionId, account)
+  const { collection, error } = useNFTCollection(network, collectionId, account)
 
   if (!collectionId) {
     return <></>
@@ -99,19 +96,18 @@ export const CollectionNfts: FC = () => {
             mx="3"
             py={6}
           >
-            {collection.nfts.map((nft) => (
+            {collection.nftIds.map((nftId) => (
               <NftFigure
-                key={`${nft.collectionId}-${nft.id}`}
+                key={`${collectionId}-${nftId}`}
                 onClick={() =>
-                  navigate(routes.sendNft(nft.collectionId, nft.id))
+                  navigate(routes.sendNft(collectionId, nftId))
                 }
               >
-                <NftItem
-                  thumbnailSrc={nft.metadata.image || ""}
-                  name={
-                    nft.metadata.name ||
-                    "Untitled"
-                  }
+                <Nft
+                  collectionId={collectionId}
+                  nftId={nftId}
+                  network={network}
+                  account={account}
                 />
               </NftFigure>
             ))}
