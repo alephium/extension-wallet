@@ -4,6 +4,7 @@ import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { SWRConfigCommon } from "../../services/swr"
 import { getNFT } from "./alephium-nft.service"
+import { laggy } from "./laggy"
 
 export const useNFT = (
   network: Network,
@@ -17,6 +18,9 @@ export const useNFT = (
     () => (collectionId && nftId) ? getNFT(collectionId, nftId, network) : undefined,
     {
       refreshInterval: 60e3 /* 1 minute */,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      use: [laggy],
       suspense: true,
       ...config,
     },

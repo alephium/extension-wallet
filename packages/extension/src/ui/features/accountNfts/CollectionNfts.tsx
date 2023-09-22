@@ -1,6 +1,6 @@
 import { BarBackButton, H1, H4, H6, NavigationContainer } from "@argent/ui"
-import { Tooltip, Flex, Image, SimpleGrid } from "@chakra-ui/react"
-import { FC } from "react"
+import { Tooltip, Flex, Image, SimpleGrid, Spinner as Loading } from "@chakra-ui/react"
+import { FC, Suspense } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
 
@@ -103,12 +103,18 @@ export const CollectionNfts: FC = () => {
                   navigate(routes.sendNft(collectionId, nftId))
                 }
               >
-                <Nft
-                  collectionId={collectionId}
-                  nftId={nftId}
-                  network={network}
-                  account={account}
-                />
+                <Suspense fallback={
+                  <Flex w="142px" h="142px" justifyContent="center" alignItems="center">
+                    <Loading />
+                  </Flex>}
+                >
+                  <Nft
+                    collectionId={collectionId}
+                    nftId={nftId}
+                    network={network}
+                    account={account}
+                  />
+                </Suspense>
               </NftFigure>
             ))}
           </SimpleGrid>

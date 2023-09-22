@@ -1,5 +1,5 @@
 import { BarBackButton, NavigationContainer } from "@argent/ui"
-import { FC, useCallback, useMemo, useRef, useState } from "react"
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
@@ -90,7 +90,8 @@ export const SendNftScreen: FC = () => {
   const network = useCurrentNetwork()
 
   console.log("tokenId", nftId)
-  const { nft } = useNFT(network, nftCollectionId, nftId, account)
+  const { nft, mutate } = useNFT(network, nftCollectionId, nftId, account)
+  useEffect(() => { mutate() }, [mutate])
 
   const resolver = useYupValidationResolver(SendNftSchema)
 
