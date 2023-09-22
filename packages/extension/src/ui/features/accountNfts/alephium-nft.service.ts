@@ -29,7 +29,7 @@ export const fetchCollectionAndNfts = async (
         }
       }
     } catch (e) {
-      console.error("Error fetching parent for token id", e)
+      console.error(`Error fetching parent for collection id for NFT ${tokenId}`, e)
     }
   }
   return parentAndTokenIds

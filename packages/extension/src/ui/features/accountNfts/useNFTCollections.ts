@@ -7,6 +7,7 @@ import { SWRConfigCommon } from "../../services/swr"
 import { Network } from "../../../shared/network"
 import { fetchNFTCollection, fetchCollectionAndNfts } from "./alephium-nft.service"
 import { useNonFungibleTokensWithBalance } from "../accountTokens/tokens.state"
+import { laggy } from "./laggy"
 
 export const useCollectionAndNFTs = (
   network: Network,
@@ -20,8 +21,7 @@ export const useCollectionAndNFTs = (
     account && nonFungibleTokenIds.length > 0 && [getAccountIdentifier(account), 'collectionAndNft'],
     () => fetchCollectionAndNfts(nonFungibleTokenIds, network),
     {
-      refreshInterval: 60e3 /* 1 minute */,
-      suspense: true,
+      refreshInterval: 30000,
       ...config,
     }
   )
@@ -42,7 +42,7 @@ export const useNFTCollection = (
     () => collectionId ? fetchNFTCollection(collectionId, nftIds, network) : undefined,
     {
       refreshInterval: 60e3 /* 1 minute */,
-      suspense: true,
+      use: [laggy],
       ...config,
     },
   )

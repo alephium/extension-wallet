@@ -17,6 +17,7 @@ import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { sortBy } from "lodash"
 import { addTokenToBalances } from "../../../shared/token/balance"
 import { Transaction, compareTransactions } from "../../../shared/transactions"
+import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
 
 type UseTokensWithBalance = UseTokensBase<TokenWithBalance>
 type UseBaseTokensWithBalance = UseTokensBase<BaseTokenWithBalance>
@@ -123,16 +124,11 @@ export const useNonFungibleTokensWithBalance = (
       potentialNonFungibleTokens.push(token)
     }
   }
-  const sortedPotentialNonFungibleTokensIds = potentialNonFungibleTokens.map((t) => t.id).sort()
 
-  const {
-    data: nonFungibleTokens
-  } = useSWRImmutable(
-    selectedAccount && [
-      getAccountIdentifier(selectedAccount),
-      sortedPotentialNonFungibleTokensIds,
-      "accountNonFungibleTokens",
-    ],
+  const { data: nonFungibleTokens } = useSWR(
+    selectedAccount &&
+    potentialNonFungibleTokens.length > 0 &&
+    [getAccountIdentifier(selectedAccount), "accountNonFungibleTokens"],
     async () => {
       const network = await getNetwork(networkId)
       const nodeProvider = new NodeProvider(network.nodeUrl)
@@ -140,7 +136,7 @@ export const useNonFungibleTokensWithBalance = (
       const nonFungibleTokens: BaseTokenWithBalance[] = []
       for (const token of potentialNonFungibleTokens) {
         if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
-          const tokenType = await nodeProvider.guessStdTokenType(token.id)
+          const tokenType = await fetchImmutable(`${token.id}-token-type`, () => nodeProvider.guessStdTokenType(token.id))
           if (tokenType === 'non-fungible') {
             nonFungibleTokens.push({ id: token.id, networkId: networkId, balance: token.balance })
           }
@@ -148,6 +144,9 @@ export const useNonFungibleTokensWithBalance = (
       }
 
       return nonFungibleTokens
+    },
+    {
+      refreshInterval: 30000
     }
   )
 
