@@ -4,14 +4,18 @@ import { Account } from "../accounts/Account"
 import { NftItem } from "./NftItem"
 import { useNFTCollection } from "./useNFTCollections"
 import { Flex, Spinner } from "@chakra-ui/react"
+import { useNavigate } from "react-router-dom"
+import { routes } from "../../routes"
 
 interface NftCollectionItemProps {
   collectionId: string
   network: Network
   account: Account
+  navigateToSend: boolean
 }
 
-const NftCollectionItem: FC<NftCollectionItemProps> = ({ network, collectionId, account }) => {
+const NftCollectionItem: FC<NftCollectionItemProps> = ({ network, collectionId, account, navigateToSend }) => {
+  const navigate = useNavigate()
   const { collection } = useNFTCollection(network, collectionId, account)
   if (collection === undefined) {
     return (
@@ -21,6 +25,11 @@ const NftCollectionItem: FC<NftCollectionItemProps> = ({ network, collectionId, 
     )
   }
   return <NftItem
+    onClick={() => {
+      navigate(routes.collectionNfts(collectionId), {
+        state: { navigateToSend },
+      })
+    }}
     name={collection.metadata.name}
     thumbnailSrc={collection.metadata.image}
     total={collection.nftIds.length}

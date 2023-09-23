@@ -7,13 +7,14 @@ import { NftThumbnailImage } from "./NftThumbnailImage"
 interface NftItemProps {
   name: string
   thumbnailSrc: string
+  onClick: () => void
   logoSrc?: string
   total?: number
   unverifiedCollection?: boolean
 }
 
-const NftItem: FC<NftItemProps> = ({ logoSrc, name, thumbnailSrc, total, unverifiedCollection }) => (
-  <Box as="figure" role="group">
+const NftItem: FC<NftItemProps> = ({ logoSrc, name, thumbnailSrc, onClick, total, unverifiedCollection }) => (
+  <Box as="figure" role="group" onClick={onClick}>
     <Box
       position="relative"
       transition={"transform 0.2s ease-in-out"}

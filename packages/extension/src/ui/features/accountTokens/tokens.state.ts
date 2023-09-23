@@ -3,7 +3,6 @@ import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
 import useSWR from "swr"
-import useSWRImmutable from 'swr/immutable'
 import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage, useObjectStorage } from "../../../shared/storage/hooks"

@@ -1,9 +1,7 @@
 import { H4 } from "@argent/ui"
 import { Flex, SimpleGrid } from "@chakra-ui/react"
 import { FC, Suspense } from "react"
-import { useNavigate } from "react-router-dom"
 
-import { routes } from "../../routes"
 import { Account } from "../accounts/Account"
 import { EmptyCollections } from "./EmptyCollections"
 import { NftFigure } from "./NftFigure"
@@ -22,7 +20,6 @@ const Collections: FC<AccountCollectionsProps> = ({
   account,
   navigateToSend = false,
 }) => {
-  const navigate = useNavigate()
   const network = useNetwork(account.networkId)
   const { collectionAndNfts } = useCollectionAndNFTs(network, account)
   const collectionIds = Object.keys(collectionAndNfts)
@@ -41,18 +38,12 @@ const Collections: FC<AccountCollectionsProps> = ({
           mx="3"
         >
           {collectionIds.map((collectionId) => (
-            <NftFigure
-              key={collectionId}
-              onClick={() => {
-                navigate(routes.collectionNfts(collectionId), {
-                  state: { navigateToSend },
-                })
-              }}
-            >
+            <NftFigure key={collectionId}>
               <NftCollectionItem
                 collectionId={collectionId}
                 network={network}
                 account={account}
+                navigateToSend={navigateToSend}
               />
             </NftFigure>
           ))}

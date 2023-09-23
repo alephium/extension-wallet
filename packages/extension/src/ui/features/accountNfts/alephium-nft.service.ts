@@ -67,6 +67,9 @@ export async function getNFT(collectionId: string, nftId: string, network: Netwo
       metadata: metadata
     }
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Deprecated NFT contract')) {
+      throw error
+    }
     console.log(`Error fetching NFT ${nftId}, error: ${error}`)
     return undefined
   }

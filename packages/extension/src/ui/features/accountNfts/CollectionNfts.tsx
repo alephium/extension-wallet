@@ -1,5 +1,6 @@
 import { BarBackButton, H1, H4, H6, NavigationContainer } from "@argent/ui"
 import { Tooltip, Flex, Image, SimpleGrid, Spinner as Loading } from "@chakra-ui/react"
+import { ErrorBoundary } from "@sentry/react"
 import { FC, Suspense } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
@@ -97,24 +98,21 @@ export const CollectionNfts: FC = () => {
             py={6}
           >
             {collection.nftIds.map((nftId) => (
-              <NftFigure
-                key={`${collectionId}-${nftId}`}
-                onClick={() =>
-                  navigate(routes.sendNft(collectionId, nftId))
-                }
-              >
-                <Suspense fallback={
-                  <Flex w="142px" h="142px" justifyContent="center" alignItems="center">
-                    <Loading />
-                  </Flex>}
-                >
-                  <Nft
-                    collectionId={collectionId}
-                    nftId={nftId}
-                    network={network}
-                    account={account}
-                  />
-                </Suspense>
+              <NftFigure key={`${collectionId}-${nftId}`}>
+                <ErrorBoundary fallback={<H4 mt="10" textAlign="center">Deprecated NFT</H4>}>
+                  <Suspense fallback={
+                    <Flex w="142px" h="142px" justifyContent="center" alignItems="center">
+                      <Loading />
+                    </Flex>}
+                  >
+                    <Nft
+                      collectionId={collectionId}
+                      nftId={nftId}
+                      network={network}
+                      account={account}
+                    />
+                  </Suspense>
+                </ErrorBoundary>
               </NftFigure>
             ))}
           </SimpleGrid>
