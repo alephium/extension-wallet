@@ -198,7 +198,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     networkId: selectedAccount?.networkId || "unknown",
   })
   const [buildResult, setBuildResult] = useState<
-    ReviewTransactionResult | { error: string } | undefined
+    ReviewTransactionResult | undefined
   >()
   const { id: networkId, nodeUrl } = useNetwork(
     selectedAccount?.networkId ?? "unknown",
@@ -228,13 +228,17 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         )
         setBuildResult(buildResult)
       } catch (e: any) {
-        console.error("Error building transaction", e)
-        setBuildResult({ error: e.toString() })
+        useAppState.setState({
+          error: `Failed in building transaction: ${e.toString()}`,
+          isLoading: false,
+        })
+        rejectAction(actionHash)
+        navigate(routes.error())
       }
     }
 
     build()
-  }, [nodeUrl, selectedAccount, transaction, tokenDetailsIsInitialising])
+  }, [nodeUrl, selectedAccount, transaction, allUserTokens, tokenDetailsIsInitialising, actionHash, navigate])
 
   const ledgerSign = useCallback(async () => {
     if (selectedAccount === undefined) {
@@ -242,7 +246,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     }
     setLedgerState(oldState => oldState === undefined ? "detecting" : oldState)
 
-    if (buildResult && !("error" in buildResult)) {
+    if (buildResult) {
       let app: LedgerApp | undefined
       try {
         app = await getLedgerApp()
@@ -284,15 +288,6 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     return <LoadingScreen />
   }
 
-  if ("error" in buildResult) {
-    useAppState.setState({
-      error: `Failed in building transaction: ${buildResult.error}`,
-      isLoading: false,
-    })
-    rejectAction(actionHash)
-    return <Navigate to={routes.error()} />
-  }
-
   return (
     <ConfirmScreen
       confirmButtonText={
@@ -332,8 +327,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       }}
       showHeader={false}
       footer={
-        buildResult &&
-        !("error" in buildResult) && (
+        buildResult && (
           <Flex direction="column" gap="1">
             <LedgerStatus ledgerState={ledgerState} />
             <FeeEstimation
