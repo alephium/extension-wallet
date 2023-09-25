@@ -17,11 +17,11 @@ export const useNFT = (
     account && collectionId && nftId && [getAccountIdentifier(account), collectionId, nftId, 'nft'],
     () => (collectionId && nftId) ? getNFT(collectionId, nftId, network) : undefined,
     {
+      ...config,
       revalidateOnFocus: false,
       revalidateOnMount: false,
       use: [laggy],
       suspense: true,
-      ...config,
     },
   )
   return { nft, ...rest }

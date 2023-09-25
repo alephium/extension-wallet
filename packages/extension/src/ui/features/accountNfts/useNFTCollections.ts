@@ -21,8 +21,8 @@ export const useCollectionAndNFTs = (
     account && nonFungibleTokenIds.length > 0 && [getAccountIdentifier(account), 'collectionAndNft'],
     () => fetchCollectionAndNfts(nonFungibleTokenIds, network),
     {
-      refreshInterval: 30000,
       ...config,
+      refreshInterval: 30000,
     }
   )
 
@@ -41,9 +41,9 @@ export const useNFTCollection = (
     account && collectionId && [getAccountIdentifier(account), collectionId, 'collection'],
     () => collectionId ? fetchNFTCollection(collectionId, nftIds, network) : undefined,
     {
+      ...config,
       refreshInterval: 60e3 /* 1 minute */,
       use: [laggy],
-      ...config,
     },
   )
   return { collection, ...rest }
