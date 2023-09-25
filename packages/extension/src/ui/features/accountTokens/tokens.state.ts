@@ -332,7 +332,7 @@ async function getBalances(nodeProvider: NodeProvider, address: string): Promise
 async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
-    const tokenType = await nodeProvider.guessStdTokenType(tokenId)
+    const tokenType = await fetchImmutable(`${tokenId}-token-type`, () => nodeProvider.guessStdTokenType(tokenId))
     if (tokenType !== 'fungible') {
       return undefined
     }
