@@ -17,7 +17,6 @@ export const useNFT = (
     account && collectionId && nftId && [getAccountIdentifier(account), collectionId, nftId, 'nft'],
     () => (collectionId && nftId) ? getNFT(collectionId, nftId, network) : undefined,
     {
-      refreshInterval: 60e3 /* 1 minute */,
       revalidateOnFocus: false,
       revalidateOnMount: false,
       use: [laggy],
