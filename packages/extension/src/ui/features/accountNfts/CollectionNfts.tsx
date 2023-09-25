@@ -1,26 +1,24 @@
 import { BarBackButton, H1, H4, H6, NavigationContainer } from "@argent/ui"
-import { Tooltip, Flex, Image, SimpleGrid } from "@chakra-ui/react"
-import { FC } from "react"
+import { Tooltip, Flex, Image, SimpleGrid, Spinner as Loading } from "@chakra-ui/react"
+import { ErrorBoundary } from "@sentry/react"
+import { FC, Suspense } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
 
 import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
 import { useSelectedAccount } from "../accounts/accounts.state"
-import { useNonFungibleTokens } from "../accountTokens/tokens.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
+import { Nft } from "./NFT"
 import { NftFigure } from "./NftFigure"
-import { NftItem } from "./NftItem"
 import { useNFTCollection } from "./useNFTCollections"
 
 export const CollectionNfts: FC = () => {
   const { collectionId } = useParams<{ collectionId: string }>()
   const account = useSelectedAccount()
   const navigate = useNavigate()
-  const unknownTokens = useNonFungibleTokens(account)
-  const unknownTokenIds = unknownTokens.map((t) => t.id)
   const network = useCurrentNetwork()
-  const { collection, error } = useNFTCollection(unknownTokenIds, network, collectionId, account)
+  const { collection, error } = useNFTCollection(network, collectionId, account)
 
   if (!collectionId) {
     return <></>
@@ -99,20 +97,22 @@ export const CollectionNfts: FC = () => {
             mx="3"
             py={6}
           >
-            {collection.nfts.map((nft) => (
-              <NftFigure
-                key={`${nft.collectionId}-${nft.id}`}
-                onClick={() =>
-                  navigate(routes.sendNft(nft.collectionId, nft.id))
-                }
-              >
-                <NftItem
-                  thumbnailSrc={nft.metadata.image || ""}
-                  name={
-                    nft.metadata.name ||
-                    "Untitled"
-                  }
-                />
+            {collection.nftIds.map((nftId) => (
+              <NftFigure key={`${collectionId}-${nftId}`}>
+                <ErrorBoundary fallback={<H4 mt="10" textAlign="center">Deprecated NFT</H4>}>
+                  <Suspense fallback={
+                    <Flex w="142px" h="142px" justifyContent="center" alignItems="center">
+                      <Loading />
+                    </Flex>}
+                  >
+                    <Nft
+                      collectionId={collectionId}
+                      nftId={nftId}
+                      network={network}
+                      account={account}
+                    />
+                  </Suspense>
+                </ErrorBoundary>
               </NftFigure>
             ))}
           </SimpleGrid>

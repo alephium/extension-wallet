@@ -33,11 +33,11 @@ export interface NFT {
 export interface NFTCollection {
   id: string
   metadata: NFTCollectionMeta
-  nfts: NFT[]
+  nftIds: string[]
   verified: boolean
 }
 
-export type NFTCollections = NFTCollection[]
+export type CollectionAndNFTMap = Record<string, string[]>
 
 export const whitelistedCollection: Record<string, string[]> = whitelistedCollectionFromTokenList
   .reduce((acc, collections) => {

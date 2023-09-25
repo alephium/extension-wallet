@@ -5,65 +5,46 @@ import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { SWRConfigCommon } from "../../services/swr"
 
 import { Network } from "../../../shared/network"
-import { fetchNFTCollections, fetchNFTCollection } from "./alephium-nft.service"
-import { useNonFungibleTokens } from "../accountTokens/tokens.state"
+import { fetchNFTCollection, fetchCollectionAndNfts } from "./alephium-nft.service"
+import { useNonFungibleTokensWithBalance } from "../accountTokens/tokens.state"
+import { laggy } from "./laggy"
 
-export const useNFTCollections = (
+export const useCollectionAndNFTs = (
   network: Network,
   account?: BaseWalletAccount,
   config?: SWRConfigCommon,
 ) => {
-  const nonFungibleTokens = useNonFungibleTokens(account)
+  const nonFungibleTokens = useNonFungibleTokensWithBalance(account)
   const nonFungibleTokenIds = nonFungibleTokens.map((t) => t.id)
 
-  const { data: collections, ...rest } = useSWR(
-    account &&
-    nonFungibleTokenIds.length > 0 &&
-    [
-      getAccountIdentifier(account),
-      nonFungibleTokenIds,
-      "collections",
-    ],
-    () => fetchNFTCollections(nonFungibleTokenIds, network),
+  const { data: collectionAndNfts, ...rest } = useSWR(
+    account && nonFungibleTokenIds.length > 0 && [getAccountIdentifier(account), 'collectionAndNft'],
+    () => fetchCollectionAndNfts(nonFungibleTokenIds, network),
     {
-      refreshInterval: 60e3 /* 1 minute */,
-      suspense: true,
       ...config,
-    },
+      refreshInterval: 30000,
+    }
   )
 
-  return { collections: collections || [], ...rest }
+  return { collectionAndNfts: collectionAndNfts || {}, ...rest }
 }
 
 export const useNFTCollection = (
-  tokenIds: string[],
   network: Network,
   collectionId?: string,
   account?: BaseWalletAccount,
   config?: SWRConfigCommon,
 ) => {
+  const { collectionAndNfts } = useCollectionAndNFTs(network, account, config)
+  const nftIds = collectionId === undefined ? [] : (collectionAndNfts[collectionId] ?? [])
   const { data: collection, ...rest } = useSWR(
-    collectionId &&
-    tokenIds.length > 0 &&
-    account && [
-      getAccountIdentifier(account),
-      collectionId,
-      tokenIds,
-      "collection",
-    ],
-    async () => {
-      if (collectionId) {
-        return await fetchNFTCollection(collectionId, tokenIds, network)
-      } else {
-        return Promise.resolve(undefined)
-      }
-    },
+    account && collectionId && [getAccountIdentifier(account), collectionId, 'collection'],
+    () => collectionId ? fetchNFTCollection(collectionId, nftIds, network) : undefined,
     {
-      refreshInterval: 60e3 /* 1 minute */,
-      suspense: true,
       ...config,
+      refreshInterval: 60e3 /* 1 minute */,
+      use: [laggy],
     },
   )
-
   return { collection, ...rest }
 }

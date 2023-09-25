@@ -3,7 +3,6 @@ import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
 import useSWR from "swr"
-import useSWRImmutable from 'swr/immutable'
 import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage, useObjectStorage } from "../../../shared/storage/hooks"
@@ -17,9 +16,10 @@ import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { sortBy } from "lodash"
 import { addTokenToBalances } from "../../../shared/token/balance"
 import { Transaction, compareTransactions } from "../../../shared/transactions"
+import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
 
-type UseTokens = UseTokensBase<TokenWithBalance>
-type UseBaseTokens = UseTokensBase<BaseTokenWithBalance>
+type UseTokensWithBalance = UseTokensBase<TokenWithBalance>
+type UseBaseTokensWithBalance = UseTokensBase<BaseTokenWithBalance>
 
 interface UseTokensBase<T> {
   tokenDetails: T[]
@@ -106,7 +106,7 @@ export const useToken = (baseToken: BaseToken): Token | undefined => {
 /** error codes to suppress - will not bubble error up to parent */
 const SUPPRESS_ERROR_STATUS = [429]
 
-export const useNonFungibleTokens = (
+export const useNonFungibleTokensWithBalance = (
   account?: BaseWalletAccount,
 ): BaseTokenWithBalance[] => {
   const selectedAccount = useAccount(account)
@@ -114,7 +114,7 @@ export const useNonFungibleTokens = (
     return selectedAccount?.networkId ?? ""
   }, [selectedAccount?.networkId])
   const cachedFungibleTokens = useTokensInNetwork(networkId)
-  const { tokenDetails: allUserTokens } = useAllTokens(account)
+  const { tokenDetails: allUserTokens } = useAllTokensWithBalance(account)
 
   const potentialNonFungibleTokens: BaseTokenWithBalance[] = []
   for (const token of allUserTokens) {
@@ -123,16 +123,11 @@ export const useNonFungibleTokens = (
       potentialNonFungibleTokens.push(token)
     }
   }
-  const sortedPotentialNonFungibleTokensIds = potentialNonFungibleTokens.map((t) => t.id).sort()
 
-  const {
-    data: nonFungibleTokens
-  } = useSWRImmutable(
-    selectedAccount && [
-      getAccountIdentifier(selectedAccount),
-      sortedPotentialNonFungibleTokensIds,
-      "accountNonFungibleTokens",
-    ],
+  const { data: nonFungibleTokens } = useSWR(
+    selectedAccount &&
+    potentialNonFungibleTokens.length > 0 &&
+    [getAccountIdentifier(selectedAccount), "accountNonFungibleTokens"],
     async () => {
       const network = await getNetwork(networkId)
       const nodeProvider = new NodeProvider(network.nodeUrl)
@@ -140,7 +135,7 @@ export const useNonFungibleTokens = (
       const nonFungibleTokens: BaseTokenWithBalance[] = []
       for (const token of potentialNonFungibleTokens) {
         if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
-          const tokenType = await nodeProvider.guessStdTokenType(token.id)
+          const tokenType = await fetchImmutable(`${token.id}-token-type`, () => nodeProvider.guessStdTokenType(token.id))
           if (tokenType === 'non-fungible') {
             nonFungibleTokens.push({ id: token.id, networkId: networkId, balance: token.balance })
           }
@@ -148,21 +143,24 @@ export const useNonFungibleTokens = (
       }
 
       return nonFungibleTokens
+    },
+    {
+      refreshInterval: 30000
     }
   )
 
   return nonFungibleTokens || []
 }
 
-export const useFungibleTokens = (
+export const useFungibleTokensWithBalance = (
   account?: BaseWalletAccount
-): UseTokens => {
+): UseTokensWithBalance => {
   const {
     tokenDetails: allUserTokens,
     tokenDetailsIsInitialising: allUserTokensIsInitialising,
     isValidating: allUserTokensIsValidating,
     error: allUserTokensError
-  } = useAllTokens(account)
+  } = useAllTokensWithBalance(account)
   const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
@@ -225,9 +223,9 @@ export const useFungibleTokens = (
   }
 }
 
-export const useAllTokens = (
+export const useAllTokensWithBalance = (
   account?: BaseWalletAccount
-): UseBaseTokens => {
+): UseBaseTokensWithBalance => {
   const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
     return selectedAccount?.networkId ?? ""
@@ -334,7 +332,7 @@ async function getBalances(nodeProvider: NodeProvider, address: string): Promise
 async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
-    const tokenType = await nodeProvider.guessStdTokenType(tokenId)
+    const tokenType = await fetchImmutable(`${tokenId}-token-type`, () => nodeProvider.guessStdTokenType(tokenId))
     if (tokenType !== 'fungible') {
       return undefined
     }

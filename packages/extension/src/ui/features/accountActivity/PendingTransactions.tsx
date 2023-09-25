@@ -8,7 +8,7 @@ import { Transaction } from "../../../shared/transactions"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { openExplorerTransaction } from "../../services/blockExplorer.service"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
-import { useFungibleTokens } from "../accountTokens/tokens.state"
+import { useFungibleTokensWithBalance } from "../accountTokens/tokens.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { ReviewedTransactionListItem } from "./TransactionListItem"
 import { transformReviewedTransaction } from "./transform/transaction/transformTransaction"
@@ -22,7 +22,7 @@ export const PendingTransactionsContainer: FC<
 > = ({ account }) => {
   const network = useCurrentNetwork()
   const { pendingTransactions } = useAccountTransactions(account)
-  const tokensByNetwork = useFungibleTokens(account)
+  const tokensByNetwork = useFungibleTokensWithBalance(account)
 
   return (
     <PendingTransactions

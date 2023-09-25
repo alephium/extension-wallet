@@ -26,11 +26,11 @@ import { Navigate, useNavigate, useParams } from "react-router-dom"
 import { Schema, object } from "yup"
 
 import { routes } from "../../routes"
-import { addressSchema, isEqualAddress } from "../../services/addresses"
+import { addressSchema } from "../../services/addresses"
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenMenu } from "../accountTokens/TokenMenu"
 import { useCurrentNetwork } from "../networks/useNetworks"
-import { useNFTCollection } from "./useNFTCollections"
+import { useNFT } from "./useNfts"
 const { SwapIcon } = icons
 
 const { SendIcon } = icons
@@ -47,22 +47,7 @@ export const NftScreen: FC = () => {
   const { contractAddress, tokenId } = useParams()
   const account = useSelectedAccount()
   const network = useCurrentNetwork()
-
-  const { collection } = useNFTCollection(
-    tokenId && [tokenId] || [],
-    network,
-    contractAddress,
-    account
-  )
-
-  const nft = collection && collection.nfts
-    .filter(Boolean)
-    .find(
-      ({ collectionId, id }) =>
-        contractAddress &&
-        isEqualAddress(collectionId, contractAddress) &&
-        id === tokenId,
-    )
+  const { nft } = useNFT(network, contractAddress, tokenId, account)
 
   if (!account || !contractAddress || !tokenId) {
     return <Navigate to={routes.accounts()} />

@@ -17,7 +17,7 @@ import { routes } from "../../routes"
 import { usePageTracking } from "../../services/analytics"
 import { rejectAction } from "../../services/backgroundActions"
 import { Account } from "../accounts/Account"
-import { useAllTokens } from "../accountTokens/tokens.state"
+import { useAllTokensWithBalance } from "../accountTokens/tokens.state"
 import { getLedgerApp } from "../ledger/utils"
 import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
@@ -210,7 +210,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     "detecting" | "notfound" | "signing" | "succeeded" | "failed"
   >()
   const [ledgerApp, setLedgerApp] = useState<LedgerApp>()
-  const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokens(selectedAccount)
+  const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokensWithBalance(selectedAccount)
 
   // TODO: handle error
   useEffect(() => {

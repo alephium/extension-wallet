@@ -1,24 +1,28 @@
 import useSWR from "swr"
-
+import { Network } from "../../../shared/network"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
-import { isEqualAddress } from "../../services/addresses"
 import { SWRConfigCommon } from "../../services/swr"
-import { AspectNft } from "./aspect.model"
+import { getNFT } from "./alephium-nft.service"
+import { laggy } from "./laggy"
 
-interface IGetNft {
-  nfts?: AspectNft[]
-  contractAddress: string
-  tokenId: string
-}
-
-export const getNft = ({ nfts, contractAddress, tokenId }: IGetNft) => {
-  if (!nfts) {
-    return
-  }
-  const nft = nfts.find(
-    ({ contract_address, token_id }) =>
-      isEqualAddress(contract_address, contractAddress) && token_id === tokenId,
+export const useNFT = (
+  network: Network,
+  collectionId?: string,
+  nftId?: string,
+  account?: BaseWalletAccount,
+  config?: SWRConfigCommon,
+) => {
+  const { data: nft, ...rest } = useSWR(
+    account && collectionId && nftId && [getAccountIdentifier(account), collectionId, nftId, 'nft'],
+    () => (collectionId && nftId) ? getNFT(collectionId, nftId, network) : undefined,
+    {
+      ...config,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      use: [laggy],
+      suspense: true,
+    },
   )
-  return nft
+  return { nft, ...rest }
 }
