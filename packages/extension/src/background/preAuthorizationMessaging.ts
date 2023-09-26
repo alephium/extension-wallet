@@ -1,7 +1,7 @@
 import { differenceWith, isEqual } from "lodash-es"
 
 import { PreAuthorisationMessage } from "../shared/messages/PreAuthorisationMessage"
-import { getPreAuthorized, isPreAuthorized, preAuthorizeStore, removePreAuthorization } from "../shared/preAuthorizations"
+import { getPreAuthorized, isPreAuthorized, preAuthorizeStore, removePreAuthorization, setConnectionExpiryAlarm } from "../shared/preAuthorizations"
 import { withNetwork } from "../shared/wallet.service"
 import { addTab, sendMessageToHost } from "./activeTabs"
 import { UnhandledMessage } from "./background"
@@ -45,6 +45,7 @@ export const handlePreAuthorizationMessage: HandleMessage<
       }
 
       if (authorized) {
+        await setConnectionExpiryAlarm(msg.data.host)
         const authorizedAccount = await wallet.getAccount(authorized.account)
         const walletAccountWithNetwork = await withNetwork(authorizedAccount)
         return respond({
