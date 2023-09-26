@@ -238,7 +238,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     }
 
     build()
-  }, [nodeUrl, selectedAccount, transaction, allUserTokens, tokenDetailsIsInitialising, actionHash, navigate])
+  }, [nodeUrl, selectedAccount, transaction, tokenDetailsIsInitialising, actionHash, navigate])
 
   const ledgerSign = useCallback(async () => {
     if (selectedAccount === undefined) {
