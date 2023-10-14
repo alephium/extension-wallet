@@ -34,7 +34,7 @@
     "chokidar": "^3.5.2",
     "concurrently": "^7.2.2",
     "copy-webpack-plugin": "^11.0.0",
-    "cross-fetch": "^3.1.5",
+    "cross-fetch": "^4.0.0",
     "dotenv-webpack": "^8.0.0",
     "esbuild-loader": "^2.19.0",
     "eslint": "^8.7.0",
