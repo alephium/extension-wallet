@@ -1,7 +1,6 @@
 import { H6 } from "@argent/ui"
-import { Circle, Box, Image, Tooltip } from "@chakra-ui/react"
+import { Box, Image } from "@chakra-ui/react"
 import { FC } from "react"
-import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
 import { NftThumbnailImage } from "./NftThumbnailImage"
 
 interface NftItemProps {
@@ -10,10 +9,9 @@ interface NftItemProps {
   onClick: () => void
   logoSrc?: string
   total?: number
-  unverifiedCollection?: boolean
 }
 
-const NftItem: FC<NftItemProps> = ({ logoSrc, name, thumbnailSrc, onClick, total, unverifiedCollection }) => (
+const NftItem: FC<NftItemProps> = ({ logoSrc, name, thumbnailSrc, onClick, total }) => (
   <Box as="figure" role="group" onClick={onClick}>
     <Box
       position="relative"
@@ -40,19 +38,6 @@ const NftItem: FC<NftItemProps> = ({ logoSrc, name, thumbnailSrc, onClick, total
         </Box>
       )}
     </Box>
-    {(unverifiedCollection === true) && (
-      <Tooltip label={"Unverified Collection"}>
-        <Circle
-          overflow={"hidden"}
-          position={"absolute"}
-          left={120}
-          bottom={150}
-          size={16}
-        >
-          <WarningIconRounded />
-        </Circle>
-      </Tooltip>
-    )}
     <Box
       as="figcaption"
       display="flex"

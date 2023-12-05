@@ -33,7 +33,6 @@ const NftCollectionItem: FC<NftCollectionItemProps> = ({ network, collectionId, 
     name={collection.metadata.name}
     thumbnailSrc={collection.metadata.image}
     total={collection.nftIds.length}
-    unverifiedCollection={!collection.verified}
   />
 }
 
