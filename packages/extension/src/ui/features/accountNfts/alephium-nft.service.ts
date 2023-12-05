@@ -1,4 +1,4 @@
-import { whitelistedCollection, NFT, CollectionAndNFTMap } from "./alephium-nft.model"
+import { NFT, CollectionAndNFTMap } from "./alephium-nft.model"
 import { NFTCollection } from "./alephium-nft.model"
 import { Network } from "../../../shared/network"
 import { addressFromContractId, binToHex, contractIdFromAddress, ExplorerProvider, NodeProvider } from "@alephium/web3"
@@ -46,8 +46,7 @@ export const fetchNFTCollection = async (
     return {
       id: collectionId,
       metadata: collectionMetadata,
-      nftIds: nftIds,
-      verified: isWhitelistedCollection(collectionId, network.id)
+      nftIds: nftIds
     }
   } catch (error) {
     console.log(`Error fetching NFT collection ${collectionId}, error: ${error}`)
@@ -82,8 +81,4 @@ async function getCollectionMetadata(
   const metadata = await nodeProvider.fetchNFTCollectionMetaData(collectionId)
   const metadataResponse = await fetch(metadata.collectionUri)
   return await metadataResponse.json()
-}
-
-function isWhitelistedCollection(collectionId: string, networkId: string): boolean {
-  return networkId === 'devnet' || whitelistedCollection[networkId].includes(collectionId)
 }

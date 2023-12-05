@@ -1,17 +1,3 @@
-import { defaultNetworkIds } from "../../../shared/network/defaults"
-import { mainnetNFTCollectionsMetadata, testnetNFTCollectionsMetadata } from "@alephium/token-list"
-
-const whitelistedCollectionFromTokenList = [
-  {
-    "networkId": mainnetNFTCollectionsMetadata.networkId,
-    "collections": mainnetNFTCollectionsMetadata.nftCollections
-  },
-  {
-    "networkId": testnetNFTCollectionsMetadata.networkId,
-    "collections": testnetNFTCollectionsMetadata.nftCollections
-  }
-]
-
 export interface NFTCollectionMeta {
   name: string
   description: string
@@ -34,13 +20,6 @@ export interface NFTCollection {
   id: string
   metadata: NFTCollectionMeta
   nftIds: string[]
-  verified: boolean
 }
 
 export type CollectionAndNFTMap = Record<string, string[]>
-
-export const whitelistedCollection: Record<string, string[]> = whitelistedCollectionFromTokenList
-  .reduce((acc, collections) => {
-    acc[defaultNetworkIds[collections.networkId]] = collections.collections.map(c => c.id)
-    return acc
-  }, {} as Record<string, string[]>)
