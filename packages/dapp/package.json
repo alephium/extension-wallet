@@ -10,15 +10,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@alephium/get-extension-wallet": "^0.24.0",
-    "@alephium/web3": "^0.24.0",
+    "@alephium/get-extension-wallet": "^0.27.5",
+    "@alephium/web3": "^0.27.5",
     "ethers": "^5.5.1",
     "next": "^13.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@alephium/cli": "^0.24.0",
+    "@alephium/cli": "^0.27.5",
     "@types/node": "18.11.18",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",

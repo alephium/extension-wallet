@@ -14,7 +14,7 @@ export const fetchCollectionAndNfts = async (
   const parentAndTokenIds: CollectionAndNFTMap = {}
   for (const tokenId of nonFungibleTokenIds) {
     try {
-      const result = await fetchImmutable(`${tokenId}-parent`, () => explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId)))
+      const result = await fetchImmutable(`${tokenId}-parent`, () => explorerProvider.contracts.getContractsContractAddressParent(addressFromContractId(tokenId)))
       if (result.parent) {
         const parentContractId = binToHex(contractIdFromAddress(result.parent))
         const isFollowNFTCollectionStd = await fetchImmutable(`${parentContractId}-std`, () => nodeProvider.guessFollowsNFTCollectionStd(parentContractId))
