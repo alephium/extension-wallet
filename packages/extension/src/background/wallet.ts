@@ -255,6 +255,9 @@ export class Wallet {
   }
 
   public async newAlephiumAccount(networkId: string, keyType: KeyType, group?: number): Promise<WalletAccount> {
+    if (keyType === 'passkey') {
+      throw new Error('invalid key type')
+    }
     const session = await this.sessionStore.get()
     if (!this.isSessionOpen() || !session) {
       throw Error("no open session")
@@ -269,6 +272,26 @@ export class Wallet {
 
       return newAndDefaultAddress
     }
+  }
+
+  public async importPasskeyAccount(publicKey: string, networkId: string): Promise<WalletAccount> {
+    const address = addressFromPublicKey(publicKey, 'passkey')
+    const group = groupOfAddress(address)
+    const walletAccount: WalletAccount = {
+      address: address,
+      networkId: networkId,
+      signer: {
+        type: 'passkey' as const,
+        publicKey: publicKey,
+        keyType: 'passkey',
+        derivationIndex: 0,
+        group: group
+      },
+      type: 'alephium'
+    }
+    await this.walletStore.push([walletAccount])
+    await this.selectAccount(walletAccount)
+    return walletAccount
   }
 
   public async importLedgerAccount(account: Account, hdIndex: number, networkId: string): Promise<BaseWalletAccount> {

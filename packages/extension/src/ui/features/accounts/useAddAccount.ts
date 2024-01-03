@@ -7,13 +7,16 @@ import { getAccounts, selectAccount } from "../../services/backgroundAccounts"
 import { recover } from "../recovery/recovery.service"
 import { createAccount } from "./accounts.service"
 import { importNewLedgerAccount } from '../../services/backgroundAccounts'
+import { createPasskeyAccount } from "./passkey.service"
 
 export const useAddAccount = () => {
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
 
   const addAccount = useCallback(async (keyType: KeyType, group?: number) => {
-    const newAccount = await createAccount(switcherNetworkId, keyType, undefined, group)
+    const newAccount = keyType === 'passkey'
+      ? (await createPasskeyAccount(switcherNetworkId, 'mywallet'))
+      : (await createAccount(switcherNetworkId, keyType, undefined, group))
     // switch background wallet to the account that was selected
     await selectAccount(newAccount)
     navigate(await recover())

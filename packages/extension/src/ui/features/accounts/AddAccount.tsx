@@ -69,11 +69,11 @@ export const MemuSelector: FC<MenuSelectorProps> = ({ title, options, setValue }
 }
 
 const groupOptions = ["any", ...Array.from(Array(TOTAL_NUMBER_OF_GROUPS).keys()).map(g => `${g}`)]
-const signOptions = ["default", "schnorr"] as const
+const signOptions = ["default", "schnorr", "passkey"] as const
 
 export const AddAccount: FC = () => {
   const navigate = useNavigate()
-  const [hasError, setHasError] = useState(false)
+  const [error, setError] = useState<string | undefined>()
   const [group, setGroup] = useState<string>(groupOptions[0])
   const [signMethod, setSignMethod] = useState<string>(signOptions[0])
   const { switcherNetworkId } = useAppState()
@@ -81,7 +81,7 @@ export const AddAccount: FC = () => {
   const { addAccount } = useAddAccount()
     
   const parsedGroup = group === "any" ? undefined : parseInt(group)
-  const parsedKeyType = signMethod === "default" ? "default" : "bip340-schnorr"
+  const parsedKeyType = signMethod === "default" ? "default" : signMethod === 'passkey' ? 'passkey' : "bip340-schnorr"
 
   return (
     <>
@@ -99,10 +99,10 @@ export const AddAccount: FC = () => {
             icon={<StyledAlephiumLogo />}
             description="Generate a new wallet address"
             hideArrow
-            onClick={() => addAccount(parsedKeyType, parsedGroup).catch(() => setHasError(true))}
+            onClick={() => addAccount(parsedKeyType, parsedGroup).catch((error) => setError(`${error}`))}
           />
           {
-            parsedKeyType !== "bip340-schnorr" &&
+            parsedKeyType === "default" &&
             <A
               href={`/index.html?goto=ledger&networkId=${switcherNetworkId}&group=${parsedGroup}&keyType=${parsedKeyType}`}
               targetBlank
@@ -119,9 +119,9 @@ export const AddAccount: FC = () => {
             </A>
           }
         </OptionsWrapper>
-        {hasError && (
+        {error && (
           <FormError>
-            There was an error creating your account. Please try again.
+            {`There was an error creating your account: ${error}. Please try again.`}
           </FormError>
         )}
       </PageWrapper>

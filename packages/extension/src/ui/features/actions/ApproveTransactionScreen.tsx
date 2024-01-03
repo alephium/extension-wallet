@@ -31,6 +31,7 @@ import { TxHashContainer } from "./TxHashContainer"
 import { getToken } from "../../../shared/token/storage"
 import { BigNumber } from "ethers"
 import { addTokenToBalances } from "../../../shared/token/balance"
+import { signWithPasskey } from "../accounts/passkey.service"
 
 const { AlertIcon } = icons
 
@@ -211,6 +212,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   >()
   const [ledgerApp, setLedgerApp] = useState<LedgerApp>()
   const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokensWithBalance(selectedAccount)
+  const usePasskey = selectedAccount !== undefined && selectedAccount.signer.type === 'passkey'
 
   // TODO: handle error
   useEffect(() => {
@@ -280,6 +282,25 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     }
   }, [selectedAccount, buildResult, onSubmit, onReject, navigate])
 
+  const passkeySign = useCallback(async () => {
+    if (selectedAccount === undefined) {
+      return
+    }
+
+    if (buildResult) {
+      try {
+        const signature = await signWithPasskey(selectedAccount, buildResult.result.txId)
+        onSubmit({ ...buildResult, signature })
+      } catch (e) {
+        if (onReject !== undefined) {
+          onReject()
+        } else {
+          navigate(-1)
+        }
+      }
+    }
+  }, [selectedAccount, buildResult, onSubmit, onReject, navigate])
+
   if (!selectedAccount) {
     return <Navigate to={routes.accounts()} />
   }
@@ -291,7 +312,9 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   return (
     <ConfirmScreen
       confirmButtonText={
-        !useLedger
+        usePasskey
+          ? 'Sign with Passkey'
+          : !useLedger
           ? "Sign"
           : ledgerState === undefined
           ? "Sign with Ledger"
@@ -311,6 +334,8 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       onSubmit={() => {
         if (useLedger) {
           ledgerSign()
+        } else if (usePasskey) {
+          passkeySign()
         } else {
           onSubmit(buildResult)
         }

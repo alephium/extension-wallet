@@ -68,6 +68,34 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
       }
     }
 
+    case "NEW_PASSKEY_ACCOUNT": {
+      if (!(await wallet.isSessionOpen())) {
+        throw Error("you need an open session")
+      }
+
+      const { networkId, publicKey } = msg.data
+      try {
+        const account = await wallet.importPasskeyAccount(publicKey, networkId)
+        return sendMessageToUi({
+          type: "NEW_PASSKEY_ACCOUNT_RES",
+          data: { account }
+        })
+      } catch (exception) {
+        const error = `${exception}`
+
+        analytics.track("createAccount", {
+          status: "failure",
+          networkId: networkId,
+          errorMessage: error,
+        })
+
+        return sendMessageToUi({
+          type: "NEW_PASSKEY_ACCOUNT_REJ",
+          data: { error },
+        })
+      }
+    }
+
     case "NEW_LEDGER_ACCOUNT": {
       if (!(await wallet.isSessionOpen())) {
         throw Error("you need an open session")

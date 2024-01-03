@@ -5,7 +5,7 @@ import {
   WalletAccount,
   WalletAccountSigner,
 } from "../../../shared/wallet.model"
-import { createNewAccount } from "../../services/backgroundAccounts"
+import { createNewAccount, createPasskeyAccount } from "../../services/backgroundAccounts"
 
 export interface AccountConstructorProps {
   address: string
@@ -58,6 +58,20 @@ export class Account {
       networkId: networkId,
       signer: result.account.signer,
       type: result.account.type,
+    })
+  }
+
+  public static async createPasskey(networkId: string, publicKey: string): Promise<Account> {
+    const result = await createPasskeyAccount(networkId, publicKey)
+    if (result === 'error') {
+      throw new Error(result)
+    }
+    return new Account({
+      address: result.account.address,
+      publicKey: result.account.signer.publicKey,
+      networkId: networkId,
+      signer: result.account.signer,
+      type: result.account.type
     })
   }
 

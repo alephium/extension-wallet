@@ -15,6 +15,9 @@ export type AccountMessage =
       }
     }
   | { type: "NEW_ACCOUNT_REJ"; data: { error: string } }
+  | { type: "NEW_PASSKEY_ACCOUNT"; data: { networkId: string; publicKey: string } }
+  | { type: "NEW_PASSKEY_ACCOUNT_RES"; data: { account: WalletAccount } }
+  | { type: "NEW_PASSKEY_ACCOUNT_REJ"; data: { error: string } }
   | { type: "NEW_LEDGER_ACCOUNT"; data: { account: Account; hdIndex: number, networkId: string } }
   | {
       type: "NEW_LEDGER_ACCOUNT_RES"

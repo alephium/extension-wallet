@@ -20,6 +20,18 @@ export const createNewAccount = async (networkId: string, keyType: KeyType, grou
   }
 }
 
+export const createPasskeyAccount = async (networkId: string, publicKey: string) => {
+  sendMessage({ type: "NEW_PASSKEY_ACCOUNT", data: { networkId, publicKey } })
+  try {
+    return await Promise.race([
+      waitForMessage("NEW_PASSKEY_ACCOUNT_RES"),
+      waitForMessage("NEW_PASSKEY_ACCOUNT_REJ").then(() => "error" as const),
+    ])
+  } catch {
+    throw Error("Could add new passkey account")
+  }
+}
+
 export const importNewLedgerAccount = async (account: Account, hdIndex: number, networkId: string) => {
   sendMessage({ type: "NEW_LEDGER_ACCOUNT", data: { account, hdIndex, networkId } })
   try {
