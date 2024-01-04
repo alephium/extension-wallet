@@ -266,7 +266,7 @@ export const SendTokenScreen: FC = () => {
   const inputRecipient = formValues.recipient
 
   const currencyValue = useTokenUnitAmountToCurrencyValue(token, inputAmount)
-  const maxFee = "10000000000000000"  // FIXME: hardcoded to 0.01 ALPH for now
+  const maxFee = "3000000000000000"  // FIXME: hardcoded to 0.003 ALPH for now
 
   const setMaxInputAmount = useCallback(
     (token: TokenWithBalance, maxFee?: string) => {
@@ -311,10 +311,6 @@ export const SendTokenScreen: FC = () => {
 
   const isAlphToken = (tokenId: string | undefined): boolean => {
     return tokenId === ALPH_TOKEN_ID || tokenId === undefined
-  }
-
-  const isSweepingAllAsset = (tokenId: string | undefined): boolean => {
-    return maxClicked && isAlphToken(tokenId)
   }
 
   const recipientInAddressBook = useMemo(
@@ -455,40 +451,27 @@ export const SendTokenScreen: FC = () => {
           <StyledForm
             onSubmit={handleSubmit(async ({ amount, recipient }) => {
               if (account) {
-                if (isSweepingAllAsset(tokenId)) {
-                  const sweepResult = await sweepTransaction
-                  if (sweepResult) {
-                    sweepResult.unsignedTxs.map((sweepUnsignedTx) => {
-                      sendUnsignedTxTransaction({
-                        signerAddress: account.address,
-                        networkId: account.networkId,
-                        unsignedTx: sweepUnsignedTx.unsignedTx
-                      })
-                    })
+                let destination: Destination
+                if (isAlphToken(tokenId)) {
+                  destination = {
+                    address: recipient,
+                    attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '?',
+                    tokens: []
                   }
                 } else {
-                  let destination: Destination
-                  if (isAlphToken(tokenId)) {
-                    destination = {
-                      address: recipient,
-                      attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '?',
-                      tokens: []
-                    }
-                  } else {
-                    destination = {
-                      address: recipient,
-                      attoAlphAmount: DUST_AMOUNT,
-                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, decimals) ?? '?' }]
-                    }
+                  destination = {
+                    address: recipient,
+                    attoAlphAmount: DUST_AMOUNT,
+                    tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, decimals) ?? '?' }]
                   }
-
-                  sendTransferTransaction({
-                    signerAddress: account.address,
-                    signerKeyType: account.signer.keyType,
-                    networkId: account.networkId,
-                    destinations: [destination],
-                  })
                 }
+
+                sendTransferTransaction({
+                  signerAddress: account.address,
+                  signerKeyType: account.signer.keyType,
+                  networkId: account.networkId,
+                  destinations: [destination],
+                })
 
                 navigate(routes.accountTokens(), { replace: true })
               }
@@ -627,14 +610,6 @@ export const SendTokenScreen: FC = () => {
                   </div>
                 )}
               </div>
-              {
-                isSweepingAllAsset(tokenId) ? (
-                  <WarningContainer>
-                    Warning: This will sweep all assets to the recipient, including all the tokens.
-                    {txsNumber > 1 ? `Due to the number of UTXOs, you need to sign ${txsNumber} transactions` : ""}
-                  </WarningContainer>
-                ) : <></>
-              }
             </Column>
             <ButtonSpacer />
             <Button disabled={disableSubmit} type="submit">
