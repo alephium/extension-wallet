@@ -1,7 +1,7 @@
 import { binToHex, hexToBinUnsafe } from "@alephium/web3"
 import { ArrayStorage } from "../../../shared/storage"
 import { AuthenticationCredential, RegistrationCredential } from "@simplewebauthn/typescript-types"
-import { decodeAttestationObject, parseAuthenticatorData, isoCBOR, cose } from "@simplewebauthn/server/helpers"
+import { toHash, decodeAttestationObject, parseAuthenticatorData, isoCBOR, cose } from "@simplewebauthn/server/helpers"
 import { randomBytes } from "crypto"
 import * as elliptic from 'elliptic'
 import { Account } from "./Account"
@@ -99,4 +99,32 @@ function unwrapEC2Signature(signature: Uint8Array): Uint8Array {
 
 function shouldRemoveLeadingZero(bytes: Uint8Array): boolean {
   return bytes[0] === 0x0 && (bytes[1] & (1 << 7)) !== 0
+}
+
+export const importPasskey = async (networkId: string) => {
+  const challenge = randomBytes(32)
+  const credential = await navigator.credentials.get({
+    publicKey: { challenge }
+  }) as AuthenticationCredential
+  const clientDataHash = await toHash(new Uint8Array(credential.response.clientDataJSON))
+  const authenticatorData = new Uint8Array(credential.response.authenticatorData)
+  const data = new Uint8Array([...authenticatorData, ...clientDataHash])
+  const dataHash = await toHash(data)
+  const signature = unwrapEC2Signature(new Uint8Array(credential.response.signature))
+  let publicKey: string | undefined = undefined
+  for (let i = 0; i < 4; i++) {
+    const r = signature.subarray(0, 32)
+    const s = signature.subarray(32, 64)
+    try {
+      const result = curve.recoverPubKey(dataHash, { r, s }, i)
+      publicKey = result.encode('hex', true)
+      break
+    } catch (_) { /* empty */ }
+  }
+  if (publicKey === undefined) {
+    throw new Error(`Failed to recover the public key`)
+  }
+  const passkeyWallet = { rawId: binToHex(new Uint8Array(credential.rawId)), publicKey }
+  await passkeyWalletStore.push([passkeyWallet])
+  return Account.createPasskey(networkId, publicKey)
 }

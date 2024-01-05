@@ -99,7 +99,13 @@ export const AddAccount: FC = () => {
             icon={<StyledAlephiumLogo />}
             description="Generate a new wallet address"
             hideArrow
-            onClick={() => addAccount(parsedKeyType, parsedGroup).catch((error) => setError(`${error}`))}
+            onClick={() => {
+              if (parsedKeyType === 'passkey') {
+                window.open(`/index.html?goto=passkey&networkId=${switcherNetworkId}`, '_blank')
+              } else {
+                addAccount(parsedKeyType, parsedGroup).catch((error) => setError(`${error}`))
+              }
+            }}
           />
           {
             parsedKeyType === "default" &&

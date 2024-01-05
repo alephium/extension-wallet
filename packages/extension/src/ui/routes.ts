@@ -157,4 +157,5 @@ export const routes = {
   ),
   ledgerSelect: route((group?: number) => `/ledger/import/select/${group}`, "/ledger/import/select/:group"),
   ledgerDone: route((group?: number) => `/ledger/import/done/${group}`, "/ledger/import/done/:group"),
+  passkey: route((networkId: string) => `/passkey/start/${networkId}`, "/passkey/start/:networkId")
 }

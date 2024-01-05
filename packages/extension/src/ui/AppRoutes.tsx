@@ -66,6 +66,7 @@ import { useEntryRoute } from "./useEntryRoute"
 import { AddTokenScreen } from "./features/actions/AddTokenScreen"
 import { LedgerStartScreen } from "./features/ledger/start"
 import { LedgerDoneScreen } from "./features/ledger/done"
+import { PasskeyStartScreen } from "./features/passkey/start"
 
 const ResponsiveContainer = chakra(ResponsiveBox, {
   baseStyle: {
@@ -330,6 +331,10 @@ const fullscreenRoutes = (
     <Route
       path={routes.ledgerDone.path}
       element={<LedgerDoneScreen />}
+    />
+    <Route
+      path={routes.passkey.path}
+      element={<PasskeyStartScreen />}
     />
   </>
 )
