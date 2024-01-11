@@ -1,4 +1,4 @@
-import { memoize } from "lodash-es"
+import { memoize, isEqual } from "lodash-es"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { swrCacheProvider } from "../../ui/services/swr"
@@ -18,8 +18,11 @@ export function useKeyValueStorage<
 
   const set = useCallback(
     (value: T[K]) => {
-      swrCacheProvider.set(storage.namespace + ":" + key.toString(), value)
-      setValue(value)
+      const k = storage.namespace + ":" + key.toString()
+      if (!isEqual(swrCacheProvider.get(k), value)) {
+        swrCacheProvider.set(k, value)
+        setValue(value)
+      }
     },
     [key, storage.namespace],
   )
@@ -70,8 +73,10 @@ export function useArrayStorage<T>(
 
   const set = useCallback(
     (value: T[]) => {
-      swrCacheProvider.set(storage.namespace, value)
-      setValue(value)
+      if (!isEqual(swrCacheProvider.get(storage.namespace), value)) {
+        swrCacheProvider.set(storage.namespace, value)
+        setValue(value)
+      }
     },
     [storage.namespace],
   )
