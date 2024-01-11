@@ -222,6 +222,10 @@ export const alephiumWindowObject: AlephiumWindowObject = new (class extends Ale
   #signMessage = async (params: SignMessageParams): Promise<SignMessageResult> => {
     this.#checkParams(params)
 
+    if (typeof params.message !== 'string') {
+      throw new Error('Invalid type of message, expected a string')
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     sendMessage({ type: "ALPH_SIGN_MESSAGE", data: { ...params, networkId: this.connectedNetworkId, host: window.location.host } })
     const { actionHash } = await waitForMessage("ALPH_SIGN_MESSAGE_RES", USER_ACTION_TIMEOUT)
