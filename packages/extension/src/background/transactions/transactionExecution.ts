@@ -2,7 +2,7 @@ import {
   ReviewTransactionResult,
 } from "../../shared/actionQueue/types"
 import { BackgroundService } from "../background"
-import { addTransaction } from "./store"
+import { addTransaction } from "../../shared/transactions/store"
 
 export const executeTransactionAction = async (
   transaction: ReviewTransactionResult,

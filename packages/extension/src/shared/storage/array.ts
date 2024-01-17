@@ -24,7 +24,8 @@ export function mergeArrayStableWith<T>(
   compareFn: (a: T, b: T) => boolean = isEqual,
   insertMode: "unshift" | "push" = "push",
 ): T[] {
-  const result = reverse(uniqWith(reverse(source), compareFn)) // 2x reverse to keep the order while keeping the last occurrence of duplicates
+  // 2x reverse to keep the order while keeping the last occurrence of duplicates
+  const result: T[] = reverse(uniqWith(reverse(source), compareFn))
   for (const element of other) {
     const index = result.findIndex((e) => compareFn(e, element))
     if (index === -1) {
@@ -42,6 +43,7 @@ interface ArrayStorageOptions<T> extends ObjectStorageOptions<T[]> {
 
 export interface IArrayStorage<T> extends BaseStorage<T[]> {
   get(selector?: SelectorFn<T>): Promise<T[]>
+  set(value: AllowArray<T>): Promise<void>
   push(value: AllowArray<T> | SetterFn<T>): Promise<void>
   unshift(value: AllowArray<T> | SetterFn<T>): Promise<void>
   remove(value: AllowArray<T> | SelectorFn<T>): Promise<T[]>
@@ -88,8 +90,13 @@ export class ArrayStorage<T> implements IArrayStorage<T> {
     return isFunction(setterOrArray)
       ? setterOrArray(setterArg)
       : Array.isArray(setterOrArray)
-      ? setterOrArray
-      : [setterOrArray]
+        ? setterOrArray
+        : [setterOrArray]
+  }
+
+  public async set(value: AllowArray<T>): Promise<void> {
+    const setValue = Array.isArray(value) ? value : [value]
+    await this.storageImplementation.set(setValue)
   }
 
   public async push(value: AllowArray<T> | SetterFn<T>): Promise<void> {
@@ -117,8 +124,8 @@ export class ArrayStorage<T> implements IArrayStorage<T> {
     const valuesToRemove = isFunction(value)
       ? await this.get(value)
       : Array.isArray(value)
-      ? value
-      : [value]
+        ? value
+        : [value]
     const newAll = differenceWith(all, valuesToRemove, this.compare)
     await this.storageImplementation.set(newAll)
     return valuesToRemove

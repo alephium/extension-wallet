@@ -5,7 +5,7 @@ import { WalletAccount } from "../../shared/wallet.model"
 import { accountsEqual } from "../../shared/wallet.service"
 import { getTransactionsUpdate } from "./sources/onchain"
 import { getTransactionHistory } from "./sources/voyager"
-import { transactionsStore } from "./store"
+import { transactionsStore } from "../../shared/transactions/store"
 import { partition } from "lodash"
 
 export interface TransactionTracker {
@@ -21,15 +21,14 @@ export const transactionTracker: TransactionTracker = {
       uniqAccounts,
       allTransactions,
     )
-    return transactionsStore.push(historyTransactions)
+
+    // We set the tx history directly here, which potentially will remove historical transactions
+    return transactionsStore.set(historyTransactions)
   },
   async update() {
     const allTransactions = await transactionsStore.get()
     const pendingTransactions = getInFlightTransactions(allTransactions)
-    const updatedTransactions = await getTransactionsUpdate(
-      // is smart enough to filter for just the pending transactions, as the rest needs no update
-      allTransactions,
-    )
+    const updatedTransactions = await getTransactionsUpdate(pendingTransactions)
     const [toBeRemoved, toBeKept] = partition(updatedTransactions, (tx) => tx.status === "REMOVED_FROM_MEMPOOL")
     if (toBeRemoved.length > 0) {
       await transactionsStore.remove((tx) => toBeRemoved.some((toBeRemovedTx) => tx.hash === toBeRemovedTx.hash))

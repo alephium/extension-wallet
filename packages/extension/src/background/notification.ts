@@ -41,11 +41,10 @@ export async function sentTransactionNotification(
   meta?: TransactionMeta,
 ) {
   const id = `TX:${hash}:${networkId}`
-  const title = `${meta?.title || "Transaction"} ${
-    ["ACCEPTED_ON_CHAIN", "ACCEPTED_ON_MEMPOOL", "PENDING"].includes(status)
-      ? "succeeded"
-      : "rejected"
-  }`
+  const title = `${meta?.title || "Transaction"} ${["ACCEPTED_ON_CHAIN", "ACCEPTED_ON_MEMPOOL", "PENDING"].includes(status)
+    ? "succeeded"
+    : "rejected"
+    }`
   return browser.notifications.create(id, {
     type: "basic",
     title,

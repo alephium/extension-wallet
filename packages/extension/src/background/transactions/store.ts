@@ -1,53 +1,10 @@
-import { differenceWith } from "lodash-es"
-
-import { ArrayStorage } from "../../shared/storage"
-import { StorageChange } from "../../shared/storage/types"
-import {
-  Transaction,
-  TransactionRequest,
-  compareTransactions,
-} from "../../shared/transactions"
+import { transactionsStore } from "../../shared/transactions/store"
 import { runAddedHandlers, runChangedStatusHandlers } from "./onupdate"
 
-export const transactionsStore = new ArrayStorage<Transaction>([], {
-  namespace: "core:transactions",
-  areaName: "local",
-  compare: compareTransactions,
-})
+// basically what i will do:
 
-export const addTransaction = async (transaction: TransactionRequest) => {
-  // sanity checks
-  if (!transaction.hash) {
-    return // dont throw
-  }
-
-  const newTransaction = {
-    status: "RECEIVED" as const,
-    timestamp: Date.now(),
-    ...transaction,
-  }
-
-  return transactionsStore.push(newTransaction)
-}
-
-export const getUpdatedTransactionsForChangeSet = (
-  changeSet: StorageChange<Transaction[]>,
-) => {
-  const updatedTransactions = differenceWith(
-    changeSet.oldValue ?? [],
-    changeSet.newValue ?? [],
-    equalTransactionWithStatus,
-  )
-  return updatedTransactions
-}
-
-const equalTransactionWithStatus = (
-  a: Transaction,
-  b: Transaction,
-): boolean => {
-  return compareTransactions(a, b) && a.status === b.status
-}
-
+// if we remove txs, how does this function affect the tx history since it subscribe
+// to the change?
 transactionsStore.subscribe((_, changeSet) => {
   const findOldTransaction = (hash: string) => changeSet.oldValue?.find(
     (oldTransaction) => oldTransaction.hash === hash,

@@ -1,13 +1,9 @@
 import { ExplorerProvider } from "@alephium/web3"
 import { getNetwork } from "../../../shared/network"
-import {
-  Transaction,
-  getInFlightTransactions,
-} from "../../../shared/transactions"
+import { Transaction } from "../../../shared/transactions"
 import { getTransactionsStatusUpdate } from "../determineUpdates"
 
-export async function getTransactionsUpdate(transactions: Transaction[]) {
-  const transactionsToCheck = getInFlightTransactions(transactions)
+export async function getTransactionsUpdate(transactionsToCheck: Transaction[]) {
 
   // as this function tends to run into 429 errors, we'll simply keep the old status when it fails
   // TODO: we should add a cooldown when user run into 429 errors
@@ -43,5 +39,5 @@ export async function getTransactionsUpdate(transactions: Transaction[]) {
     [],
   )
 
-  return getTransactionsStatusUpdate(transactions, updatedTransactions)
+  return getTransactionsStatusUpdate(transactionsToCheck, updatedTransactions)
 }
