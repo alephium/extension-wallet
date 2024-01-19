@@ -155,7 +155,7 @@ function buildGetTransactionsFn(metadataTransactions: Transaction[]) {
       page += 1
     }
 
-    console.log(`fetched tx for account ${account.address} in network ${account.networkId}`, result)
+    console.debug(`fetched tx for account ${account.address} in network ${account.networkId}`, result)
     return result
   }
 }

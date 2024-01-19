@@ -1,10 +1,6 @@
 import { transactionsStore } from "../../shared/transactions/store"
 import { runAddedHandlers, runChangedStatusHandlers } from "./onupdate"
 
-// basically what i will do:
-
-// if we remove txs, how does this function affect the tx history since it subscribe
-// to the change?
 transactionsStore.subscribe((_, changeSet) => {
   const findOldTransaction = (hash: string) => changeSet.oldValue?.find(
     (oldTransaction) => oldTransaction.hash === hash,

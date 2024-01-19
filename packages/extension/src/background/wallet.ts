@@ -11,6 +11,8 @@ import {
   groupOfAddress,
   KeyType,
   Account,
+  ExplorerProvider,
+  TOTAL_NUMBER_OF_GROUPS
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
@@ -24,6 +26,7 @@ import { withHiddenSelector } from "../shared/account/selectors"
 import {
   Network,
   defaultNetwork,
+  getNetworks,
 } from "../shared/network"
 import {
   IArrayStorage,
@@ -86,6 +89,7 @@ export class Wallet {
     private readonly sessionStore: IObjectStorage<WalletSession | null>,
     private readonly getNetwork: GetNetwork,
   ) { }
+
   async signAndSubmitUnsignedTx(
     account: WalletAccount,
     params: SignUnsignedTxParams,
@@ -97,7 +101,7 @@ export class Wallet {
   async submitSignedTx(account: WalletAccount, unsignedTx: string, signature: string): Promise<void> {
     const network = await this.getNetwork(account.networkId)
     const nodeProvider = new NodeProvider(network.nodeUrl)
-    await nodeProvider.transactions.postTransactionsSubmit({ unsignedTx, signature})
+    await nodeProvider.transactions.postTransactionsSubmit({ unsignedTx, signature })
     return
   }
 
@@ -229,23 +233,7 @@ export class Wallet {
   }
 
   public async newAccountShared(secret: string, startIndex: number, networkId: string, keyType: KeyType, forGroup?: number): Promise<WalletAccount> {
-    const [privateKey, index] = forGroup === undefined ? [deriveHDWalletPrivateKey(secret, keyType, startIndex), startIndex]
-      : deriveHDWalletPrivateKeyForGroup(secret, forGroup, keyType, startIndex)
-    const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
-    const newAddress = addressFromPublicKey(publicKey, keyType)
-
-    const account: WalletAccount = {
-      address: newAddress,
-      networkId: networkId,
-      signer: {
-        type: "local_secret" as const,
-        publicKey: publicKey,
-        keyType: keyType,
-        derivationIndex: index,
-        group: groupOfAddress(newAddress)
-      },
-      type: "alephium",
-    }
+    const account: WalletAccount = this.deriveAccount(secret, startIndex, networkId, keyType, forGroup)
 
     await this.walletStore.push([account])
 
@@ -447,6 +435,137 @@ export class Wallet {
 
     if (accounts.length > 0) {
       await this.walletStore.push(accounts)
+    }
+  }
+
+  public deriveAccount(secret: string, startIndex: number, networkId: string, keyType: KeyType, forGroup?: number): WalletAccount {
+    const [privateKey, index] = forGroup === undefined ? [deriveHDWalletPrivateKey(secret, keyType, startIndex), startIndex]
+      : deriveHDWalletPrivateKeyForGroup(secret, forGroup, keyType, startIndex)
+    const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
+    const newAddress = addressFromPublicKey(publicKey, keyType)
+
+    return {
+      address: newAddress,
+      networkId: networkId,
+      signer: {
+        type: "local_secret" as const,
+        publicKey: publicKey,
+        keyType: keyType,
+        derivationIndex: index,
+        group: groupOfAddress(newAddress)
+      },
+      type: "alephium",
+    }
+  }
+
+  public async deriveActiveAccountsIfNonExistence(): Promise<void> {
+    const accounts = await this.walletStore.get()
+
+    if (accounts.length === 0) {
+      console.info("no accounts exist, deriving active accounts")
+      const walletAccounts = await this.deriveActiveAccounts()
+      if (walletAccounts.length > 0) {
+        await this.walletStore.push(walletAccounts)
+        await this.selectAccount(walletAccounts[0])
+      }
+    } else {
+      console.info("accounts exist, do not deriving active accounts")
+    }
+  }
+
+  public async deriveActiveAccountsForNetworkIfNonExistence(networkId: string): Promise<void> {
+    const accounts = await this.walletStore.get()
+
+    if (accounts.filter(account => account.networkId == networkId).length === 0) {
+      console.info(`no accounts exist for ${networkId}, deriving active accounts`)
+      const walletAccounts = await this.deriveActiveAccountsForNetwork(networkId)
+      if (walletAccounts.length > 0) {
+        await this.walletStore.push(walletAccounts)
+        await this.selectAccount(walletAccounts[0])
+      }
+    } else {
+      console.info(`accounts exist for ${networkId}, do not deriving active accounts`)
+    }
+  }
+
+  public async deriveActiveAccounts(): Promise<WalletAccount[]> {
+    const networks = await getNetworks()
+    const walletAccounts: WalletAccount[] = []
+    for (const network of networks) {
+      const walletAccountsForNetwork = await this.deriveActiveAccountsForNetwork(network.id)
+      walletAccounts.push(...walletAccountsForNetwork)
+    }
+
+    return walletAccounts
+  }
+
+  public async deriveActiveAccountsForNetwork(networkId: string): Promise<WalletAccount[]> {
+    console.log(`derived active accounts for ${networkId}`)
+    const session = await this.sessionStore.get()
+    if (!(await this.isSessionOpen()) || !session) {
+      throw Error("no open session")
+    }
+
+    const network = await this.getNetwork(networkId)
+
+    const walletAccounts: WalletAccount[] = []
+
+    for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
+      const walletAccountsForGroup = await this.deriveActiveAccountsForGroup(session.secret, network, 'default', group, [], [])
+      walletAccounts.push(...walletAccountsForGroup)
+    }
+
+    return walletAccounts
+  }
+
+  public async deriveActiveAccountsForGroup(
+    secret: string,
+    network: Network,
+    keyType: KeyType,
+    forGroup: number,
+    allWalletAccounts: { wallet: WalletAccount, active: boolean }[],
+    activeWalletAccounts: WalletAccount[]
+  ): Promise<WalletAccount[]> {
+    const minGap = 5
+    const derivationBatchSize = 10
+    if (!network.explorerUrl) {
+      return []
+    }
+
+    const explorerService = new ExplorerProvider(network.explorerApiUrl)
+    const gapSatisfied = (allWalletAccounts.length >= minGap) && allWalletAccounts.slice(-minGap).every(item => item.active === false);
+
+    if (gapSatisfied) {
+      return activeWalletAccounts
+    } else {
+      let startIndex = getNextPathIndex(allWalletAccounts.map(account => account.wallet.signer.derivationIndex))
+      const newWalletAccounts = []
+      for (let i = 0; i < derivationBatchSize; i++) {
+        const newWalletAccount = this.deriveAccount(secret, startIndex, network.id, keyType, forGroup)
+        newWalletAccounts.push(newWalletAccount)
+        startIndex = newWalletAccount.signer.derivationIndex + 1
+      }
+
+      const results = await explorerService.addresses.postAddressesUsed(newWalletAccounts.map(account => account.address))
+
+      const updatedActiveWalletAccounts = activeWalletAccounts
+      for (let i = 0; i < derivationBatchSize; i++) {
+        const newWalletAccount = newWalletAccounts[i]
+        const result = results[i]
+        if (result) {
+          updatedActiveWalletAccounts.push(newWalletAccount)
+        }
+        allWalletAccounts.push({ wallet: newWalletAccount, active: result })
+      }
+
+      return this.deriveActiveAccountsForGroup(
+        secret,
+        network,
+        keyType,
+        forGroup,
+        allWalletAccounts,
+        updatedActiveWalletAccounts
+      )
     }
   }
 }

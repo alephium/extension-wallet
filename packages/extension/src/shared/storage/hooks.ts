@@ -1,4 +1,4 @@
-import { memoize } from "lodash-es"
+import { memoize, isEqual } from "lodash-es"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { swrCacheProvider } from "../../ui/services/swr"
@@ -17,9 +17,13 @@ export function useKeyValueStorage<
   )
 
   const set = useCallback(
-    (value: T[K]) => {
-      swrCacheProvider.set(storage.namespace + ":" + key.toString(), value)
-      setValue(value)
+    (v: T[K]) => {
+      const k = storage.namespace + ":" + key.toString()
+
+      if (!isEqual(swrCacheProvider.get(k), v)) {
+        swrCacheProvider.set(storage.namespace + ":" + key.toString(), v)
+        setValue(v)
+      }
     },
     [key, storage.namespace],
   )
@@ -40,8 +44,10 @@ export function useObjectStorage<T>(storage: IObjectStorage<T>): T {
 
   const set = useCallback(
     (value: T) => {
-      swrCacheProvider.set(storage.namespace, value)
-      setValue(value)
+      if (!isEqual(swrCacheProvider.get(storage.namespace), value)) {
+        swrCacheProvider.set(storage.namespace, value)
+        setValue(value)
+      }
     },
     [storage.namespace],
   )
@@ -69,9 +75,11 @@ export function useArrayStorage<T>(
   )
 
   const set = useCallback(
-    (value: T[]) => {
-      swrCacheProvider.set(storage.namespace, value)
-      setValue(value)
+    (v: T[]) => {
+      if (!isEqual(swrCacheProvider.get(storage.namespace), v)) {
+        swrCacheProvider.set(storage.namespace, v)
+        setValue(v)
+      }
     },
     [storage.namespace],
   )
@@ -83,6 +91,5 @@ export function useArrayStorage<T>(
   }, [selector, storage, set])
 
   const filteredValue = useMemo(() => value.filter(selector), [value, selector])
-
   return filteredValue
 }

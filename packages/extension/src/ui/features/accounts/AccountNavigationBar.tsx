@@ -11,21 +11,22 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { routes, useCurrentPathnameWithQuery } from "../../routes"
 import { NetworkSwitcher } from "../networks/NetworkSwitcher"
 import { getAccountName, useAccountMetadata } from "./accountMetadata.state"
-import { useSelectedAccount } from "./accounts.state"
+import { Account } from "../accounts/Account"
 
 const { SettingsIcon, DropdownDownIcon } = icons
 
 export interface AccountNavigationBarProps
   extends Pick<NavigationBarProps, "scroll"> {
+  account?: Account
   showAccountButton?: boolean
 }
 
 export const AccountNavigationBar: FC<AccountNavigationBarProps> = ({
+  account,
   scroll,
   showAccountButton = true,
 }) => {
   const { accountNames } = useAccountMetadata()
-  const account = useSelectedAccount()
   const navigate = useNavigate()
   const location = useLocation()
   const returnTo = useCurrentPathnameWithQuery()

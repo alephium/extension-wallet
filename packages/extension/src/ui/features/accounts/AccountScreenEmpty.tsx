@@ -1,6 +1,8 @@
 import { Empty, EmptyButton, icons } from "@argent/ui"
 import { partition } from "lodash-es"
-import { FC, useEffect } from "react"
+import { FC, useEffect, useState } from "react"
+import { discoverAccounts } from "../../services/backgroundAccounts"
+import { LoadingScreen } from "../actions/LoadingScreen"
 
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { AccountNavigationBar } from "./AccountNavigationBar"
@@ -20,6 +22,7 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
   isDeploying,
 }) => {
   const currentNetwork = useCurrentNetwork()
+  const [accountsDiscovered, setAcccountsDiscovered] = useState(false)
   const allAccounts = useAccounts({ showHidden: true })
   const [hiddenAccounts, visibleAccounts] = partition(
     allAccounts,
@@ -32,15 +35,28 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
     if (hasVisibleAccounts) {
       autoSelectAccountOnNetwork(currentNetwork.id)
     }
+
+    if (allAccounts.length === 0) {
+      discoverAccounts(currentNetwork.id)
+        .then(() => setAcccountsDiscovered(true))
+        .catch((e) => {
+          console.error(e)
+          setAcccountsDiscovered(true)
+        })
+    }
   }, [currentNetwork.id, hasVisibleAccounts])
+
+  if (allAccounts.length === 0 && !accountsDiscovered) {
+    return <LoadingScreen />
+  }
+
   return (
     <>
-      <AccountNavigationBar showAccountButton={false} />
+      <AccountNavigationBar showAccountButton={false} account={undefined} />
       <Empty
         icon={<WalletIcon />}
-        title={`You have no ${hasHiddenAccounts ? "visible " : ""}accounts on ${
-          currentNetwork.name
-        }`}
+        title={`You have no ${hasHiddenAccounts ? "visible " : ""}accounts on ${currentNetwork.name
+          }`}
       >
         <EmptyButton
           leftIcon={<AddIcon />}

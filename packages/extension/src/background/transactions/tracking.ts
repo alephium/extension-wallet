@@ -22,7 +22,7 @@ export const transactionTracker: TransactionTracker = {
       allTransactions,
     )
 
-    // We set the tx history directly here, which potentially will remove historical transactions
+    // Set the tx history directly here, which potentially trims historical transactions
     return transactionsStore.set(historyTransactions)
   },
   async update() {

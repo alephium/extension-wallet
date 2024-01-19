@@ -55,7 +55,6 @@ export const SendScreen: FC = () => {
   const currentQueryValue = watch().query
   const { tokenDetails: fungibleTokens } = useFungibleTokensWithBalance(account)
   const tokenList = useCustomTokenList(fungibleTokens, account?.networkId, currentQueryValue)
-
   if (!account) {
     return <></>
   }
@@ -86,7 +85,8 @@ export const SendScreen: FC = () => {
           <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>
             <CellStack pt={0}>
               <TokenList
-                tokenList={tokenList}
+                account={account}
+                tokens={tokenList}
                 variant="no-currency"
                 navigateToSend
                 showNewTokenButton

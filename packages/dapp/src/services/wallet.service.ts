@@ -64,7 +64,7 @@ export const signMessage = async (message: string, messageHasher: MessageHasher)
 
   return await alephium.signMessage({
     signerAddress: alephium.connectedAccount.address,
-    message: message,
+    message,
     messageHasher
   })
 }

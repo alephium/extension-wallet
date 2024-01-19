@@ -1,7 +1,5 @@
-import { some } from "lodash-es"
-
 import { defaultNetwork } from "../../../shared/network"
-import { accountsEqual, isEqualWalletAddress } from "../../../shared/wallet.service"
+import { accountsEqual } from "../../../shared/wallet.service"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import {

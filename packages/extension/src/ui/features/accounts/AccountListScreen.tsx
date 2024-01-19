@@ -5,8 +5,8 @@ import {
   icons,
 } from "@argent/ui"
 import { Flex } from "@chakra-ui/react"
-import { partition, some } from "lodash-es"
-import { FC, useCallback } from "react"
+import { partition } from "lodash-es"
+import { FC, useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
@@ -23,10 +23,9 @@ import {
   useAccounts,
   useSelectedAccount,
 } from "./accounts.state"
-import { DeprecatedAccountsWarning } from "./DeprecatedAccountsWarning"
 import { HiddenAccountsBar } from "./HiddenAccountsBar"
-import { useAddAccount } from "./useAddAccount"
 import { routes } from "../../routes"
+import { discoverAccounts } from "../../services/backgroundAccounts"
 
 const { AddIcon } = icons
 
@@ -34,19 +33,10 @@ const Paragraph = styled(P)`
   text-align: center;
 `
 
-const DimmingContainer = styled.div`
-  background-color: ${({ theme }) => theme.bg1};
-  opacity: 0.5;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-`
-
 export const AccountListScreen: FC = () => {
   const navigate = useNavigate()
   const returnTo = useReturnTo()
+  const [accountsDiscovered, setAcccountsDiscovered] = useState(false)
   const selectedAccount = useSelectedAccount()
   const allAccounts = useAccounts({ showHidden: true })
   const [hiddenAccounts, visibleAccounts] = partition(
@@ -65,6 +55,21 @@ export const AccountListScreen: FC = () => {
       navigate(await recover())
     }
   }, [navigate, returnTo])
+
+  useEffect(() => {
+    if (allAccounts.length === 0) {
+      discoverAccounts(currentNetwork.id)
+        .then(() => setAcccountsDiscovered(true))
+        .catch((e) => {
+          console.error(e)
+          setAcccountsDiscovered(true)
+        })
+    }
+  }, [currentNetwork])
+
+  if (allAccounts.length === 0 && !accountsDiscovered) {
+    return <LoadingScreen />
+  }
 
   return (
     <>

@@ -20,6 +20,11 @@ export const createNewAccount = async (networkId: string, keyType: KeyType, grou
   }
 }
 
+export const discoverAccounts = async (networkId?: string) => {
+  sendMessage({ type: "DISCOVER_ACCOUNTS", data: { networkId } })
+  return waitForMessage("DISCOVER_ACCOUNTS_RES")
+}
+
 export const importNewLedgerAccount = async (account: Account, hdIndex: number, networkId: string) => {
   sendMessage({ type: "NEW_LEDGER_ACCOUNT", data: { account, hdIndex, networkId } })
   try {

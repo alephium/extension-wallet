@@ -34,9 +34,7 @@ import {
   isValidAddress,
   normalizeAddress,
 } from "../../services/addresses"
-import {
-  sendTransferTransaction, sendUnsignedTxTransaction,
-} from "../../services/transactions"
+import { sendTransferTransaction } from "../../services/transactions"
 import { useOnClickOutside } from "../../services/useOnClickOutside"
 import { H3, H5 } from "../../theme/Typography"
 import { Account } from "../accounts/Account"
@@ -322,6 +320,7 @@ export const SendTokenScreen: FC = () => {
     [addressBook.contacts, addressBook.userAccounts, inputRecipient],
   )
 
+  // If ALPH only, can still sweep
   const sweepTransaction: Promise<BuildSweepAddressTransactionsResult | undefined> = useMemo(
     async () => {
       let result = undefined
