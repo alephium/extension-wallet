@@ -401,8 +401,7 @@ export const TokenDapp: FC<{
 
           <div className="columns">
             <label htmlFor="short-text">Short Text</label>
-            <input
-              type="text"
+            <textarea
               id="short-text"
               name="short-text"
               value={shortText}

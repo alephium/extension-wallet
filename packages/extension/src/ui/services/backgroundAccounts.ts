@@ -29,7 +29,7 @@ export const discoverAccounts = async (networkId?: string) => {
     ])
   } catch {
     const networkMsg = networkId ? ` for ${networkId}` : ""
-    throw Error(`Could not discover accounts${networkMsg}}.`)
+    throw Error(`Could not discover active accounts${networkMsg}}.`)
   }
 }
 

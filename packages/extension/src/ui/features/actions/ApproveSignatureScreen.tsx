@@ -1,14 +1,10 @@
 import { SignMessageParams } from "@alephium/web3"
-import { P4, H5, H6, H2 } from "@argent/ui"
+import { H6, H2 } from "@argent/ui"
 import { FC } from "react"
 import styled from "styled-components"
 
 import { usePageTracking } from "../../services/analytics"
-import { P } from "../../theme/Typography"
-import {
-  ConfirmPageProps,
-  DeprecatedConfirmScreen,
-} from "./DeprecatedConfirmScreen"
+import { ConfirmPageProps } from "./DeprecatedConfirmScreen"
 import { Field, FieldGroup, FieldKey, FieldValue, SectionHeader } from "../../components/Fields"
 import { AccountAddressField } from "./transaction/fields/AccountAddressField"
 import { Box, Flex } from "@chakra-ui/react"
