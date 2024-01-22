@@ -31,15 +31,21 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
 
     case "DISCOVER_ACCOUNTS": {
       const { networkId } = msg.data
-      if (networkId) {
-        await wallet.deriveActiveAccountsForNetworkIfNonExistence(networkId)
-      } else {
-        await wallet.deriveActiveAccountsIfNonExistence()
+      try {
+        if (networkId) {
+          await wallet.deriveActiveAccountsForNetworkIfNonExistence(networkId)
+        } else {
+          await wallet.deriveActiveAccountsIfNonExistence()
+        }
+        return respond({ type: "DISCOVER_ACCOUNTS_RES" })
+      } catch (exception) {
+        console.error("Failed to discover accounts", exception)
+        return respond({
+          type: "DISCOVER_ACCOUNTS_REJ",
+          data: { error: `${exception}` },
+        })
       }
 
-      return respond({
-        type: "DISCOVER_ACCOUNTS_RES",
-      })
     }
 
     case "NEW_ACCOUNT": {

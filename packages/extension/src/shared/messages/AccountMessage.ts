@@ -63,3 +63,7 @@ export type AccountMessage =
       data: { networkId?: string }
     }
   | { type: "DISCOVER_ACCOUNTS_RES" }
+  | {
+      type: "DISCOVER_ACCOUNTS_REJ"
+      data: { error: string }
+    }
