@@ -6,13 +6,12 @@ import {
 } from "@argent/ui"
 import { Flex } from "@chakra-ui/react"
 import { partition } from "lodash-es"
-import { FC, useCallback, useEffect, useState } from "react"
+import { FC, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
 import { useReturnTo } from "../../routes"
 import { P } from "../../theme/Typography"
-import { LoadingScreen } from "../actions/LoadingScreen"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { useBackupRequired } from "../recovery/backupDownload.state"
 import { recover } from "../recovery/recovery.service"
@@ -25,7 +24,6 @@ import {
 } from "./accounts.state"
 import { HiddenAccountsBar } from "./HiddenAccountsBar"
 import { routes } from "../../routes"
-import { discoverAccounts } from "../../services/backgroundAccounts"
 
 const { AddIcon } = icons
 
@@ -36,7 +34,6 @@ const Paragraph = styled(P)`
 export const AccountListScreen: FC = () => {
   const navigate = useNavigate()
   const returnTo = useReturnTo()
-  const [accountsDiscovered, setAcccountsDiscovered] = useState(false)
   const selectedAccount = useSelectedAccount()
   const allAccounts = useAccounts({ showHidden: true })
   const [hiddenAccounts, visibleAccounts] = partition(
@@ -45,7 +42,6 @@ export const AccountListScreen: FC = () => {
   )
   const { isBackupRequired } = useBackupRequired()
   const currentNetwork = useCurrentNetwork()
-
   const hasHiddenAccounts = hiddenAccounts.length > 0
 
   const onClose = useCallback(async () => {
@@ -55,21 +51,6 @@ export const AccountListScreen: FC = () => {
       navigate(await recover())
     }
   }, [navigate, returnTo])
-
-  useEffect(() => {
-    if (allAccounts.length === 0) {
-      discoverAccounts(currentNetwork.id)
-        .then(() => setAcccountsDiscovered(true))
-        .catch((e) => {
-          console.error(e)
-          setAcccountsDiscovered(true)
-        })
-    }
-  }, [currentNetwork])
-
-  if (allAccounts.length === 0 && !accountsDiscovered) {
-    return <LoadingScreen />
-  }
 
   return (
     <>

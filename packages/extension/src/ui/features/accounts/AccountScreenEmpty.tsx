@@ -3,26 +3,26 @@ import { partition } from "lodash-es"
 import { FC, useEffect, useState } from "react"
 import { discoverAccounts } from "../../services/backgroundAccounts"
 import { LoadingScreen } from "../actions/LoadingScreen"
-
+import { routes } from "../../routes"
+import { Navigate } from "react-router-dom"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { AccountNavigationBar } from "./AccountNavigationBar"
 import { isHiddenAccount, useAccounts } from "./accounts.state"
 import { HiddenAccountsBar } from "./HiddenAccountsBar"
 import { autoSelectAccountOnNetwork } from "./switchAccount"
 
-const { WalletIcon, AddIcon } = icons
+const { WalletIcon, AddIcon, SearchIcon } = icons
 
 export interface AccountScreenEmptyProps {
   onAddAccount: () => void
-  isDeploying?: boolean
 }
 
 export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
   onAddAccount,
-  isDeploying,
 }) => {
   const currentNetwork = useCurrentNetwork()
-  const [accountsDiscovered, setAcccountsDiscovered] = useState(false)
+  const [discoveringAccount, setDiscoveringAccount] = useState(false)
+  const [accountDiscoveryFinished, setAccountDiscoveryFinished] = useState(false)
   const allAccounts = useAccounts({ showHidden: true })
   const [hiddenAccounts, visibleAccounts] = partition(
     allAccounts,
@@ -30,24 +30,31 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
   )
   const hasVisibleAccounts = visibleAccounts.length > 0
   const hasHiddenAccounts = hiddenAccounts.length > 0
+
+  const onDiscoverAccounts = () => {
+    setDiscoveringAccount(true)
+    discoverAccounts(currentNetwork.id)
+      .then(() => {
+        setDiscoveringAccount(false)
+        setAccountDiscoveryFinished(true)
+      })
+      .catch((e) => {
+        console.error(e)
+        setDiscoveringAccount(false)
+      })
+  }
+
   useEffect(() => {
     /** User made some account visible then returned to this screen */
     if (hasVisibleAccounts) {
       autoSelectAccountOnNetwork(currentNetwork.id)
     }
+  }, [currentNetwork.id, hasVisibleAccounts, accountDiscoveryFinished])
 
-    if (allAccounts.length === 0) {
-      discoverAccounts(currentNetwork.id)
-        .then(() => setAcccountsDiscovered(true))
-        .catch((e) => {
-          console.error(e)
-          setAcccountsDiscovered(true)
-        })
-    }
-  }, [currentNetwork.id, hasVisibleAccounts])
-
-  if (allAccounts.length === 0 && !accountsDiscovered) {
+  if (allAccounts.length === 0 && discoveringAccount) {
     return <LoadingScreen />
+  } else if (allAccounts.length > 0) {
+    return <Navigate to={routes.accounts()} />
   }
 
   return (
@@ -59,14 +66,36 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
           }`}
       >
         <EmptyButton
+          size={"sm"}
+          colorScheme={"transparent"}
+          color={"neutrals.500"}
           leftIcon={<AddIcon />}
           onClick={onAddAccount}
-          isLoading={isDeploying}
-          isDisabled={isDeploying}
           loadingText={"Creating"}
         >
-          Create account
+          New account
         </EmptyButton>
+        {
+          accountDiscoveryFinished ? (
+            <>
+              No active accounts found
+            </>
+          ) :
+            (<>
+              or
+              <EmptyButton
+                size={"sm"}
+                colorScheme={"transparent"}
+                color={"neutrals.500"}
+                leftIcon={<SearchIcon />}
+                onClick={onDiscoverAccounts}
+                loadingText={"Discovering"}
+              >
+                Discover accounts
+              </EmptyButton>
+            </>
+            )
+        }
       </Empty>
       {hasHiddenAccounts && <HiddenAccountsBar />}
     </>
