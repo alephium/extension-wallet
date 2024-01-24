@@ -22,7 +22,6 @@ export const AccountTokens: FC<AccountTokensProps> = ({ account }) => {
   const { accountNames } = useAccountMetadata()
   const { isBackupRequired } = useBackupRequired()
   const { tokenDetails: tokensForAccount } = useFungibleTokensWithBalance(account)
-  //const tokensForAccount: TokenWithBalance[] = []
   const accountName = getAccountName(account, accountNames)
 
   const showBackupBanner = isBackupRequired

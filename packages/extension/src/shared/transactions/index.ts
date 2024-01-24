@@ -1,5 +1,4 @@
 import { ExplorerProvider } from "@alephium/web3"
-//import { getAccounts } from "../../shared/account/store"
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call } from "starknet"
 import { ReviewTransactionResult } from "../actionQueue/types"

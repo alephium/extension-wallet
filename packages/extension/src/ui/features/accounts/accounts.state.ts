@@ -76,7 +76,7 @@ export const useAccountsOnNetwork = ({
 export const useAccount = (
   account?: BaseWalletAccount,
 ): Account | undefined => {
-  const accounts = useAccounts({ allNetworks: true, showHidden: true })  // Does it need to be all networks here?
+  const accounts = useAccounts({ allNetworks: false, showHidden: true })
   return useMemo(() => {
     if (!account) {
       return undefined

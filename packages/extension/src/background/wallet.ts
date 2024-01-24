@@ -533,7 +533,7 @@ export class Wallet {
     }
 
     const explorerService = new ExplorerProvider(network.explorerApiUrl)
-    const gapSatisfied = (allWalletAccounts.length >= minGap) && allWalletAccounts.slice(-minGap).every(item => item.active === false);
+    const gapSatisfied = (allWalletAccounts.length >= minGap) && allWalletAccounts.slice(-minGap).every(item => !item.active);
 
     if (gapSatisfied) {
       return activeWalletAccounts
