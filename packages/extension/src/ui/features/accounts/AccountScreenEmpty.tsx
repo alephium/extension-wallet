@@ -54,7 +54,7 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
   if (allAccounts.length === 0 && discoveringAccount) {
     return <LoadingScreen />
   } else if (allAccounts.length > 0) {
-    return <Navigate to={routes.accounts()} />
+    return <Navigate to={routes.accountTokens()} />
   }
 
   return (

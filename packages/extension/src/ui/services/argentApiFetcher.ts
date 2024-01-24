@@ -33,12 +33,12 @@ export const alephiumApiFetcher = (
   init?: RequestInit,
   fetcherImpl: Fetcher = fetcher,
 ) => {
-  const initWithArgentApiHeaders = {
+  const initWithAlephiumApiHeaders = {
     ...init,
     headers: {
       ...init?.headers,
       accept: "application/json",
     },
   }
-  return fetcherImpl(input, initWithArgentApiHeaders)
+  return fetcherImpl(input, initWithAlephiumApiHeaders)
 }
