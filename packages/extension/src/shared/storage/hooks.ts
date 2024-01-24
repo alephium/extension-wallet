@@ -90,6 +90,5 @@ export function useArrayStorage<T>(
     return () => sub()
   }, [selector, storage, set])
 
-  const filteredValue = useMemo(() => value.filter(selector), [value, selector])
-  return filteredValue
+  return useMemo(() => value.filter(selector), [value, selector])
 }
