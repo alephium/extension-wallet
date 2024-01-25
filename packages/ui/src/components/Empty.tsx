@@ -32,7 +32,6 @@ export const Empty: FC<EmptyProps> = ({
 export const EmptyButton: FC<ComponentProps<typeof Button>> = (props) => (
   <Button
     colorScheme={"tertiary"}
-    color={"neutrals.500"}
     size={"sm"}
     {...props}
   />

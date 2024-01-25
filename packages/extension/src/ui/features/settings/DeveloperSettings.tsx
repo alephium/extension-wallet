@@ -1,22 +1,51 @@
-import { BarBackButton, CellStack, NavigationBar } from "@argent/ui"
-import { FC } from "react"
+import { BarBackButton, CellStack, NavigationBar, ButtonCell, icons } from "@argent/ui"
+import { FC, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { isExperimentalSettingsEnabled } from "../../../shared/settings"
-import { ArrowCircleDownIcon, CheckCircleIcon } from "../../components/Icons/MuiIcons"
+import { ArrowCircleDownIcon } from "../../components/Icons/MuiIcons"
 import { routes } from "../../routes"
 import { SettingsMenuItem } from "./SettingsMenuItem"
-import styled from "styled-components"
-import { IconButton } from "../../components/Button"
 import { updateTokenListNow } from "../../../shared/token/storage"
+import { discoverAccounts } from "../../services/backgroundAccounts"
+import { useCurrentNetwork } from "../networks/useNetworks"
+import { LoadingScreen } from "../actions/LoadingScreen"
 
-const StyledIconButton = styled(IconButton)`
-  margin-top: 16px;
-  width: auto;
-`
+const { SearchIcon } = icons
 
 const DeveloperSettings: FC = () => {
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const currentNetwork = useCurrentNetwork()
+
+  const onTokenListUpdate = () => {
+    setLoading(true)
+    updateTokenListNow()
+      .then(() => {
+        setLoading(false)
+      })
+      .catch((e) => {
+        console.error(e)
+        setLoading(false)
+      })
+  }
+
+  const onDiscoverAccounts = () => {
+    setLoading(true)
+    discoverAccounts(currentNetwork.id)
+      .then(() => {
+        setLoading(false)
+      })
+      .catch((e) => {
+        console.error(e)
+        setLoading(false)
+      })
+  }
+
+  if (loading) {
+    return <LoadingScreen />
+  }
+
   return (
     <>
       <NavigationBar
@@ -37,17 +66,20 @@ const DeveloperSettings: FC = () => {
           />
         )}
 
-        <div>
-          <StyledIconButton
-            size="s"
-            icon={<ArrowCircleDownIcon fontSize="inherit" />}
-            clickedIcon={<CheckCircleIcon fontSize="inherit" />}
-            clickedTimeout={5 * 60 * 1000}
-            onClick={updateTokenListNow}
-          >
-            Update Token List
-          </StyledIconButton>
-        </div>
+        <ButtonCell
+          rightIcon={<ArrowCircleDownIcon fontSize="inherit" />}
+          onClick={onTokenListUpdate}
+          title="Update Token List"
+        >
+          Update token list
+        </ButtonCell>
+        <ButtonCell
+          rightIcon={<SearchIcon fontSize="inherit" />}
+          onClick={onDiscoverAccounts}
+          title="Discover accounts"
+        >
+          Discover accounts
+        </ButtonCell>
       </CellStack>
     </>
   )
