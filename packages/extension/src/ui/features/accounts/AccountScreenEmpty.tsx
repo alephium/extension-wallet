@@ -3,13 +3,13 @@ import { partition } from "lodash-es"
 import { FC, useEffect, useState } from "react"
 import { discoverAccounts } from "../../services/backgroundAccounts"
 import { LoadingScreen } from "../actions/LoadingScreen"
-import { routes } from "../../routes"
-import { Navigate } from "react-router-dom"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { AccountNavigationBar } from "./AccountNavigationBar"
 import { isHiddenAccount, useAccounts } from "./accounts.state"
 import { HiddenAccountsBar } from "./HiddenAccountsBar"
 import { autoSelectAccountOnNetwork } from "./switchAccount"
+import { AccountContainer } from "./AccountContainer"
+import { AccountTokens } from "../accountTokens/AccountTokens"
 
 const { WalletIcon, AddIcon, SearchIcon } = icons
 
@@ -54,7 +54,14 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
   if (allAccounts.length === 0 && discoveringAccount) {
     return <LoadingScreen />
   } else if (allAccounts.length > 0) {
-    return <Navigate to={routes.accountTokens()} />
+    const account = allAccounts[0]
+    return (
+      <AccountContainer
+        scrollKey={"accounts/AccountTokens"}
+        account={account}>
+        <AccountTokens account={account} />
+      </AccountContainer>
+    )
   }
 
   return (
