@@ -1,5 +1,5 @@
 import { BarBackButton, CellStack, NavigationBar, ButtonCell, icons } from "@argent/ui"
-import { FC, useState } from "react"
+import { FC, useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { isExperimentalSettingsEnabled } from "../../../shared/settings"
@@ -7,9 +7,11 @@ import { ArrowCircleDownIcon } from "../../components/Icons/MuiIcons"
 import { routes } from "../../routes"
 import { SettingsMenuItem } from "./SettingsMenuItem"
 import { updateTokenListNow } from "../../../shared/token/storage"
-import { discoverAccounts } from "../../services/backgroundAccounts"
+import { accountsOnNetwork, discoverAccounts, getAccounts } from "../../services/backgroundAccounts"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { LoadingScreen } from "../actions/LoadingScreen"
+import { mapWalletAccountsToAccounts } from "../accounts/accounts.state"
+import { getDefaultAccountNameByIndex, useAccountMetadata } from "../accounts/accountMetadata.state"
 
 const { SearchIcon } = icons
 
@@ -17,8 +19,9 @@ const DeveloperSettings: FC = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const currentNetwork = useCurrentNetwork()
+  const { setAccountName } = useAccountMetadata()
 
-  const onTokenListUpdate = () => {
+  const onTokenListUpdate = useCallback(() => {
     setLoading(true)
     updateTokenListNow()
       .then(() => {
@@ -28,19 +31,30 @@ const DeveloperSettings: FC = () => {
         console.error(e)
         setLoading(false)
       })
-  }
+  }, [])
 
-  const onDiscoverAccounts = () => {
+  const onDiscoverAccounts = useCallback(async () => {
     setLoading(true)
-    discoverAccounts(currentNetwork.id)
-      .then(() => {
+    try {
+      const allWalletAccounts = await getAccounts(true)
+      const allWalletAccountsOnNetwork = accountsOnNetwork(allWalletAccounts, currentNetwork.id)
+      const result = await discoverAccounts(currentNetwork.id)
+      if (result === "error") {
+        console.log("Error discovering accounts")
+      } else {
+        const discoveredAccounts = mapWalletAccountsToAccounts(result.accounts)
+        let accountIndex = allWalletAccountsOnNetwork.length
+        discoveredAccounts.forEach((account) => {
+          setAccountName(account.networkId, account.address, getDefaultAccountNameByIndex(account, accountIndex))
+          accountIndex++
+        })
         setLoading(false)
-      })
-      .catch((e) => {
-        console.error(e)
-        setLoading(false)
-      })
-  }
+      }
+    } catch (e) {
+      console.log("Error discovering accounts", e)
+      setLoading(false)
+    }
+  }, [currentNetwork.id, setAccountName])
 
   if (loading) {
     return <LoadingScreen />

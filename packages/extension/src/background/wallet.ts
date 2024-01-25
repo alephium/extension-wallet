@@ -457,7 +457,7 @@ export class Wallet {
     }
   }
 
-  public async discoverActiveAccounts(networkId: string): Promise<void> {
+  public async discoverActiveAccounts(networkId: string): Promise<WalletAccount[]> {
     const accountsForNetwork = await this.walletStore.get(account => account.networkId == networkId)
     const selectedAccount = await this.getSelectedAccount()
 
@@ -472,6 +472,7 @@ export class Wallet {
       }
     }
     console.info(`Discovered ${newDiscoveredAccounts.length} new active accounts for ${networkId}`)
+    return newDiscoveredAccounts
   }
 
   public async deriveActiveAccountsForNetwork(networkId: string): Promise<WalletAccount[]> {

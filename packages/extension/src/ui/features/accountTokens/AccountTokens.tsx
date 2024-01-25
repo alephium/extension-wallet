@@ -39,7 +39,7 @@ export const AccountTokens: FC<AccountTokensProps> = ({ account }) => {
       <CellStack pt={0}>
         <StatusMessageBannerContainer />
         {showBackupBanner && <RecoveryBanner />}
-        <TokenList variant={'default'} account={account} tokens={tokensForAccount} showNewTokenButton />
+        <TokenList variant={'no-currency'} account={account} tokens={tokensForAccount} showNewTokenButton />
       </CellStack>
     </Flex>
   )

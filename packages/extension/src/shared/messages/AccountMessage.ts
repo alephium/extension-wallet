@@ -62,7 +62,12 @@ export type AccountMessage =
       type: "DISCOVER_ACCOUNTS"
       data: { networkId: string }
     }
-  | { type: "DISCOVER_ACCOUNTS_RES" }
+  | {
+      type: "DISCOVER_ACCOUNTS_RES"
+      data: {
+        accounts: WalletAccount[]
+      }
+    }
   | {
       type: "DISCOVER_ACCOUNTS_REJ"
       data: { error: string }
