@@ -60,7 +60,7 @@ export type AccountMessage =
     }
   | {
       type: "DISCOVER_ACCOUNTS"
-      data: { networkId?: string }
+      data: { networkId: string }
     }
   | { type: "DISCOVER_ACCOUNTS_RES" }
   | {

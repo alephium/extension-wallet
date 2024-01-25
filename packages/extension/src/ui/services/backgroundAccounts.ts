@@ -20,7 +20,7 @@ export const createNewAccount = async (networkId: string, keyType: KeyType, grou
   }
 }
 
-export const discoverAccounts = async (networkId?: string) => {
+export const discoverAccounts = async (networkId: string) => {
   sendMessage({ type: "DISCOVER_ACCOUNTS", data: { networkId } })
   try {
     return await Promise.race([
@@ -28,8 +28,7 @@ export const discoverAccounts = async (networkId?: string) => {
       waitForMessage("DISCOVER_ACCOUNTS_REJ").then(() => "error" as const),
     ])
   } catch {
-    const networkMsg = networkId ? ` for ${networkId}` : ""
-    throw Error(`Could not discover active accounts${networkMsg}}.`)
+    throw Error(`Could not discover active accounts for ${networkId}.`)
   }
 }
 

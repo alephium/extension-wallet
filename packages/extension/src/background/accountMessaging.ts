@@ -32,11 +32,7 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
     case "DISCOVER_ACCOUNTS": {
       const { networkId } = msg.data
       try {
-        if (networkId) {
-          await wallet.deriveActiveAccountsForNetworkIfNonExistence(networkId)
-        } else {
-          await wallet.deriveActiveAccountsIfNonExistence()
-        }
+        await wallet.discoverActiveAccounts(networkId)
         return respond({ type: "DISCOVER_ACCOUNTS_RES" })
       } catch (exception) {
         console.error("Failed to discover accounts", exception)

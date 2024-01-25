@@ -26,7 +26,6 @@ import { withHiddenSelector } from "../shared/account/selectors"
 import {
   Network,
   defaultNetwork,
-  getNetworks,
 } from "../shared/network"
 import {
   IArrayStorage,
@@ -458,45 +457,21 @@ export class Wallet {
     }
   }
 
-  public async deriveActiveAccountsIfNonExistence(): Promise<void> {
-    const accounts = await this.walletStore.get()
+  public async discoverActiveAccounts(networkId: string): Promise<void> {
+    const accountsForNetwork = await this.walletStore.get(account => account.networkId == networkId)
+    const selectedAccount = await this.getSelectedAccount()
 
-    if (accounts.length === 0) {
-      console.info("no accounts exist, deriving active accounts")
-      const walletAccounts = await this.deriveActiveAccounts()
-      if (walletAccounts.length > 0) {
-        await this.walletStore.push(walletAccounts)
-        await this.selectAccount(walletAccounts[0])
+    console.info(`start discovering active accounts for ${networkId}`)
+    const walletAccounts = await this.deriveActiveAccountsForNetwork(networkId)
+    const newDiscoveredAccounts = walletAccounts.filter(account => !accountsForNetwork.find(a => a.address === account.address))
+
+    if (newDiscoveredAccounts.length > 0) {
+      await this.walletStore.push(newDiscoveredAccounts)
+      if (selectedAccount === undefined) {
+        await this.selectAccount(newDiscoveredAccounts[0])
       }
-    } else {
-      console.info("accounts exist, do not deriving active accounts")
     }
-  }
-
-  public async deriveActiveAccountsForNetworkIfNonExistence(networkId: string): Promise<void> {
-    const accounts = await this.walletStore.get()
-
-    if (accounts.filter(account => account.networkId == networkId).length === 0) {
-      console.info(`no accounts exist for ${networkId}, deriving active accounts`)
-      const walletAccounts = await this.deriveActiveAccountsForNetwork(networkId)
-      if (walletAccounts.length > 0) {
-        await this.walletStore.push(walletAccounts)
-        await this.selectAccount(walletAccounts[0])
-      }
-    } else {
-      console.info(`accounts exist for ${networkId}, do not deriving active accounts`)
-    }
-  }
-
-  public async deriveActiveAccounts(): Promise<WalletAccount[]> {
-    const networks = await getNetworks()
-    const walletAccounts: WalletAccount[] = []
-    for (const network of networks) {
-      const walletAccountsForNetwork = await this.deriveActiveAccountsForNetwork(network.id)
-      walletAccounts.push(...walletAccountsForNetwork)
-    }
-
-    return walletAccounts
+    console.info(`Discovered ${newDiscoveredAccounts.length} new active accounts for ${networkId}`)
   }
 
   public async deriveActiveAccountsForNetwork(networkId: string): Promise<WalletAccount[]> {
