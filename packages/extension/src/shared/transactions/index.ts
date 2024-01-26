@@ -5,7 +5,6 @@ import { ReviewTransactionResult } from "../actionQueue/types"
 import { WalletAccount } from "../wallet.model"
 import { AlephiumExplorerTransaction } from "../explorer/type"
 import { mapAlephiumTransactionToTransaction } from "./transformers"
-import { Transaction as AlephiumTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { getNetwork } from "../network"
 
 export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_MEMPOOL' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED' | 'REMOVED_FROM_MEMPOOL';
@@ -109,52 +108,24 @@ export async function getTransactionsPerAccount(
   return transactionsPerAccount
 }
 
-// The number of transactions fetched has the following constraints:
-// 1) At most 50 transactions (3.1kb per tx, 50 txs = 155kb per account),
-//    max `chrome.storage.local` quota per extension is 5mb
-// 2) At least total number of transactions from the last two days
+// Fetch the latest 20 transactions (at most)
 function buildGetTransactionsFn(metadataTransactions: Transaction[]) {
   return async (account: WalletAccount) => {
-    const currentDate = new Date()
+    const limit = 20
     const network = await getNetwork(account.networkId)
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-    const limit = 50
-
-    let page = 1
-    let continueFetching = true
-    const result: Transaction[] = []
-    while (continueFetching) {
-      const transactions: AlephiumTransaction[] = await explorerProvider.addresses.getAddressesAddressTransactions(account.address, { page, limit })
-      const convertedTxs = transactions.map((transaction) =>
-        mapAlephiumTransactionToTransaction(
-          transaction,
-          account,
-          metadataTransactions.find((tx) =>
-            compareTransactions(tx, {
-              hash: transaction.hash,
-              account: { networkId: account.networkId },
-            }),
-          )?.meta,
-        ),
-      )
-      result.push(...convertedTxs)
-
-      if (transactions.length < limit) {
-        continueFetching = false
-      } else {
-        const lastTxDate = new Date(transactions[transactions.length - 1].timestamp)
-        const txCreatedSinceInMinutes = (currentDate.valueOf() - lastTxDate.valueOf()) / 1000 / 60
-        const txCreatedLessThan2Days = txCreatedSinceInMinutes < 60 * 24 * 2
-
-        if (!txCreatedLessThan2Days) {
-          continueFetching = false
-        }
-      }
-
-      page += 1
-    }
-
-    console.debug(`fetched tx for account ${account.address} in network ${account.networkId}`, result)
-    return result
+    const transactions = await explorerProvider.addresses.getAddressesAddressTransactions(account.address, { page: 1, limit })
+    return transactions.map((transaction) =>
+      mapAlephiumTransactionToTransaction(
+        transaction,
+        account,
+        metadataTransactions.find((tx) =>
+          compareTransactions(tx, {
+            hash: transaction.hash,
+            account: { networkId: account.networkId },
+          }),
+        )?.meta,
+      ),
+    )
   }
 }

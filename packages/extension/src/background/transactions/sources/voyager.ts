@@ -32,7 +32,7 @@ export const fetchVoyagerTransactions = async (
   return items
 }
 
-export async function getTransactionHistory(
+export async function getLatestTransactions(
   accountsToPopulate: WalletAccount[],
   metadataTransactions: Transaction[],
 ) {
