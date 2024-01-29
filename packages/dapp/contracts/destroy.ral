@@ -1,0 +1,3 @@
+TxScript Destroy(shinyTokenId: ByteVec, to: Address) {
+  ShinyToken(shinyTokenId).destroy(to)
+}

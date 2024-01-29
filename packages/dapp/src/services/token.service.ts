@@ -1,7 +1,7 @@
 import { getDefaultAlephiumWallet } from "@alephium/get-extension-wallet"
 import * as web3 from '@alephium/web3'
-import { binToHex, contractIdFromAddress, DUST_AMOUNT } from '@alephium/web3'
-import { ShinyToken, ShinyTokenInstance, Transfer } from '../../artifacts/ts'
+import { binToHex, contractIdFromAddress, DUST_AMOUNT, stringToHex } from '@alephium/web3'
+import { Destroy, ShinyToken, ShinyTokenInstance, Transfer } from '../../artifacts/ts'
 
 export const erc20TokenAddressByNetwork = {
   "goerli-alpha":
@@ -77,7 +77,12 @@ export const mintToken = async (
   }
 
   return ShinyToken.deploy(alephium, {
-    initialFields: {},
+    initialFields: {
+      name: stringToHex("ShinyToken"),
+      symbol: stringToHex("SHINY"),
+      decimals: 0,
+      totalSupply: BigInt(mintAmount)
+    },
     initialAttoAlphAmount: BigInt(1100000000000000000),
     issueTokenAmount: BigInt(mintAmount),
   })
@@ -126,4 +131,23 @@ export const transferToken = async (
       ]
     }]
   })
+}
+
+export const destroyTokenContract = async (
+  tokenId: string,
+): Promise<web3.ExecuteScriptResult> => {
+  const alephium = await getDefaultAlephiumWallet()
+  if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
+    throw Error("alephium object not initialized")
+  }
+
+  return Destroy.execute(
+    alephium,
+    {
+      initialFields: {
+        shinyTokenId: binToHex(contractIdFromAddress(tokenId)),
+        to: alephium.connectedAccount.address,
+      }
+    }
+  )
 }

@@ -4,6 +4,7 @@
 
 import {
   Address,
+  ExecutableScript,
   ExecuteScriptParams,
   ExecuteScriptResult,
   HexString,
@@ -11,20 +12,15 @@ import {
   SignerProvider,
 } from "@alephium/web3";
 
+import { default as DestroyScriptJson } from "../Destroy.ral.json";
 import { default as TransferScriptJson } from "../Transfer.ral.json";
 
-export namespace Transfer {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      shinyTokenId: HexString;
-      to: Address;
-      amount: bigint;
-    }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(TransferScriptJson);
-}
+export const Destroy = new ExecutableScript<{
+  shinyTokenId: HexString;
+  to: Address;
+}>(Script.fromJson(DestroyScriptJson));
+export const Transfer = new ExecutableScript<{
+  shinyTokenId: HexString;
+  to: Address;
+  amount: bigint;
+}>(Script.fromJson(TransferScriptJson));

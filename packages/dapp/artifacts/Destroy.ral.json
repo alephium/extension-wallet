@@ -1,20 +1,17 @@
 {
   "version": "v2.8.0",
-  "name": "Transfer",
-  "bytecodeTemplate": "01010300000006{1}{2}0e0c{0}0104",
+  "name": "Destroy",
+  "bytecodeTemplate": "01010300000005{1}0d0c{0}0105",
   "fieldsSig": {
     "names": [
       "shinyTokenId",
-      "to",
-      "amount"
+      "to"
     ],
     "types": [
       "ByteVec",
-      "Address",
-      "U256"
+      "Address"
     ],
     "isMutable": [
-      false,
       false,
       false
     ]
