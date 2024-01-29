@@ -80,7 +80,7 @@ export const mintToken = async (
     initialFields: {
       name: stringToHex("ShinyToken"),
       symbol: stringToHex("SHINY"),
-      decimals: 0,
+      decimals: 0n,
       totalSupply: BigInt(mintAmount)
     },
     initialAttoAlphAmount: BigInt(1100000000000000000),
