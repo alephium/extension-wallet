@@ -10,20 +10,21 @@ import { NavLink } from "react-router-dom"
 
 import { routes } from "../../routes"
 import { AccountNavigationBar } from "./AccountNavigationBar"
-import { useSelectedAccount } from "./accounts.state"
 import { useAccountTransactions } from "./accountTransactions.state"
+import { Account } from "../accounts/Account"
 
-const { WalletIcon, NftIcon, ActivityIcon, SwapIcon } = icons
+const { WalletIcon, NftIcon, ActivityIcon } = icons
 
 export interface AccountContainerProps extends PropsWithChildren {
+  account: Account
   scrollKey: string
 }
 
 export const AccountContainer: FC<AccountContainerProps> = ({
+  account,
   scrollKey,
   children,
 }) => {
-  const account = useSelectedAccount()
   const { pendingTransactions } = useAccountTransactions(account)
   const { scrollRef, scroll } = useScrollRestoration(scrollKey)
 
@@ -33,7 +34,7 @@ export const AccountContainer: FC<AccountContainerProps> = ({
 
   return (
     <>
-      <AccountNavigationBar scroll={scroll} />
+      <AccountNavigationBar scroll={scroll} account={account} />
       <ScrollContainer ref={scrollRef}>{children}</ScrollContainer>
       <TabBar>
         <Tab

@@ -2,7 +2,7 @@ import { ExplorerProvider } from "@alephium/web3"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useState } from "react"
 import { Transaction as AlephiumTransaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { transactionsStore } from "../../../background/transactions/store"
+import { transactionsStore } from "../../../shared/transactions/store"
 import { getNetwork } from "../../../shared/network"
 import { useArrayStorage } from "../../../shared/storage/hooks"
 import { Transaction } from "../../../shared/transactions"

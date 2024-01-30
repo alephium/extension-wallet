@@ -30,5 +30,9 @@ export const Empty: FC<EmptyProps> = ({
 )
 
 export const EmptyButton: FC<ComponentProps<typeof Button>> = (props) => (
-  <Button colorScheme={"tertiary"} size={"sm"} {...props} />
+  <Button
+    colorScheme={"tertiary"}
+    size={"sm"}
+    {...props}
+  />
 )

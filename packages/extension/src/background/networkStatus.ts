@@ -1,10 +1,7 @@
 import { ExplorerProvider, NodeProvider } from "@alephium/web3"
-import urljoin from "url-join"
-
 import { Network, NetworkStatus } from "../shared/network"
 import { KeyValueStorage } from "../shared/storage"
 import { createStaleWhileRevalidateCache } from "./swr"
-import { fetchWithTimeout } from "./utils/fetchWithTimeout"
 
 type SwrCacheKey = string
 
@@ -45,13 +42,15 @@ export const isNetworkHealthy = async (network: Network): Promise<boolean> => {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
 
-  try {
-    const nodeReleaseVersion = (await nodeProvider.infos.getInfosVersion()).version
-    const explorerReleaseVersion = (await explorerProvider.infos.getInfos()).releaseVersion
+  return swr(`${network.id}-network-status`, async () => {
+    try {
+      const nodeReleaseVersion = (await nodeProvider.infos.getInfosVersion()).version
+      const explorerReleaseVersion = (await explorerProvider.infos.getInfos()).releaseVersion
 
-    return !!nodeReleaseVersion && !!explorerReleaseVersion
-  } catch (exception) {
-    console.debug('Exception when checking network healthy', exception)
-    return false
-  }
+      return !!nodeReleaseVersion && !!explorerReleaseVersion
+    } catch (exception) {
+      console.debug('Exception when checking network healthy', exception)
+      return false
+    }
+  })
 }

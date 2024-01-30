@@ -16,7 +16,19 @@ export const createNewAccount = async (networkId: string, keyType: KeyType, grou
       waitForMessage("NEW_ACCOUNT_REJ").then(() => "error" as const),
     ])
   } catch {
-    throw Error("Could add new account")
+    throw Error("Could not add new account")
+  }
+}
+
+export const discoverAccounts = async (networkId: string) => {
+  sendMessage({ type: "DISCOVER_ACCOUNTS", data: { networkId } })
+  try {
+    return await Promise.race([
+      waitForMessage("DISCOVER_ACCOUNTS_RES"),
+      waitForMessage("DISCOVER_ACCOUNTS_REJ").then(() => "error" as const),
+    ])
+  } catch {
+    throw Error(`Could not discover active accounts for ${networkId}.`)
   }
 }
 
@@ -28,7 +40,7 @@ export const importNewLedgerAccount = async (account: Account, hdIndex: number, 
       waitForMessage("NEW_LEDGER_ACCOUNT_REJ").then(() => "error" as const),
     ])
   } catch {
-    throw Error("Could add new account")
+    throw Error("Could add new ledger account")
   }
 }
 

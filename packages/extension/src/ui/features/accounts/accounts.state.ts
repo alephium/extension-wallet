@@ -5,7 +5,7 @@ import {
   withHiddenSelector,
   withoutHiddenSelector,
 } from "../../../shared/account/selectors"
-import { accountStore, addAccounts } from "../../../shared/account/store"
+import { accountStore } from "../../../shared/account/store"
 import { defaultNetwork } from "../../../shared/network"
 import {
   useArrayStorage,
@@ -16,7 +16,6 @@ import { accountsEqual } from "../../../shared/wallet.service"
 import { walletStore } from "../../../shared/wallet/walletStore"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { Account } from "./Account"
-import { useAddAccount } from "./useAddAccount"
 
 export const mapWalletAccountsToAccounts = (
   walletAccounts: WalletAccount[],
@@ -67,23 +66,17 @@ export const useAccountsOnNetwork = ({
 }) => {
   const accounts = useArrayStorage(accountStore)
 
-  const filteredAccounts = useMemo(
-    () =>
-      accounts
-        .filter(getNetworkSelector(networkId))
-        .filter(showHidden ? withHiddenSelector : withoutHiddenSelector),
-    [accounts, networkId, showHidden],
-  )
+  const filteredAccounts = accounts
+    .filter(getNetworkSelector(networkId))
+    .filter(showHidden ? withHiddenSelector : withoutHiddenSelector)
 
-  return useMemo(() => {
-    return mapWalletAccountsToAccounts(filteredAccounts)
-  }, [filteredAccounts])
+  return mapWalletAccountsToAccounts(filteredAccounts)
 }
 
 export const useAccount = (
   account?: BaseWalletAccount,
 ): Account | undefined => {
-  const accounts = useAccounts({ allNetworks: true, showHidden: true })
+  const accounts = useAccounts({ showHidden: true })
   return useMemo(() => {
     if (!account) {
       return undefined

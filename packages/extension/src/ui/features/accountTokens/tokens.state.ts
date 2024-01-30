@@ -161,11 +161,9 @@ export const useFungibleTokensWithBalance = (
     isValidating: allUserTokensIsValidating,
     error: allUserTokensError
   } = useAllTokensWithBalance(account)
-  const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
-    return selectedAccount?.networkId ?? ""
-  }, [selectedAccount?.networkId])
-
+    return account?.networkId ?? ""
+  }, [account?.networkId])
   const sortedTokenIds = allUserTokens.map((t) => t.id).sort()
   const cachedTokens = useTokensInNetwork(networkId)
   const {
@@ -173,8 +171,8 @@ export const useFungibleTokensWithBalance = (
     isValidating,
     error
   } = useSWR(
-    selectedAccount && [
-      getAccountIdentifier(selectedAccount),
+    account && [
+      getAccountIdentifier(account),
       sortedTokenIds,
       "accountFungibleTokens",
     ],
@@ -212,7 +210,6 @@ export const useFungibleTokensWithBalance = (
       },
     }
   )
-
   const tokenDetailsIsInitialising = !error && !fungibleTokens
 
   return {
@@ -226,10 +223,9 @@ export const useFungibleTokensWithBalance = (
 export const useAllTokensWithBalance = (
   account?: BaseWalletAccount
 ): UseBaseTokensWithBalance => {
-  const selectedAccount = useAccount(account)
   const networkId = useMemo(() => {
-    return selectedAccount?.networkId ?? ""
-  }, [selectedAccount?.networkId])
+    return account?.networkId ?? ""
+  }, [account?.networkId])
 
   const { pendingTransactions } = useAccountTransactions(account)
   const pendingTransactionsRef = useRef(pendingTransactions)
@@ -241,19 +237,19 @@ export const useAllTokensWithBalance = (
     mutate,
   } = useSWR(
     // skip if no account selected
-    selectedAccount && [
-      getAccountIdentifier(selectedAccount),
+    account && [
+      getAccountIdentifier(account),
       "accountTokens",
     ],
     async () => {
-      if (!selectedAccount) {
+      if (!account) {
         return
       }
 
       const allTokens: BaseTokenWithBalance[] = []
       const network = await getNetwork(networkId)
       const nodeProvider = new NodeProvider(network.nodeUrl)
-      const tokenBalances = await getBalances(nodeProvider, selectedAccount.address)
+      const tokenBalances = await getBalances(nodeProvider, account.address)
 
       for (const tokenId of tokenBalances.keys()) {
         if (allTokens.findIndex((t) => t.id == tokenId) === -1) {

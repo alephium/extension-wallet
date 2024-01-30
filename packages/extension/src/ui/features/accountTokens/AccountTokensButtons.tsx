@@ -2,30 +2,29 @@ import { AlertDialog, Button, icons } from "@argent/ui"
 import { Flex, SimpleGrid } from "@chakra-ui/react"
 import { FC, useCallback, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { TokenWithBalance } from "../../../shared/token/type"
 
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
-import { Account } from "../accounts/Account"
-import { useNetworkFeeToken, useFungibleTokensWithBalance } from "./tokens.state"
+import { useNetworkFeeToken } from "./tokens.state"
 
 const { AddIcon, SendIcon } = icons
 
 interface AccountTokensButtonsProps {
-  account: Account
+  tokens: TokenWithBalance[]
 }
 
 export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
-  account,
+  tokens
 }) => {
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
 
   const sendToken = useNetworkFeeToken(switcherNetworkId)
-  const { tokenDetails, tokenDetailsIsInitialising } = useFungibleTokensWithBalance(account)
 
   const hasNonZeroBalance = useMemo(() => {
-    return tokenDetails.some(({ balance }) => balance?.gt(0))
-  }, [tokenDetails])
+    return tokens.some(({ balance }) => balance?.gt(0))
+  }, [tokens])
 
   const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false)
 
@@ -34,10 +33,7 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
   }, [])
 
   const onSend = useCallback(() => {
-    /** tokenDetailsIsInitialising - balance is unknown, let the Send screen deal with it */
-    if (
-      (tokenDetailsIsInitialising || hasNonZeroBalance)
-    ) {
+    if (hasNonZeroBalance) {
       navigate(routes.sendScreen())
     } else {
       setAlertDialogIsOpen(true)
@@ -45,7 +41,6 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
   }, [
     hasNonZeroBalance,
     navigate,
-    tokenDetailsIsInitialising,
   ])
 
   const onAddFunds = useCallback(() => {

@@ -77,8 +77,11 @@ const handlers = [
 ] as Array<HandleMessage<MessageType>>
 
 getAccounts()
-  .then((x) => transactionTracker.loadHistory(x))
-  .catch(() => console.warn("failed to load transaction history"))
+  .then((x) => (async () => {
+    await transactionTracker.prune()
+    await transactionTracker.loadHistory(x)
+  })())
+  .catch(() => console.warn("failed to prune and load latest transactions"))
 
 const safeMessages: MessageType["type"][] = [
   "ALPH_IS_PREAUTHORIZED",

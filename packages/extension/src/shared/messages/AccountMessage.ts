@@ -58,3 +58,17 @@ export type AccountMessage =
       type: "GET_ENCRYPTED_SEED_PHRASE_RES"
       data: { encryptedSeedPhrase: string }
     }
+  | {
+      type: "DISCOVER_ACCOUNTS"
+      data: { networkId: string }
+    }
+  | {
+      type: "DISCOVER_ACCOUNTS_RES"
+      data: {
+        accounts: WalletAccount[]
+      }
+    }
+  | {
+      type: "DISCOVER_ACCOUNTS_REJ"
+      data: { error: string }
+    }

@@ -17,12 +17,13 @@ interface AccountScreenProps {
 
 export const AccountScreen: FC<AccountScreenProps> = ({ tab }) => {
   const account = useSelectedAccount()
+
   const shouldShowFullScreenStatusMessage =
     useShouldShowFullScreenStatusMessage()
   const { addAccount } = useAddAccount()
 
-  const hasAcccount = !!account
-  const showEmpty = !hasAcccount
+  const hasAccount = !!account
+  const showEmpty = !hasAccount
 
   let body: ReactNode
   let scrollKey = "accounts/AccountScreen"
@@ -45,5 +46,7 @@ export const AccountScreen: FC<AccountScreenProps> = ({ tab }) => {
     assertNever(tab)
   }
 
-  return <AccountContainer scrollKey={scrollKey}>{body}</AccountContainer>
+  return (
+    <AccountContainer scrollKey={scrollKey} account={account}>{body}</AccountContainer>
+  )
 }

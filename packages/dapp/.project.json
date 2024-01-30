@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v2.3.3",
+  "fullNodeVersion": "v2.8.0",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -9,11 +9,32 @@
     "ignoreCheckExternalCallerWarnings": false
   },
   "infos": {
+    "Destroy": {
+      "sourceFile": "destroy.ral",
+      "sourceCodeHash": "fd2b5d64b6e4666b13aed5e1ab9b8526f2f222eb26eef69c8781d56ac4ea5340",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "IFungibleToken": {
+      "sourceFile": "../../../node_modules/@alephium/web3/std/fungible_token_interface.ral",
+      "sourceCodeHash": "6809cb06fb20fa7edf529461998beeebd12b1636d439612cca2f84214dbf4a20",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "PresaleToken": {
+      "sourceFile": "niux-token.ral",
+      "sourceCodeHash": "882c5082b87fffa1aa736d5d48bd46391ee5ce4f7f583a436f0bc16275d18960",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "68b5b8ea856a1bbaf28fb8f2495d8a2b2d13c8c0ef436eebe2880f837ba98d1b",
+      "warnings": []
+    },
     "ShinyToken": {
       "sourceFile": "shiny-token.ral",
-      "sourceCodeHash": "c58caad9fbb72a7929f8d5dcedaccde8c9deb2f3a9a1c6d32a9541e20139e0a1",
+      "sourceCodeHash": "b6fdc5d87df9a51ee1611196216db85f14ee257cf7487ad2d7676f6518336c09",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "eb751581aa1fc6da7377f792446d49817a6627c1c41b30d1f83cb6ebb57492fa",
+      "codeHashDebug": "5fa5fb7f1345ae13a578f49e9ddced90971c0ca97b6e0bf1ab17e64418d09ea5",
       "warnings": []
     },
     "Transfer": {

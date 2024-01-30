@@ -1,7 +1,7 @@
 import { memoize } from "lodash-es"
 import { useMemo } from "react"
 
-import { transactionsStore } from "../../../background/transactions/store"
+import { transactionsStore } from "../../../shared/transactions/store"
 import { useArrayStorage } from "../../../shared/storage/hooks"
 import { Transaction, Status as DetailedStatus } from "../../../shared/transactions"
 

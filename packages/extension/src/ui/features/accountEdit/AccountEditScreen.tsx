@@ -12,15 +12,9 @@ import { nip19 } from "nostr-tools"
 import { FC, useCallback, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
-import { settingsStore } from "../../../shared/settings"
-import { useKeyValueStorage } from "../../../shared/storage/hooks"
 import { AddressCopyButton } from "../../components/AddressCopyButton"
 import { routes, useReturnTo } from "../../routes"
-import { upgradeAccount } from "../../services/backgroundAccounts"
-import {
-  openBlockExplorerAddress,
-  useBlockExplorerTitle,
-} from "../../services/blockExplorer.service"
+import { openBlockExplorerAddress } from "../../services/blockExplorer.service"
 import { Account } from "../accounts/Account"
 import {
   getAccountName,
@@ -32,7 +26,7 @@ import { useCurrentNetwork } from "../networks/useNetworks"
 import { AccountEditName } from "./AccountEditName"
 import { Button, CopyTooltip } from "@argent/ui"
 
-const { ExpandIcon, HideIcon, PluginIcon, AlertIcon, CopyIcon } = icons
+const { ExpandIcon, HideIcon, AlertIcon } = icons
 
 export const AccountEditScreen: FC = () => {
   const currentNetwork = useCurrentNetwork()
@@ -47,7 +41,6 @@ export const AccountEditScreen: FC = () => {
   const accountName = account
     ? getAccountName(account, accountNames)
     : "Not found"
-  const blockExplorerTitle = useBlockExplorerTitle()
 
   const [liveEditingAccountName, setLiveEditingAccountName] =
     useState(accountName)
@@ -60,13 +53,8 @@ export const AccountEditScreen: FC = () => {
     }
   }, [navigate, returnTo])
 
-  const experimentalPluginAccount = useKeyValueStorage(
-    settingsStore,
-    "experimentalPluginAccount",
-  )
-
   const showDelete =
-    account && (account.networkId === "devnet")
+    account && (account.networkId === "devnet" || account.signer.type === "ledger")
 
   const handleHideOrDeleteAccount = async (account: Account) => {
     if (showDelete) {

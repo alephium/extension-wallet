@@ -5,14 +5,13 @@ import {
   icons,
 } from "@argent/ui"
 import { Flex } from "@chakra-ui/react"
-import { partition, some } from "lodash-es"
+import { partition } from "lodash-es"
 import { FC, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
 import { useReturnTo } from "../../routes"
 import { P } from "../../theme/Typography"
-import { LoadingScreen } from "../actions/LoadingScreen"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { useBackupRequired } from "../recovery/backupDownload.state"
 import { recover } from "../recovery/recovery.service"
@@ -23,25 +22,13 @@ import {
   useAccounts,
   useSelectedAccount,
 } from "./accounts.state"
-import { DeprecatedAccountsWarning } from "./DeprecatedAccountsWarning"
 import { HiddenAccountsBar } from "./HiddenAccountsBar"
-import { useAddAccount } from "./useAddAccount"
 import { routes } from "../../routes"
 
 const { AddIcon } = icons
 
 const Paragraph = styled(P)`
   text-align: center;
-`
-
-const DimmingContainer = styled.div`
-  background-color: ${({ theme }) => theme.bg1};
-  opacity: 0.5;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
 `
 
 export const AccountListScreen: FC = () => {
@@ -55,7 +42,6 @@ export const AccountListScreen: FC = () => {
   )
   const { isBackupRequired } = useBackupRequired()
   const currentNetwork = useCurrentNetwork()
-
   const hasHiddenAccounts = hiddenAccounts.length > 0
 
   const onClose = useCallback(async () => {

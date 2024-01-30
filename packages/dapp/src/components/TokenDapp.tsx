@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react"
 import Select from 'react-select';
 import { AlephiumWindowObject, getDefaultAlephiumWallet } from '@alephium/get-extension-wallet'
 import {
+  destroyTokenContract,
   getAlphBalance,
   getTokenBalances,
   mintToken,
@@ -36,6 +37,7 @@ export const TokenDapp: FC<{
   const [transactionError, setTransactionError] = useState("")
   const [addTokenError, setAddTokenError] = useState("")
   const [transferTokenAddress, setTransferTokenAddress] = useState("")
+  const [destroyTokenAddress, setDestroyTokenAddress] = useState("")
   const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>([])
   const [alphBalance, setAlphBalance] = useState<{ balance: string, lockedBalance: string } | undefined>()
   const [mintedToken, setMintedToken] = useState<string | undefined>()
@@ -170,6 +172,21 @@ export const TokenDapp: FC<{
       console.log(result)
 
       setLastTransactionHash(result.txId)
+      setTransactionStatus("pending")
+    } catch (e) {
+      console.error(e)
+      setTransactionStatus("idle")
+    }
+  }
+
+  const handleDestroyTokenSubmit = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault()
+      setTransactionStatus("approve")
+
+      const destroyTokenContractResult = await destroyTokenContract(destroyTokenAddress)
+      setLastTransactionHash(destroyTokenContractResult.txId)
+
       setTransactionStatus("pending")
     } catch (e) {
       console.error(e)
@@ -394,6 +411,19 @@ export const TokenDapp: FC<{
           <br />
           <input type="submit" disabled={buttonsDisabled} value="Transfer" />
         </form>
+        <form onSubmit={handleDestroyTokenSubmit}>
+          <h2 className={styles.title}>Destroy token contract</h2>
+
+          <label htmlFor="destroy-token-address">Token Id</label>
+          <input
+            type="text"
+            id="destroy-token-address"
+            name="fname"
+            value={destroyTokenAddress}
+            onChange={(e) => setDestroyTokenAddress(e.target.value)}
+          />
+          <input type="submit" disabled={buttonsDisabled} value="Destroy" />
+        </form>
       </div>
       <div className="columns">
         <form onSubmit={handleSignSubmit}>
@@ -401,8 +431,7 @@ export const TokenDapp: FC<{
 
           <div className="columns">
             <label htmlFor="short-text">Short Text</label>
-            <input
-              type="text"
+            <textarea
               id="short-text"
               name="short-text"
               value={shortText}

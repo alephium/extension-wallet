@@ -34,9 +34,7 @@ import {
   isValidAddress,
   normalizeAddress,
 } from "../../services/addresses"
-import {
-  sendTransferTransaction, sendUnsignedTxTransaction,
-} from "../../services/transactions"
+import { sendTransferTransaction, sendUnsignedTxTransaction } from "../../services/transactions"
 import { useOnClickOutside } from "../../services/useOnClickOutside"
 import { H3, H5 } from "../../theme/Typography"
 import { Account } from "../accounts/Account"
@@ -55,6 +53,7 @@ import { TokenMenuDeprecated } from "./TokenMenuDeprecated"
 import { useTokenUnitAmountToCurrencyValue } from "./tokenPriceHooks"
 import { formatTokenBalance, toTokenView } from "./tokens.service"
 import {
+  useAllTokensWithBalance,
   useNetworkFeeToken,
   useToken
 } from "./tokens.state"
@@ -220,7 +219,9 @@ export const SendTokenScreen: FC = () => {
     id: tokenId || "0x0",
     networkId: account?.networkId || "Unknown",
   })
+
   const { tokenWithBalance } = useTokenBalanceForAccount({ token, account })
+  const { tokenDetails: allTokensWithBalance } = useAllTokensWithBalance(account)
 
   const resolver = useYupValidationResolver(SendSchema)
   const feeToken = useNetworkFeeToken(account?.networkId)
@@ -311,6 +312,10 @@ export const SendTokenScreen: FC = () => {
 
   const isAlphToken = (tokenId: string | undefined): boolean => {
     return tokenId === ALPH_TOKEN_ID || tokenId === undefined
+  }
+
+  const isSweepingAllAsset = (tokenId: string | undefined): boolean => {
+    return maxClicked && allTokensWithBalance.length === 1 && isAlphToken(tokenId)
   }
 
   const recipientInAddressBook = useMemo(
@@ -451,27 +456,41 @@ export const SendTokenScreen: FC = () => {
           <StyledForm
             onSubmit={handleSubmit(async ({ amount, recipient }) => {
               if (account) {
-                let destination: Destination
-                if (isAlphToken(tokenId)) {
-                  destination = {
-                    address: recipient,
-                    attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '?',
-                    tokens: []
+                // If ALPH only, can still sweep
+                if (isSweepingAllAsset(tokenId)) {
+                  const sweepResult = await sweepTransaction
+                  if (sweepResult) {
+                    sweepResult.unsignedTxs.map((sweepUnsignedTx) => {
+                      sendUnsignedTxTransaction({
+                        signerAddress: account.address,
+                        networkId: account.networkId,
+                        unsignedTx: sweepUnsignedTx.unsignedTx
+                      })
+                    })
                   }
                 } else {
-                  destination = {
-                    address: recipient,
-                    attoAlphAmount: DUST_AMOUNT,
-                    tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, decimals) ?? '?' }]
+                  let destination: Destination
+                  if (isAlphToken(tokenId)) {
+                    destination = {
+                      address: recipient,
+                      attoAlphAmount: convertAlphAmountWithDecimals(amount) ?? '?',
+                      tokens: []
+                    }
+                  } else {
+                    destination = {
+                      address: recipient,
+                      attoAlphAmount: DUST_AMOUNT,
+                      tokens: [{ id: tokenId as string, amount: convertAmountWithDecimals(amount, decimals) ?? '?' }]
+                    }
                   }
-                }
 
-                sendTransferTransaction({
-                  signerAddress: account.address,
-                  signerKeyType: account.signer.keyType,
-                  networkId: account.networkId,
-                  destinations: [destination],
-                })
+                  sendTransferTransaction({
+                    signerAddress: account.address,
+                    signerKeyType: account.signer.keyType,
+                    networkId: account.networkId,
+                    destinations: [destination],
+                  })
+                }
 
                 navigate(routes.accountTokens(), { replace: true })
               }
@@ -610,6 +629,14 @@ export const SendTokenScreen: FC = () => {
                   </div>
                 )}
               </div>
+              {
+                (isSweepingAllAsset(tokenId) && txsNumber > 1) ? (
+                  <WarningContainer>
+                    Warning: This will sweep all ALPHs to the recipient.
+                    `Due to the number of UTXOs, you need to sign ${txsNumber} transactions`
+                  </WarningContainer>
+                ) : <></>
+              }
             </Column>
             <ButtonSpacer />
             <Button disabled={disableSubmit} type="submit">

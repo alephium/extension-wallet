@@ -7,7 +7,7 @@ import { encryptForUi } from "./crypto"
 
 export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
   msg,
-  background: { wallet, actionQueue },
+  background: { wallet },
   messagingKeys: { privateKey },
   respond,
 }) => {
@@ -27,6 +27,24 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         type: "CONNECT_ACCOUNT_RES",
         data: selectedAccount,
       })
+    }
+
+    case "DISCOVER_ACCOUNTS": {
+      const { networkId } = msg.data
+      try {
+        const discoveredAccounts = await wallet.discoverActiveAccounts(networkId)
+        return respond({
+          type: "DISCOVER_ACCOUNTS_RES",
+          data: { accounts: discoveredAccounts }
+        })
+      } catch (exception) {
+        console.error("Failed to discover accounts", exception)
+        return respond({
+          type: "DISCOVER_ACCOUNTS_REJ",
+          data: { error: `${exception}` },
+        })
+      }
+
     }
 
     case "NEW_ACCOUNT": {

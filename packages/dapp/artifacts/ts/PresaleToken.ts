@@ -25,16 +25,14 @@ import {
   testMethod,
 } from "@alephium/web3";
 
-import { default as ShinyTokenContractJson } from "../ShinyToken.ral.json";
+import { default as PresaleTokenContractJson } from "../PresaleToken.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
-export namespace ShinyTokenTypes {
+export namespace PresaleTokenTypes {
   export type Fields = {
     symbol: HexString;
     name: HexString;
-    decimals: bigint;
-    totalSupply: bigint;
   };
 
   export type State = ContractState<Fields>;
@@ -72,21 +70,23 @@ export namespace ShinyTokenTypes {
 }
 
 class Factory extends ContractFactory<
-  ShinyTokenInstance,
-  ShinyTokenTypes.Fields
+  PresaleTokenInstance,
+  PresaleTokenTypes.Fields
 > {
   getInitialFieldsWithDefaultValues() {
-    return this.contract.getInitialFieldsWithDefaultValues() as ShinyTokenTypes.Fields;
+    return this.contract.getInitialFieldsWithDefaultValues() as PresaleTokenTypes.Fields;
   }
 
-  at(address: string): ShinyTokenInstance {
-    return new ShinyTokenInstance(address);
+  consts = { Ap: BigInt(2) };
+
+  at(address: string): PresaleTokenInstance {
+    return new PresaleTokenInstance(address);
   }
 
   tests = {
     getSymbol: async (
       params: Omit<
-        TestContractParams<ShinyTokenTypes.Fields, never>,
+        TestContractParams<PresaleTokenTypes.Fields, never>,
         "testArgs"
       >
     ): Promise<TestContractResult<HexString>> => {
@@ -94,7 +94,7 @@ class Factory extends ContractFactory<
     },
     getName: async (
       params: Omit<
-        TestContractParams<ShinyTokenTypes.Fields, never>,
+        TestContractParams<PresaleTokenTypes.Fields, never>,
         "testArgs"
       >
     ): Promise<TestContractResult<HexString>> => {
@@ -102,7 +102,7 @@ class Factory extends ContractFactory<
     },
     getDecimals: async (
       params: Omit<
-        TestContractParams<ShinyTokenTypes.Fields, never>,
+        TestContractParams<PresaleTokenTypes.Fields, never>,
         "testArgs"
       >
     ): Promise<TestContractResult<bigint>> => {
@@ -110,53 +110,40 @@ class Factory extends ContractFactory<
     },
     getTotalSupply: async (
       params: Omit<
-        TestContractParams<ShinyTokenTypes.Fields, never>,
+        TestContractParams<PresaleTokenTypes.Fields, never>,
         "testArgs"
       >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getTotalSupply", params);
     },
-    transfer: async (
-      params: TestContractParams<
-        ShinyTokenTypes.Fields,
-        { to: Address; amount: bigint }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "transfer", params);
-    },
-    destroy: async (
-      params: TestContractParams<ShinyTokenTypes.Fields, { to: Address }>
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "destroy", params);
-    },
   };
 }
 
 // Use this object to test and deploy the contract
-export const ShinyToken = new Factory(
+export const PresaleToken = new Factory(
   Contract.fromJson(
-    ShinyTokenContractJson,
+    PresaleTokenContractJson,
     "",
-    "5fa5fb7f1345ae13a578f49e9ddced90971c0ca97b6e0bf1ab17e64418d09ea5"
+    "68b5b8ea856a1bbaf28fb8f2495d8a2b2d13c8c0ef436eebe2880f837ba98d1b"
   )
 );
 
 // Use this class to interact with the blockchain
-export class ShinyTokenInstance extends ContractInstance {
+export class PresaleTokenInstance extends ContractInstance {
   constructor(address: Address) {
     super(address);
   }
 
-  async fetchState(): Promise<ShinyTokenTypes.State> {
-    return fetchContractState(ShinyToken, this);
+  async fetchState(): Promise<PresaleTokenTypes.State> {
+    return fetchContractState(PresaleToken, this);
   }
 
   methods = {
     getSymbol: async (
-      params?: ShinyTokenTypes.CallMethodParams<"getSymbol">
-    ): Promise<ShinyTokenTypes.CallMethodResult<"getSymbol">> => {
+      params?: PresaleTokenTypes.CallMethodParams<"getSymbol">
+    ): Promise<PresaleTokenTypes.CallMethodResult<"getSymbol">> => {
       return callMethod(
-        ShinyToken,
+        PresaleToken,
         this,
         "getSymbol",
         params === undefined ? {} : params,
@@ -164,10 +151,10 @@ export class ShinyTokenInstance extends ContractInstance {
       );
     },
     getName: async (
-      params?: ShinyTokenTypes.CallMethodParams<"getName">
-    ): Promise<ShinyTokenTypes.CallMethodResult<"getName">> => {
+      params?: PresaleTokenTypes.CallMethodParams<"getName">
+    ): Promise<PresaleTokenTypes.CallMethodResult<"getName">> => {
       return callMethod(
-        ShinyToken,
+        PresaleToken,
         this,
         "getName",
         params === undefined ? {} : params,
@@ -175,10 +162,10 @@ export class ShinyTokenInstance extends ContractInstance {
       );
     },
     getDecimals: async (
-      params?: ShinyTokenTypes.CallMethodParams<"getDecimals">
-    ): Promise<ShinyTokenTypes.CallMethodResult<"getDecimals">> => {
+      params?: PresaleTokenTypes.CallMethodParams<"getDecimals">
+    ): Promise<PresaleTokenTypes.CallMethodResult<"getDecimals">> => {
       return callMethod(
-        ShinyToken,
+        PresaleToken,
         this,
         "getDecimals",
         params === undefined ? {} : params,
@@ -186,10 +173,10 @@ export class ShinyTokenInstance extends ContractInstance {
       );
     },
     getTotalSupply: async (
-      params?: ShinyTokenTypes.CallMethodParams<"getTotalSupply">
-    ): Promise<ShinyTokenTypes.CallMethodResult<"getTotalSupply">> => {
+      params?: PresaleTokenTypes.CallMethodParams<"getTotalSupply">
+    ): Promise<PresaleTokenTypes.CallMethodResult<"getTotalSupply">> => {
       return callMethod(
-        ShinyToken,
+        PresaleToken,
         this,
         "getTotalSupply",
         params === undefined ? {} : params,
@@ -198,14 +185,14 @@ export class ShinyTokenInstance extends ContractInstance {
     },
   };
 
-  async multicall<Calls extends ShinyTokenTypes.MultiCallParams>(
+  async multicall<Calls extends PresaleTokenTypes.MultiCallParams>(
     calls: Calls
-  ): Promise<ShinyTokenTypes.MultiCallResults<Calls>> {
+  ): Promise<PresaleTokenTypes.MultiCallResults<Calls>> {
     return (await multicallMethods(
-      ShinyToken,
+      PresaleToken,
       this,
       calls,
       getContractByCodeHash
-    )) as ShinyTokenTypes.MultiCallResults<Calls>;
+    )) as PresaleTokenTypes.MultiCallResults<Calls>;
   }
 }

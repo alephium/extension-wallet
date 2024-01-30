@@ -1,7 +1,5 @@
-import { some } from "lodash-es"
-
 import { defaultNetwork } from "../../../shared/network"
-import { accountsEqual, isEqualWalletAddress } from "../../../shared/wallet.service"
+import { accountsEqual } from "../../../shared/wallet.service"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import {
@@ -15,13 +13,11 @@ import { mapWalletAccountsToAccounts } from "../accounts/accounts.state"
 
 interface RecoveryOptions {
   networkId?: string
-  showAccountList?: boolean
   showHiddenAccountList?: boolean
 }
 
 export const recover = async ({
   networkId,
-  showAccountList,
   showHiddenAccountList,
 }: RecoveryOptions = {}) => {
   try {
@@ -44,10 +40,6 @@ export const recover = async ({
     setDefaultAccountNames(accounts)
     await selectAccount(selectedAccount)
     useAppState.setState({ switcherNetworkId: networkId })
-
-    if (showAccountList || !selectedAccount) {
-      return routes.accounts()
-    }
 
     if (showHiddenAccountList && networkId) {
       return routes.accountsHidden(networkId)

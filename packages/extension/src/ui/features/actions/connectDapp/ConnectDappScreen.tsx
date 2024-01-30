@@ -1,7 +1,7 @@
 import { KeyType } from "@alephium/web3"
 import { Flex } from "@chakra-ui/react"
 import { L2 } from "@argent/ui"
-import { FC, useCallback, useEffect, useMemo, useState } from "react"
+import { FC, useCallback, useMemo, useState } from "react"
 import styled from "styled-components"
 
 import {
@@ -20,7 +20,7 @@ import {
   getDefaultAccountNameByIndex,
   useAccountMetadata,
 } from "../../accounts/accountMetadata.state"
-import { useAccounts, useAccountsOnNetwork, useSelectedAccount } from "../../accounts/accounts.state"
+import { useAccountsOnNetwork, useSelectedAccount } from "../../accounts/accounts.state"
 import { AccountSelect } from "../../accounts/AccountSelect"
 import { useCurrentNetwork } from "../../networks/useNetworks"
 import {
@@ -219,10 +219,12 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
   }
 
   const currentNetwork = useCurrentNetwork()
-  const visibleAccounts = useAccountsOnNetwork({
+  const initialVisibleAccounts = useAccountsOnNetwork({
     networkId: networkId || currentNetwork.id,
     showHidden: false
   })
+
+  const [visibleAccounts, setVisibleAccounts] = useState<Account[]>(initialVisibleAccounts)
 
   const visibleAccountsForGroup = (group === undefined && keyType === undefined) ? visibleAccounts : visibleAccounts.filter((account) => {
     return Wallet.checkAccount(account, networkId, keyType, group)
@@ -256,6 +258,7 @@ export const ConnectDappScreen: FC<ConnectDappProps> = ({
     const walletAccounts = accountsOnNetwork(allAccounts, selectedNetworkId)
     const accountIndex = walletAccounts.length
     const account = await createAccount(selectedNetworkId, keyType ?? 'default', undefined, group)
+    setVisibleAccounts([account])
     setAccountName(account.networkId, account.address, getDefaultAccountNameByIndex(account, accountIndex))
     setConnectedAccount(account)
   }, [keyType, networkId, group, switcherNetworkId, setAccountName])

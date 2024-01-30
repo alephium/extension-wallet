@@ -22,7 +22,11 @@ const loadingTexts = [
   "Almost there…",
 ]
 
-export const LoadingScreen: FC = () => {
+export interface LoadingScreenProps {
+  texts?: string[]
+}
+
+export const LoadingScreen: FC<LoadingScreenProps> = ({ texts }) => {
   const { progress, clearProgress } = useLoadingProgress()
 
   // TODO: make clearProgress function stable
@@ -32,7 +36,7 @@ export const LoadingScreen: FC = () => {
   return (
     <LoadingScreenWrapper>
       <Spinner size={92} value={progress} />
-      <Greetings greetings={loadingTexts} />
+      <Greetings greetings={texts || loadingTexts} />
     </LoadingScreenWrapper>
   )
 }

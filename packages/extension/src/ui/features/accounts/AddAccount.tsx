@@ -1,5 +1,4 @@
-import { FC, useCallback, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { FC, useState } from "react"
 import { useAppState } from "../../app.state"
 import A from "tracking-link"
 
@@ -72,14 +71,13 @@ const groupOptions = ["any", ...Array.from(Array(TOTAL_NUMBER_OF_GROUPS).keys())
 const signOptions = ["default", "schnorr"] as const
 
 export const AddAccount: FC = () => {
-  const navigate = useNavigate()
   const [hasError, setHasError] = useState(false)
   const [group, setGroup] = useState<string>(groupOptions[0])
   const [signMethod, setSignMethod] = useState<string>(signOptions[0])
   const { switcherNetworkId } = useAppState()
 
   const { addAccount } = useAddAccount()
-    
+
   const parsedGroup = group === "any" ? undefined : parseInt(group)
   const parsedKeyType = signMethod === "default" ? "default" : "bip340-schnorr"
 

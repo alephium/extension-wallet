@@ -1,9 +1,11 @@
+import { ExplorerProvider } from "@alephium/web3"
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call } from "starknet"
-import { ReviewTransactionResult } from "./actionQueue/types"
-
-import { WalletAccount } from "./wallet.model"
-import { AlephiumExplorerTransaction } from "./explorer/type"
+import { ReviewTransactionResult } from "../actionQueue/types"
+import { WalletAccount } from "../wallet.model"
+import { AlephiumExplorerTransaction } from "../explorer/type"
+import { mapAlephiumTransactionToTransaction } from "./transformers"
+import { getNetwork } from "../network"
 
 export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_MEMPOOL' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED' | 'REMOVED_FROM_MEMPOOL';
 
@@ -65,7 +67,7 @@ export const getInFlightTransactions = (
   transactions: Transaction[],
 ): Transaction[] =>
   transactions.filter(
-    ({ status, meta }) =>
+    ({ status }) =>
       TRANSACTION_STATUSES_TO_TRACK.includes(status)
   )
 
@@ -90,4 +92,40 @@ export function transactionNamesToTitle(
 }
 
 // ===== ALPH ======
+export async function getTransactionsPerAccount(
+  accountsToPopulate: WalletAccount[],
+  metadataTransactions: Transaction[],
+): Promise<Map<WalletAccount, Transaction[]>> {
+  const getTransactions = buildGetTransactionsFn(metadataTransactions)
+  const transactionsPerAccount = new Map<WalletAccount, Transaction[]>()
+  await Promise.all(
+    accountsToPopulate.map(async (account) => {
+      const transactions = await getTransactions(account)
+      transactionsPerAccount.set(account, transactions)
+    }),
+  )
 
+  return transactionsPerAccount
+}
+
+// Fetch the latest 20 transactions (at most)
+function buildGetTransactionsFn(metadataTransactions: Transaction[]) {
+  return async (account: WalletAccount) => {
+    const limit = 20
+    const network = await getNetwork(account.networkId)
+    const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+    const transactions = await explorerProvider.addresses.getAddressesAddressTransactions(account.address, { page: 1, limit })
+    return transactions.map((transaction) =>
+      mapAlephiumTransactionToTransaction(
+        transaction,
+        account,
+        metadataTransactions.find((tx) =>
+          compareTransactions(tx, {
+            hash: transaction.hash,
+            account: { networkId: account.networkId },
+          }),
+        )?.meta,
+      ),
+    )
+  }
+}
