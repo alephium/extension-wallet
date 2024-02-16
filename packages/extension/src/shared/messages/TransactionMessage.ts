@@ -5,10 +5,7 @@ import type {
   UniversalDeployerContractPayload,
 } from "starknet"
 
-import {
-  ReviewTransactionResult,
-  TransactionParams,
-} from "../actionQueue/types"
+import { TransactionParams, TransactionResult } from "../actionQueue/types"
 import { Transaction } from "../transactions"
 import { DeclareContract } from "../udc/type"
 import { BaseWalletAccount } from "../wallet.model"
@@ -37,7 +34,7 @@ export type TransactionMessage =
   | { type: "TRANSACTION_UPDATES"; data: Transaction[] }
   | {
       type: "ALPH_TRANSACTION_SUBMITTED"
-      data: { result: ReviewTransactionResult["result"]; actionHash: string }
+      data: { result: TransactionResult["result"]; actionHash: string }
     }
   | {
       type: "ALPH_TRANSACTION_FAILED"
