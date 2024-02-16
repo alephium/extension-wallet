@@ -26,7 +26,11 @@ export const handleActionApproval = async (
   switch (action.type) {
     case "CONNECT_DAPP": {
       const { host, networkId, group, keyType } = action.payload
-      const selectedAccount = await wallet.getAlephiumSelectedAddress(networkId, group, keyType)
+      const selectedAccount = await wallet.getAlephiumSelectedAddress(
+        networkId,
+        group,
+        keyType,
+      )
 
       if (!selectedAccount) {
         openUi()
@@ -45,11 +49,12 @@ export const handleActionApproval = async (
     }
 
     case "TRANSACTION": {
-      const {signature, ...transaction} = additionalData as (ReviewTransactionResult & { signature?: string })
+      const { signature: signatureOpt, ...transaction } =
+        additionalData as ReviewTransactionResult & { signature?: string }
       try {
-        await executeTransactionAction(
+        const { signature } = await executeTransactionAction(
           transaction,
-          signature,
+          signatureOpt,
           background,
           transaction.params.networkId,
         )
@@ -58,7 +63,7 @@ export const handleActionApproval = async (
 
         return {
           type: "ALPH_TRANSACTION_SUBMITTED",
-          data: { result: transaction.result, actionHash },
+          data: { result: { ...transaction.result, signature } , actionHash },
         }
       } catch (error: unknown) {
         return {
@@ -69,7 +74,10 @@ export const handleActionApproval = async (
     }
 
     case "SIGN_MESSAGE": {
-      const account = await wallet.getAccount({ address: action.payload.signerAddress, networkId: action.payload.networkId })
+      const account = await wallet.getAccount({
+        address: action.payload.signerAddress,
+        networkId: action.payload.networkId,
+      })
       if (!account) {
         throw Error("No selected account")
       }
@@ -85,9 +93,12 @@ export const handleActionApproval = async (
       }
     }
 
-    case 'SIGN_UNSIGNED_TX': {
+    case "SIGN_UNSIGNED_TX": {
       try {
-        const account = await wallet.getAccount({ address: action.payload.signerAddress, networkId: action.payload.networkId })
+        const account = await wallet.getAccount({
+          address: action.payload.signerAddress,
+          networkId: action.payload.networkId,
+        })
         if (!account) {
           throw Error("No selected account")
         }
@@ -95,13 +106,13 @@ export const handleActionApproval = async (
         const result = await wallet.signUnsignedTx(account, action.payload)
 
         return {
-          type: 'ALPH_SIGN_UNSIGNED_TX_SUCCESS',
-          data: { actionHash, result }
+          type: "ALPH_SIGN_UNSIGNED_TX_SUCCESS",
+          data: { actionHash, result },
         }
       } catch (error) {
         return {
-          type: 'ALPH_SIGN_UNSIGNED_TX_FAILURE',
-          data: { actionHash, error: `${error}` }
+          type: "ALPH_SIGN_UNSIGNED_TX_FAILURE",
+          data: { actionHash, error: `${error}` },
         }
       }
     }

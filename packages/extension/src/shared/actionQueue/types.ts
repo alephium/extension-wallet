@@ -1,4 +1,5 @@
 import {
+  KeyType,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
@@ -9,12 +10,11 @@ import {
   SignTransferTxResult,
   SignUnsignedTxParams,
   SignUnsignedTxResult,
-  KeyType,
 } from "@alephium/web3"
 
+import { Token } from "../../shared/token/type"
 import { TransactionMeta } from "../transactions"
 import { BaseWalletAccount } from "../wallet.model"
-import { Token } from "../../shared/token/type"
 
 export interface QueueItem {
   meta: {
@@ -98,9 +98,9 @@ export type ActionItem =
   | {
       type: "CONNECT_DAPP"
       payload: {
-        host: string,
-        networkId?: string,
-        group?: number,
+        host: string
+        networkId?: string
+        group?: number
         keyType?: KeyType
       }
     }
@@ -110,11 +110,11 @@ export type ActionItem =
     }
   | {
       type: "SIGN_MESSAGE"
-      payload: SignMessageParams & { networkId?: string, host: string }
+      payload: SignMessageParams & { networkId?: string; host: string }
     }
   | {
       type: "SIGN_UNSIGNED_TX"
-      payload: SignUnsignedTxParams & { networkId?: string, host: string }
+      payload: SignUnsignedTxParams & { networkId?: string; host: string }
     }
   | {
       type: "REQUEST_ADD_TOKEN"
