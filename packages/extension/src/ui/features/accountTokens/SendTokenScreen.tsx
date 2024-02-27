@@ -51,10 +51,9 @@ import { useYupValidationResolver } from "../settings/useYupValidationResolver"
 import { TokenIcon } from "./TokenIcon"
 import { TokenMenuDeprecated } from "./TokenMenuDeprecated"
 import { useTokenUnitAmountToCurrencyValue } from "./tokenPriceHooks"
-import { formatTokenBalance, toTokenView } from "./tokens.service"
+import { toTokenView } from "./tokens.service"
 import {
   useAllTokensWithBalance,
-  useNetworkFeeToken,
   useToken
 } from "./tokens.state"
 import { useTokenBalanceForAccount } from './useTokenBalanceForAccount'
@@ -224,7 +223,6 @@ export const SendTokenScreen: FC = () => {
   const { tokenDetails: allTokensWithBalance } = useAllTokensWithBalance(account)
 
   const resolver = useYupValidationResolver(SendSchema)
-  const feeToken = useNetworkFeeToken(account?.networkId)
   const [maxClicked, setMaxClicked] = useState(false)
   const [txsNumber, setTxsNumber] = useState(1)
   const [addressBookRecipient, setAddressBookRecipient] = useState<
@@ -272,29 +270,20 @@ export const SendTokenScreen: FC = () => {
   const setMaxInputAmount = useCallback(
     (token: TokenWithBalance) => {
       const tokenDecimals = token.decimals ?? 18
-      const tokenBalance = formatTokenBalance(token.balance, tokenDecimals)
 
       if (token.balance) {
-        let maxAmount = token.balance
-        if (feeToken?.id === token.id) {
-          maxAmount =
-            account?.networkId ===
-              "devnet" /** FIXME: workaround for localhost fee estimate with devnet 0.3.4 */
-              ? maxAmount.sub(maxFee).sub(100000000000000)
-              : maxAmount.sub(maxFee)
-        }
-
+        const maxAmount = ALPH_TOKEN_ID === token.id ? token.balance.sub(maxFee) : token.balance
         const formattedMaxAmount = utils.formatUnits(maxAmount, tokenDecimals)
         setValue(
           "amount",
-          maxAmount.lte(0) ? tokenBalance : formattedMaxAmount,
+          formattedMaxAmount,
           {
             shouldDirty: true,
           },
         )
       }
     },
-    [account?.networkId, setValue, feeToken],
+    [setValue],
   )
 
   const [addressBookOpen, setAddressBookOpen] = useState(false)
@@ -368,7 +357,7 @@ export const SendTokenScreen: FC = () => {
     }, [])
 
   useEffect(() => {
-    if (maxClicked && maxFee && token) {
+    if (maxClicked && token) {
       setMaxInputAmount(token)
     }
 
@@ -379,9 +368,9 @@ export const SendTokenScreen: FC = () => {
       const isInputAmountGtBalance =
         parsedInputAmount && (
           parsedInputAmount.gt(tokenWithBalance.balance) ||
-          (feeToken?.id === id &&
+          (ALPH_TOKEN_ID === id &&
             (inputAmount === balance ||
-              parsedInputAmount.add(maxFee?.toString() ?? 0).gt(tokenWithBalance.balance)))
+              parsedInputAmount.add(maxFee).gt(tokenWithBalance.balance)))
         )
 
       if (isInputAmountGtBalance) {
