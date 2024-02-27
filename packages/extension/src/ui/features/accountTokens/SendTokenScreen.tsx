@@ -270,18 +270,19 @@ export const SendTokenScreen: FC = () => {
   const maxFee = "3000000000000000"  // FIXME: hardcoded to 0.003 ALPH for now
 
   const setMaxInputAmount = useCallback(
-    (token: TokenWithBalance, maxFee?: string) => {
+    (token: TokenWithBalance) => {
       const tokenDecimals = token.decimals ?? 18
       const tokenBalance = formatTokenBalance(token.balance, tokenDecimals)
 
-      if (token.balance && maxFee) {
-        const balanceBn = token.balance
-
-        const maxAmount =
-          account?.networkId ===
-            "devnet" /** FIXME: workaround for localhost fee estimate with devnet 0.3.4 */
-            ? balanceBn.sub(maxFee).sub(100000000000000)
-            : balanceBn.sub(maxFee)
+      if (token.balance) {
+        let maxAmount = token.balance
+        if (feeToken?.id === token.id) {
+          maxAmount =
+            account?.networkId ===
+              "devnet" /** FIXME: workaround for localhost fee estimate with devnet 0.3.4 */
+              ? maxAmount.sub(maxFee).sub(100000000000000)
+              : maxAmount.sub(maxFee)
+        }
 
         const formattedMaxAmount = utils.formatUnits(maxAmount, tokenDecimals)
         setValue(
@@ -293,7 +294,7 @@ export const SendTokenScreen: FC = () => {
         )
       }
     },
-    [account?.networkId, setValue],
+    [account?.networkId, setValue, feeToken],
   )
 
   const [addressBookOpen, setAddressBookOpen] = useState(false)
@@ -368,7 +369,7 @@ export const SendTokenScreen: FC = () => {
 
   useEffect(() => {
     if (maxClicked && maxFee && token) {
-      setMaxInputAmount(token, maxFee)
+      setMaxInputAmount(token)
     }
 
     if (tokenWithBalance?.balance) {
@@ -405,7 +406,7 @@ export const SendTokenScreen: FC = () => {
 
   const handleMaxClick = () => {
     setMaxClicked(true)
-    setMaxInputAmount(tokenWithBalance, maxFee)
+    setMaxInputAmount(tokenWithBalance)
   }
 
   const handleAddressSelect = (account?: Account | AddressBookContact) => {
