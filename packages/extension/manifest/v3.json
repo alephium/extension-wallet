@@ -15,13 +15,12 @@
   },
   "permissions": [
     "alarms",
-    "downloads",
     "tabs",
     "storage",
     "notifications",
     "http://localhost/*",
-    "https://wallet-v16.testnet.alephium.org/*",
-    "https://backend-v112.testnet.alephium.org/*",
+    "https://wallet.testnet.alephium.org/*",
+    "https://backend.testnet.alephium.org/*",
     "https://wallet.mainnet.alephium.org/*",
     "https://backend.mainnet.alephium.org/*"
   ],

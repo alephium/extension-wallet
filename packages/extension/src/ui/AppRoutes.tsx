@@ -41,7 +41,6 @@ import { OnboardingRestoreBackup } from "./features/onboarding/OnboardingRestore
 import { OnboardingRestorePassword } from "./features/onboarding/OnboardingRestorePassword"
 import { OnboardingRestoreSeed } from "./features/onboarding/OnboardingRestoreSeed"
 import { OnboardingStartScreen } from "./features/onboarding/OnboardingStartScreen"
-import { BackupDownloadScreen } from "./features/recovery/BackupDownloadScreen"
 import { RecoverySetupScreen } from "./features/recovery/RecoverySetupScreen"
 import { SeedRecoveryConfirmScreen } from "./features/recovery/SeedRecoveryConfirmScreen"
 import { SeedRecoverySetupScreen } from "./features/recovery/SeedRecoverySetupScreen"
@@ -268,10 +267,6 @@ const walletRoutes = (
     <Route path={routes.setupRecovery.path} element={<RecoverySetupScreen />} />
     <Route path={routes.newToken.path} element={<AddTokenScreen />} />
     <Route path={routes.token.path} element={<TokenScreen />} />
-    <Route
-      path={routes.backupDownload.path}
-      element={<BackupDownloadScreen />}
-    />
     <Route
       path={routes.exportPrivateKey.path}
       element={<ExportPrivateKeyScreen />}

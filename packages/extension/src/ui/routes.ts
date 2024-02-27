@@ -143,11 +143,6 @@ export const routes = {
   settingsAddressbookAdd: route("/settings/addressbook/add-or-edit"),
   settingsPrivacyStatement: route("/settings/privacy-policy"),
   networkWarning: routeWithReturnTo("/network-warning"),
-  backupDownload: route(
-    (isFromSettings?: boolean) =>
-      `/backup-download${isFromSettings ? "?settings" : ""}`,
-    "/backup-download",
-  ),
   userReview: route("/user-review"),
   userReviewFeedback: route("/user-review/feedback"),
   error: route("/error"),
