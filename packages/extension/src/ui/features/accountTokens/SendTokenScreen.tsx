@@ -272,7 +272,8 @@ export const SendTokenScreen: FC = () => {
       const tokenDecimals = token.decimals ?? 18
 
       if (token.balance) {
-        const maxAmount = ALPH_TOKEN_ID === token.id ? token.balance.sub(maxFee) : token.balance
+        let maxAmount = ALPH_TOKEN_ID === token.id ? token.balance.sub(maxFee) : token.balance
+        maxAmount = maxAmount.lt(0) ? token.balance : maxAmount
         const formattedMaxAmount = utils.formatUnits(maxAmount, tokenDecimals)
         setValue(
           "amount",
