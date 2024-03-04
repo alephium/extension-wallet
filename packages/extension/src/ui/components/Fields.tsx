@@ -112,4 +112,6 @@ export const SectionHeader = styled.div`
   font-weight: 600;
   background-color: ${({ theme }) => theme.black};
   color: ${({ theme }) => theme.text1};
+  white-space: pre-wrap;
+  word-wrap: break-word;
 `
