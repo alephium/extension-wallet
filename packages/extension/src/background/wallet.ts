@@ -75,7 +75,7 @@ export const walletStore = new KeyValueStorage<WalletStorageProps>(
 ) */
 
 export const sessionStore = new ObjectStorage<WalletSession | null>(null, {
-  namespace: "core:wallet:session",
+  namespace: "core:wallet:alphSession",
   areaName: "session",
 })
 
