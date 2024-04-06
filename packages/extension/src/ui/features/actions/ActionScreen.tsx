@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { TransactionResult } from "../../../shared/actionQueue/types"
 
 import { waitForMessage } from "../../../shared/messages"
 import { removePreAuthorization } from "../../../shared/preAuthorizations"
