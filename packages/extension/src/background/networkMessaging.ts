@@ -41,7 +41,7 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
       })
     }
 
-    case "REQUEST_ADD_CUSTOM_NETWORK": {
+    case "ALPH_REQUEST_ADD_CUSTOM_NETWORK": {
       const exists = await getNetwork(msg.data.id)
 
       if (exists) {
@@ -54,7 +54,7 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
       }
 
       const { meta } = await actionQueue.push({
-        type: "REQUEST_ADD_CUSTOM_NETWORK",
+        type: "ALPH_REQUEST_ADD_CUSTOM_NETWORK",
         payload: msg.data,
       })
 
@@ -66,7 +66,7 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
       })
     }
 
-    case "REQUEST_SWITCH_CUSTOM_NETWORK": {
+    case "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK": {
       const { id } = msg.data
 
       const network = await getNetworkById(id)
@@ -81,7 +81,7 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
       }
 
       const { meta } = await actionQueue.push({
-        type: "REQUEST_SWITCH_CUSTOM_NETWORK",
+        type: "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK",
         payload: network,
       })
 

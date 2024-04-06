@@ -9,7 +9,7 @@ export const handleTransactionMessage: HandleMessage<
   switch (msg.type) {
     case "ALPH_EXECUTE_TRANSACTION": {
       const { meta } = await actionQueue.push({
-        type: "TRANSACTION",
+        type: "ALPH_TRANSACTION",
         payload: msg.data,
       })
 

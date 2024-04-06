@@ -39,7 +39,7 @@ export const handlePreAuthorizationMessage: HandleMessage<
 
       if (!authorized) {
         await actionQueue.push({
-          type: "CONNECT_DAPP",
+          type: "ALPH_CONNECT_DAPP",
           payload: { host: msg.data.host, networkId: msg.data.networkId, group: msg.data.group, keyType: msg.data.keyType },
         })
       }

@@ -9,7 +9,7 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
   respond,
 }) => {
   switch (msg.type) {
-    case "REQUEST_ADD_TOKEN": {
+    case "ALPH_REQUEST_ADD_TOKEN": {
       const selectedAccount = await wallet.getSelectedAccount()
       const networkId = msg.data.networkId ?? selectedAccount?.networkId ?? defaultNetwork.id
       const exists = await hasToken({
@@ -19,7 +19,7 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
 
       if (!exists) {
         const { meta } = await actionQueue.push({
-          type: "REQUEST_ADD_TOKEN",
+          type: "ALPH_REQUEST_ADD_TOKEN",
           payload: msg.data,
         })
 

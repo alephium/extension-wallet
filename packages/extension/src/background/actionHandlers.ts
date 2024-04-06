@@ -24,7 +24,7 @@ export const handleActionApproval = async (
   const actionHash = action.meta.hash
 
   switch (action.type) {
-    case "CONNECT_DAPP": {
+    case "ALPH_CONNECT_DAPP": {
       const { host, networkId, group, keyType } = action.payload
       const selectedAccount = await wallet.getAlephiumSelectedAddress(
         networkId,
@@ -48,7 +48,7 @@ export const handleActionApproval = async (
       return { type: "ALPH_CONNECT_DAPP_RES", data: walletAccountWithNetwork }
     }
 
-    case "TRANSACTION": {
+    case "ALPH_TRANSACTION": {
       const { signature: signatureOpt, ...transaction } =
         additionalData as ReviewTransactionResult & { signature?: string }
       try {
@@ -63,7 +63,7 @@ export const handleActionApproval = async (
 
         return {
           type: "ALPH_TRANSACTION_SUBMITTED",
-          data: { result: { ...transaction.result, signature } , actionHash },
+          data: { result: { ...transaction.result, signature }, actionHash },
         }
       } catch (error: unknown) {
         return {
@@ -73,7 +73,7 @@ export const handleActionApproval = async (
       }
     }
 
-    case "SIGN_MESSAGE": {
+    case "ALPH_SIGN_MESSAGE": {
       const account = await wallet.getAccount({
         address: action.payload.signerAddress,
         networkId: action.payload.networkId,
@@ -93,7 +93,7 @@ export const handleActionApproval = async (
       }
     }
 
-    case "SIGN_UNSIGNED_TX": {
+    case "ALPH_SIGN_UNSIGNED_TX": {
       try {
         const account = await wallet.getAccount({
           address: action.payload.signerAddress,
@@ -117,14 +117,14 @@ export const handleActionApproval = async (
       }
     }
 
-    case "REQUEST_ADD_TOKEN": {
+    case "ALPH_REQUEST_ADD_TOKEN": {
       return {
         type: "APPROVE_REQUEST_ADD_TOKEN",
         data: { actionHash },
       }
     }
 
-    case "REQUEST_ADD_CUSTOM_NETWORK": {
+    case "ALPH_REQUEST_ADD_CUSTOM_NETWORK": {
       try {
         await addNetwork(action.payload)
         return {
@@ -139,7 +139,7 @@ export const handleActionApproval = async (
       }
     }
 
-    case "REQUEST_SWITCH_CUSTOM_NETWORK": {
+    case "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK": {
       try {
         const networks = await getNetworks()
 
@@ -199,7 +199,7 @@ export const handleActionRejection = async (
   const actionHash = action.meta.hash
 
   switch (action.type) {
-    case "CONNECT_DAPP": {
+    case "ALPH_CONNECT_DAPP": {
       return {
         type: "ALPH_REJECT_PREAUTHORIZATION",
         data: {
@@ -209,42 +209,42 @@ export const handleActionRejection = async (
       }
     }
 
-    case "TRANSACTION": {
+    case "ALPH_TRANSACTION": {
       return {
         type: "ALPH_TRANSACTION_FAILED",
         data: { actionHash },
       }
     }
 
-    case "SIGN_MESSAGE": {
+    case "ALPH_SIGN_MESSAGE": {
       return {
         type: "ALPH_SIGN_MESSAGE_FAILURE",
         data: { actionHash },
       }
     }
 
-    case "SIGN_UNSIGNED_TX": {
+    case "ALPH_SIGN_UNSIGNED_TX": {
       return {
         type: "ALPH_SIGN_UNSIGNED_TX_FAILURE",
         data: { actionHash },
       }
     }
 
-    case "REQUEST_ADD_TOKEN": {
+    case "ALPH_REQUEST_ADD_TOKEN": {
       return {
         type: "REJECT_REQUEST_ADD_TOKEN",
         data: { actionHash },
       }
     }
 
-    case "REQUEST_ADD_CUSTOM_NETWORK": {
+    case "ALPH_REQUEST_ADD_CUSTOM_NETWORK": {
       return {
         type: "REJECT_REQUEST_ADD_CUSTOM_NETWORK",
         data: { actionHash },
       }
     }
 
-    case "REQUEST_SWITCH_CUSTOM_NETWORK": {
+    case "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK": {
       return {
         type: "REJECT_REQUEST_SWITCH_CUSTOM_NETWORK",
         data: { actionHash },

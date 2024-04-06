@@ -58,7 +58,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
 
     case "ALPH_SIGN_MESSAGE": {
       const { meta } = await actionQueue.push({
-        type: "SIGN_MESSAGE",
+        type: "ALPH_SIGN_MESSAGE",
         payload: msg.data,
       })
 
@@ -72,7 +72,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
 
     case "ALPH_SIGN_UNSIGNED_TX": {
       const { meta } = await actionQueue.push({
-        type: 'SIGN_UNSIGNED_TX',
+        type: 'ALPH_SIGN_UNSIGNED_TX',
         payload: msg.data
       })
 

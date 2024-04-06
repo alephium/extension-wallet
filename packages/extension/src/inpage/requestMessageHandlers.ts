@@ -7,7 +7,7 @@ export async function handleAddTokenRequest(
   callParams: AddNewTokenParameters,
 ): Promise<boolean> {
   sendMessage({
-    type: "REQUEST_ADD_TOKEN",
+    type: "ALPH_REQUEST_ADD_TOKEN",
     data: {
       id: callParams.id,
       networkId: callParams.networkId,
@@ -58,7 +58,7 @@ export async function handleAddNetworkRequest(
   callParams: AddStarknetChainParameters,
 ): Promise<boolean> {
   sendMessage({
-    type: "REQUEST_ADD_CUSTOM_NETWORK",
+    type: "ALPH_REQUEST_ADD_CUSTOM_NETWORK",
     data: {
       id: callParams.id,
       name: callParams.chainName,
@@ -116,7 +116,7 @@ export async function handleSwitchNetworkRequest(callParams: {
   id: Network["id"]
 }): Promise<boolean> {
   sendMessage({
-    type: "REQUEST_SWITCH_CUSTOM_NETWORK",
+    type: "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK",
     data: { id: callParams.id },
   })
 
