@@ -81,7 +81,7 @@ getAccounts()
     await transactionTracker.prune()
     await transactionTracker.loadHistory(x)
   })())
-  .catch(() => console.warn("failed to prune and load latest transactions"))
+  .catch((e) => console.warn("failed to prune and load latest transactions", e))
 
 const safeMessages: MessageType["type"][] = [
   "ALPH_IS_PREAUTHORIZED",
