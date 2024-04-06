@@ -6,69 +6,69 @@ import {
 } from "../wallet.model"
 
 export type AccountMessage =
-  | { type: "NEW_ACCOUNT"; data: { networkId: string; keyType: KeyType; group?: number } }
+  | { type: "ALPH_NEW_ACCOUNT"; data: { networkId: string; keyType: KeyType; group?: number } }
   | {
-      type: "NEW_ACCOUNT_RES"
+      type: "ALPH_NEW_ACCOUNT_RES"
       data: {
         account: WalletAccount
         accounts: WalletAccount[]
       }
     }
-  | { type: "NEW_ACCOUNT_REJ"; data: { error: string } }
-  | { type: "NEW_LEDGER_ACCOUNT"; data: { account: Account; hdIndex: number, networkId: string } }
+  | { type: "ALPH_NEW_ACCOUNT_REJ"; data: { error: string } }
+  | { type: "ALPH_NEW_LEDGER_ACCOUNT"; data: { account: Account; hdIndex: number, networkId: string } }
   | {
-      type: "NEW_LEDGER_ACCOUNT_RES"
+      type: "ALPH_NEW_LEDGER_ACCOUNT_RES"
       data: {
         account: BaseWalletAccount
       }
     }
-  | { type: "NEW_LEDGER_ACCOUNT_REJ"; data: { error: string } }
-  | { type: "GET_ACCOUNTS"; data?: { showHidden: boolean } }
-  | { type: "GET_ACCOUNTS_RES"; data: WalletAccount[] }
-  | { type: "CONNECT_ACCOUNT"; data?: BaseWalletAccount }
-  | { type: "CONNECT_ACCOUNT_RES"; data?: WalletAccount }
-  | { type: "DISCONNECT_ACCOUNT" }
-  | { type: "GET_SELECTED_ACCOUNT" }
-  | { type: "GET_SELECTED_ACCOUNT_RES"; data: WalletAccount | undefined }
-  | { type: "DELETE_ACCOUNT"; data: BaseWalletAccount }
-  | { type: "DELETE_ACCOUNT_RES" }
-  | { type: "DELETE_ACCOUNT_REJ" }
+  | { type: "ALPH_NEW_LEDGER_ACCOUNT_REJ"; data: { error: string } }
+  | { type: "ALPH_GET_ACCOUNTS"; data?: { showHidden: boolean } }
+  | { type: "ALPH_GET_ACCOUNTS_RES"; data: WalletAccount[] }
+  | { type: "ALPH_CONNECT_ACCOUNT"; data?: BaseWalletAccount }
+  | { type: "ALPH_CONNECT_ACCOUNT_RES"; data?: WalletAccount }
+  | { type: "ALPH_DISCONNECT_ACCOUNT" }
+  | { type: "ALPH_GET_SELECTED_ACCOUNT" }
+  | { type: "ALPH_GET_SELECTED_ACCOUNT_RES"; data: WalletAccount | undefined }
+  | { type: "ALPH_DELETE_ACCOUNT"; data: BaseWalletAccount }
+  | { type: "ALPH_DELETE_ACCOUNT_RES" }
+  | { type: "ALPH_DELETE_ACCOUNT_REJ" }
   | {
-      type: "UPGRADE_ACCOUNT"
+      type: "ALPH_UPGRADE_ACCOUNT"
       data: {
         wallet: BaseWalletAccount
         targetImplementationType?: ArgentAccountType
       }
     }
-  | { type: "UPGRADE_ACCOUNT_RES" }
-  | { type: "UPGRADE_ACCOUNT_REJ" }
+  | { type: "ALPH_UPGRADE_ACCOUNT_RES" }
+  | { type: "ALPH_UPGRADE_ACCOUNT_REJ" }
   | {
-      type: "GET_ENCRYPTED_PRIVATE_KEY"
+      type: "ALPH_GET_ENCRYPTED_PRIVATE_KEY"
       data: { encryptedSecret: string }
     }
   | {
-      type: "GET_ENCRYPTED_PRIVATE_KEY_RES"
+      type: "ALPH_GET_ENCRYPTED_PRIVATE_KEY_RES"
       data: { encryptedPrivateKey: string }
     }
   | {
-      type: "GET_ENCRYPTED_SEED_PHRASE"
+      type: "ALPH_GET_ENCRYPTED_SEED_PHRASE"
       data: { encryptedSecret: string }
     }
   | {
-      type: "GET_ENCRYPTED_SEED_PHRASE_RES"
+      type: "ALPH_GET_ENCRYPTED_SEED_PHRASE_RES"
       data: { encryptedSeedPhrase: string }
     }
   | {
-      type: "DISCOVER_ACCOUNTS"
+      type: "ALPH_DISCOVER_ACCOUNTS"
       data: { networkId: string }
     }
   | {
-      type: "DISCOVER_ACCOUNTS_RES"
+      type: "ALPH_DISCOVER_ACCOUNTS_RES"
       data: {
         accounts: WalletAccount[]
       }
     }
   | {
-      type: "DISCOVER_ACCOUNTS_REJ"
+      type: "ALPH_DISCOVER_ACCOUNTS_REJ"
       data: { error: string }
     }

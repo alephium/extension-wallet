@@ -22,7 +22,7 @@ export const useLoadingProgress = () => {
 
   useEffect(() => {
     messageStream.subscribe(([message]) => {
-      if (message.type === "LOADING_PROGRESS") {
+      if (message.type === "ALPH_LOADING_PROGRESS") {
         setProgress(message.data >= 1 ? undefined : message.data)
       }
     })

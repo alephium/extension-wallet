@@ -65,7 +65,7 @@ export const getDeployContractEstimatedFee = async (
 // for debugging purposes
 try {
   ; (window as any).downloadBackup = () => {
-    sendMessage({ type: "DOWNLOAD_BACKUP_FILE" })
+    sendMessage({ type: "ALPH_DOWNLOAD_BACKUP_FILE" })
   }
 } catch {
   // ignore

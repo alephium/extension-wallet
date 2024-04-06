@@ -5,15 +5,15 @@ import { sendMessage, waitForMessage } from "../../shared/messages"
 import { AllowArray } from "../../shared/storage/types"
 
 export const getActions = async () => {
-  sendMessage({ type: "GET_ACTIONS" })
-  return waitForMessage("GET_ACTIONS_RES")
+  sendMessage({ type: "ALPH_GET_ACTIONS" })
+  return waitForMessage("ALPH_GET_ACTIONS_RES")
 }
 
 export const approveAction = (action: ExtensionActionItem | string, additionalData?: any) => {
   const actionHash = isString(action) ? action : action.meta.hash
-  return sendMessage({ type: "APPROVE_ACTION", data: { actionHash, additionalData } })
+  return sendMessage({ type: "ALPH_APPROVE_ACTION", data: { actionHash, additionalData } })
 }
 
 export const rejectAction = (actionHash: AllowArray<string>) => {
-  return sendMessage({ type: "REJECT_ACTION", data: { actionHash } })
+  return sendMessage({ type: "ALPH_REJECT_ACTION", data: { actionHash } })
 }

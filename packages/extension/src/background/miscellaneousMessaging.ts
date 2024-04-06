@@ -14,7 +14,7 @@ export const handleMiscellaneousMessage: HandleMessage<
       return openUi()
     }
 
-    case "RESET_ALL": {
+    case "ALPH_RESET_ALL": {
       try {
         browser.storage.local.clear()
         browser.storage.sync.clear()
@@ -23,12 +23,12 @@ export const handleMiscellaneousMessage: HandleMessage<
       } catch {
         // Ignore browser.storage.session error "This is a read-only store"
       }
-      return respond({ type: "DISCONNECT_ACCOUNT" })
+      return respond({ type: "ALPH_DISCONNECT_ACCOUNT" })
     }
 
-    case "GET_MESSAGING_PUBLIC_KEY": {
+    case "ALPH_GET_MESSAGING_PUBLIC_KEY": {
       return sendMessageToUi({
-        type: "GET_MESSAGING_PUBLIC_KEY_RES",
+        type: "ALPH_GET_MESSAGING_PUBLIC_KEY_RES",
         data: publicKeyJwk,
       })
     }

@@ -24,7 +24,7 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
         })
 
         return respond({
-          type: "REQUEST_ADD_TOKEN_RES",
+          type: "ALPH_REQUEST_ADD_TOKEN_RES",
           data: {
             actionHash: meta.hash,
           },
@@ -32,12 +32,12 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
       }
 
       return respond({
-        type: "REQUEST_ADD_TOKEN_RES",
+        type: "ALPH_REQUEST_ADD_TOKEN_RES",
         data: {},
       })
     }
 
-    case "REJECT_REQUEST_ADD_TOKEN": {
+    case "ALPH_REJECT_REQUEST_ADD_TOKEN": {
       return await actionQueue.remove(msg.data.actionHash)
     }
   }

@@ -4,20 +4,20 @@ import { ExtensionActionItem, TransactionResult } from "../actionQueue/types"
 import { SignMessageParams, SignUnsignedTxParams, SignUnsignedTxResult } from "@alephium/web3"
 
 export type ActionMessage =
-  | { type: "GET_ACTIONS" }
+  | { type: "ALPH_GET_ACTIONS" }
   | {
-      type: "GET_ACTIONS_RES"
+      type: "ALPH_GET_ACTIONS_RES"
       data: ExtensionActionItem[]
     }
   | {
-      type: "APPROVE_ACTION"
+      type: "ALPH_APPROVE_ACTION"
       data: { actionHash: string; additionalData?: any }
     }
   | {
-      type: "APPROVE_Transaction_ACTION"
+      type: "ALPH_APPROVE_Transaction_ACTION"
       data: { actionHash: string; result: TransactionResult }
     }
-  | { type: "REJECT_ACTION"; data: { actionHash: string | string[] } }
+  | { type: "ALPH_REJECT_ACTION"; data: { actionHash: string | string[] } }
   | { type: "ALPH_SIGN_MESSAGE"; data: SignMessageParams & { networkId?: string, host: string } }
   | { type: "ALPH_SIGN_MESSAGE_RES"; data: { actionHash: string } }
   | { type: "ALPH_SIGN_MESSAGE_FAILURE"; data: { actionHash: string } }

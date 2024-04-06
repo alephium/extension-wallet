@@ -2,11 +2,11 @@ import { sendMessage, waitForMessage } from "../../shared/messages"
 import { encryptForBackground } from "./crypto"
 
 export const recoverBackup = async (backup: string) => {
-  sendMessage({ type: "RECOVER_BACKUP", data: backup })
+  sendMessage({ type: "ALPH_RECOVER_BACKUP", data: backup })
 
   await Promise.race([
-    waitForMessage("RECOVER_BACKUP_RES"),
-    waitForMessage("RECOVER_BACKUP_REJ").then((error) => {
+    waitForMessage("ALPH_RECOVER_BACKUP_RES"),
+    waitForMessage("ALPH_RECOVER_BACKUP_REJ").then((error) => {
       throw new Error(error)
     }),
   ])
@@ -20,13 +20,13 @@ export const recoverBySeedPhrase = async (
   const body = await encryptForBackground(message)
 
   sendMessage({
-    type: "RECOVER_SEEDPHRASE",
+    type: "ALPH_RECOVER_SEEDPHRASE",
     data: { secure: true, body },
   })
 
   const succeeded = await Promise.race([
-    waitForMessage("RECOVER_SEEDPHRASE_RES").then(() => true),
-    waitForMessage("RECOVER_SEEDPHRASE_REJ")
+    waitForMessage("ALPH_RECOVER_SEEDPHRASE_RES").then(() => true),
+    waitForMessage("ALPH_RECOVER_SEEDPHRASE_REJ")
       .then(() => false)
       .catch(() => false),
   ])
@@ -37,12 +37,12 @@ export const recoverBySeedPhrase = async (
 }
 
 export const downloadBackupFile = () => {
-  sendMessage({ type: "DOWNLOAD_BACKUP_FILE" })
+  sendMessage({ type: "ALPH_DOWNLOAD_BACKUP_FILE" })
 }
 
 // for debugging purposes
 try {
-  ;(window as any).downloadBackup = downloadBackupFile
+  ; (window as any).downloadBackup = downloadBackupFile
 } catch {
   // ignore
 }

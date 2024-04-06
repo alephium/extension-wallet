@@ -12,15 +12,15 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
   const { actionQueue } = background
 
   switch (msg.type) {
-    case "GET_ACTIONS": {
+    case "ALPH_GET_ACTIONS": {
       const actions = await actionQueue.getAll()
       return await sendMessageToUi({
-        type: "GET_ACTIONS_RES",
+        type: "ALPH_GET_ACTIONS_RES",
         data: actions,
       })
     }
 
-    case "APPROVE_ACTION": {
+    case "ALPH_APPROVE_ACTION": {
       const { actionHash, additionalData } = msg.data
       const action = await actionQueue.remove(actionHash)
       if (!action) {
@@ -38,7 +38,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
       return
     }
 
-    case "REJECT_ACTION": {
+    case "ALPH_REJECT_ACTION": {
       const payload = msg.data.actionHash
 
       const actionHashes = Array.isArray(payload) ? payload : [payload]

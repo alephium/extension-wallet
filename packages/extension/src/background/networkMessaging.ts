@@ -10,14 +10,14 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
   respond,
 }) => {
   switch (msg.type) {
-    case "GET_NETWORKS": {
+    case "ALPH_GET_NETWORKS": {
       return respond({
-        type: "GET_NETWORKS_RES",
+        type: "ALPH_GET_NETWORKS_RES",
         data: await getNetworks(),
       })
     }
 
-    case "GET_NETWORK": {
+    case "ALPH_GET_NETWORK": {
       const allNetworks = await getNetworks()
 
       const network = allNetworks.find((n) => n.id === msg.data)
@@ -27,16 +27,16 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
       }
 
       return respond({
-        type: "GET_NETWORK_RES",
+        type: "ALPH_GET_NETWORK_RES",
         data: network,
       })
     }
 
-    case "GET_NETWORK_STATUSES": {
+    case "ALPH_GET_NETWORK_STATUSES": {
       const networks = msg.data?.length ? msg.data : await getNetworks()
       const statuses = await getNetworkStatuses(networks)
       return respond({
-        type: "GET_NETWORK_STATUSES_RES",
+        type: "ALPH_GET_NETWORK_STATUSES_RES",
         data: statuses,
       })
     }
@@ -46,7 +46,7 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
 
       if (exists) {
         return respond({
-          type: "REQUEST_ADD_CUSTOM_NETWORK_REJ",
+          type: "ALPH_REQUEST_ADD_CUSTOM_NETWORK_REJ",
           data: {
             error: `Network with id ${msg.data.id} already exists`,
           },
@@ -59,7 +59,7 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
       })
 
       return respond({
-        type: "REQUEST_ADD_CUSTOM_NETWORK_RES",
+        type: "ALPH_REQUEST_ADD_CUSTOM_NETWORK_RES",
         data: {
           actionHash: meta.hash,
         },
@@ -73,7 +73,7 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
 
       if (!network) {
         return respond({
-          type: "REQUEST_SWITCH_CUSTOM_NETWORK_REJ",
+          type: "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK_REJ",
           data: {
             error: `Network with id ${id} does not exist. Please add the network with wallet_addStarknetChain request`,
           },
@@ -86,15 +86,15 @@ export const handleNetworkMessage: HandleMessage<NetworkMessage> = async ({
       })
 
       return respond({
-        type: "REQUEST_SWITCH_CUSTOM_NETWORK_RES",
+        type: "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK_RES",
         data: {
           actionHash: meta.hash,
         },
       })
     }
 
-    case "REJECT_REQUEST_ADD_CUSTOM_NETWORK":
-    case "REJECT_REQUEST_SWITCH_CUSTOM_NETWORK": {
+    case "ALPH_REJECT_REQUEST_ADD_CUSTOM_NETWORK":
+    case "ALPH_REJECT_REQUEST_SWITCH_CUSTOM_NETWORK": {
       return await actionQueue.remove(msg.data.actionHash)
     }
   }

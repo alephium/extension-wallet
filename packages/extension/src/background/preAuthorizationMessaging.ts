@@ -12,7 +12,7 @@ preAuthorizeStore.subscribe(async (_, changeSet) => {
   const removed = differenceWith(changeSet.oldValue ?? [], changeSet.newValue ?? [], isEqual)
   for (const preAuthorization of removed) {
     await sendMessageToHost(
-      { type: "DISCONNECT_ACCOUNT" },
+      { type: "ALPH_DISCONNECT_ACCOUNT" },
       preAuthorization.host,
     )
   }

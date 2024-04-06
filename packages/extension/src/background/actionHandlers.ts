@@ -119,7 +119,7 @@ export const handleActionApproval = async (
 
     case "ALPH_REQUEST_ADD_TOKEN": {
       return {
-        type: "APPROVE_REQUEST_ADD_TOKEN",
+        type: "ALPH_APPROVE_REQUEST_ADD_TOKEN",
         data: { actionHash },
       }
     }
@@ -128,12 +128,12 @@ export const handleActionApproval = async (
       try {
         await addNetwork(action.payload)
         return {
-          type: "APPROVE_REQUEST_ADD_CUSTOM_NETWORK",
+          type: "ALPH_APPROVE_REQUEST_ADD_CUSTOM_NETWORK",
           data: { actionHash },
         }
       } catch (error) {
         return {
-          type: "REJECT_REQUEST_ADD_CUSTOM_NETWORK",
+          type: "ALPH_REJECT_REQUEST_ADD_CUSTOM_NETWORK",
           data: { actionHash },
         }
       }
@@ -176,12 +176,12 @@ export const handleActionApproval = async (
         }
 
         return {
-          type: "APPROVE_REQUEST_SWITCH_CUSTOM_NETWORK",
+          type: "ALPH_APPROVE_REQUEST_SWITCH_CUSTOM_NETWORK",
           data: { actionHash, selectedAccount },
         }
       } catch (error) {
         return {
-          type: "REJECT_REQUEST_SWITCH_CUSTOM_NETWORK",
+          type: "ALPH_REJECT_REQUEST_SWITCH_CUSTOM_NETWORK",
           data: { actionHash },
         }
       }
@@ -232,21 +232,21 @@ export const handleActionRejection = async (
 
     case "ALPH_REQUEST_ADD_TOKEN": {
       return {
-        type: "REJECT_REQUEST_ADD_TOKEN",
+        type: "ALPH_REJECT_REQUEST_ADD_TOKEN",
         data: { actionHash },
       }
     }
 
     case "ALPH_REQUEST_ADD_CUSTOM_NETWORK": {
       return {
-        type: "REJECT_REQUEST_ADD_CUSTOM_NETWORK",
+        type: "ALPH_REJECT_REQUEST_ADD_CUSTOM_NETWORK",
         data: { actionHash },
       }
     }
 
     case "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK": {
       return {
-        type: "REJECT_REQUEST_SWITCH_CUSTOM_NETWORK",
+        type: "ALPH_REJECT_REQUEST_SWITCH_CUSTOM_NETWORK",
         data: { actionHash },
       }
     }

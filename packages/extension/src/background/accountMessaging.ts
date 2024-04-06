@@ -12,42 +12,42 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
   respond,
 }) => {
   switch (msg.type) {
-    case "GET_ACCOUNTS": {
+    case "ALPH_GET_ACCOUNTS": {
       return sendMessageToUi({
-        type: "GET_ACCOUNTS_RES",
+        type: "ALPH_GET_ACCOUNTS_RES",
         data: await getAccounts(msg.data?.showHidden ? () => true : undefined),
       })
     }
 
-    case "CONNECT_ACCOUNT": {
+    case "ALPH_CONNECT_ACCOUNT": {
       // Select an Account of BaseWalletAccount type
       const selectedAccount = await wallet.getSelectedAccount()
 
       return respond({
-        type: "CONNECT_ACCOUNT_RES",
+        type: "ALPH_CONNECT_ACCOUNT_RES",
         data: selectedAccount,
       })
     }
 
-    case "DISCOVER_ACCOUNTS": {
+    case "ALPH_DISCOVER_ACCOUNTS": {
       const { networkId } = msg.data
       try {
         const discoveredAccounts = await wallet.discoverActiveAccounts(networkId)
         return respond({
-          type: "DISCOVER_ACCOUNTS_RES",
+          type: "ALPH_DISCOVER_ACCOUNTS_RES",
           data: { accounts: discoveredAccounts }
         })
       } catch (exception) {
         console.error("Failed to discover accounts", exception)
         return respond({
-          type: "DISCOVER_ACCOUNTS_REJ",
+          type: "ALPH_DISCOVER_ACCOUNTS_REJ",
           data: { error: `${exception}` },
         })
       }
 
     }
 
-    case "NEW_ACCOUNT": {
+    case "ALPH_NEW_ACCOUNT": {
       if (!(await wallet.isSessionOpen())) {
         throw Error("you need an open session")
       }
@@ -64,7 +64,7 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         const accounts = await getAccounts()
 
         return sendMessageToUi({
-          type: "NEW_ACCOUNT_RES",
+          type: "ALPH_NEW_ACCOUNT_RES",
           data: {
             account,
             accounts,
@@ -80,13 +80,13 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         })
 
         return sendMessageToUi({
-          type: "NEW_ACCOUNT_REJ",
+          type: "ALPH_NEW_ACCOUNT_REJ",
           data: { error },
         })
       }
     }
 
-    case "NEW_LEDGER_ACCOUNT": {
+    case "ALPH_NEW_LEDGER_ACCOUNT": {
       if (!(await wallet.isSessionOpen())) {
         throw Error("you need an open session")
       }
@@ -95,7 +95,7 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
       try {
         const baseAccount = await wallet.importLedgerAccount(account, hdIndex, networkId)
         return sendMessageToUi({
-          type: "NEW_LEDGER_ACCOUNT_RES",
+          type: "ALPH_NEW_LEDGER_ACCOUNT_RES",
           data: {
             account: baseAccount
           }
@@ -110,38 +110,38 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         })
 
         return sendMessageToUi({
-          type: "NEW_LEDGER_ACCOUNT_REJ",
+          type: "ALPH_NEW_LEDGER_ACCOUNT_REJ",
           data: { error },
         })
       }
     }
 
-    case "GET_SELECTED_ACCOUNT": {
+    case "ALPH_GET_SELECTED_ACCOUNT": {
       const selectedAccount = await wallet.getSelectedAccount()
       return sendMessageToUi({
-        type: "GET_SELECTED_ACCOUNT_RES",
+        type: "ALPH_GET_SELECTED_ACCOUNT_RES",
         data: selectedAccount,
       })
     }
 
-    case "UPGRADE_ACCOUNT": {
+    case "ALPH_UPGRADE_ACCOUNT": {
       try {
-        return sendMessageToUi({ type: "UPGRADE_ACCOUNT_RES" })
+        return sendMessageToUi({ type: "ALPH_UPGRADE_ACCOUNT_RES" })
       } catch {
-        return sendMessageToUi({ type: "UPGRADE_ACCOUNT_REJ" })
+        return sendMessageToUi({ type: "ALPH_UPGRADE_ACCOUNT_REJ" })
       }
     }
 
-    case "DELETE_ACCOUNT": {
+    case "ALPH_DELETE_ACCOUNT": {
       try {
         await removeAccount(msg.data)
-        return sendMessageToUi({ type: "DELETE_ACCOUNT_RES" })
+        return sendMessageToUi({ type: "ALPH_DELETE_ACCOUNT_RES" })
       } catch {
-        return sendMessageToUi({ type: "DELETE_ACCOUNT_REJ" })
+        return sendMessageToUi({ type: "ALPH_DELETE_ACCOUNT_REJ" })
       }
     }
 
-    case "GET_ENCRYPTED_PRIVATE_KEY": {
+    case "ALPH_GET_ENCRYPTED_PRIVATE_KEY": {
       if (!(await wallet.isSessionOpen())) {
         throw Error("you need an open session")
       }
@@ -153,12 +153,12 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
       )
 
       return sendMessageToUi({
-        type: "GET_ENCRYPTED_PRIVATE_KEY_RES",
+        type: "ALPH_GET_ENCRYPTED_PRIVATE_KEY_RES",
         data: { encryptedPrivateKey },
       })
     }
 
-    case "GET_ENCRYPTED_SEED_PHRASE": {
+    case "ALPH_GET_ENCRYPTED_SEED_PHRASE": {
       if (!(await wallet.isSessionOpen())) {
         throw Error("you need an open session")
       }
@@ -170,7 +170,7 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
       )
 
       return sendMessageToUi({
-        type: "GET_ENCRYPTED_SEED_PHRASE_RES",
+        type: "ALPH_GET_ENCRYPTED_SEED_PHRASE_RES",
         data: { encryptedSeedPhrase },
       })
     }
