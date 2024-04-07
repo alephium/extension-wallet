@@ -12,7 +12,7 @@ preAuthorizeStore.subscribe(async (_, changeSet) => {
   const removed = differenceWith(changeSet.oldValue ?? [], changeSet.newValue ?? [], isEqual)
   for (const preAuthorization of removed) {
     await sendMessageToHost(
-      { type: "DISCONNECT_ACCOUNT" },
+      { type: "ALPH_DISCONNECT_ACCOUNT" },
       preAuthorization.host,
     )
   }
@@ -39,7 +39,7 @@ export const handlePreAuthorizationMessage: HandleMessage<
 
       if (!authorized) {
         await actionQueue.push({
-          type: "CONNECT_DAPP",
+          type: "ALPH_CONNECT_DAPP",
           payload: { host: msg.data.host, networkId: msg.data.networkId, group: msg.data.group, keyType: msg.data.keyType },
         })
       }

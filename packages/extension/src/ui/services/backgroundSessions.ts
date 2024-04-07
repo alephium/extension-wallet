@@ -2,23 +2,23 @@ import { sendMessage, waitForMessage } from "../../shared/messages"
 import { encryptForBackground } from "./crypto"
 
 export const hasActiveSession = async () => {
-  sendMessage({ type: "HAS_SESSION" })
-  return waitForMessage("HAS_SESSION_RES")
+  sendMessage({ type: "ALPH_HAS_SESSION" })
+  return waitForMessage("ALPH_HAS_SESSION_RES")
 }
 
 export const isInitialized = async () => {
-  sendMessage({ type: "IS_INITIALIZED" })
-  return await waitForMessage("IS_INITIALIZED_RES")
+  sendMessage({ type: "ALPH_IS_INITIALIZED" })
+  return await waitForMessage("ALPH_IS_INITIALIZED_RES")
 }
 
 export const startSession = async (password: string): Promise<void> => {
   const body = await encryptForBackground(password)
 
-  sendMessage({ type: "START_SESSION", data: { secure: true, body } })
+  sendMessage({ type: "ALPH_START_SESSION", data: { secure: true, body } })
 
   const succeeded = await Promise.race([
-    waitForMessage("START_SESSION_RES").then(() => true),
-    waitForMessage("START_SESSION_REJ")
+    waitForMessage("ALPH_START_SESSION_RES").then(() => true),
+    waitForMessage("ALPH_START_SESSION_REJ")
       .then(() => false)
       .catch(() => false),
   ])
@@ -29,17 +29,17 @@ export const startSession = async (password: string): Promise<void> => {
 }
 
 export const stopSession = () => {
-  sendMessage({ type: "STOP_SESSION" })
+  sendMessage({ type: "ALPH_STOP_SESSION" })
 }
 
 export const checkPassword = async (password: string): Promise<boolean> => {
   const body = await encryptForBackground(password)
 
-  sendMessage({ type: "CHECK_PASSWORD", data: { body } })
+  sendMessage({ type: "ALPH_CHECK_PASSWORD", data: { body } })
 
   return await Promise.race([
-    waitForMessage("CHECK_PASSWORD_RES").then(() => true),
-    waitForMessage("CHECK_PASSWORD_REJ")
+    waitForMessage("ALPH_CHECK_PASSWORD_RES").then(() => true),
+    waitForMessage("ALPH_CHECK_PASSWORD_REJ")
       .then(() => false)
       .catch(() => false),
   ])

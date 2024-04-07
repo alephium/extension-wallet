@@ -96,7 +96,7 @@ export type TransactionResult =
 
 export type ActionItem =
   | {
-      type: "CONNECT_DAPP"
+      type: "ALPH_CONNECT_DAPP"
       payload: {
         host: string
         networkId?: string
@@ -105,23 +105,23 @@ export type ActionItem =
       }
     }
   | {
-      type: "TRANSACTION"
+      type: "ALPH_TRANSACTION"
       payload: TransactionParams
     }
   | {
-      type: "SIGN_MESSAGE"
+      type: "ALPH_SIGN_MESSAGE"
       payload: SignMessageParams & { networkId?: string; host: string }
     }
   | {
-      type: "SIGN_UNSIGNED_TX"
+      type: "ALPH_SIGN_UNSIGNED_TX"
       payload: SignUnsignedTxParams & { networkId?: string; host: string }
     }
   | {
-      type: "REQUEST_ADD_TOKEN"
+      type: "ALPH_REQUEST_ADD_TOKEN"
       payload: Token
     }
   | {
-      type: "REQUEST_ADD_CUSTOM_NETWORK"
+      type: "ALPH_REQUEST_ADD_CUSTOM_NETWORK"
       payload: {
         id: string
         name: string
@@ -131,7 +131,7 @@ export type ActionItem =
       }
     }
   | {
-      type: "REQUEST_SWITCH_CUSTOM_NETWORK"
+      type: "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK"
       payload: {
         id: string
         name: string

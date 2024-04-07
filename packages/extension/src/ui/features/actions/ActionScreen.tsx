@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { TransactionResult } from "../../../shared/actionQueue/types"
 
 import { waitForMessage } from "../../../shared/messages"
 import { removePreAuthorization } from "../../../shared/preAuthorizations"
@@ -30,9 +29,9 @@ export const ActionScreen: FC = () => {
 
   const [action] = actions
   const isLastAction = actions.length === 1
-  const signerAccount = useAccount(action.type === 'TRANSACTION' && selectedAccount
+  const signerAccount = useAccount(action.type === 'ALPH_TRANSACTION' && selectedAccount
     ? { address: action.payload.params.signerAddress, networkId: action.payload.params.networkId ?? selectedAccount.networkId }
-    : (action.type === 'SIGN_MESSAGE' || action.type === 'SIGN_UNSIGNED_TX') && selectedAccount
+    : (action.type === 'ALPH_SIGN_MESSAGE' || action.type === 'ALPH_SIGN_UNSIGNED_TX') && selectedAccount
       ? { address: action.payload.signerAddress, networkId: action.payload.networkId ?? selectedAccount.networkId }
       : undefined
   )
@@ -74,7 +73,7 @@ export const ActionScreen: FC = () => {
   }, [extensionIsInTab, action?.type])
 
   switch (action?.type) {
-    case "CONNECT_DAPP":
+    case "ALPH_CONNECT_DAPP":
       return (
         <ConnectDappScreen
           host={action.payload.host}
@@ -103,7 +102,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "REQUEST_ADD_TOKEN":
+    case "ALPH_REQUEST_ADD_TOKEN":
       return (
         <AddTokenScreen
           defaultToken={action.payload}
@@ -113,7 +112,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "REQUEST_ADD_CUSTOM_NETWORK":
+    case "ALPH_REQUEST_ADD_CUSTOM_NETWORK":
       return (
         <AddNetworkScreen
           requestedNetwork={action.payload}
@@ -124,7 +123,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "REQUEST_SWITCH_CUSTOM_NETWORK":
+    case "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK":
       return (
         <AddNetworkScreen
           requestedNetwork={action.payload}
@@ -135,7 +134,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "TRANSACTION":
+    case "ALPH_TRANSACTION":
       return (
         <ApproveTransactionScreen
           transaction={action.payload}
@@ -185,7 +184,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case "SIGN_MESSAGE":
+    case "ALPH_SIGN_MESSAGE":
       return (
         <ApproveSignatureScreen
           dataToSign={action.payload}
@@ -207,7 +206,7 @@ export const ActionScreen: FC = () => {
         />
       )
 
-    case 'SIGN_UNSIGNED_TX':
+    case 'ALPH_SIGN_UNSIGNED_TX':
       return (
         <ApproveSignUnsignedTxScreen
           params={action.payload}

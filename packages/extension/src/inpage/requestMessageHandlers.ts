@@ -7,7 +7,7 @@ export async function handleAddTokenRequest(
   callParams: AddNewTokenParameters,
 ): Promise<boolean> {
   sendMessage({
-    type: "REQUEST_ADD_TOKEN",
+    type: "ALPH_REQUEST_ADD_TOKEN",
     data: {
       id: callParams.id,
       networkId: callParams.networkId,
@@ -17,7 +17,7 @@ export async function handleAddTokenRequest(
       logoURI: callParams.logoURI
     },
   })
-  const { actionHash } = await waitForMessage("REQUEST_ADD_TOKEN_RES", 1000)
+  const { actionHash } = await waitForMessage("ALPH_REQUEST_ADD_TOKEN_RES", 1000)
 
   if (!actionHash) {
     // token already exists
@@ -28,18 +28,18 @@ export async function handleAddTokenRequest(
 
   const result = await Promise.race([
     waitForMessage(
-      "APPROVE_REQUEST_ADD_TOKEN",
+      "ALPH_APPROVE_REQUEST_ADD_TOKEN",
       11 * 60 * 1000,
       (x) => x.data.actionHash === actionHash,
     ),
     waitForMessage(
-      "REJECT_REQUEST_ADD_TOKEN",
+      "ALPH_REJECT_REQUEST_ADD_TOKEN",
       10 * 60 * 1000,
       (x) => x.data.actionHash === actionHash,
     )
       .then(() => "error" as const)
       .catch(() => {
-        sendMessage({ type: "REJECT_REQUEST_ADD_TOKEN", data: { actionHash } })
+        sendMessage({ type: "ALPH_REJECT_REQUEST_ADD_TOKEN", data: { actionHash } })
         return "timeout" as const
       }),
   ])
@@ -58,7 +58,7 @@ export async function handleAddNetworkRequest(
   callParams: AddStarknetChainParameters,
 ): Promise<boolean> {
   sendMessage({
-    type: "REQUEST_ADD_CUSTOM_NETWORK",
+    type: "ALPH_REQUEST_ADD_CUSTOM_NETWORK",
     data: {
       id: callParams.id,
       name: callParams.chainName,
@@ -69,8 +69,8 @@ export async function handleAddNetworkRequest(
   })
 
   const req = await Promise.race([
-    waitForMessage("REQUEST_ADD_CUSTOM_NETWORK_RES", 1000),
-    waitForMessage("REQUEST_ADD_CUSTOM_NETWORK_REJ", 1000),
+    waitForMessage("ALPH_REQUEST_ADD_CUSTOM_NETWORK_RES", 1000),
+    waitForMessage("ALPH_REQUEST_ADD_CUSTOM_NETWORK_REJ", 1000),
   ])
 
   if ("error" in req) {
@@ -83,19 +83,19 @@ export async function handleAddNetworkRequest(
 
   const result = await Promise.race([
     waitForMessage(
-      "APPROVE_REQUEST_ADD_CUSTOM_NETWORK",
+      "ALPH_APPROVE_REQUEST_ADD_CUSTOM_NETWORK",
       11 * 60 * 1000,
       (x) => x.data.actionHash === actionHash,
     ),
     waitForMessage(
-      "REJECT_REQUEST_ADD_CUSTOM_NETWORK",
+      "ALPH_REJECT_REQUEST_ADD_CUSTOM_NETWORK",
       10 * 60 * 1000,
       (x) => x.data.actionHash === actionHash,
     )
       .then(() => "error" as const)
       .catch(() => {
         sendMessage({
-          type: "REJECT_REQUEST_ADD_CUSTOM_NETWORK",
+          type: "ALPH_REJECT_REQUEST_ADD_CUSTOM_NETWORK",
           data: { actionHash },
         })
         return "timeout" as const
@@ -116,13 +116,13 @@ export async function handleSwitchNetworkRequest(callParams: {
   id: Network["id"]
 }): Promise<boolean> {
   sendMessage({
-    type: "REQUEST_SWITCH_CUSTOM_NETWORK",
+    type: "ALPH_REQUEST_SWITCH_CUSTOM_NETWORK",
     data: { id: callParams.id },
   })
 
   const req = await Promise.race([
-    waitForMessage("REQUEST_SWITCH_CUSTOM_NETWORK_RES", 1000),
-    waitForMessage("REQUEST_SWITCH_CUSTOM_NETWORK_REJ", 1000),
+    waitForMessage("ALPH_REQUEST_SWITCH_CUSTOM_NETWORK_RES", 1000),
+    waitForMessage("ALPH_REQUEST_SWITCH_CUSTOM_NETWORK_REJ", 1000),
   ])
 
   if ("error" in req) {
@@ -135,19 +135,19 @@ export async function handleSwitchNetworkRequest(callParams: {
 
   const result = await Promise.race([
     waitForMessage(
-      "APPROVE_REQUEST_SWITCH_CUSTOM_NETWORK",
+      "ALPH_APPROVE_REQUEST_SWITCH_CUSTOM_NETWORK",
       11 * 60 * 1000,
       (x) => x.data.actionHash === actionHash,
     ),
     waitForMessage(
-      "REJECT_REQUEST_SWITCH_CUSTOM_NETWORK",
+      "ALPH_REJECT_REQUEST_SWITCH_CUSTOM_NETWORK",
       10 * 60 * 1000,
       (x) => x.data.actionHash === actionHash,
     )
       .then(() => "error" as const)
       .catch(() => {
         sendMessage({
-          type: "REJECT_REQUEST_SWITCH_CUSTOM_NETWORK",
+          type: "ALPH_REJECT_REQUEST_SWITCH_CUSTOM_NETWORK",
           data: { actionHash },
         })
         return "timeout" as const

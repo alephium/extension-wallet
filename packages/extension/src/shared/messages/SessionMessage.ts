@@ -1,18 +1,18 @@
 import { WalletAccount } from "../wallet.model"
 
 export type SessionMessage =
-  | { type: "STOP_SESSION" }
-  | { type: "HAS_SESSION" }
-  | { type: "HAS_SESSION_RES"; data: boolean }
-  | { type: "IS_INITIALIZED" }
+  | { type: "ALPH_STOP_SESSION" }
+  | { type: "ALPH_HAS_SESSION" }
+  | { type: "ALPH_HAS_SESSION_RES"; data: boolean }
+  | { type: "ALPH_IS_INITIALIZED" }
   | {
-      type: "IS_INITIALIZED_RES"
+      type: "ALPH_IS_INITIALIZED_RES"
       data: { initialized: boolean }
     }
-  | { type: "START_SESSION"; data: { secure: true; body: string } }
-  | { type: "START_SESSION_REJ" }
-  | { type: "START_SESSION_RES"; data?: WalletAccount }
-  | { type: "LOADING_PROGRESS"; data: number }
-  | { type: "CHECK_PASSWORD"; data: { body: string } }
-  | { type: "CHECK_PASSWORD_REJ" }
-  | { type: "CHECK_PASSWORD_RES" }
+  | { type: "ALPH_START_SESSION"; data: { secure: true; body: string } }
+  | { type: "ALPH_START_SESSION_REJ" }
+  | { type: "ALPH_START_SESSION_RES"; data?: WalletAccount }
+  | { type: "ALPH_LOADING_PROGRESS"; data: number }
+  | { type: "ALPH_CHECK_PASSWORD"; data: { body: string } }
+  | { type: "ALPH_CHECK_PASSWORD_REJ" }
+  | { type: "ALPH_CHECK_PASSWORD_RES" }

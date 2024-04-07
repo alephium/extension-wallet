@@ -1,5 +1,5 @@
 import { sendMessage } from "./messageActions"
 
 export const disconnectAccount = async () => {
-  sendMessage({ type: "DISCONNECT_ACCOUNT" })
+  sendMessage({ type: "ALPH_DISCONNECT_ACCOUNT" })
 }

@@ -9,7 +9,7 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
   respond,
 }) => {
   switch (msg.type) {
-    case "REQUEST_ADD_TOKEN": {
+    case "ALPH_REQUEST_ADD_TOKEN": {
       const selectedAccount = await wallet.getSelectedAccount()
       const networkId = msg.data.networkId ?? selectedAccount?.networkId ?? defaultNetwork.id
       const exists = await hasToken({
@@ -19,12 +19,12 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
 
       if (!exists) {
         const { meta } = await actionQueue.push({
-          type: "REQUEST_ADD_TOKEN",
+          type: "ALPH_REQUEST_ADD_TOKEN",
           payload: msg.data,
         })
 
         return respond({
-          type: "REQUEST_ADD_TOKEN_RES",
+          type: "ALPH_REQUEST_ADD_TOKEN_RES",
           data: {
             actionHash: meta.hash,
           },
@@ -32,12 +32,12 @@ export const handleTokenMessaging: HandleMessage<TokenMessage> = async ({
       }
 
       return respond({
-        type: "REQUEST_ADD_TOKEN_RES",
+        type: "ALPH_REQUEST_ADD_TOKEN_RES",
         data: {},
       })
     }
 
-    case "REJECT_REQUEST_ADD_TOKEN": {
+    case "ALPH_REJECT_REQUEST_ADD_TOKEN": {
       return await actionQueue.remove(msg.data.actionHash)
     }
   }
