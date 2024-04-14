@@ -21,7 +21,7 @@ interface AccountTokensProps {
 export const AccountTokens: FC<AccountTokensProps> = ({ account }) => {
   const { accountNames } = useAccountMetadata()
   const { isBackupRequired } = useBackupRequired()
-  const { tokenDetails: tokensForAccount } = useFungibleTokensWithBalance(account)
+  const { tokenDetails: tokensForAccount, mutate } = useFungibleTokensWithBalance(account)
   const accountName = getAccountName(account, accountNames)
 
   const showBackupBanner = isBackupRequired
@@ -32,6 +32,7 @@ export const AccountTokens: FC<AccountTokensProps> = ({ account }) => {
         <AccountTokensHeader
           account={account}
           tokens={tokensForAccount}
+          refreshTokens={() => mutate()}
           accountName={accountName}
         />
         <AccountTokensButtons tokens={tokensForAccount} />
