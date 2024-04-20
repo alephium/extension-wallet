@@ -195,6 +195,7 @@ export const handleActionApproval = async (
 export const handleActionRejection = async (
   action: ExtQueueItem<ActionItem>,
   _: BackgroundService,
+  error: string
 ): Promise<MessageType | undefined> => {
   const actionHash = action.meta.hash
 
@@ -212,21 +213,21 @@ export const handleActionRejection = async (
     case "ALPH_TRANSACTION": {
       return {
         type: "ALPH_TRANSACTION_FAILED",
-        data: { actionHash },
+        data: { actionHash, error: error },
       }
     }
 
     case "ALPH_SIGN_MESSAGE": {
       return {
         type: "ALPH_SIGN_MESSAGE_FAILURE",
-        data: { actionHash },
+        data: { actionHash, error },
       }
     }
 
     case "ALPH_SIGN_UNSIGNED_TX": {
       return {
         type: "ALPH_SIGN_UNSIGNED_TX_FAILURE",
-        data: { actionHash },
+        data: { actionHash, error },
       }
     }
 

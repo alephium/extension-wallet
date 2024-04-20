@@ -244,21 +244,19 @@ export const alephiumWindowObject: AlephiumWindowObject =
           USER_ACTION_TIMEOUT,
           (x) => x.data.actionHash === actionHash,
         )
-          .then(() => "error" as const)
+          .then((res) => res)
           .catch(() => {
+            const error = 'User action timed out'
             sendMessage({
               type: "ALPH_SIGN_UNSIGNED_TX_FAILURE",
-              data: { actionHash },
+              data: { actionHash, error },
             })
-            return "timeout" as const
+            return { error }
           }),
       ])
 
-      if (result === "error") {
-        throw Error("User abort")
-      }
-      if (result === "timeout") {
-        throw Error("User action timed out")
+      if ("error" in result) {
+        throw Error(result.error)
       }
 
       return result.result
@@ -300,13 +298,14 @@ export const alephiumWindowObject: AlephiumWindowObject =
           USER_ACTION_TIMEOUT,
           (x) => x.data.actionHash === actionHash,
         )
-          .then(() => "error" as const)
+          .then((res) => res)
           .catch(() => {
+            const error = "User action timed out"
             sendMessage({
               type: "ALPH_SIGN_MESSAGE_FAILURE",
-              data: { actionHash },
+              data: { actionHash, error },
             })
-            return "timeout" as const
+            return { error }
           }),
       ])
 
@@ -314,11 +313,8 @@ export const alephiumWindowObject: AlephiumWindowObject =
 
       const result = await resultP
 
-      if (result === "error") {
-        throw Error("User abort")
-      }
-      if (result === "timeout") {
-        throw Error("User action timed out")
+      if ("error" in result) {
+        throw Error(result.error)
       }
 
       return result
@@ -399,21 +395,19 @@ export const alephiumWindowObject: AlephiumWindowObject =
           USER_ACTION_TIMEOUT,
           (x) => x.data.actionHash === actionHash,
         )
-          .then(() => "error" as const)
+          .then((res) => res)
           .catch(() => {
+            const error = "User action time out"
             sendMessage({
               type: "ALPH_TRANSACTION_FAILED",
-              data: { actionHash },
+              data: { actionHash, error },
             })
-            return "timeout" as const
+            return { error }
           }),
       ])
 
-      if (result === "error") {
-        throw Error("User abort")
-      }
-      if (result === "timeout") {
-        throw Error("User action timed out")
+      if ("error" in result) {
+        throw Error(result.error)
       }
 
       return result

@@ -231,7 +231,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           error: `Failed in building transaction: ${e.toString()}`,
           isLoading: false,
         })
-        rejectAction(actionHash)
+        rejectAction(actionHash, `${e}`)
         navigate(routes.error())
       }
     }

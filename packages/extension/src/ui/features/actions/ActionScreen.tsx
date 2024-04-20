@@ -53,14 +53,9 @@ export const ActionScreen: FC = () => {
   }, [action, closePopupIfLastAction])
 
   const onReject = useCallback(async () => {
-    await rejectAction(action.meta.hash)
+    await rejectAction(action.meta.hash, 'User rejected')
     closePopupIfLastAction()
   }, [action, closePopupIfLastAction])
-
-  const rejectAllActions = useCallback(async () => {
-    await rejectAction(actions.map((act) => act.meta.hash))
-    closePopup()
-  }, [actions, closePopup])
 
   /** Focus the extension if it is running in a tab  */
   useEffect(() => {
@@ -94,7 +89,7 @@ export const ActionScreen: FC = () => {
           onDisconnect={async (selectedAccount?: Account) => {
             if (selectedAccount) {
               await removePreAuthorization(action.payload.host, selectedAccount)
-              await rejectAction(action.meta.hash)
+              await rejectAction(action.meta.hash, 'User disconnected')
             }
             closePopupIfLastAction()
           }}
