@@ -1,5 +1,5 @@
-import { H2 } from "@argent/ui"
-import { VStack } from "@chakra-ui/react"
+import { H2, Button } from "@argent/ui"
+import { VStack, Flex } from "@chakra-ui/react"
 import { FC } from "react"
 
 import { prettifyCurrencyValue } from "../../../shared/token/price"

@@ -2,7 +2,7 @@ import { ALPH_TOKEN_ID, NodeProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
-import useSWR from "swr"
+import useSWR, { KeyedMutator } from "swr"
 import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage, useObjectStorage } from "../../../shared/storage/hooks"
@@ -25,6 +25,7 @@ interface UseTokensBase<T> {
   tokenDetails: T[]
   tokenDetailsIsInitialising: boolean
   isValidating: boolean
+  mutate: KeyedMutator<T[] | undefined> | KeyedMutator<T[]>
   error?: any
 }
 
@@ -169,6 +170,7 @@ export const useFungibleTokensWithBalance = (
   const {
     data: fungibleTokens,
     isValidating,
+    mutate,
     error
   } = useSWR(
     account && [
@@ -216,7 +218,8 @@ export const useFungibleTokensWithBalance = (
     tokenDetails: fungibleTokens || [],
     tokenDetailsIsInitialising: allUserTokensIsInitialising && tokenDetailsIsInitialising,
     isValidating: allUserTokensIsValidating || isValidating,
-    error: allUserTokensError || error
+    error: allUserTokensError || error,
+    mutate
   }
 }
 
@@ -297,6 +300,7 @@ export const useAllTokensWithBalance = (
     tokenDetails: userTokens || [],
     tokenDetailsIsInitialising,
     isValidating,
+    mutate,
     error,
   }
 }
