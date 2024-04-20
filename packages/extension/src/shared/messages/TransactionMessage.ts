@@ -38,7 +38,7 @@ export type TransactionMessage =
     }
   | {
       type: "ALPH_TRANSACTION_FAILED"
-      data: { actionHash: string; error?: string }
+      data: { actionHash: string; error: string }
     }
   | { type: "ESTIMATE_TRANSACTION_FEE"; data: Call | Call[] }
   | { type: "ESTIMATE_TRANSACTION_FEE_REJ"; data: { error: string } }

@@ -14,6 +14,6 @@ export const approveAction = (action: ExtensionActionItem | string, additionalDa
   return sendMessage({ type: "ALPH_APPROVE_ACTION", data: { actionHash, additionalData } })
 }
 
-export const rejectAction = (actionHash: AllowArray<string>) => {
-  return sendMessage({ type: "ALPH_REJECT_ACTION", data: { actionHash } })
+export const rejectAction = (actionHash: AllowArray<string>, error: string) => {
+  return sendMessage({ type: "ALPH_REJECT_ACTION", data: { actionHash, error } })
 }

@@ -48,7 +48,7 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
         if (!action) {
           throw new Error("Action not found")
         }
-        const resultMessage = await handleActionRejection(action, background)
+        const resultMessage = await handleActionRejection(action, background, msg.data.error)
         if (resultMessage) {
           await respond(resultMessage)
         }
