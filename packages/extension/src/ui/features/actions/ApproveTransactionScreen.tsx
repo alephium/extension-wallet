@@ -280,7 +280,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   }, [selectedAccount, buildResult, onSubmit, onReject, navigate])
 
   if (!selectedAccount) {
-    rejectAction(actionHash)
+    rejectAction(actionHash, `No account found for network ${networkId}`)
     return <Navigate to={routes.accounts()} />
   }
 
