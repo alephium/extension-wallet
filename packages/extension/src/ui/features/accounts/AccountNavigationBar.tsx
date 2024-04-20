@@ -59,16 +59,14 @@ export const AccountNavigationBar: FC<AccountNavigationBarProps> = ({
           </Text>
         </Button>
       )}
-      <Button
-        p={0}
-        colorScheme={"transparent"}
-        leftIcon={<SyncRounded style={{ blockSize: "16px" }} />}
-        color="neutrals.400"
-        onClick={() => { mutate() }}
-        _hover={{}}
-        _focus={{ background: 'transparent' }}
-      >
-      </Button>
+        <BarIconButton
+          ml={1}
+          aria-label="Sync account"
+          onClick={() => { mutate() }}
+          colorScheme={"neutrals"}
+        >
+          <SyncRounded fontSize="small"/>
+        </BarIconButton>
       <Flex ml={"auto"}>
         <NetworkSwitcher />
         <BarIconButton
