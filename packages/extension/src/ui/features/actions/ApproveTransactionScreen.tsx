@@ -4,7 +4,7 @@ import { getHDWalletPath } from "@alephium/web3-wallet"
 import { L1, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Navigate, useNavigate } from "react-router-dom"
 
 import {
   ReviewTransactionResult,
@@ -280,7 +280,8 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   }, [selectedAccount, buildResult, onSubmit, onReject, navigate])
 
   if (!selectedAccount) {
-    throw Error(`No account found for network ${networkId}`)
+    rejectAction(actionHash)
+    return <Navigate to={routes.accounts()} />
   }
 
   if (!buildResult) {
