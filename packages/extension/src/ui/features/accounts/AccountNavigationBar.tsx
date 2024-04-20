@@ -12,6 +12,8 @@ import { routes, useCurrentPathnameWithQuery } from "../../routes"
 import { NetworkSwitcher } from "../networks/NetworkSwitcher"
 import { getAccountName, useAccountMetadata } from "./accountMetadata.state"
 import { Account } from "../accounts/Account"
+import { SyncRounded } from "@mui/icons-material"
+import { useFungibleTokensWithBalance } from "../accountTokens/tokens.state"
 
 const { SettingsIcon, DropdownDownIcon } = icons
 
@@ -30,7 +32,7 @@ export const AccountNavigationBar: FC<AccountNavigationBarProps> = ({
   const navigate = useNavigate()
   const location = useLocation()
   const returnTo = useCurrentPathnameWithQuery()
-
+  const { mutate } = useFungibleTokensWithBalance(account)
   const openAccountList = useCallback(() => {
     navigate(routes.accounts(location.pathname))
   }, [location.pathname, navigate])
@@ -57,6 +59,16 @@ export const AccountNavigationBar: FC<AccountNavigationBarProps> = ({
           </Text>
         </Button>
       )}
+      <Button
+        p={0}
+        colorScheme={"transparent"}
+        leftIcon={<SyncRounded style={{ blockSize: "16px" }} />}
+        color="neutrals.400"
+        onClick={() => { mutate() }}
+        _hover={{}}
+        _focus={{ background: 'transparent' }}
+      >
+      </Button>
       <Flex ml={"auto"}>
         <NetworkSwitcher />
         <BarIconButton
