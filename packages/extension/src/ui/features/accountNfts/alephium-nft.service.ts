@@ -1,35 +1,22 @@
 import { NFT, CollectionAndNFTMap } from "./alephium-nft.model"
 import { NFTCollection } from "./alephium-nft.model"
 import { Network } from "../../../shared/network"
-import { addressFromContractId, binToHex, contractIdFromAddress, ExplorerProvider, NodeProvider } from "@alephium/web3"
-import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
+import { ExplorerProvider, NodeProvider } from "@alephium/web3"
 
 export const fetchCollectionAndNfts = async (
   nonFungibleTokenIds: string[],
   network: Network
 ): Promise<CollectionAndNFTMap> => {
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-  const nodeProvider = new NodeProvider(network.nodeUrl)
-
   const parentAndTokenIds: CollectionAndNFTMap = {}
-  for (const tokenId of nonFungibleTokenIds) {
-    try {
-      const result = await fetchImmutable(`${tokenId}-parent`, () => explorerProvider.contracts.getContractsContractParent(addressFromContractId(tokenId)))
-      if (result.parent) {
-        const parentContractId = binToHex(contractIdFromAddress(result.parent))
-        const isFollowNFTCollectionStd = await fetchImmutable(`${parentContractId}-std`, () => nodeProvider.guessFollowsNFTCollectionStd(parentContractId))
-
-        // Guess if parent implements the NFT collection standard interface
-        if (isFollowNFTCollectionStd) {
-          if (parentAndTokenIds[parentContractId]) {
-            parentAndTokenIds[parentContractId].push(tokenId)
-          } else {
-            parentAndTokenIds[parentContractId] = [tokenId]
-          }
-        }
-      }
-    } catch (e) {
-      console.error(`Error fetching parent for collection id for NFT ${tokenId}`, e)
+  const nftMetadataz = await explorerProvider.tokens.postTokensNftMetadata(nonFungibleTokenIds)
+  for (const nftMetadata of nftMetadataz) {
+    const tokenId = nftMetadata.id
+    const collectionId = nftMetadata.collectionId
+    if (parentAndTokenIds[collectionId]) {
+      parentAndTokenIds[collectionId].push(tokenId)
+    } else {
+      parentAndTokenIds[collectionId] = [tokenId]
     }
   }
   return parentAndTokenIds
