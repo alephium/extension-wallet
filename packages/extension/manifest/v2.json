@@ -19,9 +19,9 @@
     "storage",
     "notifications",
     "http://localhost/*",
-    "https://wallet.testnet.alephium.org/*",
+    "https://node.testnet.alephium.org/*",
     "https://backend.testnet.alephium.org/*",
-    "https://wallet.mainnet.alephium.org/*",
+    "https://node.mainnet.alephium.org/*",
     "https://backend.mainnet.alephium.org/*"
   ],
   "content_security_policy": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",

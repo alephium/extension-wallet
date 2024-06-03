@@ -11,17 +11,17 @@ export const DEVNET = {
 export const defaultNetworks: Network[] = [
   {
     id: 'mainnet',
-    nodeUrl: 'https://wallet.mainnet.alephium.org',
+    nodeUrl: 'https://node.mainnet.alephium.org',
     explorerApiUrl: 'https://backend.mainnet.alephium.org',
-    explorerUrl: 'https://explorer.mainnet.alephium.org',
+    explorerUrl: 'https://explorer.alephium.org',
     name: 'Mainnet',
     readonly: true
   },
   {
     id: 'testnet',
-    nodeUrl: 'https://wallet.testnet.alephium.org',
+    nodeUrl: 'https://node.testnet.alephium.org',
     explorerApiUrl: 'https://backend.testnet.alephium.org',
-    explorerUrl: 'https://explorer.testnet.alephium.org',
+    explorerUrl: 'https://testnet.alephium.org',
     name: 'Testnet',
   },
   DEVNET
