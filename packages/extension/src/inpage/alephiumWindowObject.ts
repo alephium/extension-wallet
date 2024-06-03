@@ -81,11 +81,11 @@ export const alephiumWindowObject: AlephiumWindowObject =
       }
     }
 
-    unsafeEnable = async (options: EnableOptions) => {
+    unsafeEnable = async (options?: EnableOptions) => {
       return this.#unsafeEnable(options)
     }
 
-    #unsafeEnable = async (options: EnableOptions) => {
+    #unsafeEnable = async (options?: EnableOptions) => {
       this.#checkTabFocused()
 
       const walletAccountP = Promise.race([
@@ -100,9 +100,9 @@ export const alephiumWindowObject: AlephiumWindowObject =
         type: "ALPH_CONNECT_DAPP",
         data: {
           host: window.location.host,
-          networkId: options.networkId,
-          group: options.addressGroup,
-          keyType: options.keyType,
+          networkId: options?.networkId,
+          group: options?.addressGroup,
+          keyType: options?.keyType,
         },
       })
 
@@ -136,7 +136,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
           walletAccount.network.explorerApiUrl,
         )
       }
-      this.onDisconnected = options.onDisconnected
+      this.onDisconnected = options?.onDisconnected
 
       return account
     }
