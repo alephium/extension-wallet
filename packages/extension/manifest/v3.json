@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/chrome-manifest.json",
   "name": "Alephium Extension Wallet",
   "description": "Alephium's official extension wallet with powerful features and a clean UI.",
-  "version": "0.8.20",
+  "version": "0.8.21",
   "manifest_version": 3,
   "action": {
     "default_icon": {
