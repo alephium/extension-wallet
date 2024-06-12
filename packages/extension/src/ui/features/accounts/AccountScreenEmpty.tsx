@@ -44,6 +44,7 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
       const result = await discoverAccounts(currentNetwork.id)
       if (result === "error") {
         console.log("Error discovering accounts")
+        setDiscoveringAccounts(false)
       } else {
         const discoveredAccounts = mapWalletAccountsToAccounts(result.accounts)
         setAllAccounts(allAccountsOnNetwork.concat(discoveredAccounts))

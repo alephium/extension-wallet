@@ -41,6 +41,7 @@ const DeveloperSettings: FC = () => {
       const result = await discoverAccounts(currentNetwork.id)
       if (result === "error") {
         console.log("Error discovering accounts")
+        setLoading(false)
       } else {
         const discoveredAccounts = mapWalletAccountsToAccounts(result.accounts)
         let accountIndex = allWalletAccountsOnNetwork.length
