@@ -1,4 +1,5 @@
 import { FC, useEffect, useRef } from "react"
+import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 
 import {
@@ -20,6 +21,7 @@ export const OnboardingStartScreen: FC = () => {
   const didRunInit = useRef(false)
   const navigate = useNavigate()
   usePageTracking("welcome")
+  const { t } = useTranslation()
 
   useEffect(() => {
     const init = async () => {
@@ -42,21 +44,21 @@ export const OnboardingStartScreen: FC = () => {
     <OnboardingScreen
       length={4}
       currentIndex={0}
-      title="Welcome to Alephium"
-      subtitle="A New Paradigm"
+      title={t("Welcome to Alephium")}
+      subtitle={t("A New Paradigm")}
     >
       <Row gap={"12px"} align="stretch">
         <RectButton onClick={() => navigate(routes.onboardingPassword())}>
           <CreateWalletRectButtonIcon>
             <AccountBalanceWalletIcon />
           </CreateWalletRectButtonIcon>
-          Create a new wallet
+          {t("Create a new wallet")}
         </RectButton>
         <RectButton onClick={() => navigate(routes.onboardingRestoreSeed())}>
           <RestoreWalletRectButtonIcon>
             <RefreshIcon />
           </RestoreWalletRectButtonIcon>
-          Restore an existing wallet
+          {t("Restore an existing wallet")}
         </RectButton>
       </Row>
     </OnboardingScreen>
