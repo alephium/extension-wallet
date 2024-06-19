@@ -10,14 +10,16 @@ import {
   validateSeedRecoveryCompletion,
 } from "../recovery/seedRecovery.state"
 import { OnboardingPasswordScreen } from "./OnboardingPasswordScreen"
+import { useTranslation } from "react-i18next"
 
 export const OnboardingRestorePassword: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   return (
     <OnboardingPasswordScreen
-      overrideTitle="New password"
-      overrideSubmitText="Continue"
+      overrideTitle={t("New password")}
+      overrideSubmitText={t("Continue")}
       overrideSubmit={async ({ password }) => {
         try {
           validateAndSetPassword(password)

@@ -11,14 +11,15 @@ import { PasswordForm } from "../lock/PasswordForm"
 import { CopySeedPhrase } from "../recovery/CopySeedPhrase"
 import { SeedPhrase } from "../recovery/SeedPhrase"
 import { useSeedPhrase } from "../recovery/useSeedPhrase"
+import { useTranslation } from "react-i18next"
 
 const CopySeedScreen: FC = () => {
+  const { t } = useTranslation()
   const seedPhrase = useSeedPhrase()
   return (
     <>
       <Paragraph>
-        Write these words down on paper. It is unsafe to save them on your
-        computer.
+        {t("Write these words down on paper. It is unsafe to save them on your computer.")}
       </Paragraph>
       <SeedPhrase seedPhrase={seedPhrase} />
       <CopySeedPhrase seedPhrase={seedPhrase} />
@@ -29,9 +30,10 @@ const CopySeedScreen: FC = () => {
 const UnlockCopySeed: FC<{
   setPasswordIsValid: (isValid: boolean) => void
 }> = ({ setPasswordIsValid }) => {
+  const { t } = useTranslation()
   return (
     <>
-      <Paragraph>Enter your password to view your recovery phrase.</Paragraph>
+      <Paragraph>{t("Enter your password to view your recovery phrase.")}</Paragraph>
 
       <PasswordForm
         verifyPassword={async (password) => {
@@ -43,7 +45,7 @@ const UnlockCopySeed: FC<{
         {(isDirty) => (
           <StickyGroup>
             <Button type="submit" disabled={!isDirty}>
-              Continue
+              {t("Continue")}
             </Button>
           </StickyGroup>
         )}
@@ -53,6 +55,7 @@ const UnlockCopySeed: FC<{
 }
 
 export const SeedSettingsScreen: FC = () => {
+  const { t } = useTranslation()
   const [passwordIsValid, setPasswordIsValid] = useState(false)
   const returnTo = useReturnTo()
   const navigate = useNavigate()
@@ -68,7 +71,7 @@ export const SeedSettingsScreen: FC = () => {
   return (
     <NavigationContainer
       leftButton={<BarBackButton onClick={onClick} />}
-      title={"View recovery phrase"}
+      title={t("View recovery phrase")}
     >
       <CellStack>
         {!passwordIsValid && (

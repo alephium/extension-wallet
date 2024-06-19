@@ -20,8 +20,10 @@ import { ApproveSignatureScreen } from "./ApproveSignatureScreen"
 import { ApproveSignUnsignedTxScreen } from "./ApproveSignUnsignedTxScreen"
 import { ApproveTransactionScreen } from "./ApproveTransactionScreen"
 import { ConnectDappScreen } from "./connectDapp/ConnectDappScreen"
+import { useTranslation } from "react-i18next"
 
 export const ActionScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const selectedAccount = useSelectedAccount()
   const extensionIsInTab = useExtensionIsInTab()
@@ -53,9 +55,9 @@ export const ActionScreen: FC = () => {
   }, [action, closePopupIfLastAction])
 
   const onReject = useCallback(async () => {
-    await rejectAction(action.meta.hash, 'User rejected')
+    await rejectAction(action.meta.hash, t('User rejected'))
     closePopupIfLastAction()
-  }, [action, closePopupIfLastAction])
+  }, [action, closePopupIfLastAction, t])
 
   /** Focus the extension if it is running in a tab  */
   useEffect(() => {
@@ -89,7 +91,7 @@ export const ActionScreen: FC = () => {
           onDisconnect={async (selectedAccount?: Account) => {
             if (selectedAccount) {
               await removePreAuthorization(action.payload.host, selectedAccount)
-              await rejectAction(action.meta.hash, 'User disconnected')
+              await rejectAction(action.meta.hash, t('User disconnected'))
             }
             closePopupIfLastAction()
           }}
@@ -140,7 +142,7 @@ export const ActionScreen: FC = () => {
             })
             if (!builtTransaction || "error" in builtTransaction) {
               useAppState.setState({
-                error: `Transaction building failed: ${builtTransaction?.error || "unknown"}`,
+                error: `${t('Transaction building failed')}: ${builtTransaction?.error || t("unknown")}`,
                 isLoading: false,
               })
               navigate(routes.error())
@@ -160,11 +162,11 @@ export const ActionScreen: FC = () => {
               // (await) blocking as the window may closes afterwards
               await analytics.track("sentTransaction", {
                 success: !("error" in result),
-                networkId: selectedAccount?.networkId || "unknown",
+                networkId: selectedAccount?.networkId || t("unknown"),
               })
               if ("error" in result) {
                 useAppState.setState({
-                  error: `Sending transaction failed: ${result.error}`,
+                  error: `${t('Sending transaction failed')}: ${result.error}`,
                   isLoading: false,
                 })
                 navigate(routes.error())
@@ -191,7 +193,7 @@ export const ActionScreen: FC = () => {
               ({ data }) => data.actionHash === action.meta.hash,
             )
             await analytics.track("signedMessage", {
-              networkId: selectedAccount?.networkId || "unknown",
+              networkId: selectedAccount?.networkId || t("unknown"),
             })
             closePopupIfLastAction()
             useAppState.setState({ isLoading: false })
@@ -220,7 +222,7 @@ export const ActionScreen: FC = () => {
             ])
             if ("error" in result) {
               useAppState.setState({
-                error: `Sign unsigned tx failed: ${result.error}`,
+                error: `${t('Sign unsigned tx failed')}: ${result.error}`,
                 isLoading: false,
               })
               navigate(routes.error())

@@ -22,6 +22,7 @@ import {
 } from "./Icons/MuiIcons"
 import { WarningIcon } from "./Icons/WarningIcon"
 import IOSSwitch from "./IOSSwitch"
+import { useTranslation } from "react-i18next"
 
 const MessageContainer = styled.div`
   display: flex;
@@ -119,9 +120,10 @@ const ErrorBoundaryFallbackWithCopyError: FC<
 > = ({
   error,
   errorInfo,
-  message = "Sorry, an error occurred",
+  message,
   privacyErrorReporting: privacyErrorReportingProp,
 }) => {
+  const { t } = useTranslation()
   const [viewLogs, setViewLogs] = useState(false)
 
   const toast = useToast()
@@ -157,13 +159,13 @@ ${displayStack}
       })
       if (manuallySubmitted) {
         toast({
-          title: "The error was reported successfully",
+          title: t("The error was reported successfully"),
           status: "success",
           duration: 3000,
         })
       }
     },
-    [error, errorInfo, toast],
+    [error, errorInfo, t, toast],
   )
 
   const privacyErrorReportingSetting = useKeyValueStorage(
@@ -191,15 +193,15 @@ ${displayStack}
     <MessageContainer>
       <AlertIcon style={{ marginBottom: "15px" }} />
       <ErrorMessageContainer>
-        <P style={{ textAlign: "center" }}>{message}</P>
+        <P style={{ textAlign: "center" }}>{message || t("Sorry, an error occurred")}</P>
 
         <ErrorLogsContainer>
           <ShowLogsToggle
             {...makeClickable(() => setViewLogs(!viewLogs), {
-              label: "Show error logs",
+              label: t("Show error logs"),
             })}
           >
-            View Logs
+            {t("View Logs")}
             <KeyboardArrowDownRounded
               style={{
                 transition: "transform 0.2s ease-in-out",
@@ -228,20 +230,20 @@ ${displayStack}
       </ErrorMessageContainer>
 
       <ActionsWrapper>
-        <CopyTooltip message="Copied" copyValue={errorPayload}>
+        <CopyTooltip message={t("Copied")} copyValue={errorPayload}>
           <ActionContainer>
             <ContentCopyIcon />
-            <span>Copy error</span>
+            <span>{t("Copy error")}</span>
           </ActionContainer>
         </CopyTooltip>
         <ActionContainer {...makeClickable(hardResetAndReload)}>
           <RefreshIcon />
-          <span>Retry</span>
+          <span>{t("Retry")}</span>
         </ActionContainer>
         {privacyErrorReporting && (
           <ActionContainer {...makeClickable(reportToSentry)}>
             <WarningIcon />
-            <span>Report error</span>
+            <span>{t("Report error")}</span>
           </ActionContainer>
         )}
       </ActionsWrapper>
@@ -256,9 +258,9 @@ ${displayStack}
                 fontWeight: 600,
               }}
             >
-              Automatic Error Reporting.{" "}
+              {t("Automatic Error Reporting")}.{" "}
               <span style={{ fontWeight: 400 }}>
-                Be aware that shared logs might contain sensitive data
+                {t("Be aware that shared logs might contain sensitive data")}
               </span>
             </span>
             <IOSSwitch

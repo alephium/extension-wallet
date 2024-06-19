@@ -6,6 +6,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form"
 
 import { useAppState } from "../../app.state"
 import { validatePassword } from "../recovery/seedRecovery.state"
+import { useTranslation } from "react-i18next"
 
 interface FieldValues {
   password: string
@@ -20,6 +21,7 @@ export const PasswordForm: FC<PasswordFormProps> = ({
   verifyPassword,
   children,
 }) => {
+  const { t } = useTranslation()
   const { control, formState, handleSubmit, clearErrors, setError } =
     useForm<FieldValues>()
   const { errors, isDirty, isSubmitting } = formState
@@ -52,7 +54,7 @@ export const PasswordForm: FC<PasswordFormProps> = ({
         render={({ field: { ref, ...field } }) => (
           <Input
             autoFocus
-            placeholder="Password"
+            placeholder={t("Password")}
             type="password"
             {...field}
             isInvalid={!isEmpty(errors.password)}
@@ -71,10 +73,10 @@ export const PasswordForm: FC<PasswordFormProps> = ({
             <InfoIcon />
           </Text>
           {errors.password?.type === "validate" && (
-            <FieldError>Password is too short</FieldError>
+            <FieldError>{t("Password is too short")}</FieldError>
           )}
           {errors.password?.type === "required" && (
-            <FieldError>Password is required</FieldError>
+            <FieldError>{t("Password is required")}</FieldError>
           )}
           {errors.password?.message && (
             <FieldError>{errors.password.message}</FieldError>

@@ -31,6 +31,7 @@ import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenMenu } from "../accountTokens/TokenMenu"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { useNFT } from "./useNfts"
+import { useTranslation } from "react-i18next"
 const { SwapIcon } = icons
 
 const { SendIcon } = icons
@@ -43,6 +44,7 @@ export const SendNftSchema: Schema<SendNftInput> = object().required().shape({
 })
 
 export const NftScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { contractAddress, tokenId } = useParams()
   const account = useSelectedAccount()
@@ -61,7 +63,7 @@ export const NftScreen: FC = () => {
             onClick={() => navigate(routes.accountCollections())}
           />
         }
-        title="Not found"
+        title={t("Not found")}
       />
     )
   }
@@ -114,7 +116,7 @@ export const NftScreen: FC = () => {
           <Accordion allowToggle>
             <AccordionItem>
               <AccordionButton justifyContent="space-between">
-                <P4 color="neutrals.300">Description</P4> <AccordionIcon />
+                <P4 color="neutrals.300">{t("Description")}</P4> <AccordionIcon />
               </AccordionButton>
               <AccordionPanel>{nft.metadata.description}</AccordionPanel>
             </AccordionItem>
@@ -141,7 +143,7 @@ export const NftScreen: FC = () => {
             bg="neutrals.700"
             _hover={{ bg: "neutrals.600" }}
           >
-            <B3>Send</B3>
+            <B3>{t("Send")}</B3>
           </Button>
         </SimpleGrid>
       </NavigationContainer>
@@ -150,6 +152,7 @@ export const NftScreen: FC = () => {
 }
 
 export function NoNft() {
+  const { t } = useTranslation()
   return (
     <Flex
       direction="column"
@@ -163,7 +166,7 @@ export function NoNft() {
         <SwapIcon />
       </Text>
       <H5 mt="10" textAlign="center">
-        Nft is not available for now
+        {t("NFT is not available for now")}
       </H5>
     </Flex>
   )

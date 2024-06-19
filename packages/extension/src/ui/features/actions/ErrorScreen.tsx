@@ -4,11 +4,11 @@ import styled from "styled-components"
 
 import { coerceErrorToString } from "../../../shared/utils/error"
 import { useAppState } from "../../app.state"
-import { routes } from "../../routes"
 import { P } from "../../theme/Typography"
 import { EXTENSION_IS_POPUP } from "../browser/constants"
 import { Pre } from "./ApproveSignatureScreen"
 import { DeprecatedConfirmScreen } from "./DeprecatedConfirmScreen"
+import { useTranslation } from "react-i18next"
 
 const SP = styled(P)`
   font-size: 18px;
@@ -20,13 +20,14 @@ const WrappingPre = styled(Pre)`
 `
 
 export const ErrorScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { error } = useAppState()
   const displayError = coerceErrorToString(error)
 
   const message =
     error && error.replace ? error.replace(/^(error:\s*)+/gi, "") : displayError
-  
+
   const onSubmit = () => {
     if (EXTENSION_IS_POPUP) {
       window.close()
@@ -42,7 +43,7 @@ export const ErrorScreen: FC = () => {
       singleButton
       onSubmit={onSubmit}
     >
-      <SP>Something went wrong:</SP>
+      <SP>{t("Something went wrong")}:</SP>
       <WrappingPre>{message}</WrappingPre>
     </DeprecatedConfirmScreen>
   )

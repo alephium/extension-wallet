@@ -20,6 +20,7 @@ import { useCustomNetworks, useNetworks } from "../networks/useNetworks"
 import { DappConnection } from "./DappConnection"
 import { useSelectedNetwork } from "./selectedNetwork.state"
 import { validateRemoveNetwork } from "./validateRemoveNetwork"
+import { useTranslation } from "react-i18next"
 
 const IconButtonCenter = styled(IconButton)`
   margin: 0 auto;
@@ -67,6 +68,7 @@ const RestoreDefaultsButtonIcon = styled.div`
 `
 
 export const NetworkSettingsScreen: FC = () => {
+  const { t } = useTranslation()
   const allNetworks = useNetworks()
   const navigate = useNavigate()
   const [, setSelectedCustomNetwork] = useSelectedNetwork()
@@ -112,7 +114,7 @@ export const NetworkSettingsScreen: FC = () => {
           {!allNetworks ? (
             <Spinner />
           ) : allNetworks.length === 0 ? (
-            <P>No custom networks found</P>
+            <P>{t("No custom networks found")}</P>
           ) : (
             allNetworks.map((network) => (
               <DappConnection
@@ -145,7 +147,7 @@ export const NetworkSettingsScreen: FC = () => {
               <RestoreDefaultsButtonIcon>
                 <RefreshIcon fontSize="inherit" />
               </RestoreDefaultsButtonIcon>
-              <div>Restore default networks</div>
+              <div>{t("Restore default networks")}</div>
             </RestoreDefaultsButton>
           </Footer>
         )}

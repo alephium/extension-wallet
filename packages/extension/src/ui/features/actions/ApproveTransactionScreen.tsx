@@ -30,28 +30,33 @@ import { TxHashContainer } from "./TxHashContainer"
 import { getToken } from "../../../shared/token/storage"
 import { BigNumber } from "ethers"
 import { addTokenToBalances } from "../../../shared/token/balance"
+import { useTranslation } from "react-i18next"
+import i18n from "../../../i18n"
 
 const { AlertIcon } = icons
 
-const LedgerStatus = ({ ledgerState }: { ledgerState: string | undefined }): JSX.Element => (
-  ledgerState === "notfound" ?
-    <Flex
-      direction="column"
-      backgroundColor="#330105"
-      boxShadow="menu"
-      py="3.5"
-      px="3.5"
-      borderRadius="xl"
-    >
-      <Flex gap="1" align="center">
-        <Text color="errorText">
-          <AlertIcon />
-        </Text>
-        <L1 color="errorText">The ledger app is not connected</L1>
+const LedgerStatus = ({ ledgerState }: { ledgerState: string | undefined }): JSX.Element => {
+  const { t } = useTranslation()
+  return (
+    ledgerState === "notfound" ?
+      <Flex
+        direction="column"
+        backgroundColor="#330105"
+        boxShadow="menu"
+        py="3.5"
+        px="3.5"
+        borderRadius="xl"
+      >
+        <Flex gap="1" align="center">
+          <Text color="errorText">
+            <AlertIcon />
+          </Text>
+          <L1 color="errorText">{t("The Ledger app is not connected")}</L1>
+        </Flex>
       </Flex>
-    </Flex>
-    : <></>
-)
+      : <></>
+  )
+}
 
 const minimalGasFee = BigInt(20000) * BigInt(100000000000)
 
@@ -178,7 +183,7 @@ export async function checkBalances(
       const tokenDecimals = tokenInfo?.decimals ?? 0
       const expectedStr = prettifyTokenAmount(amount.toBigInt(), tokenDecimals)
       const haveStr = prettifyTokenAmount((tokenBalance ?? zero).toBigInt(), tokenDecimals)
-      return `Insufficient token ${tokenSymbol}, expected at least ${expectedStr}, got ${haveStr}`
+      return i18n.t("Insufficient token {{ tokenSymbol }}, expected at least {{ expectedStr }}, got {{ haveStr }}", { tokenSymbol, expectedStr, haveStr })
     }
   }
   return undefined
@@ -192,6 +197,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   onReject,
   ...props
 }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   usePageTracking("signTransaction", {
     networkId: selectedAccount?.networkId || "unknown",
@@ -228,7 +234,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         setBuildResult(buildResult)
       } catch (e: any) {
         useAppState.setState({
-          error: `Failed in building transaction: ${e.toString()}`,
+          error: `${t("Transaction building failed")}: ${e.toString()}`,
           isLoading: false,
         })
         rejectAction(actionHash, `${e}`)
@@ -237,7 +243,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     }
 
     build()
-  }, [nodeUrl, selectedAccount, transaction, tokenDetailsIsInitialising, actionHash, navigate])
+  }, [nodeUrl, selectedAccount, transaction, tokenDetailsIsInitialising, actionHash, navigate, t])
 
   const ledgerSign = useCallback(async () => {
     if (selectedAccount === undefined) {
@@ -280,7 +286,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   }, [selectedAccount, buildResult, onSubmit, onReject, navigate])
 
   if (!selectedAccount) {
-    rejectAction(actionHash, `No account found for network ${networkId}`)
+    rejectAction(actionHash, t("No account found for network {{ networkId }}", { networkId }))
     return <Navigate to={routes.accounts()} />
   }
 
@@ -292,21 +298,21 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     <ConfirmScreen
       confirmButtonText={
         !useLedger
-          ? "Sign"
+          ? t("Sign")
           : ledgerState === undefined
-          ? "Sign with Ledger"
+          ? t("Sign with Ledger")
           : (ledgerState === "detecting") || (ledgerState === "notfound")
-          ? "Ledger: Detecting"
+          ? t("Ledger: Detecting")
           : ledgerState === "signing"
-          ? "Ledger: Signing"
+          ? t("Ledger: Signing")
           : ledgerState === "succeeded"
-          ? "Ledger: Succeeded"
+          ? t("Ledger: Succeeded")
           : ledgerState === "failed"
-          ? "Ledger: Failed"
+          ? t("Ledger: Failed")
           : ledgerState
       }
       confirmButtonDisabled={ledgerState !== undefined}
-      rejectButtonText="Cancel"
+      rejectButtonText={t("Cancel")}
       selectedAccount={selectedAccount}
       onSubmit={() => {
         if (useLedger) {

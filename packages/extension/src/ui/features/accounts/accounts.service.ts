@@ -7,6 +7,7 @@ import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { accountsEqual } from "../../../shared/wallet.service"
 import { startSession } from "../../services/backgroundSessions"
 import { Account } from "./Account"
+import i18n from "../../../i18n"
 
 const { toBN } = number
 
@@ -83,7 +84,7 @@ export const getStatus = (
   activeAccount?: BaseWalletAccount,
 ): AccountStatus => {
   if (activeAccount && accountsEqual(account, activeAccount)) {
-    return { code: "CONNECTED", text: "Active" }
+    return { code: "CONNECTED", text: i18n.t("Active") }
   }
   return { code: "DEFAULT", text: "" }
 }

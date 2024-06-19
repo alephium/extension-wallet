@@ -10,10 +10,7 @@ import { ViewOnBlockExplorerIcon } from "../../components/Icons/ViewOnBlockExplo
 import Row, { RowCentered } from "../../components/Row"
 import { routes } from "../../routes"
 import { normalizeAddress } from "../../services/addresses"
-import {
-  openBlockExplorerAddress,
-  useBlockExplorerTitle,
-} from "../../services/blockExplorer.service"
+import { openBlockExplorerAddress } from "../../services/blockExplorer.service"
 import { useOnClickOutside } from "../../services/useOnClickOutside"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import {
@@ -24,6 +21,7 @@ import {
   MenuItemWrapper,
   Separator,
 } from "./DeprecatedAccountMenu"
+import { useTranslation } from "react-i18next"
 
 const StyledMenuContainer = styled(MenuContainer)`
   flex: 1;
@@ -53,6 +51,7 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
   tokenId,
   canHideToken = true,
 }) => {
+  const { t } = useTranslation()
   const [isMenuOpen, setMenuOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
@@ -78,7 +77,7 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
             <MenuItemWrapper>
               <MenuItem>
                 <ContentCopyIcon fontSize="inherit" htmlColor="white" />
-                Copy token ID
+                {t("Copy token ID")}
               </MenuItem>
             </MenuItemWrapper>
           </CopyToClipboard>
@@ -90,7 +89,7 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
               <MenuItemWrapper>
                 <MenuItem>
                   <ContentCopyIcon fontSize="inherit" htmlColor="white" />
-                  Copy token address
+                  {t("Copy token address")}
                 </MenuItem>
               </MenuItemWrapper>
             </CopyToClipboard>
@@ -104,7 +103,7 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
             {!isALPH &&
               <MenuItem>
                 <ViewOnBlockExplorerIcon />
-                View on explorer
+                {t("View on explorer")}
               </MenuItem>
             }
           </MenuItemWrapper>
@@ -118,7 +117,7 @@ export const TokenMenuDeprecated: FC<TokenMenuProps> = ({
                   <IconWrapper>
                     <VisibilityOff fontSize="inherit" htmlColor="white" />
                   </IconWrapper>
-                  Hide this token
+                  {t("Hide this token")}
                 </MenuItem>
               </MenuItemWrapper>
             </>

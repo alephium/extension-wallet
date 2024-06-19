@@ -10,6 +10,7 @@ import {
   getAccountName,
   useAccountMetadata,
 } from "../accounts/accountMetadata.state"
+import { useTranslation } from "react-i18next"
 
 export interface ConfirmPageProps {
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void
@@ -55,11 +56,11 @@ export const StickyGroup = chakra(Box, {
 
 export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   title,
-  confirmButtonText = "Confirm",
+  confirmButtonText,
   confirmButtonDisabled,
   confirmButtonBackgroundColor,
   confirmButtonVariant,
-  rejectButtonText = "Reject",
+  rejectButtonText,
   rejectButtonDisabled,
   rejectButtonBackgroundColor,
   rejectButtonVariant,
@@ -76,12 +77,15 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
   children,
   ...props
 }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { accountNames } = useAccountMetadata()
   const [placeholderHeight, setPlaceholderHeight] = useState(0)
   onReject ??= () => navigate(-1)
 
   const accountHeader = Boolean(selectedAccount && showHeader)
+  const confirmText = confirmButtonText || t("Confirm")
+  const rejectText = rejectButtonText || t("Reject")
 
   return (
     <ScrollContainer>
@@ -144,7 +148,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
                             : undefined
                         }
                       >
-                        {rejectButtonText}
+                        {rejectText}
                       </Button>
                     )}
                     <Button
@@ -158,7 +162,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
                       w="full"
                       type="submit"
                     >
-                      {confirmButtonText}
+                      {confirmText}
                     </Button>
                   </Flex>
                 )}
@@ -179,7 +183,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
                             : undefined
                         }
                       >
-                        {rejectButtonText}
+                        {rejectText}
                       </Button>
                     )}
                     <Button
@@ -192,7 +196,7 @@ export const ConfirmScreen: FC<ConfirmScreenProps> = ({
                       variant={confirmButtonVariant}
                       type="submit"
                     >
-                      {confirmButtonText}
+                      {confirmText}
                     </Button>
                   </Flex>
                 )}

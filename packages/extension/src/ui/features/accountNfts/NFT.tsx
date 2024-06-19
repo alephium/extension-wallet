@@ -6,6 +6,7 @@ import { useNFT } from "./useNfts"
 import { Flex, Spinner } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom"
 import { routes } from "../../routes"
+import { useTranslation } from "react-i18next"
 
 interface NftProps {
   collectionId: string
@@ -15,6 +16,7 @@ interface NftProps {
 }
 
 const Nft: FC<NftProps> = ({ collectionId, nftId, account, network }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { nft } = useNFT(network, collectionId, nftId, account)
   if (nft === undefined) {
@@ -27,7 +29,7 @@ const Nft: FC<NftProps> = ({ collectionId, nftId, account, network }) => {
   return <NftItem
     onClick={() => navigate(routes.sendNft(collectionId, nftId))}
     thumbnailSrc={nft.metadata.image || ""}
-    name={nft.metadata.name || "Untitled"}
+    name={nft.metadata.name || t("Untitled")}
   />
 }
 

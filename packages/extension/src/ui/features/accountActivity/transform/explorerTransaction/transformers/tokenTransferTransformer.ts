@@ -2,6 +2,7 @@ import { isEqualAddress } from "../../../../../services/addresses"
 import { TokenTransferTransaction } from "../../type"
 import { getParameter } from "../getParameter"
 import { IExplorerTransactionTransformer } from "./type"
+import i18n from "../../../../../../i18n"
 
 /** adds erc20 token transfer data */
 
@@ -20,7 +21,7 @@ export default function({
     if (calls?.length === 1) {
       const entity = "TOKEN"
       let action = "TRANSFER"
-      let displayName = "Transfer"
+      let displayName = i18n.t("Transfer")
       const tokenAddress = calls[0].address
       const parameters = calls[0].parameters
       const eventParameters = events?.[0]?.parameters
@@ -32,11 +33,11 @@ export default function({
       if (accountAddress && toAddress && fromAddress) {
         if (isEqualAddress(toAddress, accountAddress)) {
           action = "RECEIVE"
-          displayName = "Receive"
+          displayName = i18n.t("Receive")
         }
         if (isEqualAddress(fromAddress, accountAddress)) {
           action = "SEND"
-          displayName = "Send"
+          displayName = i18n.t("Send")
         }
       }
       result = {

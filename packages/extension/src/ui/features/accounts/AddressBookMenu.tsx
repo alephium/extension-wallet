@@ -12,6 +12,7 @@ import { Account } from "./Account"
 import { getAccountName, useAccountMetadata } from "./accountMetadata.state"
 import { getAccountImageUrl } from "./accounts.service"
 import { ProfilePicture } from "./ProfilePicture"
+import { useTranslation } from "react-i18next"
 
 const MenuContainer = styled.div`
   position: absolute;
@@ -77,6 +78,7 @@ export const AddressBookMenu: FC<AddressBookMenuProps> = ({
   addressBook,
   onAddressSelect,
 }) => {
+  const { t } = useTranslation()
   const { accountNames } = useAccountMetadata()
   const [selectedTab, setSelectedTab] = useState<AddressBookMenuTabs>(
     addressBook.contacts.length > 0 ? "external" : "user",
@@ -123,14 +125,14 @@ export const AddressBookMenu: FC<AddressBookMenuProps> = ({
             selected={selectedTab === "external"}
             onClick={() => setSelectedTab("external")}
           >
-            Addresses
+            {t("Address_other")}
           </Tab>
         )}
         <Tab
           selected={selectedTab === "user"}
           onClick={() => setSelectedTab("user")}
         >
-          My accounts
+          {t("My accounts")}
         </Tab>
       </TabsWrapper>
 

@@ -4,6 +4,7 @@ import { FC } from "react"
 
 import { prettifyTokenAmount } from "../../../../shared/token/price"
 import { SwapTransaction } from "../transform/type"
+import { useTranslation } from "react-i18next"
 
 export interface SwapAccessoryProps {
   transaction: SwapTransaction
@@ -11,6 +12,7 @@ export interface SwapAccessoryProps {
 
 export const SwapAccessory: FC<SwapAccessoryProps> = ({ transaction }) => {
   const { fromAmount, fromToken, toAmount, toToken } = transaction
+  const { t } = useTranslation()
   return (
     <Flex direction={"column"} overflow="hidden">
       <H6
@@ -27,7 +29,7 @@ export const SwapAccessory: FC<SwapAccessoryProps> = ({ transaction }) => {
             symbol: toToken.symbol,
           })
         ) : (
-          <>{toAmount} Unknown</>
+          <>{toAmount} {t("Unknown")}</>
         )}
       </H6>
       <P4
@@ -45,7 +47,7 @@ export const SwapAccessory: FC<SwapAccessoryProps> = ({ transaction }) => {
             symbol: fromToken.symbol,
           })
         ) : (
-          <>{fromAmount} Unknown</>
+          <>{fromAmount} {t("Unknown")}</>
         )}
       </P4>
     </Flex>

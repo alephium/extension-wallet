@@ -11,6 +11,7 @@ import {
 } from "../../../shared/settings/defaultBlockExplorers"
 import { useKeyValueStorage } from "../../../shared/storage/hooks"
 import { SettingsItem, SettingsScreenWrapper, Title } from "./SettingsScreen"
+import { useTranslation } from "react-i18next"
 
 const Default = styled.div`
   color: ${({ theme }) => theme.text2};
@@ -26,6 +27,7 @@ const StyledRadio = styled(Radio)`
 `
 
 export const BlockExplorerSettingsScreen: FC = () => {
+  const { t } = useTranslation()
   const blockExplorerKey = useKeyValueStorage(settingsStore, "blockExplorerKey")
   return (
     <NavigationContainer
@@ -44,7 +46,7 @@ export const BlockExplorerSettingsScreen: FC = () => {
                 <Title>
                   <span>
                     {title}
-                    {isDefault && <Default>Default</Default>}
+                    {isDefault && <Default>{t("Default")}</Default>}
                   </span>
                   <StyledRadio
                     checked={checked}

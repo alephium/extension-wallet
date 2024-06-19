@@ -4,6 +4,7 @@ import { Box, Flex } from "@chakra-ui/react"
 import { FC } from "react"
 
 import { formatTruncatedAddress, normalizeAddress } from "../services/addresses"
+import { useTranslation } from "react-i18next"
 
 export interface AddressCopyButtonProps {
   address: string
@@ -13,15 +14,16 @@ export interface AddressCopyButtonProps {
 
 export const AddressCopyButton: FC<AddressCopyButtonProps> = ({ address, type, title }) => {
   const copyValue = normalizeAddress(address)
+  const { t } = useTranslation()
   return (
-    <CopyTooltip prompt={`Click to copy ${type ?? "address"}`} copyValue={copyValue}>
+    <CopyTooltip prompt={type ? t("Click to copy {{ something }}", { something: type }) : t("Click to copy address")} copyValue={copyValue}>
       <Button
         size="3xs"
         color={"white50"}
         bg={"transparent"}
         _hover={{ bg: "neutrals.700", color: "text" }}
       >
-        {`${title ?? "Address"}: ${formatTruncatedAddress(address, 6)}`}
+        {`${title ?? t("Address_one")}: ${formatTruncatedAddress(address, 6)}`}
       </Button>
     </CopyTooltip>
   )
@@ -33,8 +35,9 @@ export interface AddressCopyButtonMainProps {
 
 export const AddressCopyButtonMain: FC<AddressCopyButtonMainProps> = ({ address }) => {
   const copyValue = normalizeAddress(address)
+  const { t } = useTranslation()
   return (
-    <CopyTooltip prompt={`Click to copy address`} copyValue={copyValue}>
+    <CopyTooltip prompt={t("Click to copy address")} copyValue={copyValue}>
       <Button
         size="3xs"
         color={"white50"}
@@ -49,7 +52,7 @@ export const AddressCopyButtonMain: FC<AddressCopyButtonMainProps> = ({ address 
             /
           </Box>
           <Box>
-            {`Group: ${groupOfAddress(address)}`}
+            {t('Group')}: {groupOfAddress(address)}
           </Box>
         </Flex>
       </Button>

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
+import { useTranslation } from "react-i18next"
 
 const { HideIcon } = icons
 
@@ -19,6 +20,7 @@ const Container = chakra(Center, {
 })
 
 export const HiddenAccountsBar: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
 
@@ -31,7 +33,7 @@ export const HiddenAccountsBar: FC = () => {
         colorScheme="transparent"
         color="white50"
       >
-        Hidden accounts
+        {t("Hidden accounts")}
       </Button>
     </Container>
   )

@@ -6,10 +6,12 @@ import { useNavigate } from "react-router-dom"
 import { routes, useReturnTo } from "../../routes"
 import { useNeedsToShowNetworkStatusWarning } from "./seenNetworkStatusWarning.state"
 import { useCurrentNetwork } from "./useNetworks"
+import { useTranslation } from "react-i18next"
 
 const { NetworkIcon } = icons
 
 export const NetworkWarningScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const returnTo = useReturnTo()
   const network = useCurrentNetwork()
@@ -34,10 +36,10 @@ export const NetworkWarningScreen: FC = () => {
           />
         </Circle>
         <H3 pt={6} pb={3}>
-          Network issues
+          {t("Network issues")}
         </H3>
         <P3 color="neutrals.100">
-          There are connectivity issues for Alephium explorer or full node at the moment on {network.name}
+          {t("There are connectivity issues for Alephium explorer or full node at the moment on {{ network }}", { network: network.name })}
         </P3>
       </Center>
       <Button
@@ -49,7 +51,7 @@ export const NetworkWarningScreen: FC = () => {
           navigate(returnTo ? returnTo : routes.accounts())
         }}
       >
-        I understand
+        {t("I understand")}
       </Button>
     </Center>
   )

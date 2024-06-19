@@ -13,6 +13,7 @@ import { createAccount } from "../accounts/accounts.service"
 import { validatePassword } from "../recovery/seedRecovery.state"
 import { OnboardingButton } from "./ui/OnboardingButton"
 import { OnboardingScreen } from "./ui/OnboardingScreen"
+import { useTranslation } from "react-i18next"
 
 const Form = styled.form`
   display: flex;
@@ -41,6 +42,7 @@ export const OnboardingPasswordScreen: FC<NewWalletScreenProps> = ({
   overrideTitle,
   overrideSubmitText,
 }) => {
+  const { t } = useTranslation()
   usePageTracking("createWallet")
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
@@ -93,18 +95,18 @@ export const OnboardingPasswordScreen: FC<NewWalletScreenProps> = ({
       return overrideSubmitText
     }
     if (isDeploying) {
-      return "Creating wallet…"
+      return `${t("Creating wallet")}…`
     }
-    return deployFailed ? "Retry create wallet" : "Create wallet"
-  }, [deployFailed, isDeploying, overrideSubmitText])
+    return deployFailed ? t("Retry create wallet") : t("Create wallet")
+  }, [deployFailed, isDeploying, overrideSubmitText, t])
 
   return (
     <OnboardingScreen
       back
       length={4}
       currentIndex={2}
-      title={overrideTitle || "New wallet"}
-      subtitle="Enter a password to protect your wallet"
+      title={overrideTitle || t("New wallet")}
+      subtitle={t("Enter a password to protect your wallet")}
     >
       <Form onSubmit={handleSubmit(({ password }) => handleDeploy(password))}>
         <StyledControlledInput
@@ -114,15 +116,15 @@ export const OnboardingPasswordScreen: FC<NewWalletScreenProps> = ({
           rules={{ required: true, validate: validatePassword }}
           autoFocus
           type="password"
-          placeholder="Password"
+          placeholder={t("Password")}
           disabled={isDeploying}
           variant="neutrals800"
         />
         {errors.password?.type === "required" && (
-          <FormError>A new password is required</FormError>
+          <FormError>{t("A new password is required")}</FormError>
         )}
         {errors.password?.type === "validate" && (
-          <FormError>Password is too short</FormError>
+          <FormError>{t("Password is too short")}</FormError>
         )}
         <StyledControlledInput
           name="repeatPassword"
@@ -135,11 +137,11 @@ export const OnboardingPasswordScreen: FC<NewWalletScreenProps> = ({
           variant="neutrals800"
         />
         {errors.repeatPassword?.type === "validate" && (
-          <FormError>Passwords do not match</FormError>
+          <FormError>{t("Passwords do not match")}</FormError>
         )}
         {deployFailed && (
           <FormError>
-            Sorry, unable to create wallet. Please try again later.
+            {t("Sorry, unable to create wallet. Please try again later.")}
           </FormError>
         )}
         <StyledOnboardingButton

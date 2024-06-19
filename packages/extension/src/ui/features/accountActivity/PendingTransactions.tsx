@@ -12,6 +12,7 @@ import { useFungibleTokensWithBalance } from "../accountTokens/tokens.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { ReviewedTransactionListItem } from "./TransactionListItem"
 import { transformReviewedTransaction } from "./transform/transaction/transformTransaction"
+import { useTranslation } from "react-i18next"
 
 interface PendingTransactionsContainerProps {
   account: BaseWalletAccount
@@ -43,10 +44,10 @@ interface PendingTransactionsProps {
 
 export const PendingTransactions: FC<PendingTransactionsProps> = ({
   pendingTransactions,
-  network,
-  tokensByNetwork,
-  accountAddress,
+  network
 }) => {
+  const { t } = useTranslation()
+
   if (!pendingTransactions.length) {
     return null
   }
@@ -55,7 +56,7 @@ export const PendingTransactions: FC<PendingTransactionsProps> = ({
     <>
       <HeaderCell>
         <Flex alignItems={"center"} gap={1}>
-          Pending transactions
+          {t("Pending transactions")}
           <Center
             color={"neutrals.900"}
             backgroundColor={"skyBlue.500"}

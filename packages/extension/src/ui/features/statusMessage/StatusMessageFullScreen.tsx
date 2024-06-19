@@ -13,6 +13,7 @@ import { Paragraph, Title } from "../../components/Page"
 import { getColorForLevel } from "./getColorForLevel"
 import { StatusMessageIcon } from "./StatusMessageIcon"
 import { useStatusMessage } from "./useStatusMessage"
+import { useTranslation } from "react-i18next"
 
 export interface IStatusMessageFullScreen {
   statusMessage: IStatusMessage | undefined
@@ -85,6 +86,7 @@ export const StatusMessageFullScreen: FC<IStatusMessageFullScreen> = ({
   statusMessage,
   onClose,
 }) => {
+  const { t } = useTranslation()
   if (!statusMessage || !statusMessage.message) {
     return null
   }
@@ -115,7 +117,7 @@ export const StatusMessageFullScreen: FC<IStatusMessageFullScreen> = ({
         </Button>
       ) : (
         <Button variant={level} onClick={onClose}>
-          Got it
+          {t("Got it")}
         </Button>
       )}
     </Container>

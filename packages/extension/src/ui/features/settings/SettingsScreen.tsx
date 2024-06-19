@@ -21,6 +21,7 @@ import { useAccount, useSelectedAccount } from "../accounts/accounts.state"
 import { useExtensionIsInTab, useOpenExtensionInTab } from "../browser/tabs"
 import { SettingsMenuItem } from "./SettingsMenuItem"
 import { SupportFooter } from "./SupportFooter"
+import { useTranslation } from "react-i18next"
 
 const {
   LockIcon,
@@ -77,6 +78,7 @@ export const SettingsScreenWrapper = styled.div`
 `
 
 export const SettingsScreen: FC = () => {
+  const { t } = useTranslation()
   const settingsReturnTo = useReturnTo()
   const openExtensionInTab = useOpenExtensionInTab()
   const extensionIsInTab = useExtensionIsInTab()
@@ -94,7 +96,7 @@ export const SettingsScreen: FC = () => {
             }
           />
         }
-        title={"Settings"}
+        title={t("Settings")}
         scrollKey={"settings/SettingsScreen"}
       >
         <CellStack>
@@ -110,39 +112,39 @@ export const SettingsScreen: FC = () => {
               rightIcon={<ExpandIcon />}
               to={routes.settings()}
               onClick={openExtensionInTab}
-              title="Extended view"
+              title={t("Extended view")}
             />
           )}
 
           <SettingsMenuItem
             leftIcon={<AddressBookIcon />}
             to={routes.settingsAddressbook()}
-            title="Address book"
+            title={t("Address book")}
           />
 
           <SettingsMenuItem
             leftIcon={<LinkIcon />}
             to={routes.settingsDappConnections()}
-            title="Connected dapps"
+            title={t("Connected dApps")}
           />
 
           <SettingsMenuItem
             leftIcon={<PasswordIcon />}
             to={routes.settingsSeed(returnTo)}
-            title="Show recovery phrase"
+            title={t("Show recovery phrase")}
           />
 
           <SettingsMenuItem
             leftIcon={<CodeIcon />}
             to={routes.settingsDeveloper()}
-            title="Developer settings"
+            title={t("Developer settings")}
           />
 
           {isPrivacySettingsEnabled && (
             <SettingsMenuItem
               leftIcon={<ShieldIcon />}
               to={routes.settingsPrivacy()}
-              title="Privacy"
+              title={t("Privacy")}
             />
           )}
           <SupportFooter />
@@ -164,7 +166,7 @@ export const SettingsScreen: FC = () => {
           color="white50"
           leftIcon={<LockIcon />}
         >
-          Lock wallet
+          {t("Lock wallet")}
         </Button>
       </Center>
     </>
