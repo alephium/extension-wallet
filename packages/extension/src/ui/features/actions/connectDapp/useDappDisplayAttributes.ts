@@ -1,5 +1,4 @@
 import useSWR from "swr"
-import useSWRImmutable from "swr/immutable"
 import urlJoin from "url-join"
 
 import { generateAvatarImage } from "../../../../shared/avatarImage"

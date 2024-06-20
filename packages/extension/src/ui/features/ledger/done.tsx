@@ -8,6 +8,7 @@ import { P } from "../../theme/Typography"
 import { LedgerPage } from "./LedgerPage"
 import { StyledButton } from "./start"
 import { LedgerStartIllustration } from "./assets/LedgerStart"
+import { useTranslation } from "react-i18next"
 
 const SP = styled(P)`
   font-weight: 400;
@@ -17,16 +18,17 @@ const SP = styled(P)`
 `
 
 export const LedgerDoneScreen: FC = () => {
+  const { t } = useTranslation()
   return (
     <LedgerPage>
       <LedgerStartIllustration />
       <ContentWrapper>
         <StepIndicator length={2} currentIndex={1} />
 
-        <Title style={{ margin: "32px 0" }}>Account added</Title>
+        <Title style={{ margin: "32px 0" }}>{t("Account added")}</Title>
 
         <SP>
-          Your Ledger account has been successfully imported. Enjoy secure self-custody.
+          {t("Your Ledger account has been successfully imported. Enjoy secure self-custody.")}
         </SP>
 
         <StyledButton
@@ -35,7 +37,7 @@ export const LedgerDoneScreen: FC = () => {
           }}
           variant="primary"
         >
-          Finish
+          {t("Finish")}
         </StyledButton>
       </ContentWrapper>
     </LedgerPage>

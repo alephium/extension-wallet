@@ -19,6 +19,7 @@ import { useSelectedAccount } from "../accounts/accounts.state"
 import { TokenList } from "../accountTokens/TokenList"
 import { Token } from "../../../shared/token/type"
 import { useFungibleTokensWithBalance } from "../accountTokens/tokens.state"
+import { useTranslation } from "react-i18next"
 
 const SearchBox = styled.form`
   margin-top: 8px;
@@ -47,6 +48,7 @@ const TabView = styled.div`
 `
 
 export const SendScreen: FC = () => {
+  const { t } = useTranslation()
   const { control, watch } = useForm({
     defaultValues: { query: "" },
   })
@@ -63,14 +65,14 @@ export const SendScreen: FC = () => {
     <NavigationContainer
       leftButton={<BarBackButton />}
       rightButton={<BarCloseButton />}
-      title={"Send"}
+      title={t("Send")}
     >
       <Container>
         <SearchBox>
           <StyledInput
             autoComplete="off"
             name="query"
-            placeholder="Search"
+            placeholder={t("Search")}
             type="text"
             control={control}
             autoFocus

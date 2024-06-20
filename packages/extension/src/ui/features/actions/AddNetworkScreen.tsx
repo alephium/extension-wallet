@@ -8,6 +8,7 @@ import { Button, ButtonGroupHorizontal } from "../../components/Button"
 import { Header } from "../../components/Header"
 import { InputText } from "../../components/InputText"
 import { FormError, H2 } from "../../theme/Typography"
+import { useTranslation } from "react-i18next"
 
 const AddTokenScreenWrapper = styled.div`
   display: flex;
@@ -42,6 +43,7 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
   onReject,
   mode = "add",
 }) => {
+  const { t } = useTranslation()
   const [error, setError] = useState("")
 
   return (
@@ -51,7 +53,7 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
       </Header>
 
       <AddTokenScreenWrapper>
-        <H2>{mode === "add" ? "Add" : "Switch"} Network</H2>
+        <H2>{mode === "add" ? t("Add Network") : t("Switch Network")}</H2>
 
         <form
           onSubmit={async (e) => {
@@ -71,19 +73,19 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
           {requestedNetwork && (
             <>
               <InputText
-                placeholder="Network ID"
+                placeholder={t("Network ID")}
                 type="text"
                 value={requestedNetwork.id}
                 readonly
               />
               <InputText
-                placeholder="Name"
+                placeholder={t("Name")}
                 type="text"
                 value={requestedNetwork.name}
                 readonly
               />
               <InputText
-                placeholder="Node URL"
+                placeholder={t("Node URL")}
                 type="text"
                 value={requestedNetwork.nodeUrl}
                 readonly
@@ -91,7 +93,7 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
               {/*** Show Optional Fields only if the value is provided */}
               {requestedNetwork.explorerUrl && (
                 <InputText
-                  placeholder="Explorer URL"
+                  placeholder={t("Explorer URL")}
                   type="text"
                   value={requestedNetwork.explorerUrl}
                   readonly
@@ -103,11 +105,11 @@ export const AddNetworkScreen: FC<AddNetworkScreenProps> = ({
           <ButtonGroupHorizontal>
             {onReject && (
               <Button onClick={onReject} type="button">
-                Reject
+                {t("Reject")}
               </Button>
             )}
             <Button type="submit">
-              {mode === "add" ? "Add" : "Switch"} Network
+              {mode === "add" ? t("Add Network") : t("Switch Network")}
             </Button>
           </ButtonGroupHorizontal>
         </form>

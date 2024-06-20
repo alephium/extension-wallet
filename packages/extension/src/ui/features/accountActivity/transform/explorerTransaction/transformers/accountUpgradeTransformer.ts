@@ -1,3 +1,4 @@
+import i18n from "../../../../../../i18n"
 import { IExplorerTransactionTransformer } from "./type"
 
 export default function ({
@@ -10,7 +11,7 @@ export default function ({
   ) {
     const entity = "ACCOUNT"
     const action = "UPGRADE"
-    const displayName = "Upgrade account"
+    const displayName = i18n.t("Upgrade account")
     result = {
       ...result,
       action,

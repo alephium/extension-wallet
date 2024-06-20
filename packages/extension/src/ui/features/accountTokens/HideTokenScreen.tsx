@@ -11,6 +11,7 @@ import { DeprecatedConfirmScreen } from "../actions/DeprecatedConfirmScreen"
 import { TokenIcon } from "./TokenIcon"
 import { toTokenView } from "./tokens.service"
 import { useToken } from "./tokens.state"
+import { useTranslation } from "react-i18next"
 
 export const HideTokenAlert = styled(Alert)`
   padding-top: 32px;
@@ -34,6 +35,7 @@ export const TokenName = styled.h3`
 `
 
 export const HideTokenScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
   const { tokenId } = useParams()
@@ -54,15 +56,15 @@ export const HideTokenScreen: FC = () => {
       removeToken(token)
       navigate(routes.accountTokens())
     } catch {
-      setError("Token not hidden")
+      setError(t("Token not hidden"))
     }
   }
 
   return (
     <DeprecatedConfirmScreen
-      title="Hide token"
-      confirmButtonText="Confirm"
-      rejectButtonText="Cancel"
+      title={t("Hide token")}
+      confirmButtonText={t("Confirm")}
+      rejectButtonText={t("Cancel")}
       onSubmit={handleSubmit}
     >
       <TokenTitle>
@@ -72,8 +74,7 @@ export const HideTokenScreen: FC = () => {
       {error && <FormError>{error}</FormError>}
       <HideTokenAlert>
         <P>
-          To see this token again, you will need to add the token to your
-          account.
+          {t("To see this token again, you will need to add the token to your account.")}
         </P>
       </HideTokenAlert>
     </DeprecatedConfirmScreen>

@@ -11,6 +11,7 @@ import { useCustomNavigate } from "../recovery/useCustomNavigate"
 import { StatusMessageBanner } from "../statusMessage/StatusMessageBanner"
 import { OnboardingButton } from "./ui/OnboardingButton"
 import { OnboardingScreen } from "./ui/OnboardingScreen"
+import { useTranslation } from "react-i18next"
 
 const RestoreBackupLink = styled.span`
   padding: 0;
@@ -22,6 +23,7 @@ const RestoreBackupLink = styled.span`
 `
 
 export const OnboardingRestoreSeed: FC = () => {
+  const { t } = useTranslation()
   usePageTracking("restoreWallet")
   const [seedPhraseInput, setSeedPhraseInput] = useState("")
   const [error, setError] = useState("")
@@ -36,7 +38,7 @@ export const OnboardingRestoreSeed: FC = () => {
       validateAndSetSeedPhrase(seedPhraseInput.trim())
       customNavigate(routes.onboardingRestorePassword())
     } catch {
-      setError("Invalid seed phrase")
+      setError(t("Invalid seed phrase"))
     }
   }
 
@@ -45,8 +47,8 @@ export const OnboardingRestoreSeed: FC = () => {
       back
       length={4}
       currentIndex={1}
-      title={"Restore accounts"}
-      subtitle="Enter your recovery phrase (upto 24 words) separated by a space."
+      title={t("Restore accounts")}
+      subtitle={t("Enter your recovery phrase (upto 24 words) separated by a space.")}
     >
       <SeedInput
         mb="1"
@@ -60,10 +62,10 @@ export const OnboardingRestoreSeed: FC = () => {
       <StatusMessageBanner
         extendable={false}
         statusMessage={{
-          message: "Never shown",
+          message: t("Never shown"),
           dismissable: false,
           summary:
-            "You can paste your recovery phrase at once, but typing the words individually is safer",
+            t("You can paste your recovery phrase at once, but typing the words individually is safer"),
           level: "warn",
         }}
         onDismiss={() => {
@@ -77,14 +79,14 @@ export const OnboardingRestoreSeed: FC = () => {
 
       <RowBetween style={{ paddingTop: "32px" }}>
         <OnboardingButton onClick={handleRestoreClick} disabled={disableSubmit}>
-          Continue
+          {t("Continue")}
         </OnboardingButton>
         <RestoreBackupLink
           onClick={() => {
             customNavigate(routes.onboardingRestoreBackup())
           }}
         >
-          Recover using a backup file
+          {t("Recover using a backup file")}
         </RestoreBackupLink>
       </RowBetween>
     </OnboardingScreen>

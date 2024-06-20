@@ -2,6 +2,7 @@ import { includesAddress } from "../../../../../../shared/knownDapps"
 import { isEqualAddress } from "../../../../../services/addresses"
 import { NFTTransaction, NFTTransferTransaction } from "../../type"
 import { IExplorerTransactionTransformer } from "./type"
+import i18n from "../../../../../../i18n"
 
 /** adds erc721 token transfer data */
 
@@ -21,7 +22,7 @@ export default function({
       includesAddress(event.address, nftContractAddresses)
     ) {
       const contractAddress = event.address
-      let displayName = "Transfer NFT"
+      let displayName = i18n.t("Transfer NFT")
       const entity = "NFT"
       let action = "TRANSFER"
       const fromAddress = event.parameters[0].value
@@ -29,7 +30,7 @@ export default function({
       const tokenId = event.parameters[2].value
       if (fromAddress === "0x0") {
         action = "MINT"
-        displayName = "Mint NFT"
+        displayName = i18n.t("Mint NFT")
         result = {
           ...result,
           action,
@@ -43,11 +44,11 @@ export default function({
       if (accountAddress && toAddress && fromAddress) {
         if (isEqualAddress(toAddress, accountAddress)) {
           action = "RECEIVE"
-          displayName = "Receive NFT"
+          displayName = i18n.t("Receive NFT")
         }
         if (isEqualAddress(fromAddress, accountAddress)) {
           action = "SEND"
-          displayName = "Send NFT"
+          displayName = i18n.t("Send NFT")
         }
       }
       result = {

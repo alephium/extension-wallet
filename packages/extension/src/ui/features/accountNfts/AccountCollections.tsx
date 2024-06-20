@@ -9,6 +9,7 @@ import { useCollectionAndNFTs } from "./useNFTCollections"
 import { useNetwork } from "../networks/useNetworks"
 import { Spinner } from "../../components/Spinner"
 import { NftCollectionItem } from "./NftCollectionItem"
+import { useTranslation } from "react-i18next"
 
 interface AccountCollectionsProps {
   account: Account
@@ -60,9 +61,10 @@ export const AccountCollections: FC<AccountCollectionsProps> = ({
   navigateToSend,
   ...rest
 }) => {
+  const { t } = useTranslation()
   return (
     <>
-      {withHeader && <H4 textAlign="center">NFTs</H4>}
+      {withHeader && <H4 textAlign="center">{t("NFTs")}</H4>}
       <Flex direction="column" flex={1} {...rest}>
         <Suspense fallback={<Spinner size={64} style={{ marginTop: 40 }} />}>
           <Collections

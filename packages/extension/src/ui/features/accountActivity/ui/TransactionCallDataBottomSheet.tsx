@@ -12,6 +12,7 @@ import { CopyIconButton } from "../../../components/CopyIconButton"
 import Row from "../../../components/Row"
 import { scrollbarStyle } from "../../../theme"
 import { H3 } from "../../../theme/Typography"
+import { useTranslation } from "react-i18next"
 
 const Container = styled.div`
   padding: 40px 24px 32px;
@@ -45,14 +46,15 @@ export const TransactionCallDataBottomSheet: FC<
   ITransactionCallDataBottomSheet
 > = ({ calls, onClose, ...rest }) => {
   const displayCalls = JSON.stringify(calls, null, 2)
+  const { t } = useTranslation()
   return (
     <CustomBottomSheet {...rest} onClose={onClose}>
       <Container>
-        <H3>Call data</H3>
+        <H3>{t("Call data")}</H3>
         <CallDataContainer>{displayCalls}</CallDataContainer>
         <Row gap="12px">
-          <Button onClick={onClose}>Close</Button>
-          <CopyIconButton copyValue={displayCalls}>Copy</CopyIconButton>
+          <Button onClick={onClose}>{t("Close")}</Button>
+          <CopyIconButton copyValue={displayCalls}>{t("Copy")}</CopyIconButton>
         </Row>
       </Container>
     </CustomBottomSheet>

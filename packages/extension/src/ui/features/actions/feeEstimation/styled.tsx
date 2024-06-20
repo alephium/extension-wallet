@@ -1,6 +1,5 @@
 import styled, { DefaultTheme, css, keyframes } from "styled-components"
 
-import { FieldKey } from "../../../components/Fields"
 import {
   InfoRoundedIcon,
   ReportGmailerrorredRoundedIcon,

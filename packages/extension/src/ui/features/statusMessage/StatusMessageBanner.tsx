@@ -18,6 +18,7 @@ import { getColorForLevel } from "./getColorForLevel"
 import { StatusMessageIcon } from "./StatusMessageIcon"
 import { useShouldShowStatusMessage } from "./useShouldShowStatusMessage"
 import { useStatusMessage } from "./useStatusMessage"
+import { useTranslation } from "react-i18next"
 
 export interface IStatusMessageBanner
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -133,6 +134,7 @@ export const StatusMessageBanner: FC<IStatusMessageBanner> = ({
   extendable = true,
   ...rest
 }) => {
+  const { t } = useTranslation()
   const [expanded, setExpanded] = useState(false)
   const toggleExpanded = useCallback(() => {
     if (extendable) {
@@ -155,7 +157,7 @@ export const StatusMessageBanner: FC<IStatusMessageBanner> = ({
             ></StatusMessageIcon>
           </IconContainer>
           <SummaryText>{summary}</SummaryText>
-          {extendable && <ToggleButton>More</ToggleButton>}
+          {extendable && <ToggleButton>{t("More")}</ToggleButton>}
         </ClickableSummary>
         {dismissable && (
           <DismissButton onClick={onDismiss}>

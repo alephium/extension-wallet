@@ -5,16 +5,18 @@ import { routes, useReturnTo } from "../../routes"
 import { P } from "../../theme/Typography"
 import { DeprecatedConfirmScreen } from "../actions/DeprecatedConfirmScreen"
 import { useBackupRequired } from "./backupDownload.state"
+import { useTranslation } from "react-i18next"
 
 export const SeedRecoveryConfirmScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const returnTo = useReturnTo()
   return (
     <DeprecatedConfirmScreen
-      title="Have you written down your recovery phrase?"
+      title={t("Have you written down your recovery phrase?")}
       switchButtonOrder
-      rejectButtonText="No"
-      confirmButtonText="Yes"
+      rejectButtonText={t("No")}
+      confirmButtonText={t("Yes")}
       onSubmit={() => {
         useBackupRequired.setState({ isBackupRequired: false })
         navigate(returnTo || routes.accountTokens())
@@ -24,8 +26,7 @@ export const SeedRecoveryConfirmScreen: FC = () => {
       }}
     >
       <P>
-        If you lose your recovery phrase or someone steals it, you will lose
-        access to your funds.
+        {t("If you lose your recovery phrase or someone steals it, you will lose access to your funds.")}
       </P>
     </DeprecatedConfirmScreen>
   )

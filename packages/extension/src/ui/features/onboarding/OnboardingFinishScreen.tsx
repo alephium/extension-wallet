@@ -18,6 +18,7 @@ import {
   RectButton,
   TwitterRectButtonIcon,
 } from "./ui/RectButton"
+import { useTranslation } from "react-i18next"
 
 const StyledOnboardingButton = styled(OnboardingButton)`
   margin-top: 32px;
@@ -64,17 +65,18 @@ const StyledPushPinIcon = styled(PushPinIcon)`
 `
 
 const SnackbarMessage: FC = () => {
+  const { t } = useTranslation()
   return (
     <SnackbarMessageContainer>
       <Row>
         <SnackbarIconContainer>
           <ExtensionIcon fontSize="inherit" />
         </SnackbarIconContainer>
-        <span>Pin the Alephium extension for quick access</span>
+        <span>{t("Pin the Alephium extension for quick access")}</span>
       </Row>
       <ArgentXButton>
         <StyledAlephiumLogo />
-        <span>Alephium</span>
+        <span>{t("Alephium")}</span>
         <StyledPushPinIcon fontSize="inherit" />
       </ArgentXButton>
     </SnackbarMessageContainer>
@@ -92,6 +94,7 @@ const TransitionLeft: FC<SlideProps> = (props) => {
 }
 
 export const OnboardingFinishScreen: FC = () => {
+  const { t } = useTranslation()
   const onFinishClick = useCallback(() => {
     window.close()
   }, [])
@@ -106,36 +109,36 @@ export const OnboardingFinishScreen: FC = () => {
       <OnboardingScreen
         length={4}
         currentIndex={3}
-        title="Your wallet is ready!"
-        subtitle="Join Alephium's community"
+        title={t("Your wallet is ready!")}
+        subtitle={t("Join Alephium's community")}
         icon={<StyledCheckCircleOutlineRoundedIcon fontSize="inherit" />}
       >
         <Row gap={"12px"} align="stretch">
           <RectButton
             as="a"
             href="https://twitter.com/alephium"
-            title="Follow Alephium on Twitter"
+            title={t("Follow Alephium on Twitter")}
             target="_blank"
           >
             <TwitterRectButtonIcon>
               <Twitter />
             </TwitterRectButtonIcon>
-            Follow Alephium on Twitter
+            {t("Follow Alephium on Twitter")}
           </RectButton>
           <RectButton
             as="a"
             href="https://alephium.org/discord"
-            title="Join Alephium's Discord"
+            title={t("Join Alephium's Discord")}
             target="_blank"
           >
             <DiscordRectButtonIcon>
               <DiscordIcon />
             </DiscordRectButtonIcon>
-            Join Alephium&apos;s Discord
+            {t("Join Alephium's Discord")}
           </RectButton>
         </Row>
         <StyledOnboardingButton onClick={onFinishClick}>
-          Finish
+          {t("Finish")}
         </StyledOnboardingButton>
       </OnboardingScreen>
     </>

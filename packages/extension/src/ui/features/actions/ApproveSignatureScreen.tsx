@@ -9,6 +9,7 @@ import { Field, FieldGroup, FieldKey, FieldValue, SectionHeader } from "../../co
 import { AccountAddressField } from "./transaction/fields/AccountAddressField"
 import { Box, Flex } from "@chakra-ui/react"
 import { ConfirmScreen } from "./ConfirmScreen"
+import { useTranslation } from "react-i18next"
 
 interface ApproveSignatureScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
@@ -36,6 +37,7 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
   selectedAccount,
   ...props
 }) => {
+  const { t } = useTranslation()
   usePageTracking("signMessage")
 
   return (
@@ -61,24 +63,24 @@ export const ApproveSignatureScreen: FC<ApproveSignatureScreenProps> = ({
         mt="3"
         gap="6"
         >
-          <H2>Sign Message</H2>
+          <H2>{t("Sign Message")}</H2>
           <H6>{dataToSign.host}</H6>
         </Flex>
       }
       { selectedAccount &&
         <FieldGroup>
           <AccountAddressField
-            title="Signer"
+            title={t("Signer")}
             accountAddress={selectedAccount.address}
             networkId={selectedAccount.networkId}
           />
           <Field>
-            <FieldKey>Hasher</FieldKey>
+            <FieldKey>{t("Hasher")}</FieldKey>
             <FieldValue>{dataToSign.messageHasher}</FieldValue>
           </Field>
           <SectionHeader>{dataToSign.message}</SectionHeader>
           <Field>
-            <FieldKey>Network</FieldKey>
+            <FieldKey>{t("Network")}</FieldKey>
             <FieldValue>{selectedAccount.networkName}</FieldValue>
           </Field>
         </FieldGroup>

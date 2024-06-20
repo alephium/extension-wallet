@@ -11,8 +11,10 @@ import { useCurrentNetwork } from "../networks/useNetworks"
 import { Nft } from "./NFT"
 import { NftFigure } from "./NftFigure"
 import { useNFTCollection } from "./useNFTCollections"
+import { useTranslation } from "react-i18next"
 
 export const CollectionNfts: FC = () => {
+  const { t } = useTranslation()
   const { collectionId } = useParams<{ collectionId: string }>()
   const account = useSelectedAccount()
   const navigate = useNavigate()
@@ -33,7 +35,7 @@ export const CollectionNfts: FC = () => {
         }
       >
         <H1 mt="4" textAlign="center">
-          Error loading
+          {t("Error loading")}
         </H1>
       </NavigationContainer>
     )
@@ -78,7 +80,7 @@ export const CollectionNfts: FC = () => {
               justifyContent="center"
               alignItems="center"
             >
-              <H4>{collection?.metadata.name || "Loading..."}</H4>
+              <H4>{collection?.metadata.name || `${t('Loading')}...`}</H4>
             </Flex>
           </Flex>
 
@@ -90,7 +92,7 @@ export const CollectionNfts: FC = () => {
           >
             {collection.nftIds.map((nftId) => (
               <NftFigure key={`${collectionId}-${nftId}`}>
-                <ErrorBoundary fallback={<H4 mt="10" textAlign="center">Deprecated NFT</H4>}>
+                <ErrorBoundary fallback={<H4 mt="10" textAlign="center">{t("Deprecated NFT")}</H4>}>
                   <Suspense fallback={
                     <Flex w="142px" h="142px" justifyContent="center" alignItems="center">
                       <Loading />

@@ -20,6 +20,7 @@ import { formatTruncatedAddress, formatLongString } from "../../../services/addr
 import { useAccountMetadata } from "../../accounts/accountMetadata.state"
 import { getAccountNameForAddress, getContactNameForAddress } from "../../accounts/PrettyAccountAddress"
 import { devnetToken, useTokensInNetwork } from "../../accountTokens/tokens.state"
+import { useTranslation } from "react-i18next"
 
 export interface TransactionActionRow {
   key: string
@@ -75,6 +76,7 @@ function prettifyAddressName(address: string, networkId: string, accountNames: R
 }
 
 export function useExtractActions(transaction: ReviewTransactionResult, networkId: string, tokensInNetwork: Token[]): TransactionAction[] {
+  const { t } = useTranslation()
   const accountNames = useAccountMetadata((x) => x.accountNames)
   const { contacts } = useAddressBook()
   let addressName: string
@@ -84,34 +86,34 @@ export function useExtractActions(transaction: ReviewTransactionResult, networkI
       return transaction.params.destinations.map((destination) => {
         [addressName, found] = prettifyAddressName(destination.address, networkId, accountNames, contacts)
         return {
-          header: { key: 'Send', value: found ? '' : formatTruncatedAddress(destination.address) },
-          details: [{ key: 'To:', value: addressName }, ...getActionsFromAmounts(networkId, destination, tokensInNetwork)]
+          header: { key: t('Send'), value: found ? '' : formatTruncatedAddress(destination.address) },
+          details: [{ key: `${t('To')}:`, value: addressName }, ...getActionsFromAmounts(networkId, destination, tokensInNetwork)]
         }
       })
     case 'DEPLOY_CONTRACT':
       return [{
-        header: { key: 'Deploy contract', value: formatTruncatedAddress(transaction.result.contractAddress) },
+        header: { key: t('Deploy contract'), value: formatTruncatedAddress(transaction.result.contractAddress) },
         details: [
           {
-            key: 'Bytecode',
+            key: t('Bytecode'),
             value: transaction.params.bytecode
           },
           {
-            key: 'Group',
+            key: t('Group'),
             value: `${transaction.result.groupIndex}`
           },
         ]
       }]
     case 'EXECUTE_SCRIPT':
       return [{
-        header: { key: 'Call smart contracts', value: '' },
+        header: { key: t('Call smart contracts'), value: '' },
         details: [
           {
-            key: 'Bytecode',
+            key: t('Bytecode'),
             value: transaction.params.bytecode
           },
           {
-            key: 'Group',
+            key: t('Group'),
             value: `${transaction.result.groupIndex}`
           },
           ...getActionsFromAmounts(networkId, transaction.params, tokensInNetwork)
@@ -119,14 +121,14 @@ export function useExtractActions(transaction: ReviewTransactionResult, networkI
       }]
     case 'UNSIGNED_TX':
       return [{
-        header: { key: 'Sign raw transaction', value: '' },
+        header: { key: t('Sign raw transaction'), value: '' },
         details: [
           {
-            key: 'Unsigned Tx',
+            key: t('Unsigned Tx'),
             value: transaction.params.unsignedTx
           },
           {
-            key: 'Group',
+            key: t('Group'),
             value: `${transaction.result.fromGroup} -> ${transaction.result.toGroup}`
           }
         ]

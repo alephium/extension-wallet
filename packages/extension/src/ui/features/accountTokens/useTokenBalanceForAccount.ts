@@ -12,6 +12,7 @@ import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { isEqualTokenId } from "../../services/token"
 import { Account } from "../accounts/Account"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
+import { useTranslation } from "react-i18next"
 
 interface UseTokenBalanceForAccountArgs {
   token?: Token
@@ -28,6 +29,7 @@ export const useTokenBalanceForAccount = (
   { token, account, shouldReturnError = false }: UseTokenBalanceForAccountArgs,
   config?: SWRConfiguration,
 ) => {
+  const { t } = useTranslation()
   const { pendingTransactions } = useAccountTransactions(account)
   const pendingTransactionsLengthRef = useRef(pendingTransactions.length)
   const key =
@@ -39,6 +41,62 @@ export const useTokenBalanceForAccount = (
         token.networkId,
       ]
       : null
+
+  const errorToMessage = (
+    error: unknown,
+    tokenId: string,
+  ): TokenBalanceErrorMessage => {
+    const errorCode = get(error, "errorCode") as any
+    const message = get(error, "message") as any
+    if (errorCode === "StarknetErrorCode.UNINITIALIZED_CONTRACT") {
+      /** tried to use a contract not found on this network */
+      /** message like "Requested contract address 0x05754af3760f3356da99aea5c3ec39ccac7783d925a19666ebbeca58ff0087f4 is not deployed" */
+      const contractAddressMatches = message.match(/(0x[0-9a-f]+)/gi)
+      const contractAddress = contractAddressMatches?.[0] ?? undefined
+      if (contractAddress) {
+        if (isEqualTokenId(contractAddress, tokenId)) {
+          return {
+            message: t("Token not found"),
+            description: t("Token with address {{ tokenId }} not deployed on this network", { tokenId }),
+          }
+        }
+        return {
+          message: t("Missing contract"),
+          description: t("Contract with address {{ contractAddress }} not deployed on this network", { contractAddress }),
+        }
+      }
+      return {
+        message: t("Missing contract"),
+        description: message,
+      }
+    } else if (
+      errorCode === "StarknetErrorCode.ENTRY_POINT_NOT_FOUND_IN_CONTRACT"
+    ) {
+      /** not a token */
+      return {
+        message: t("Invalid token"),
+        description: t("This is not a valid token contract"),
+      }
+    } else if (isNetworkError(errorCode)) {
+      /* some other network error */
+      return {
+        message: t("Network error"),
+        description: message,
+      }
+    } else {
+      /* show a console message in dev for any unhandled errors that could be better handled here */
+      IS_DEV &&
+        console.warn(
+          `useTokenBalanceForAccount - ignoring errorCode ${errorCode} with error:`,
+          coerceErrorToString(error),
+        )
+    }
+    return {
+      message: t("Error"),
+      description: message,
+    }
+  }
+
   const { data, mutate, ...rest } = useSWR<string | TokenBalanceErrorMessage | undefined>(
     key,
     async () => {
@@ -79,8 +137,8 @@ export const useTokenBalanceForAccount = (
       return {
         tokenWithBalance: undefined,
         errorMessage: {
-          message: "Error",
-          description: "token is not defined",
+          message: t("Error"),
+          description: t("Token is not defined"),
         },
       }
     }
@@ -97,7 +155,7 @@ export const useTokenBalanceForAccount = (
       tokenWithBalance,
       errorMessage,
     }
-  }, [data, token])
+  }, [data, token, t])
 
   return {
     tokenWithBalance,
@@ -121,57 +179,4 @@ export interface TokenBalanceErrorMessage {
   description: string
 }
 
-const errorToMessage = (
-  error: unknown,
-  tokenId: string,
-): TokenBalanceErrorMessage => {
-  const errorCode = get(error, "errorCode") as any
-  const message = get(error, "message") as any
-  if (errorCode === "StarknetErrorCode.UNINITIALIZED_CONTRACT") {
-    /** tried to use a contract not found on this network */
-    /** message like "Requested contract address 0x05754af3760f3356da99aea5c3ec39ccac7783d925a19666ebbeca58ff0087f4 is not deployed" */
-    const contractAddressMatches = message.match(/(0x[0-9a-f]+)/gi)
-    const contractAddress = contractAddressMatches?.[0] ?? undefined
-    if (contractAddress) {
-      if (isEqualTokenId(contractAddress, tokenId)) {
-        return {
-          message: "Token not found",
-          description: `Token with address ${tokenId} not deployed on this network`,
-        }
-      }
-      return {
-        message: "Missing contract",
-        description: `Contract with address ${contractAddress} not deployed on this network`,
-      }
-    }
-    return {
-      message: "Missing contract",
-      description: message,
-    }
-  } else if (
-    errorCode === "StarknetErrorCode.ENTRY_POINT_NOT_FOUND_IN_CONTRACT"
-  ) {
-    /** not a token */
-    return {
-      message: "Invalid token",
-      description: `This is not a valid token contract`,
-    }
-  } else if (isNetworkError(errorCode)) {
-    /* some other network error */
-    return {
-      message: "Network error",
-      description: message,
-    }
-  } else {
-    /* show a console message in dev for any unhandled errors that could be better handled here */
-    IS_DEV &&
-      console.warn(
-        `useTokenBalanceForAccount - ignoring errorCode ${errorCode} with error:`,
-        coerceErrorToString(error),
-      )
-  }
-  return {
-    message: "Error",
-    description: message,
-  }
-}
+

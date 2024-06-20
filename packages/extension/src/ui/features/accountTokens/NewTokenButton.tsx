@@ -3,10 +3,12 @@ import { ComponentProps, FC } from "react"
 import { Link } from "react-router-dom"
 
 import { routes } from "../../routes"
+import { useTranslation } from "react-i18next"
 
 const { AddIcon } = icons
 
 export const NewTokenButton: FC<ComponentProps<typeof Button>> = (props) => {
+  const { t } = useTranslation()
   return (
     <Button
       size={"sm"}
@@ -16,10 +18,10 @@ export const NewTokenButton: FC<ComponentProps<typeof Button>> = (props) => {
       to={routes.newToken()}
       leftIcon={<AddIcon />}
       color="neutrals.400"
-      loadingText={"Fetching tokens"}
+      loadingText={t("Fetching tokens")}
       {...props}
     >
-      New token
+      {t("New token")}
     </Button>
   )
 }

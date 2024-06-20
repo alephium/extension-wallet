@@ -1,3 +1,4 @@
+import i18n from "../../../i18n"
 import { getNetworkSelector } from "../../../shared/account/selectors"
 import { accountStore } from "../../../shared/account/store"
 import { useAppState } from "../../app.state"
@@ -6,7 +7,7 @@ export const validateRemoveNetwork = async (networkId: string) => {
   const { switcherNetworkId } = useAppState.getState()
   if (switcherNetworkId === networkId) {
     throw new Error(
-      `Network ${networkId} is the current network. Change networks before deleting.`,
+      i18n.t("Network {{ networkId }} is the current network. Change networks before deleting.", { networkId })
     )
   }
 
@@ -15,9 +16,7 @@ export const validateRemoveNetwork = async (networkId: string) => {
   )
   if (accountsOnNetwork.length) {
     throw new Error(
-      `Network ${networkId} has ${accountsOnNetwork.length} account${
-        accountsOnNetwork.length === 1 ? "" : "s"
-      } which must be removed before the network can be deleted.`,
+      i18n.t("networkAccounts", { count: accountsOnNetwork.length, networkId })
     )
   }
 

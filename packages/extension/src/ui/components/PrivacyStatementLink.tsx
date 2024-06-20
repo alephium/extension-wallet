@@ -1,4 +1,5 @@
 import { ComponentProps, FC } from "react"
+import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 
@@ -14,5 +15,6 @@ const StyledLink = styled(Link)`
 export const PrivacyStatementLink: FC<ComponentProps<typeof StyledLink>> = ({
   ...props
 }) => {
-  return <StyledLink {...props}>Privacy Statement</StyledLink>
+  const { t } = useTranslation()
+  return <StyledLink {...props}>{t("Privacy Statement")}</StyledLink>
 }

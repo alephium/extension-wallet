@@ -33,6 +33,7 @@ import { FormErrorAlt } from "../../theme/Typography"
 import { getNetworkAccountImageUrl } from "../accounts/accounts.service"
 import { useCurrentNetwork, useNetworks } from "../networks/useNetworks"
 import { useYupValidationResolver } from "./useYupValidationResolver"
+import { useTranslation } from "react-i18next"
 
 const IconWrapper = styled(RowCentered)`
   height: 64px;
@@ -100,6 +101,7 @@ export const AddressbookAddOrEditScreen: FC<AddressbookAddOrEditProps> = ({
   recipientAddress,
   ...props
 }) => {
+  const { t } = useTranslation()
   const { contactId } = useParams<{ contactId?: string }>()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const navigate = useNavigate()
@@ -179,13 +181,13 @@ export const AddressbookAddOrEditScreen: FC<AddressbookAddOrEditProps> = ({
   return (
     <NavigationContainer
       leftButton={<BarBackButton />}
-      title={currentMode === "add" ? "New address" : "Edit address"}
+      title={currentMode === "add" ? t("New address") : t("Edit address")}
     >
       <VStack {...props} p="4">
         <AlertDialog
           isOpen={deleteDialogOpen}
-          title="Delete contact"
-          message="Are you sure you want to delete this contact from your address book?"
+          title={t("Delete contact")}
+          message={t("Are you sure you want to delete this contact from your address book?")}
           onDestroy={handleDelete}
           onCancel={() => setDeleteDialogOpen(false)}
         />
@@ -216,7 +218,7 @@ export const AddressbookAddOrEditScreen: FC<AddressbookAddOrEditProps> = ({
             <div>
               <StyledControlledInput
                 name="name"
-                placeholder="Name"
+                placeholder={t("Name")}
                 autoComplete="off"
                 autoFocus
                 control={control}
@@ -231,7 +233,7 @@ export const AddressbookAddOrEditScreen: FC<AddressbookAddOrEditProps> = ({
             <div>
               <StyledControlledTextArea
                 name="address"
-                placeholder="Alephium Address"
+                placeholder={t("Alephium Address")}
                 autoComplete="false"
                 control={control}
                 minRows={3}
@@ -250,7 +252,7 @@ export const AddressbookAddOrEditScreen: FC<AddressbookAddOrEditProps> = ({
                 options={networksToOptions}
                 defaultValue={currentNetwork.id}
                 control={control}
-                placeholder="Network"
+                placeholder={t("Network")}
                 classNamePrefix="network-selector"
                 isDisabled={networkDisabled}
               />
@@ -261,7 +263,7 @@ export const AddressbookAddOrEditScreen: FC<AddressbookAddOrEditProps> = ({
                 type="button"
                 onClick={() => setDeleteDialogOpen(true)}
               >
-                Remove from address book
+                {t("Remove from address book")}
               </RemoveContactButton>
             )}
           </CellStack>
@@ -271,9 +273,9 @@ export const AddressbookAddOrEditScreen: FC<AddressbookAddOrEditProps> = ({
               type="button"
               onClick={() => (isFunction(onCancel) ? onCancel() : navigate(-1))}
             >
-              Cancel
+              {t("Cancel")}
             </Button>
-            <Button>Save</Button>
+            <Button>{t("Save")}</Button>
           </Row>
         </StyledContactForm>
       </VStack>

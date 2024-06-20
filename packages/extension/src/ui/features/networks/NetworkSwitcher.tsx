@@ -11,7 +11,6 @@ import {
 import { FC, useCallback, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
-import { NetworkStatus } from "../../../shared/network"
 import { useAppState } from "../../app.state"
 import {
   StatusIndicator,
@@ -21,12 +20,14 @@ import { routes } from "../../routes"
 import { autoSelectAccountOnNetwork } from "../accounts/switchAccount"
 import { useNeedsToShowNetworkStatusWarning } from "./seenNetworkStatusWarning.state"
 import { useNetwork, useNetworkStatuses, useNetworks } from "./useNetworks"
+import { useTranslation } from "react-i18next"
 
 interface NetworkSwitcherProps {
   disabled?: boolean
 }
 
 export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const { switcherNetworkId } = useAppState()
@@ -54,7 +55,7 @@ export const NetworkSwitcher: FC<NetworkSwitcherProps> = ({ disabled }) => {
   return (
     <Menu>
       <MenuButton
-        aria-label="Selected network"
+        aria-label={t("Selected network")}
         isDisabled={disabled}
         colorScheme={"neutrals"}
         size={"2xs"}

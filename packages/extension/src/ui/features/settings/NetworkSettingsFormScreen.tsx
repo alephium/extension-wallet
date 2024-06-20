@@ -1,6 +1,5 @@
 import { BarBackButton, NavigationContainer } from "@argent/ui"
-import { Collapse } from "@mui/material"
-import { FC, useEffect, useMemo, useState } from "react"
+import { FC, useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
@@ -10,21 +9,13 @@ import { settingsStore } from "../../../shared/settings"
 import { defaultBlockExplorers } from "../../../shared/settings/defaultBlockExplorers"
 import { useKeyValueStorage } from "../../../shared/storage/hooks"
 import { useAppState } from "../../app.state"
-import { IconButton } from "../../components/IconButton"
-import { ArrowBackIosNewIcon } from "../../components/Icons/MuiIcons"
 import { ControlledInputText } from "../../components/InputText"
-import { makeClickable } from "../../services/a11y"
-import { A, FormError, P } from "../../theme/Typography"
+import { FormError, P } from "../../theme/Typography"
 import { DeprecatedConfirmScreen } from "../actions/DeprecatedConfirmScreen"
 import { slugify } from "./slugify"
 import { useYupValidationResolver } from "./useYupValidationResolver"
+import { useTranslation } from "react-i18next"
 
-const ExtendableControl = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin-top: 8px;
-`
 
 const Wrapper = styled.div`
   display: flex;
@@ -44,8 +35,8 @@ type NetworkSettingsFormScreenProps =
 export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
   props,
 ) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
-  const [expanded, setExpanded] = useState(false)
 
   const blockExplorerKey = useKeyValueStorage(settingsStore, "blockExplorerKey")
   const settingsBlockExplorer = defaultBlockExplorers[blockExplorerKey]
@@ -93,11 +84,11 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <NavigationContainer leftButton={<BarBackButton />} title={"Networks"}>
+    <NavigationContainer leftButton={<BarBackButton />} title={t("Network_other")}>
       <DeprecatedConfirmScreen
-        title={props.mode === "add" ? "Add network" : "Edit network"}
+        title={props.mode === "add" ? t("Add network") : t("Edit network")}
         singleButton
-        confirmButtonText={props.mode === "add" ? "Create" : "Save"}
+        confirmButtonText={props.mode === "add" ? t("Create") : t("Save")}
         smallTopPadding
         confirmButtonDisabled={defaultNetwork.readonly}
         onSubmit={handleSubmit(async (network) => {
@@ -111,12 +102,12 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
         })}
       >
         <Wrapper>
-          <P>Here you can add your own custom network.</P>
+          <P>{t("Here you can add your own custom network.")}</P>
           <ControlledInputText
             autoFocus
             autoComplete="off"
             control={control}
-            placeholder="Network name"
+            placeholder={t("Network name")}
             name="name"
             type="text"
             disabled={defaultNetwork.readonly}
@@ -124,7 +115,7 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
           <ControlledInputText
             autoComplete="off"
             control={control}
-            placeholder="Internal ID"
+            placeholder={t("Internal ID")}
             name="id"
             type="text"
             disabled
@@ -132,7 +123,7 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
           <ControlledInputText
             autoComplete="off"
             control={control}
-            placeholder="Node URL"
+            placeholder={t("Node URL")}
             name="nodeUrl"
             type="url"
             disabled={defaultNetwork.readonly}
@@ -140,7 +131,7 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
           <ControlledInputText
             autoComplete="off"
             control={control}
-            placeholder="Explorer API URL"
+            placeholder={t("Explorer API URL")}
             name="explorerApiUrl"
             type="url"
             disabled={defaultNetwork.readonly}
@@ -148,7 +139,7 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
           <ControlledInputText
             autoComplete="off"
             control={control}
-            placeholder="Explorer URL"
+            placeholder={t("Explorer URL")}
             name="explorerUrl"
             type="url"
             disabled={defaultNetwork.readonly}

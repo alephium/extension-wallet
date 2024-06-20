@@ -16,12 +16,14 @@ import {
 } from "./styled"
 import { TransactionsFeeEstimationProps } from "./types"
 import { getTooltipText } from "./utils"
+import { useTranslation } from "react-i18next"
 
 export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
   accountAddress,
   networkId,
   transaction,
 }) => {
+  const { t } = useTranslation()
   const fee = transaction && BigInt(transaction.result.gasAmount) * BigInt(transaction.result.gasPrice)
   const enoughBalance = true
   const extensionInTab = useExtensionIsInTab()
@@ -43,7 +45,7 @@ export const FeeEstimation: FC<TransactionsFeeEstimationProps> = ({
       >
         <Flex alignItems="center" justifyContent="center">
           <P4 fontWeight="bold" color="neutrals.300">
-            Network fee
+            {t("Network fee")}
           </P4>
           <Tippy
             content={

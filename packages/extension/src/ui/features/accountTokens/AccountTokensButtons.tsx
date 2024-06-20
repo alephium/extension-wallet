@@ -7,6 +7,7 @@ import { TokenWithBalance } from "../../../shared/token/type"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import { useNetworkFeeToken } from "./tokens.state"
+import { useTranslation } from "react-i18next"
 
 const { AddIcon, SendIcon } = icons
 
@@ -17,6 +18,7 @@ interface AccountTokensButtonsProps {
 export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
   tokens
 }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
 
@@ -47,9 +49,8 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
     navigate(routes.fundingQrCode('undefined'))
   }, [navigate])
 
-  const title = "Add funds"
-  const message = `You need to ${"add funds to this account"
-    } before you can send`
+  const title = t("Add funds")
+  const message = t("You need to add funds to this account before you can send")
 
   return (
     <Flex gap={2} mx={"auto"}>
@@ -59,7 +60,7 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
         message={message}
         cancelTitle={undefined}
         onCancel={onCancel}
-        confirmTitle="Add funds"
+        confirmTitle={t("Add funds")}
         onConfirm={onAddFunds}
       />
       <SimpleGrid columns={sendToken ? 2 : 1} spacing={2}>
@@ -69,7 +70,7 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
           size="sm"
           leftIcon={<AddIcon />}
         >
-          Add funds
+          {t("Add funds")}
         </Button>
         {sendToken && (
           <Button
@@ -78,7 +79,7 @@ export const AccountTokensButtons: FC<AccountTokensButtonsProps> = ({
             size="sm"
             leftIcon={<SendIcon />}
           >
-            Send
+            {t("Send")}
           </Button>
         )}
       </SimpleGrid>

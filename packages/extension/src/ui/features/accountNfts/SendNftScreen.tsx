@@ -49,6 +49,7 @@ import { useYupValidationResolver } from "../settings/useYupValidationResolver"
 import { Destination, DUST_AMOUNT } from "@alephium/web3"
 import { sendTransferTransaction } from "../../services/transactions"
 import { useNFT } from "./useNfts"
+import { useTranslation } from "react-i18next"
 
 export const NftImageContainer = styled.div`
   width: 96px;
@@ -84,6 +85,7 @@ export const SendNftSchema: Schema<SendNftInput> = object().required().shape({
 })
 
 export const SendNftScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { nftCollectionId, nftId } = useParams()
   const account = useSelectedAccount()
@@ -263,7 +265,7 @@ export const SendNftScreen: FC = () => {
                       autoComplete="off"
                       control={control}
                       spellCheck={false}
-                      placeholder="Recipient's address"
+                      placeholder={t("Recipient's address")}
                       name="recipient"
                       maxRows={3}
                       style={{
@@ -313,7 +315,7 @@ export const SendNftScreen: FC = () => {
                         onClick={() => setBottomSheetOpen(true)}
                       >
                         <AddIcon fill="#29C5FF" style={{ fontSize: "15px" }} />
-                        Save address
+                        {t("Save address")}
                       </SaveAddressButton>
                     )}
                     {errors.recipient && (
@@ -325,7 +327,7 @@ export const SendNftScreen: FC = () => {
             </Column>
             <ButtonSpacer />
             <Button type="submit" disabled={disableSubmit}>
-              Next
+              {t("Next")}
             </Button>
           </StyledForm>
         </>

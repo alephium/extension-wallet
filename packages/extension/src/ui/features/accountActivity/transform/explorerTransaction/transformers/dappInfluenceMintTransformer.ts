@@ -2,6 +2,7 @@ import { NFTTransaction } from "../../type"
 import { getEntityWithName } from "../getEntityWithName"
 import { getParameter } from "../getParameter"
 import { IExplorerTransactionTransformer } from "./type"
+import i18n from "../../../../../../i18n"
 
 /** adds Influence NFT purcahse */
 
@@ -19,7 +20,7 @@ export default function ({
     if (call) {
       const action = "BUY"
       const entity = "NFT"
-      const displayName = "Buy NFT"
+      const displayName = i18n.t("Buy NFT")
       const dappContractAddress = getParameter(call.parameters, "spender")
       const contractAddress = events[2].address
       const tokenId = getParameter(events[2].parameters, "value")

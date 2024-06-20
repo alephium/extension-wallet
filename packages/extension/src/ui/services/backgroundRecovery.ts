@@ -1,3 +1,4 @@
+import i18n from "../../i18n"
 import { sendMessage, waitForMessage } from "../../shared/messages"
 import { encryptForBackground } from "./crypto"
 
@@ -32,7 +33,7 @@ export const recoverBySeedPhrase = async (
   ])
 
   if (!succeeded) {
-    throw Error("Invalid Seed Phrase")
+    throw Error(i18n.t("Invalid Seed Phrase"))
   }
 }
 

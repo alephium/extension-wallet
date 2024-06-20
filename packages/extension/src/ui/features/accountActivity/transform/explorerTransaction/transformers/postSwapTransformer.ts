@@ -1,6 +1,7 @@
 import { getTokenForContractAddress } from "../../getTokenForContractAddress"
 import { isSwapTransaction } from "../../is"
 import { IExplorerTransactionTransformer } from "./type"
+import i18n from "../../../../../../i18n"
 
 /** adds token swap tokens */
 
@@ -17,9 +18,7 @@ export default function ({
       result.toTokenAddress,
       tokensByNetwork,
     )
-    result.displayName = `Sold ${fromToken?.symbol || "unknown"} for ${
-      toToken?.symbol || "unknown"
-    }`
+    result.displayName = i18n.t("Sold {{ token1 }} for {{ token2 }}", { token1: fromToken?.symbol || i18n.t("unknown"), token2: toToken?.symbol || i18n.t("unknown") })
     if (fromToken) {
       result.fromToken = fromToken
     }

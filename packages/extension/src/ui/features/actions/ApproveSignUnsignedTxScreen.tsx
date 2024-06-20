@@ -8,6 +8,7 @@ import { ConfirmScreen } from "./ConfirmScreen"
 import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import blake from 'blakejs'
 import { TxHashContainer } from "./TxHashContainer"
+import { useTranslation } from "react-i18next"
 
 interface ApproveSignUnsignedTxScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
@@ -21,6 +22,7 @@ export const ApproveSignUnsignedTxScreen: FC<ApproveSignUnsignedTxScreenProps> =
   selectedAccount,
   ...props
 }) => {
+  const { t } = useTranslation()
   const txId = binToHex(blake.blake2b(hexToBinUnsafe(params.unsignedTx), undefined, 32))
   return (
     <ConfirmScreen
@@ -43,7 +45,7 @@ export const ApproveSignUnsignedTxScreen: FC<ApproveSignUnsignedTxScreenProps> =
         mt="3"
         gap="6"
         >
-          <H2>Sign Unsigned Tx</H2>
+          <H2>{t("Sign Unsigned TX")}</H2>
           <H6>{params.host}</H6>
         </Flex>
       }
@@ -64,7 +66,7 @@ export const ApproveSignUnsignedTxScreen: FC<ApproveSignUnsignedTxScreenProps> =
             w="full"
           >
             <P4 color="neutrals.300" fontWeight="bold">
-              UnsignedTx
+              {t("Unsigned TX")}
             </P4>
             <P4
               color="neutrals.400"

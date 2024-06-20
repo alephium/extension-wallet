@@ -12,10 +12,12 @@ import { useCurrentNetwork } from "../networks/useNetworks"
 import { LoadingScreen } from "../actions/LoadingScreen"
 import { mapWalletAccountsToAccounts } from "../accounts/accounts.state"
 import { getDefaultAccountNameByIndex, useAccountMetadata } from "../accounts/accountMetadata.state"
+import { useTranslation } from "react-i18next"
 
 const { SearchIcon } = icons
 
 const DeveloperSettings: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const currentNetwork = useCurrentNetwork()
@@ -65,35 +67,35 @@ const DeveloperSettings: FC = () => {
     <>
       <NavigationBar
         leftButton={<BarBackButton onClick={() => navigate(-1)} />}
-        title={"Developer Settings"}
+        title={t("Developer Settings")}
       />
 
       <CellStack>
         <SettingsMenuItem
           to={routes.settingsNetworks()}
-          title="Manage networks"
+          title={t("Manage networks")}
         />
 
         {isExperimentalSettingsEnabled && (
           <SettingsMenuItem
             to={routes.settingsExperimental()}
-            title="Experimental"
+            title={t("Experimental")}
           />
         )}
 
         <ButtonCell
           rightIcon={<ArrowCircleDownIcon fontSize="inherit" />}
           onClick={onTokenListUpdate}
-          title="Update Token List"
+          title={t("Update Token List")}
         >
-          Update token list
+          {t("Update Token List")}
         </ButtonCell>
         <ButtonCell
           rightIcon={<SearchIcon fontSize="inherit" />}
           onClick={onDiscoverAccounts}
-          title="Discover accounts"
+          title={t("Discover accounts")}
         >
-          Discover accounts
+          {t("Discover accounts")}
         </ButtonCell>
       </CellStack>
     </>

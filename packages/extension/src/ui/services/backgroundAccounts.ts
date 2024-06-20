@@ -7,6 +7,7 @@ import {
 } from "../../shared/wallet.model"
 import { walletStore } from "../../shared/wallet/walletStore"
 import { decryptFromBackground, generateEncryptedSecret } from "./crypto"
+import i18n from "../../i18n"
 
 export const createNewAccount = async (networkId: string, keyType: KeyType, group?: number) => {
   sendMessage({ type: "ALPH_NEW_ACCOUNT", data: { networkId: networkId, keyType: keyType, group: group } })
@@ -16,7 +17,7 @@ export const createNewAccount = async (networkId: string, keyType: KeyType, grou
       waitForMessage("ALPH_NEW_ACCOUNT_REJ").then(() => "error" as const),
     ])
   } catch {
-    throw Error("Could not add new account")
+    throw Error(i18n.t("Could not add new account"))
   }
 }
 
@@ -28,7 +29,7 @@ export const discoverAccounts = async (networkId: string) => {
       waitForMessage("ALPH_DISCOVER_ACCOUNTS_REJ").then(() => "error" as const),
     ])
   } catch {
-    throw Error(`Could not discover active accounts for ${networkId}.`)
+    throw Error(i18n.t("Could not discover active accounts for {{ networkId }}.", { networkId }))
   }
 }
 
@@ -40,7 +41,7 @@ export const importNewLedgerAccount = async (account: Account, hdIndex: number, 
       waitForMessage("ALPH_NEW_LEDGER_ACCOUNT_REJ").then(() => "error" as const),
     ])
   } catch {
-    throw Error("Could add new ledger account")
+    throw Error(i18n.t("Could add new ledger account"))
   }
 }
 
@@ -84,11 +85,11 @@ export const deleteAccount = async (address: string, networkId: string) => {
     await Promise.race([
       waitForMessage("ALPH_DELETE_ACCOUNT_RES"),
       waitForMessage("ALPH_DELETE_ACCOUNT_REJ").then(() => {
-        throw new Error("Rejected")
+        throw new Error(i18n.t("Rejected"))
       }),
     ])
   } catch {
-    throw Error("Could not delete account")
+    throw Error(i18n.t("Could not delete account"))
   }
 }
 
@@ -104,11 +105,11 @@ export const upgradeAccount = async (
     await Promise.race([
       waitForMessage("ALPH_UPGRADE_ACCOUNT_RES"),
       waitForMessage("ALPH_UPGRADE_ACCOUNT_REJ").then(() => {
-        throw new Error("Rejected")
+        throw new Error(i18n.t("Rejected"))
       }),
     ])
   } catch {
-    throw Error("Could not upgrade account")
+    throw Error(i18n.t("Could not upgrade account"))
   }
 }
 

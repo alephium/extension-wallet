@@ -15,6 +15,7 @@ import {
 } from "react"
 
 import { useOnClickOutside } from "../../services/useOnClickOutside"
+import { useTranslation } from "react-i18next"
 
 const { EditIcon, TickIcon } = icons
 
@@ -28,6 +29,7 @@ export const AccountEditName: FC<AccountNameProps> = ({
   onCancel,
   ...rest
 }) => {
+  const { t } = useTranslation()
   const [isEditing, setIsEditing] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -64,7 +66,7 @@ export const AccountEditName: FC<AccountNameProps> = ({
           fontSize="base"
           spellCheck="false"
           onFocus={() => setIsEditing(true)}
-          placeholder="Account name"
+          placeholder={t("Account name")}
           {...rest}
         />
         <InputLeftElement w={6} bottom={0} h="initial" />

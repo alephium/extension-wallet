@@ -14,6 +14,7 @@ import CardSvg from "./card.svg"
 import CoinbaseSvg from "./coinbase.svg"
 import EthereumSvg from "./ethereum.svg"
 import StarkNetSvg from "./starknet.svg"
+import { useTranslation } from "react-i18next"
 
 export const Title = styled.h1`
   font-style: normal;
@@ -25,6 +26,7 @@ export const Title = styled.h1`
 `
 
 export const FundingScreen: FC = () => {
+  const { t } = useTranslation()
   const account = useSelectedAccount()
   const navigate = useNavigate()
   usePageTracking("addFunds", {
@@ -50,24 +52,24 @@ export const FundingScreen: FC = () => {
       }
     >
       <PageWrapper>
-        <Title>How would you like to fund your account?</Title>
+        <Title>{t("How would you like to fund your account?")}</Title>
         <OptionsWrapper>
           {allowFiatPurchase ? (
             <Link to={routes.fundingProvider()}>
               <Option
-                title="Buy with card or bank transfer"
+                title={t("Buy with card or bank transfer")}
                 icon={<CardSvg />}
               />
             </Link>
           ) : (
             <Option
-              title="Buy with card or bank transfer"
+              title={t("Buy with card or bank transfer")}
               description={
                 !isBanxaEnabled
-                  ? "Is coming soon!"
+                  ? t("Is coming soon!")
                   : !isMainnet
-                  ? "Only available on Mainnet"
-                  : "Only available for new accounts"
+                  ? t("Only available on Mainnet")
+                  : t("Only available for new accounts")
               }
               icon={<CardSvg />}
               disabled
@@ -90,7 +92,7 @@ export const FundingScreen: FC = () => {
               onClick={trackAddFundsService("layerswap", account.networkId)}
             >
               <Option
-                title="From an exchange"
+                title={t("From an exchange")}
                 description={"Coinbase, Binance, etc"}
                 icon={<CoinbaseSvg />}
                 hideArrow
@@ -98,7 +100,7 @@ export const FundingScreen: FC = () => {
             </A>
           )}
           <Option
-            title="Bridge from Ethereum and other chains"
+            title={t("Bridge from Ethereum and other chains")}
             icon={<EthereumSvg />}
             onClick={() => navigate(routes.fundingBridge())}
           />

@@ -12,8 +12,10 @@ import {
 import { Button } from "../../components/Button"
 import { P } from "../../theme/Typography"
 import { DappConnection } from "./DappConnection"
+import { useTranslation } from "react-i18next"
 
 export const DappConnectionsSettingsScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   const preAuthorizations = usePreAuthorizations()
@@ -27,12 +29,12 @@ export const DappConnectionsSettingsScreen: FC = () => {
   return (
     <NavigationContainer
       leftButton={<BarBackButton />}
-      title={"Dapp connections"}
+      title={t("dApp connections")}
     >
       <VStack gap="6">
         {preauthorizedHosts === null ? null : preauthorizedHosts.length ===
           0 ? (
-          <P>You haven&apos;t connected to any dapp yet.</P>
+          <P>{t("You haven&apos;t connected to any dApp yet.")}</P>
         ) : (
           <CellStack gap="4">
             {preauthorizedHosts.map((host) => (
@@ -46,14 +48,14 @@ export const DappConnectionsSettingsScreen: FC = () => {
               />
             ))}
 
-            <P>Require all dapps to request a new connection to your wallet?</P>
+            <P>{t("Require all dApps to request a new connection to your wallet?")}</P>
             <Button
               onClick={() => {
                 resetPreAuthorizations()
                 navigate(-1)
               }}
             >
-              Reset all dapp connections
+              {t("Reset all dApp connections")}
             </Button>
           </CellStack>
         )}

@@ -57,6 +57,7 @@ import {
   useToken
 } from "./tokens.state"
 import { useTokenBalanceForAccount } from './useTokenBalanceForAccount'
+import { useTranslation } from "react-i18next"
 
 export const BalanceText = styled.div`
   font-weight: 600;
@@ -210,6 +211,7 @@ const SendSchema: Schema<SendInput> = object().required().shape({
 })
 
 export const SendTokenScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   const account = useSelectedAccount()
@@ -347,7 +349,7 @@ export const SendTokenScreen: FC = () => {
         } catch (e: any) {
           console.error("e", e.message)
           if (e.message.startsWith('fractional component exceeds decimals')) {
-            setFormError('Fractional component exceeds decimals')
+            setFormError(t("Fractional component exceeds decimals"))
           } else {
             setFormError(e.message)
           }
@@ -355,7 +357,7 @@ export const SendTokenScreen: FC = () => {
       }
 
       return BigNumber.from(0)
-    }, [])
+    }, [t])
 
   useEffect(() => {
     if (maxClicked && token) {
@@ -375,14 +377,14 @@ export const SendTokenScreen: FC = () => {
         )
 
       if (isInputAmountGtBalance) {
-        setFormError('Insufficient balance')
+        setFormError(t('Insufficient balance'))
       }
 
       if (errors.amount) {
         if (errors.amount.message) {
           setFormError(errors.amount.message)
         } else {
-          setFormError('Incorrect Amount')
+          setFormError(t('Incorrect amount'))
         }
       }
     }
@@ -437,11 +439,11 @@ export const SendTokenScreen: FC = () => {
       <NavigationContainer
         leftButton={<BarBackButton />}
         rightButton={<TokenMenuDeprecated tokenId={id} />}
-        scrollContent={`Send ${symbol}`}
+        scrollContent={t("Send {{ token }}", { token: symbol })}
       >
         <>
           <ColumnCenter>
-            <H3>Send {symbol}</H3>
+            <H3>{t("Send {{ token }}", { token: symbol })}</H3>
             <BalanceText>{`${balance} ${symbol}`}</BalanceText>
           </ColumnCenter>
           <StyledForm
@@ -514,7 +516,7 @@ export const SendTokenScreen: FC = () => {
                       <>
                         <InputTokenSymbol>{symbol}</InputTokenSymbol>
                         <StyledMaxButton type="button" onClick={handleMaxClick}>
-                          {"MAX"}
+                          {t("MAX")}
                         </StyledMaxButton>
                       </>
                     )}
@@ -561,7 +563,7 @@ export const SendTokenScreen: FC = () => {
                       autoComplete="off"
                       control={control}
                       spellCheck={false}
-                      placeholder="Recipient's address"
+                      placeholder={t("Recipient's address")}
                       name="recipient"
                       maxRows={3}
                       style={{
@@ -611,7 +613,7 @@ export const SendTokenScreen: FC = () => {
                         onClick={() => setBottomSheetOpen(true)}
                       >
                         <AddIcon fill="#29C5FF" style={{ fontSize: "15px" }} />
-                        Save address
+                        {t("Save address")}
                       </SaveAddressButton>
                     )}
                     {errors.recipient && (
@@ -623,15 +625,14 @@ export const SendTokenScreen: FC = () => {
               {
                 (isSweepingAllAsset(tokenId) && txsNumber > 1) ? (
                   <WarningContainer>
-                    Warning: This will sweep all ALPHs to the recipient.
-                    `Due to the number of UTXOs, you need to sign ${txsNumber} transactions`
+                    {t("Warning: This will sweep all ALPHs to the recipient. Due to the number of UTXOs, you need to sign {{ txsNumber }} transactions.", { txsNumber })}
                   </WarningContainer>
                 ) : <></>
               }
             </Column>
             <ButtonSpacer />
             <Button disabled={disableSubmit} type="submit">
-              Next
+              {t("Next")}
             </Button>
           </StyledForm>
         </>

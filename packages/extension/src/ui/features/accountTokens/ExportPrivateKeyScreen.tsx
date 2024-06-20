@@ -13,6 +13,7 @@ import { StickyGroup } from "../actions/DeprecatedConfirmScreen"
 import { PasswordForm } from "../lock/PasswordForm"
 import { StatusMessageBanner } from "../statusMessage/StatusMessageBanner"
 import { usePrivateKey } from "./usePrivateKey"
+import { useTranslation } from "react-i18next"
 
 const Container = styled.div`
   display: flex;
@@ -50,6 +51,7 @@ const WarningContainer = styled.div`
 `
 
 const Wrapper: FC<{ children: ReactNode }> = ({ children }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   return (
     <NavigationContainer
@@ -59,7 +61,7 @@ const Wrapper: FC<{ children: ReactNode }> = ({ children }) => {
       }
     >
       <Container>
-        <H2>Export private key</H2>
+        <H2>{t("Export private key")}</H2>
         {children}
       </Container>
     </NavigationContainer>
@@ -67,6 +69,7 @@ const Wrapper: FC<{ children: ReactNode }> = ({ children }) => {
 }
 
 export const ExportPrivateKeyScreen: FC = () => {
+  const { t } = useTranslation()
   const [isPasswordValid, setPasswordValid] = useState(false)
 
   const navigate = useNavigate()
@@ -82,13 +85,13 @@ export const ExportPrivateKeyScreen: FC = () => {
   if (!isPasswordValid) {
     return (
       <Wrapper>
-        <Paragraph>Enter your password to export your private key.</Paragraph>
+        <Paragraph>{t("Enter your password to export your private key.")}</Paragraph>
 
         <PasswordForm verifyPassword={handleVerifyPassword}>
           {({ isDirty, isSubmitting }) => (
             <StickyGroup>
               <Button type="submit" disabled={!isDirty || isSubmitting}>
-                Export
+                {t("Export")}
               </Button>
             </StickyGroup>
           )}
@@ -99,15 +102,15 @@ export const ExportPrivateKeyScreen: FC = () => {
 
   return (
     <Wrapper>
-      <Paragraph>This is your private key (click to copy)</Paragraph>
+      <Paragraph>{t("This is your private key (click to copy)")}</Paragraph>
 
       <StatusMessageBanner
         extendable={false}
         statusMessage={{
-          message: "Never shown",
+          message: t("Never shown"),
           dismissable: false,
           summary:
-            "This is a feature for developers only. You wont be able to recover your account with the private key! Please backup your Seed Phrase instead.",
+            t("This is a feature for developers only. You wont be able to recover your account with the private key! Please backup your Seed Phrase instead."),
           level: "warn",
         }}
         onDismiss={() => {
@@ -120,18 +123,17 @@ export const ExportPrivateKeyScreen: FC = () => {
       />
 
       {privateKey && (
-        <CopyTooltip copyValue={privateKey} message="Copied">
+        <CopyTooltip copyValue={privateKey} message={t("Copied")}>
           <KeyContainer>{privateKey}</KeyContainer>
         </CopyTooltip>
       )}
 
       <WarningContainer>
-        Warning: Never disclose this key. Anyone with your private keys can
-        steal any assets held in your account.
+        {t("Warning: Never disclose this key. Anyone with your private keys can steal any assets held in your account.")}
       </WarningContainer>
 
       <StickyGroup>
-        <Button onClick={() => navigate(-1)}>Done</Button>
+        <Button onClick={() => navigate(-1)}>{t("Done")}</Button>
       </StickyGroup>
     </Wrapper>
   )

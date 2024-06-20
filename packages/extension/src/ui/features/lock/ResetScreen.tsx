@@ -6,8 +6,10 @@ import { routes } from "../../routes"
 import { resetAll } from "../../services/background"
 import { P } from "../../theme/Typography"
 import { DeprecatedConfirmScreen } from "../actions/DeprecatedConfirmScreen"
+import { useTranslation } from "react-i18next"
 
 export const ResetScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const theme = useTheme()
 
@@ -24,9 +26,7 @@ export const ResetScreen: FC = () => {
       }}
     >
       <P>
-        If you reset your wallet, the only way to recover it is with your
-        seed phrase. Make sure to back it up from the Argent X settings
-        and save it somewhere securely before resetting the extension
+        {t("If you reset your wallet, the only way to recover it is with your seed phrase. Make sure to back it up from the settings and save it somewhere securely before resetting the extension")}
       </P>
     </DeprecatedConfirmScreen>
   )

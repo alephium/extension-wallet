@@ -12,10 +12,12 @@ import { useActions } from "../actions/actions.state"
 import { EXTENSION_IS_POPUP } from "../browser/constants"
 import { recover } from "../recovery/recovery.service"
 import { PasswordForm } from "./PasswordForm"
+import { useTranslation } from "react-i18next"
 
-const { AlephiumLogoDark, AlephiumLogoLight } = logos
+const { AlephiumLogoLight } = logos
 
 export const LockScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const actions = useActions()
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -36,14 +38,14 @@ export const LockScreen: FC = () => {
           right={0}
           top={0}
         >
-          Reset
+          {t("Reset")}
         </P4>
         <Text pt={18} fontSize="10xl">
           <AlephiumLogoLight />
         </Text>
         <Box mt="8" mb="8" width="100%">
-          <H2>Welcome back</H2>
-          <P3 color="neutrals.300">Unlock your wallet to continue</P3>
+          <H2>{t("Welcome back")}</H2>
+          <P3 color="neutrals.300">{t("Unlock your wallet to continue")}</P3>
         </Box>
 
         <Box width="100%">
@@ -64,7 +66,7 @@ export const LockScreen: FC = () => {
                 return true
               } catch {
                 useAppState.setState({
-                  error: "Incorrect password",
+                  error: t("Incorrect password"),
                 })
                 return false
               } finally {
@@ -81,9 +83,9 @@ export const LockScreen: FC = () => {
                   disabled={!isDirty || isSubmitting}
                   width="100%"
                   isLoading={isLoading}
-                  loadingText="Unlocking"
+                  loadingText={t("Unlocking")}
                 >
-                  Unlock
+                  {t("Unlock")}
                 </Button>
               </Flex>
             )}

@@ -13,6 +13,7 @@ import { discoverAccounts } from "../../services/backgroundAccounts"
 import { LoadingScreen } from "../actions/LoadingScreen"
 import { getAccounts, accountsOnNetwork } from "../../services/backgroundAccounts"
 import { getDefaultAccountNameByIndex, useAccountMetadata } from "./accountMetadata.state"
+import { useTranslation } from "react-i18next"
 
 const { WalletIcon, AddIcon } = icons
 
@@ -23,6 +24,7 @@ export interface AccountScreenEmptyProps {
 export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
   onAddAccount,
 }) => {
+  const { t } = useTranslation()
   const currentNetwork = useCurrentNetwork()
   const initialAllAccounts = useAccounts({ showHidden: true })
   const [allAccounts, setAllAccounts] = useState(initialAllAccounts)
@@ -77,10 +79,10 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
 
   if (allAccounts.length === 0 && discoveringAccounts) {
     return <LoadingScreen texts={[
-      "Discovering accounts…",
-      "Please wait…",
-      "Patience is a virtue…",
-      "Almost there…",
+      t("Discovering accounts…"),
+      t("Please wait…"),
+      t("Patience is a virtue…"),
+      t("Almost there…"),
     ]} />
   }
 
@@ -100,8 +102,11 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
       <AccountNavigationBar showAccountButton={false} account={undefined} />
       <Empty
         icon={<WalletIcon />}
-        title={`You have no ${hasHiddenAccounts ? "visible " : ""}accounts on ${currentNetwork.name
-          }`}
+        title={
+          hasHiddenAccounts
+            ? t("You have no visible accounts on {{ network }}", { network: currentNetwork.name })
+            : t("You have no accounts on {{ network }}", { network: currentNetwork.name })
+          }
       >
         <EmptyButton
           size={"sm"}
@@ -109,7 +114,7 @@ export const AccountScreenEmpty: FC<AccountScreenEmptyProps> = ({
           onClick={onAddAccount}
           loadingText={"Creating"}
         >
-          New account
+          {t("New account")}
         </EmptyButton>
       </Empty>
       {hasHiddenAccounts && <HiddenAccountsBar />}

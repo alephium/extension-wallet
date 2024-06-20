@@ -4,6 +4,7 @@ import styled from "styled-components"
 import { useLoadingProgress } from "../../app.state"
 import { Spinner } from "../../components/Spinner"
 import { Greetings } from "../lock/Greetings"
+import i18n from "../../../i18n"
 
 const LoadingScreenWrapper = styled.div`
   display: flex;
@@ -16,10 +17,10 @@ const LoadingScreenWrapper = styled.div`
 `
 
 const loadingTexts = [
-  "Loading…",
-  "Please wait…",
-  "Patience is a virtue…",
-  "Almost there…",
+  i18n.t("Loading…"),
+  i18n.t("Please wait…"),
+  i18n.t("Patience is a virtue…"),
+  i18n.t("Almost there…"),
 ]
 
 export interface LoadingScreenProps {

@@ -1,5 +1,6 @@
 import { BarCloseButton, NavigationContainer } from "@argent/ui"
 import { ComponentProps, FC, ReactNode } from "react"
+import { useTranslation } from "react-i18next"
 import styled from "styled-components"
 
 const Container = styled.div`
@@ -25,14 +26,15 @@ interface ITransactionDetailWrapper
 }
 
 export const TransactionDetailWrapper: FC<ITransactionDetailWrapper> = ({
-  title = "Transaction",
+  title,
   children,
   ...rest
 }) => {
+  const { t } = useTranslation()
   return (
     <NavigationContainer rightButton={<BarCloseButton />} {...rest}>
       <Container>
-        <Title>{title}</Title>
+        <Title>{title || t("Transaction")}</Title>
         {children}
       </Container>
     </NavigationContainer>

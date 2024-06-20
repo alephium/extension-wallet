@@ -8,8 +8,10 @@ import { DeprecatedConfirmScreen } from "../actions/DeprecatedConfirmScreen"
 import { CopySeedPhrase } from "./CopySeedPhrase"
 import { SeedPhrase } from "./SeedPhrase"
 import { useSeedPhrase } from "./useSeedPhrase"
+import { useTranslation } from "react-i18next"
 
 export const SeedRecoverySetupScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const seedPhrase = useSeedPhrase()
   const returnTo = useReturnTo()
@@ -23,15 +25,14 @@ export const SeedRecoverySetupScreen: FC = () => {
     >
       <DeprecatedConfirmScreen
         smallTopPadding
-        title="Recovery phrase"
+        title={t("Recovery phrase")}
         singleButton
-        confirmButtonText="Continue"
+        confirmButtonText={t("Continue")}
         confirmButtonDisabled={!seedPhrase}
         onSubmit={() => navigate(routes.confirmSeedRecovery(returnTo))}
       >
         <Paragraph>
-          Write these words down on paper. It is unsafe to save them on your
-          computer.
+          {t("Write these words down on paper. It is unsafe to save them on your computer.")}
         </Paragraph>
 
         <SeedPhrase seedPhrase={seedPhrase} />

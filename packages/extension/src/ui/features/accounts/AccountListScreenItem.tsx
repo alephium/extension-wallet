@@ -12,6 +12,7 @@ import { useOriginatingHost } from "../browser/useOriginatingHost"
 import { Account } from "./Account"
 import { AccountListItem } from "./AccountListItem"
 import { getAccountName, useAccountMetadata } from "./accountMetadata.state"
+import { useTranslation } from "react-i18next"
 
 const { MoreIcon, ChevronRightIcon } = icons
 
@@ -41,6 +42,7 @@ export const AccountListScreenItem: FC<IAccountListScreenItem> = ({
   clickNavigateSettings,
   returnTo,
 }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const status = useAccountStatus(account, selectedAccount)
   const originatingHost = useOriginatingHost()
@@ -76,7 +78,7 @@ export const AccountListScreenItem: FC<IAccountListScreenItem> = ({
   return (
     <Flex position={"relative"} direction={"column"}>
       <AccountListItem
-        aria-label={`Select ${accountName}`}
+        aria-label={`${t('Select {{ accountName }}', { accountName })}`}
         onClick={clickNavigateSettings ? onAccountEdit : onClick}
         accountName={accountName}
         accountAddress={account.address}
@@ -97,7 +99,7 @@ export const AccountListScreenItem: FC<IAccountListScreenItem> = ({
           <IconContaier>
             <Button
               as={Circle}
-              aria-label={`${accountName} options`}
+              aria-label={t('{{ accountName }} options', { accountName } )}
               colorScheme="transparent"
               width={8}
               height={8}

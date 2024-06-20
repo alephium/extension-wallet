@@ -1,3 +1,4 @@
+import i18n from "../../i18n"
 import { sendMessage, waitForMessage } from "../../shared/messages"
 import { encryptForBackground } from "./crypto"
 
@@ -24,7 +25,7 @@ export const startSession = async (password: string): Promise<void> => {
   ])
 
   if (!succeeded) {
-    throw Error("Wrong password")
+    throw Error(i18n.t("Incorrect password"))
   }
 }
 
