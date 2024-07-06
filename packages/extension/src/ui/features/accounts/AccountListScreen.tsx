@@ -24,6 +24,7 @@ import {
 } from "./accounts.state"
 import { HiddenAccountsBar } from "./HiddenAccountsBar"
 import { routes } from "../../routes"
+import { useTranslation } from "react-i18next"
 
 const { AddIcon } = icons
 
@@ -32,6 +33,7 @@ const Paragraph = styled(P)`
 `
 
 export const AccountListScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const returnTo = useReturnTo()
   const selectedAccount = useSelectedAccount()
@@ -70,8 +72,9 @@ export const AccountListScreen: FC = () => {
           {isBackupRequired && <RecoveryBanner />}
           {visibleAccounts.length === 0 && (
             <Paragraph>
-              No {hasHiddenAccounts ? "visible" : ""} accounts on this network,
-              click below to add one.
+              {hasHiddenAccounts
+                ? t("No visible accounts on this network, click below to add one.")
+                : t("No accounts on this network, click below to add one.")}
             </Paragraph>
           )}
           {visibleAccounts.map((account) => (

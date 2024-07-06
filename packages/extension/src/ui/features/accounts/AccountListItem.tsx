@@ -11,6 +11,7 @@ import {
 import { TransactionStatusIndicator } from "../../components/StatusIndicator"
 import { formatTruncatedAddress } from "../../services/addresses"
 import { getNetworkAccountImageUrl } from "./accounts.service"
+import { useTranslation } from "react-i18next"
 
 const { LinkIcon, ViewIcon, UpgradeIcon } = icons
 
@@ -74,23 +75,26 @@ const NetworkStatusWrapper = chakra(Flex, {
   },
 })
 
-export const AccountListItemUpgradeBadge: FC = () => (
-  <Tooltip label="This account needs to be upgraded">
-    <Circle
-      position={"absolute"}
-      right={-0.5}
-      bottom={-0.5}
-      size={5}
-      bg={"primary.500"}
-      border={"2px solid"}
-      borderColor={"neutrals.800"}
-      color={"neutrals.800"}
-      fontSize={"2xs"}
-    >
-      <UpgradeIcon />
-    </Circle>
-  </Tooltip>
-)
+export const AccountListItemUpgradeBadge: FC = () => {
+  const { t } = useTranslation()
+  return (
+    <Tooltip label={t("This account needs to be upgraded")}>
+      <Circle
+        position={"absolute"}
+        right={-0.5}
+        bottom={-0.5}
+        size={5}
+        bg={"primary.500"}
+        border={"2px solid"}
+        borderColor={"neutrals.800"}
+        color={"neutrals.800"}
+        fontSize={"2xs"}
+      >
+        <UpgradeIcon />
+      </Circle>
+    </Tooltip>
+  )
+}
 
 export const AccountListItem: FC<AccountListItemProps> = ({
   accountName,
@@ -107,6 +111,7 @@ export const AccountListItem: FC<AccountListItemProps> = ({
   children,
   ...rest
 }) => {
+  const { t } = useTranslation()
   const avatarBadge = upgrade ? <AccountListItemUpgradeBadge /> : null
   return (
     <CustomButtonCell {...rest}>
@@ -144,7 +149,7 @@ export const AccountListItem: FC<AccountListItemProps> = ({
                 border={"1px solid"}
                 borderColor={"neutrals.700"}
               >
-                Ledger
+                {t("Ledger")}
               </L2>
             )}
             {keyType === "bip340-schnorr" && (
@@ -159,13 +164,13 @@ export const AccountListItem: FC<AccountListItemProps> = ({
                 border={"1px solid"}
                 borderColor={"neutrals.700"}
               >
-                Schnorr
+                {t("Schnorr")}
               </L2>
             )}
           </Flex>
           <Flex gap={2} color={"neutrals.300"}>
             <P4 fontWeight={"semibold"}>
-              {formatTruncatedAddress(accountAddress)} / Group:{groupOfAddress(accountAddress)}
+              {formatTruncatedAddress(accountAddress)} / {t("Group")}:{groupOfAddress(accountAddress)}
             </P4>
           </Flex>
         </Flex>
@@ -173,7 +178,7 @@ export const AccountListItem: FC<AccountListItemProps> = ({
           {deploying ? (
             <NetworkStatusWrapper>
               <TransactionStatusIndicator color="orange" />
-              Deploying
+              {t("Deploying")}
             </NetworkStatusWrapper>
           ) : connectedHost ? (
             <Tooltip label={`Connected to ${connectedHost}`}>

@@ -15,6 +15,7 @@ import { LedgerPage } from "./LedgerPage"
 import { Steps } from "./Steps"
 import { deriveAccount } from "./utils"
 import { addLedgerAccount, getAllLedgerAccounts } from "../accounts/useAddAccount"
+import { useTranslation } from "react-i18next"
 
 export const StyledButton = styled(Button)`
   width: fit-content;
@@ -24,6 +25,7 @@ export const StyledButton = styled(Button)`
 `
 
 export const LedgerStartScreen: FC = () => {
+  const { t } = useTranslation()
   const { networkId, group, keyType } = useParams()
   const [addressGroup, setAddressGroup] = useState<number>()
   const navigate = useNavigate()
@@ -54,14 +56,14 @@ export const LedgerStartScreen: FC = () => {
       <ContentWrapper>
         <StepIndicator length={2} currentIndex={0} />
         <Title style={{ margin: "32px 0" }}>
-          {detecting ? "Detecting Ledger..." : "Connect a new Ledger"}
+          {detecting ? `${t("Detecting Ledger")}...` : t("Connect a new Ledger")}
         </Title>
         <Steps
           steps={[
-            { title: "Plug in and unlock your Ledger device" },
+            { title: t("Plug in and unlock your Ledger device") },
             {
-              title: "Open (or install) the Alephium Ledger app",
-              description: <>{"The Alephium Ledger app needs to be installed manually."} <A href="https://docs.alephium.org/wallet/ledger" target="_blank">More information here.</A></>,
+              title: t("Open (or install) the Alephium Ledger app"),
+              description: <>{t("The Alephium Ledger app needs to be installed manually.")} <A href="https://docs.alephium.org/wallet/ledger" target="_blank">{t("More information here.")}</A></>,
             },
           ]}
           style={{ marginBottom: 8 }}
@@ -73,7 +75,7 @@ export const LedgerStartScreen: FC = () => {
             setError("")
 
             if (keyType === "bip340-schnorr") {
-              setError("Schnorr is not supported for Alephium's ledger app yet")
+              setError(t("Schnorr is not supported for Alephium's ledger app yet"))
               return
             }
 
@@ -86,7 +88,7 @@ export const LedgerStartScreen: FC = () => {
             } catch (e) {
               console.error(e)
               if (e instanceof Error) {
-                setError("Alephium Ledger app is not connected, please follow the instructions above")
+                setError(t("Alephium Ledger app is not connected, please follow the instructions above"))
               }
             }
 
@@ -95,7 +97,7 @@ export const LedgerStartScreen: FC = () => {
           variant="primary"
           disabled={detecting}
         >
-          Continue
+          {t("Continue")}
         </StyledButton>
       </ContentWrapper>
     </LedgerPage>

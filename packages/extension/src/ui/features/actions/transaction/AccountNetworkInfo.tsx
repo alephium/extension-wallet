@@ -3,12 +3,14 @@ import { Flex, VStack } from "@chakra-ui/react"
 
 import { Account } from "../../accounts/Account"
 import { PrettyAccountAddress } from "../../accounts/PrettyAccountAddress"
+import { useTranslation } from "react-i18next"
 
 interface AccountNetworkInfoProps {
   account: Account
 }
 
 export const AccountNetworkInfo = ({ account }: AccountNetworkInfoProps) => {
+  const { t } = useTranslation()
   return (
     <VStack
       borderRadius="xl"
@@ -19,7 +21,7 @@ export const AccountNetworkInfo = ({ account }: AccountNetworkInfoProps) => {
     >
       <Flex w="full" justifyContent="space-between">
         <P4 fontWeight="bold" color="neutrals.300">
-          From
+          {t("From")}
         </P4>
         <PrettyAccountAddress
           size={6}
@@ -30,7 +32,7 @@ export const AccountNetworkInfo = ({ account }: AccountNetworkInfoProps) => {
       </Flex>
       <Flex w="full" justifyContent="space-between">
         <P4 fontWeight="bold" color="neutrals.300">
-          Network
+          {t("Network")}
         </P4>
         <P4 fontWeight="bold" color="white">
           {account.networkName}

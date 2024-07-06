@@ -1,13 +1,9 @@
 import { H5, P4, icons } from "@argent/ui"
-import { Box, Center, Flex, VStack } from "@chakra-ui/react"
+import { Box, Flex } from "@chakra-ui/react"
 import React, { useMemo } from "react"
-import styled from "styled-components"
 import { TransactionParams } from "../../../../shared/actionQueue/types"
 
-import { ApiTransactionReviewResponse } from "../../../../shared/transactionReview.service"
-import { titleForTransactions } from "./titleForTransactions"
-
-const { NetworkIcon } = icons
+import { useTranslation } from "react-i18next"
 
 export interface DappHeaderProps {
   transaction: TransactionParams
@@ -16,9 +12,19 @@ export interface DappHeaderProps {
 export const DappHeader = ({
   transaction,
 }: DappHeaderProps) => {
+  const { t } = useTranslation()
   const title = useMemo(() => {
-    return titleForTransactions(transaction)
-  }, [transaction])
+    switch (transaction.type) {
+      case 'TRANSFER':
+        return t("Review transfer")
+      case 'DEPLOY_CONTRACT':
+        return t("Review contract deploy")
+      case 'EXECUTE_SCRIPT':
+        return t("Review dApp transaction")
+      case 'UNSIGNED_TX':
+        return t("Review transaction")
+    }
+  }, [t, transaction.type])
 
   return (
     <Box mb="6" mt="3">
@@ -59,12 +65,12 @@ const {
 const TransactionIcon = ({transaction}: {transaction: TransactionParams}) => {
   switch (transaction.type) {
     case 'TRANSFER':
-      return <SendIcon fontSize={"4xl"} color="white" /> 
+      return <SendIcon fontSize={"4xl"} color="white" />
     case 'DEPLOY_CONTRACT':
-      return <DeployIcon fontSize={"4xl"} color="white" /> 
+      return <DeployIcon fontSize={"4xl"} color="white" />
     case 'EXECUTE_SCRIPT':
-      return <MulticallIcon fontSize={"4xl"} color="white" /> 
+      return <MulticallIcon fontSize={"4xl"} color="white" />
     case 'UNSIGNED_TX':
-      return <HelpIcon fontSize={"4xl"} color="white" /> 
-  }            
-}              
+      return <HelpIcon fontSize={"4xl"} color="white" />
+  }
+}

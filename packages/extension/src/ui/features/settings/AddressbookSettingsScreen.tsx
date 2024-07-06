@@ -17,10 +17,12 @@ import { useAddressBook } from "../../services/addressBook"
 import { P } from "../../theme/Typography"
 import { AccountListItem } from "../accounts/AccountListItem"
 import { useNetworks } from "../networks/useNetworks"
+import { useTranslation } from "react-i18next"
 
 const { SearchIcon } = icons
 
 export const AddressbookSettingsScreen: FC = () => {
+  const { t } = useTranslation()
   const { register, watch } = useForm({
     defaultValues: { query: "" },
   })
@@ -65,7 +67,7 @@ export const AddressbookSettingsScreen: FC = () => {
           onClick={() => navigate(routes.settingsAddressbookAdd())}
         />
       }
-      title={"Address book"}
+      title={t("Address book")}
     >
       <VStack p="4" gap="5">
         {contacts.length ? (
@@ -73,7 +75,7 @@ export const AddressbookSettingsScreen: FC = () => {
             <Box position="relative" w="100%">
               <Input
                 autoComplete="off"
-                placeholder="Search by name, address or network"
+                placeholder={t("Search by name, address or network")}
                 type="text"
                 {...register("query")}
                 autoFocus
@@ -111,7 +113,7 @@ export const AddressbookSettingsScreen: FC = () => {
             </CellStack>
           </>
         ) : (
-          <P>You don’t have any saved addresses.</P>
+          <P>{t("You don't have any saved addresses.")}</P>
         )}
       </VStack>
     </NavigationContainer>

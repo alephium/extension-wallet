@@ -23,6 +23,7 @@ import { SwapAccessory } from "./ui/SwapAccessory"
 import { SwapTransactionIcon } from "./ui/SwapTransactionIcon"
 import { ReviewedTransactionIcon, TransactionIcon } from "./ui/TransactionIcon"
 import { ReviewedScriptTxAccessory, ReviewedTransferAccessory, TokenAmount, TransferAccessory } from "./ui/TransferAccessory"
+import { useTranslation } from "react-i18next"
 
 export interface TransactionListItemProps {
   transactionTransformed: TransformedTransaction
@@ -39,6 +40,7 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
   children,
   ...props
 }) => {
+  const { t } = useTranslation()
   const { action, displayName, dapp } = transactionTransformed
   const isNFT = isNFTTransaction(transactionTransformed)
   const isNFTTransfer = isNFTTransferTransaction(transactionTransformed)
@@ -58,7 +60,7 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
       const { toAddress, fromAddress } = transactionTransformed
       return (
         <>
-          {titleShowsTo ? "To: " : "From: "}
+          {titleShowsTo ? t("To") : t("From")}:{" "}
           <PrettyAccountAddress
             accountAddress={titleShowsTo ? toAddress : fromAddress}
             networkId={networkId}
@@ -86,6 +88,7 @@ export const TransactionListItem: FC<TransactionListItemProps> = ({
     action,
     transactionTransformed,
     networkId,
+    t
   ])
 
   const icon = useMemo(() => {
@@ -167,6 +170,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
   children,
   ...props
 }) => {
+  const { t } = useTranslation()
   const isTransfer = transactionTransformed.type === 'TRANSFER'
   const isDeployContract = transactionTransformed.type === 'DEPLOY_CONTRACT'
   const isExecuteScript = transactionTransformed.type === 'EXECUTE_SCRIPT'
@@ -183,7 +187,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
             icon={false}
           />
         </>
-        
+
       })
       if (result.length > 4) {
         return [...result.slice(0, 3), "..."]
@@ -195,10 +199,10 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
       return [<>{`@${formatLongString(transactionTransformed.contractAddress)}`}</>]
     }
     if (isExecuteScript) {
-      return [<>{`${transactionTransformed.host ?? "Unknown host"}`}</>]
+      return [<>{`${transactionTransformed.host ?? t("Unknown host")}`}</>]
     }
     if (isUnsignedTx) {
-      return [<>{`Raw tx: ${formatLongString(transactionTransformed.unsignedTx)}`}</>]
+      return [<>{`${t("Raw tx")}: ${formatLongString(transactionTransformed.unsignedTx)}`}</>]
     }
     return null
   }, [
@@ -207,7 +211,8 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
     isExecuteScript,
     isUnsignedTx,
     transactionTransformed,
-    networkId
+    networkId,
+    t
   ])
 
   const displayName = useMemo(() => {
@@ -215,13 +220,13 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
       case "TRANSFER":
         return transactionTransformed.transferType
       case "DEPLOY_CONTRACT":
-        return "Deploy"
+        return t("Deploy")
       case "EXECUTE_SCRIPT":
-        return "Dapp"
+        return "dApp"
       default:
-        return "Raw tx"
+        return t("Raw tx")
     }
-  }, [transactionTransformed])
+  }, [transactionTransformed, t])
 
   const accessory = useMemo(() => {
     if (isTransfer) {
@@ -230,8 +235,8 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
     if (isDeployContract) {
       const mintAmount = transactionTransformed.issueTokenAmount
       if (mintAmount !== undefined) {
-        return <TokenAmount amount={`Mint`} symbol={"Token"}/>
-      } 
+        return <TokenAmount amount={t(`Mint`)} symbol={t("Token")}/>
+      }
       return null
     }
     if (isExecuteScript) {
@@ -241,7 +246,7 @@ export const ReviewedTransactionListItem: FC<ReviewedTransactionListItemProps> =
       return null
     }
     return null
-  }, [isTransfer, isDeployContract, isExecuteScript, isUnsignedTx, transactionTransformed, networkId])
+  }, [isTransfer, isDeployContract, isExecuteScript, isUnsignedTx, transactionTransformed, networkId, t])
 
   const icon = useMemo(() => {
     return <ReviewedTransactionIcon transaction={transactionTransformed} size={9} />

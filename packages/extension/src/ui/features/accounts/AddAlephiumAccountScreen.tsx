@@ -11,9 +11,11 @@ import { useAppState } from '../../app.state'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useYupValidationResolver } from '../settings/useYupValidationResolver'
+import { useTranslation } from "react-i18next"
 
 export const AddAlephiumAccountScreen = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const yupSchemaValidator = useYupValidationResolver(
     object().required().shape({ group: number() })
@@ -53,10 +55,10 @@ export const AddAlephiumAccountScreen = () => {
           onSubmit={handleSubmit(handleAddAddress)}
         >
           <PageWrapper>
-            <Title>Alephium account</Title>
-            <P>Create a new address to help you manage your assets.</P>
+            <Title>{t("Alephium account")}</Title>
+            <P>{t("Create a new address to help you manage your assets.")}</P>
             <br />
-            <ToggleSection title="Define group?" marginTop>
+            <ToggleSection title={t("Define group?")} marginTop>
               <ControlledInputText
                 name="group"
                 control={control}

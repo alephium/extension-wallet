@@ -7,6 +7,7 @@ import { upgradeAccount } from "../../services/backgroundAccounts"
 import { P } from "../../theme/Typography"
 import { DeprecatedConfirmScreen } from "../actions/DeprecatedConfirmScreen"
 import { useSelectedAccount } from "./accounts.state"
+import { useTranslation } from "react-i18next"
 
 const StyledP = styled(P)`
   margin-bottom: 16px;
@@ -14,6 +15,7 @@ const StyledP = styled(P)`
 `
 
 export const UpgradeScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const selectedAccount = useSelectedAccount()
 
@@ -31,9 +33,9 @@ export const UpgradeScreen: FC = () => {
 
   return (
     <DeprecatedConfirmScreen
-      title="Upgrade Wallet"
-      confirmButtonText="Upgrade"
-      rejectButtonText="Cancel"
+      title={t("Upgrade Wallet")}
+      confirmButtonText={t("Upgrade")}
+      rejectButtonText={t("Cancel")}
       onSubmit={async () => {
         await upgradeAccount(selectedAccount)
         navigate(routes.accountTokens())
@@ -43,13 +45,10 @@ export const UpgradeScreen: FC = () => {
       }}
     >
       <StyledP>
-        You will upgrade your wallet implementation to use the latest features
-        and security.
+        {t("You will upgrade your wallet implementation to use the latest features and security.")}
       </StyledP>
       <StyledP>
-        This upgrade is required due to network and account contract changes. We
-        expect these kind of upgrades to be less frequent as the network
-        matures.
+        {t("This upgrade is required due to network and account contract changes. We expect these kind of upgrades to be less frequent as the network matures.")}
       </StyledP>
     </DeprecatedConfirmScreen>
   )

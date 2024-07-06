@@ -12,6 +12,7 @@ import { routes } from "../../routes"
 import { AccountNavigationBar } from "./AccountNavigationBar"
 import { useAccountTransactions } from "./accountTransactions.state"
 import { Account } from "../accounts/Account"
+import { useTranslation } from "react-i18next"
 
 const { WalletIcon, NftIcon, ActivityIcon } = icons
 
@@ -25,6 +26,7 @@ export const AccountContainer: FC<AccountContainerProps> = ({
   scrollKey,
   children,
 }) => {
+  const { t } = useTranslation()
   const { pendingTransactions } = useAccountTransactions(account)
   const { scrollRef, scroll } = useScrollRestoration(scrollKey)
 
@@ -42,14 +44,14 @@ export const AccountContainer: FC<AccountContainerProps> = ({
           to={routes.accountTokens()}
           replace
           icon={<WalletIcon />}
-          label="Tokens"
+          label={t("Token_other")}
         />
         <Tab
           as={NavLink}
           to={routes.accountCollections()}
           replace
           icon={<NftIcon />}
-          label="Collections"
+          label={t("Collections")}
         />
         <Tab
           as={NavLink}
@@ -57,8 +59,8 @@ export const AccountContainer: FC<AccountContainerProps> = ({
           replace
           icon={<ActivityIcon />}
           badgeLabel={pendingTransactions.length}
-          badgeDescription={"Pending transactions"}
-          label="Activity"
+          badgeDescription={t("Pending transactions")}
+          label={t("Activity")}
         />
       </TabBar>
     </>

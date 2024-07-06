@@ -21,6 +21,8 @@ import { testNodeWallet } from '@alephium/web3-test'
 import { web3 } from "@alephium/web3"
 import { defaultNetworks } from "../../../shared/network"
 import { Flex } from "@chakra-ui/react"
+import i18n from "../../../i18n"
+import { useTranslation } from "react-i18next"
 
 const Container = styled.div`
   padding: 0 20px;
@@ -39,16 +41,17 @@ const StyledIconButton = styled(IconButton)`
 
 const alterMessages = [
   {
-    title: "Request $ALPH",
-    message: "The faucet can be requested once per 5 minutes, please try later"
+    title: i18n.t("Request $ALPH"),
+    message: i18n.t("The faucet can be requested once per 5 minutes, please try later")
   },
   {
-    title: "Request $ALPH",
-    message: "The local Devnet is not available, please start one"
+    title: i18n.t("Request $ALPH"),
+    message: i18n.t("The local Devnet is not available, please start one")
   }
 ]
 
 export const FundingQrCodeScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const addressRef = useRef<HTMLParagraphElement | null>(null)
   const account = useSelectedAccount()
@@ -94,7 +97,7 @@ export const FundingQrCodeScreen: FC = () => {
     },
     [onCopyAddress, onSelectAddress],
   )
- 
+
   const onRequestToken = useCallback(async () => {
     if (account?.networkId === 'testnet') {
       fetch('https://faucet.testnet.alephium.org/send', { method: 'POST', body: account?.address })
@@ -133,7 +136,7 @@ export const FundingQrCodeScreen: FC = () => {
         title={alterMessages[alterMessageIndex].title}
         message={alterMessages[alterMessageIndex].message}
         onCancel={() => setAlertDialogIsOpen(false)}
-        cancelTitle={"OK"}
+        cancelTitle={t("OK")}
       />
       <PageWrapper>
         {account && (
@@ -142,12 +145,12 @@ export const FundingQrCodeScreen: FC = () => {
             <AccountName>{getAccountName(account, accountNames)}</AccountName>
             <AccountAddress
               ref={setAddressRef}
-              aria-label="Full account address"
+              aria-label={t("Full account address")}
             >
               {formatTruncatedAddress(account.address, 6)}
             </AccountAddress>
             <StyledCopyIconButton size="s" copyValue={copyAccountAddress}>
-              Copy address
+              {t("Copy address")}
             </StyledCopyIconButton>
             {account.networkId !== 'mainnet' &&
               <div>
@@ -158,7 +161,7 @@ export const FundingQrCodeScreen: FC = () => {
                   clickedTimeout={5 * 60 * 1000}
                   onClick={onRequestToken}
                 >
-                  Request $ALPH
+                  {t("Request $ALPH")}
                 </StyledIconButton>
               </div>
             }

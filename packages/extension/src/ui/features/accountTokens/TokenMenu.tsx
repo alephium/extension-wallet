@@ -13,6 +13,7 @@ import {
 } from "../../services/blockExplorer.service"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { IconWrapper } from "./DeprecatedAccountMenu"
+import { useTranslation } from "react-i18next"
 
 const { MoreIcon } = icons
 
@@ -25,6 +26,7 @@ export const TokenMenu: FC<TokenMenuProps> = ({
   tokenId,
   canHideToken = true,
 }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const currentNetwork = useCurrentNetwork()
   const blockExplorerTitle = useBlockExplorerTitle()
@@ -33,7 +35,7 @@ export const TokenMenu: FC<TokenMenuProps> = ({
     <>
       <Menu>
         <MenuButton
-          aria-label="NFT actions"
+          aria-label={t("NFT actions")}
           color="neutrals.200"
           colorScheme="transparent"
           padding="1.5"
@@ -46,14 +48,14 @@ export const TokenMenu: FC<TokenMenuProps> = ({
         </MenuButton>
         <MenuList>
           <CopyToClipboard text={normalizeAddress(tokenId)}>
-            <MenuItem>Copy address</MenuItem>
+            <MenuItem>{t("Copy address")}</MenuItem>
           </CopyToClipboard>
           <MenuItem
             onClick={() =>
               openBlockExplorerAddress(currentNetwork, tokenId)
             }
           >
-            View on {blockExplorerTitle}
+            {t("View on {{ blockExplorerTitle }}", { blockExplorerTitle })}
           </MenuItem>
           {canHideToken && (
             <>
@@ -63,7 +65,7 @@ export const TokenMenu: FC<TokenMenuProps> = ({
                 <IconWrapper>
                   <VisibilityOff fontSize="inherit" htmlColor="white" />
                 </IconWrapper>
-                Hide this token
+                {t("Hide this token")}
               </MenuItem>
             </>
           )}

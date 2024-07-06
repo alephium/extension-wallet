@@ -5,6 +5,7 @@ import styled from "styled-components"
 import { Button } from "../../components/Button"
 import { ColumnCenter } from "../../components/Column"
 import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
+import { useTranslation } from "react-i18next"
 
 const CopySeedPhraseButton = styled(Button)<{ active: boolean }>`
   padding: 6px 12px;
@@ -37,6 +38,7 @@ const WarningText = styled.div`
 `
 
 export const CopySeedPhrase: FC<{ seedPhrase?: string }> = ({ seedPhrase }) => {
+  const { t } = useTranslation()
   const [seedPhraseCopied, setSeedPhraseCopied] = useState(false)
 
   useEffect(() => {
@@ -54,8 +56,7 @@ export const CopySeedPhrase: FC<{ seedPhrase?: string }> = ({ seedPhrase }) => {
   return (
     <ColumnCenter gap="16px">
       <WarningText>
-        We do not recommend copying your recovery phrase to your clipboard. It
-        can leave it susceptible to exploit!
+        {t("We do not recommend copying your recovery phrase to your clipboard. It can leave it susceptible to exploit!")}
       </WarningText>
 
       <CopyToClipboard
@@ -63,7 +64,7 @@ export const CopySeedPhrase: FC<{ seedPhrase?: string }> = ({ seedPhrase }) => {
         text={seedPhrase}
       >
         <CopySeedPhraseButton active={seedPhraseCopied} type="button">
-          {seedPhraseCopied ? "Copied" : "Copy"}
+          {seedPhraseCopied ? t("Copied") : t("Copy")}
           <WarningIconRounded />
         </CopySeedPhraseButton>
       </CopyToClipboard>

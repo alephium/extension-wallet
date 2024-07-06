@@ -15,6 +15,7 @@ import { PendingTransactionsContainer } from "./PendingTransactions"
 import { isVoyagerTransaction } from "./transform/is"
 import { ActivityTransaction } from "./useActivity"
 import { useAlephiumExplorerAccountTransactionsInfinite } from "./useArgentExplorer"
+import { useTranslation } from "react-i18next"
 
 export interface AccountActivityContainerProps {
   account: Account
@@ -23,15 +24,16 @@ export interface AccountActivityContainerProps {
 export const AccountActivityContainer: FC<AccountActivityContainerProps> = ({
   account,
 }) => {
+  const { t } = useTranslation()
   return (
     <CellStack>
       <Center>
-        <H4>Activity</H4>
+        <H4>{t("Activity")}</H4>
       </Center>
       <PendingTransactionsContainer account={account} />
       <ErrorBoundary
         fallback={
-          <ErrorBoundaryFallback title="Seems like Explorer API is down..." />
+          <ErrorBoundaryFallback title={`${t('Seems like Explorer API is down')}...`} />
         }
       >
         <Suspense

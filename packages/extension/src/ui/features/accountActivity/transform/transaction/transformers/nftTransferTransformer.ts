@@ -5,6 +5,7 @@ import {
 import { NFTTransferTransaction } from "../../type"
 import { getCallsFromTransaction } from "../getCallsFromTransaction"
 import { ITransactionTransformer } from "./type"
+import i18n from "../../../../../../i18n"
 
 /** adds erc721 token transfer data */
 
@@ -14,7 +15,7 @@ export default function ({ transaction, result }: ITransactionTransformer) {
     if (isNftTransferCall(call)) {
       const action = "TRANSFER"
       const entity = "NFT"
-      const displayName = "Transfer NFT"
+      const displayName = i18n.t("Transfer NFT")
       const { contractAddress, fromAddress, toAddress, tokenId } =
         parseNftTransferCall(call)
       result = {

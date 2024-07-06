@@ -6,8 +6,10 @@ import { useAppState } from "../../app.state"
 import { routes, useReturnTo } from "../../routes"
 import { AccountListHiddenScreenItem } from "./AccountListHiddenScreenItem"
 import { isHiddenAccount, useAccountsOnNetwork } from "./accounts.state"
+import { useTranslation } from "react-i18next"
 
 export const AccountListHiddenScreen: FC = () => {
+  const { t } = useTranslation()
   const { networkId } = useParams()
   const { switcherNetworkId } = useAppState()
   const navigate = useNavigate()
@@ -25,7 +27,7 @@ export const AccountListHiddenScreen: FC = () => {
   }
   return (
     <NavigationContainer
-      title={"Hidden Accounts"}
+      title={t("Hidden Accounts")}
       leftButton={
         <BarBackButton
           onClick={() => navigate(returnTo ? returnTo : routes.accounts())}

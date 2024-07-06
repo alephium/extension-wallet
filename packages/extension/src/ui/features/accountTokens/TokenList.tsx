@@ -9,6 +9,7 @@ import { NewTokenButton } from "./NewTokenButton"
 import { TokenListItemVariant } from "./TokenListItem"
 import { TokenListItemContainer } from "./TokenListItemContainer"
 import { Account } from "../accounts/Account"
+import { useTranslation } from "react-i18next"
 
 interface TokenListProps {
   account: Account
@@ -26,6 +27,7 @@ export const TokenList: FC<TokenListProps> = ({
   showTokenSymbol = false,
   variant
 }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   if (!account) {
     return null
@@ -39,7 +41,7 @@ export const TokenList: FC<TokenListProps> = ({
     <ErrorBoundary
       fallback={
         <ErrorBoundaryFallbackWithCopyError
-          message={"Sorry, an error occurred fetching tokens"}
+          message={t("Sorry, an error occurred fetching tokens")}
         />
       }
     >

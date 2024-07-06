@@ -21,6 +21,7 @@ import { TokenMenuDeprecated } from "./TokenMenuDeprecated"
 import { useTokenBalanceToCurrencyValue } from "./tokenPriceHooks"
 import { toTokenView } from "./tokens.service"
 import { useFungibleTokensWithBalance } from "./tokens.state"
+import { useTranslation } from "react-i18next"
 
 const TokenScreenWrapper = styled(ColumnCenter)`
   width: 100%;
@@ -85,6 +86,7 @@ const tokenIcon = (name: string, size: number, logoURI?: string, verified?: bool
 }
 
 export const TokenScreen: FC = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { tokenId } = useParams()
   const account = useSelectedAccount()
@@ -142,7 +144,7 @@ export const TokenScreen: FC = () => {
             type="button"
             onClick={() => navigate(routes.sendToken(id))}
           >
-            Send
+            {t("Send")}
           </Button>
 
           <ColumnCenter gap="12px">
@@ -150,8 +152,8 @@ export const TokenScreen: FC = () => {
               <FormatListBulletedIcon />
             </ActivityIconWrapper>
             <ColumnCenter>
-              <ActivityText>Activity</ActivityText>
-              <ComingSoonText>Coming Soon</ComingSoonText>
+              <ActivityText>{t("Activity")}</ActivityText>
+              <ComingSoonText>{t("Coming Soon")}</ComingSoonText>
             </ColumnCenter>
           </ColumnCenter>
         </ActionContainer>

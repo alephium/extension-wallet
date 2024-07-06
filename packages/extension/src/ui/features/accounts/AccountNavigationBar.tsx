@@ -14,6 +14,7 @@ import { getAccountName, useAccountMetadata } from "./accountMetadata.state"
 import { Account } from "../accounts/Account"
 import { SyncRounded } from "@mui/icons-material"
 import { useFungibleTokensWithBalance } from "../accountTokens/tokens.state"
+import { useTranslation } from "react-i18next"
 
 const { SettingsIcon, DropdownDownIcon } = icons
 
@@ -28,6 +29,7 @@ export const AccountNavigationBar: FC<AccountNavigationBarProps> = ({
   scroll,
   showAccountButton = true,
 }) => {
+  const { t } = useTranslation()
   const { accountNames } = useAccountMetadata()
   const navigate = useNavigate()
   const location = useLocation()
@@ -46,7 +48,7 @@ export const AccountNavigationBar: FC<AccountNavigationBarProps> = ({
     <NavigationBar scroll={scroll}>
       {showAccountButton && account && (
         <Button
-          aria-label={"Show account list"}
+          aria-label={t("Show account list")}
           colorScheme={"neutrals"}
           size={"2xs"}
           onClick={openAccountList}
@@ -61,7 +63,7 @@ export const AccountNavigationBar: FC<AccountNavigationBarProps> = ({
       )}
         <BarIconButton
           ml={1}
-          aria-label="Sync account"
+          aria-label={t("Sync account")}
           onClick={() => { mutate() }}
           colorScheme={"neutrals"}
         >
@@ -71,7 +73,7 @@ export const AccountNavigationBar: FC<AccountNavigationBarProps> = ({
         <NetworkSwitcher />
         <BarIconButton
           ml={1}
-          aria-label="Show settings"
+          aria-label={t("Show settings")}
           onClick={showSettings}
           colorScheme={"neutrals"}
         >

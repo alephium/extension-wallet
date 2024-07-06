@@ -13,6 +13,7 @@ import { DeprecatedConfirmScreen } from "../actions/DeprecatedConfirmScreen"
 import { getAccountName, useAccountMetadata } from "./accountMetadata.state"
 import { useAccount } from "./accounts.state"
 import { autoSelectAccountOnNetwork } from "./switchAccount"
+import { useTranslation } from "react-i18next"
 
 const StyledP = styled(P)`
   margin-bottom: 16px;
@@ -39,6 +40,7 @@ const AddressWrapper = styled.span`
 export const HideOrDeleteAccountConfirmScreen: FC<{
   mode: "hide" | "delete"
 }> = ({ mode }) => {
+  const { t } = useTranslation()
   const { accountAddress = "" } = useParams<{ accountAddress: string }>()
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
@@ -74,17 +76,17 @@ export const HideOrDeleteAccountConfirmScreen: FC<{
 
   return (
     <DeprecatedConfirmScreen
-      title={mode === "hide" ? "Hide Account" : "Delete Account"}
-      confirmButtonText={mode === "hide" ? "Hide" : "Delete"}
+      title={mode === "hide" ? t("Hide Account") : t("Delete Account")}
+      confirmButtonText={mode === "hide" ? t("Hide") : t("Delete")}
       confirmButtonBackgroundColor="#C12026"
-      rejectButtonText="Cancel"
+      rejectButtonText={t("Cancel")}
       onSubmit={handleSubmit}
       onReject={() => navigate(-1)}
     >
       <StyledP>
         {mode === "hide"
-          ? "You are about to hide the following account:"
-          : "You are about to delete the following account:"}
+          ? t("You are about to hide the following account:")
+          : t("You are about to delete the following account:")}
       </StyledP>
       <AddressWrapper>
         <AccountName>{getAccountName(account, accountNames)}</AccountName>
@@ -92,8 +94,8 @@ export const HideOrDeleteAccountConfirmScreen: FC<{
       </AddressWrapper>
       <StyledP>
         {mode === "hide"
-          ? "You will be able to unhide the account from the account list screen."
-          : "You will need to recover this account manually in the future."}
+          ? t("You will be able to unhide the account from the account list screen.")
+          : t("You will need to recover this account manually in the future.")}
       </StyledP>
     </DeprecatedConfirmScreen>
   )

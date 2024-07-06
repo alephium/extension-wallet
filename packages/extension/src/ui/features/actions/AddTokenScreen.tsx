@@ -16,6 +16,7 @@ import { isValidTokenId } from "../../services/token"
 import { FormError, H2, WarningText } from "../../theme/Typography"
 import { useTokensInNetwork } from "../accountTokens/tokens.state"
 import * as yup from "yup"
+import { useTranslation } from "react-i18next"
 
 const AddTokenScreenWrapper = styled.div`
   display: flex;
@@ -80,6 +81,7 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
   onSubmit,
   onReject,
 }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { switcherNetworkId } = useAppState()
   const [tokenId, setTokenId] = useState(defaultToken?.id || "")
@@ -122,15 +124,13 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
   return (
     <NavigationContainer leftButton={hideBackButton ? null : <BarBackButton />}>
       <AddTokenScreenWrapper>
-        <H2>Add tokens</H2>
+        <H2>{t("Add tokens")}</H2>
 
         {tokenExist && (
           <TokenWarningWrapper>
             <InfoCircle />
             <WarningText>
-              This action will edit tokens that are already listed in your
-              wallet, which can be used to phish you. Only approve if you are
-              certain that you mean to change what these tokens represent.
+              {t("This action will edit tokens that are already listed in your wallet, which can be used to phish you. Only approve if you are certain that you mean to change what these tokens represent.")}
             </WarningText>
           </TokenWarningWrapper>
         )}
@@ -144,14 +144,14 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
                 onSubmit?.()
                 navigate(routes.accountTokens())
               } catch (e) {
-                setError("Token already exists")
+                setError(t("Token already exists"))
               }
             }
           }}
         >
           <InputText
             autoFocus
-            placeholder="Token Id"
+            placeholder={t("Token ID")}
             type="text"
             value={tokenId}
             onChange={(e: any) => {
@@ -159,19 +159,19 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
             }}
           />
           <InputText
-            placeholder="Name"
+            placeholder={t("Name")}
             type="text"
             value={tokenName}
             onChange={(e: any) => setTokenName(e.target.value)}
           />
           <InputText
-            placeholder="Symbol"
+            placeholder={t("Symbol")}
             type="text"
             value={tokenSymbol}
             onChange={(e: any) => setTokenSymbol(e.target.value)}
           />
           <InputText
-            placeholder="Decimals"
+            placeholder={t("Decimals")}
             type="text"
             value={tokenDecimals}
             onChange={(e: any) => {
@@ -184,7 +184,7 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
             }}
           />
           <InputText
-            placeholder="Logo Url"
+            placeholder={t("Logo URL")}
             type="text"
             value={logoURI}
             onChange={(e: any) => setLogoURI(e.target.value)}
@@ -194,14 +194,14 @@ export const AddTokenScreen: FC<AddTokenScreenProps> = ({
           <ButtonGroupHorizontal>
             {onReject && (
               <Button onClick={onReject} type="button">
-                Reject
+                {t("Reject")}
               </Button>
             )}
             <Button
               type="submit"
               disabled={!isDataComplete(compiledData)}
             >
-              Continue
+              {t("Continue")}
             </Button>
           </ButtonGroupHorizontal>
         </form>

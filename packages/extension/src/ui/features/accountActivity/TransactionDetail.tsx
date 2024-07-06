@@ -48,6 +48,7 @@ import { NFTTitle } from "./ui/NFTTitle"
 import { TransactionCallDataBottomSheet } from "./ui/TransactionCallDataBottomSheet"
 import { TransactionIcon } from "./ui/TransactionIcon"
 import { TransferTitle } from "./ui/TransferTitle"
+import { useTranslation } from "react-i18next"
 
 const { ActivityIcon } = icons
 
@@ -152,9 +153,9 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
   transaction,
   explorerTransaction,
   transactionTransformed,
-  network,
-  tokensByNetwork,
+  network
 }) => {
+  const { t } = useTranslation()
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false)
   const { action, date, displayName, actualFee, dapp } = transactionTransformed
   const isRejected =
@@ -209,12 +210,12 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
       return (
         <>
           <AccountAddressField
-            title="From"
+            title={t("From")}
             accountAddress={fromAddress}
             networkId={network.id}
           />
           <AccountAddressField
-            title="To"
+            title={t("To")}
             accountAddress={toAddress}
             networkId={network.id}
           />
@@ -226,7 +227,8 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
     isTransfer,
     isNFTTransfer,
     transactionTransformed,
-    network.id
+    network.id,
+    t
   ])
   const titleShowsTo =
     (isTransfer || isNFTTransfer) &&
@@ -244,7 +246,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
     getErrorMessageFromErrorDump(transaction.failureReason?.error_message)
   return (
     <StyledTransactionDetailWrapper
-      scrollContent={transactionTransformed.displayName || "Transaction"}
+      scrollContent={transactionTransformed.displayName || t("Transaction")}
       title={
         <>
           {!isNFT && (
@@ -260,7 +262,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
           {(titleShowsTo || titleShowsFrom) && (
             <TitleAddressContainer>
               <TitleAddressPrefix>
-                {titleShowsTo ? "To:" : "From:"}
+                {titleShowsTo ? t("To") : t("From")}:
               </TitleAddressPrefix>
               <TitleAddress>
                 <PrettyAccountAddress
@@ -275,7 +277,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
               </TitleAddress>
             </TitleAddressContainer>
           )}
-          <Date>{date ? date : "Unknown date"}</Date>
+          <Date>{date ? date : t("Unknown date")}</Date>
         </>
       }
     >
@@ -288,12 +290,12 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
       )}
       <ExpandableFieldGroup
         icon={<TransactionIcon transaction={transactionTransformed} size={9} />}
-        title="Action"
+        title={t("Action")}
         subtitle={displayName}
       >
         {displayContractAddress && (
           <Field>
-            <FieldKey>Contract</FieldKey>
+            <FieldKey>{t("Contract")}</FieldKey>
             <FieldValue>
               <StyledCopyIconButton
                 size="s"
@@ -307,14 +309,14 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
         )}
         {calls && (
           <Field clickable onClick={() => setBottomSheetOpen(true)}>
-            <FieldKey>Call data</FieldKey>
+            <FieldKey>{t("Call data")}</FieldKey>
             <FieldValue>
-              <HyperlinkText>View</HyperlinkText>
+              <HyperlinkText>{t("View")}</HyperlinkText>
             </FieldValue>
           </Field>
         )}
         {!!explorerTransaction?.events?.length && (
-          <SectionHeader>Event</SectionHeader>
+          <SectionHeader>{t("Event")}</SectionHeader>
         )}
         {explorerTransaction?.events.map((event, index) => {
           const { name, address, parameters } = event
@@ -331,7 +333,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
               key={index}
             >
               <Field>
-                <FieldKey>Contract</FieldKey>
+                <FieldKey>{t("Contract")}</FieldKey>
                 <FieldValue>
                   <StyledCopyIconButton
                     size="s"
@@ -357,12 +359,12 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
       </ExpandableFieldGroup>
       <FieldGroup>
         <Field>
-          <FieldKey>Status</FieldKey>
+          <FieldKey>{t("Status")}</FieldKey>
           <FieldValue>{isRejected ? "Failed" : "Complete"}</FieldValue>
         </Field>
         {errorMessage && (
           <Field>
-            <FieldKey>Reason</FieldKey>
+            <FieldKey>{t("Reason")}</FieldKey>
             <LeftPaddedField>{errorMessage}</LeftPaddedField>
           </Field>
         )}
@@ -374,9 +376,9 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
         <FieldGroup>
           <TransactionFailedField clickable>
             <TransactionLogKey>
-              <div>Transaction log</div>
+              <div>{t("Transaction log")}</div>
               <CopyTooltip
-                message="Copied"
+                message={t("Copied")}
                 copyValue={
                   transaction.failureReason?.error_message || hash || ""
                 }
@@ -385,7 +387,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
               </CopyTooltip>
             </TransactionLogKey>
             <TransactionLogMessage style={{ color: theme.text2 }}>
-              {transaction.failureReason?.error_message || "Unknown error"}
+              {transaction.failureReason?.error_message || t("Unknown error")}
             </TransactionLogMessage>
           </TransactionFailedField>
         </FieldGroup>
@@ -396,7 +398,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
             clickable
             onClick={() => network.explorerUrl && openExplorerTransaction(network.explorerUrl, hash)}
           >
-            <FieldKey>Transaction ID</FieldKey>
+            <FieldKey>{t("Transaction ID")}</FieldKey>
             <FieldValue>
               <HyperlinkText>{displayTransactionHash}</HyperlinkText>
             </FieldValue>
@@ -413,7 +415,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
               }
             }}
           >
-            <FieldKey>Deployed contract address</FieldKey>
+            <FieldKey>{t("Deployed contract address")}</FieldKey>
             <FieldValue>
               <HyperlinkText>
                 {formatTruncatedAddress(transaction.meta?.subTitle)}
@@ -426,7 +428,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
         <FieldGroup>
           <CopyToClipboard text={transaction.meta?.subTitle}>
             <Field clickable={!!transaction.meta?.subTitle}>
-              <FieldKey>Declared contract hash</FieldKey>
+              <FieldKey>{t("Declared contract hash")}</FieldKey>
               <FieldValue>
                 <HyperlinkText>
                   {formatTruncatedAddress(transaction.meta?.subTitle)}

@@ -1,6 +1,6 @@
 import { isString } from "lodash-es"
 
-import { ExtensionActionItem, ExtQueueItem, TransactionParams, TransactionResult } from "../../shared/actionQueue/types"
+import { ExtensionActionItem } from "../../shared/actionQueue/types"
 import { sendMessage, waitForMessage } from "../../shared/messages"
 import { AllowArray } from "../../shared/storage/types"
 

@@ -23,6 +23,7 @@ import { useAddAccount } from "./useAddAccount"
 import { AlephiumLogo } from "../../components/Icons/ArgentXLogo"
 import { LedgerIcon } from "../../components/Icons/LedgerIcon"
 import styled from "styled-components"
+import { useTranslation } from "react-i18next"
 
 const StyledAlephiumLogo = styled(AlephiumLogo)`
   font-size: 20px;
@@ -71,6 +72,7 @@ const groupOptions = ["any", ...Array.from(Array(TOTAL_NUMBER_OF_GROUPS).keys())
 const signOptions = ["default", "schnorr"] as const
 
 export const AddAccount: FC = () => {
+  const { t } = useTranslation()
   const [hasError, setHasError] = useState(false)
   const [group, setGroup] = useState<string>(groupOptions[0])
   const [signMethod, setSignMethod] = useState<string>(signOptions[0])
@@ -85,7 +87,7 @@ export const AddAccount: FC = () => {
     <>
       <IconBar close />
       <PageWrapper>
-        <Title>Add a new account</Title>
+        <Title>{t("Add a new account")}</Title>
         <Flex marginBottom={5}>
           <MemuSelector title="Group" options={groupOptions} setValue={setGroup}></MemuSelector>
           <Spacer />
@@ -93,9 +95,9 @@ export const AddAccount: FC = () => {
         </Flex>
         <OptionsWrapper>
           <Option
-            title="Create new Alephium account"
+            title={t("Create new Alephium account")}
             icon={<StyledAlephiumLogo />}
-            description="Generate a new wallet address"
+            description={t("Generate a new wallet address")}
             hideArrow
             onClick={() => addAccount(parsedKeyType, parsedGroup).catch(() => setHasError(true))}
           />
@@ -109,8 +111,8 @@ export const AddAccount: FC = () => {
               }}
             >
               <Option
-                title="Connect Ledger"
-                description="Use a Ledger hardware wallet"
+                title={t("Connect Ledger")}
+                description={t("Use a Ledger hardware wallet")}
                 icon={<LedgerIcon />}
                 hideArrow
               />
@@ -119,7 +121,7 @@ export const AddAccount: FC = () => {
         </OptionsWrapper>
         {hasError && (
           <FormError>
-            There was an error creating your account. Please try again.
+            {t("There was an error creating your account. Please try again.")}
           </FormError>
         )}
       </PageWrapper>

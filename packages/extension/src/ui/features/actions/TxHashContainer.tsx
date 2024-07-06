@@ -1,6 +1,7 @@
 import { FC } from "react"
 import styled from "styled-components"
 import { CopyTooltip } from "../../components/CopyTooltip"
+import { useTranslation } from "react-i18next"
 
 const TxHash = styled.div`
   margin-top: 1px;
@@ -15,8 +16,9 @@ const TxHash = styled.div`
 `
 
 export const TxHashContainer: FC<{ txId: string }> = ({ txId }) => {
+  const { t } = useTranslation()
   return (
-    <CopyTooltip copyValue={txId} message="Copied">
+    <CopyTooltip copyValue={txId} message={t("Copied")}>
       <TxHash>{`TxHash: ${splitTxHash(txId)}`}</TxHash>
     </CopyTooltip>
   )

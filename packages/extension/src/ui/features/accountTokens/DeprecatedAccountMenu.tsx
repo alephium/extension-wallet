@@ -1,24 +1,6 @@
-import { FC, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
-import { settingsStore } from "../../../shared/settings"
-import { useKeyValueStorage } from "../../../shared/storage/hooks"
-import { EditIcon } from "../../components/Icons/EditIcon"
-import { MoreVertSharp, VisibilityOff } from "../../components/Icons/MuiIcons"
-import { PluginIcon } from "../../components/Icons/PluginIcon"
-import { ViewOnBlockExplorerIcon } from "../../components/Icons/ViewOnBlockExplorerIcon"
-import { WarningIcon } from "../../components/Icons/WarningIcon"
-import { routes } from "../../routes"
-import { upgradeAccount } from "../../services/backgroundAccounts"
-import {
-  openBlockExplorerAddress,
-  useBlockExplorerTitle,
-} from "../../services/blockExplorer.service"
-import { useOnClickOutside } from "../../services/useOnClickOutside"
-import { Account } from "../accounts/Account"
-import { useSelectedAccount } from "../accounts/accounts.state"
-import { useCurrentNetwork } from "../networks/useNetworks"
+import { MoreVertSharp } from "../../components/Icons/MuiIcons"
 
 export const StyledMoreVert = styled(MoreVertSharp)`
   cursor: pointer;
@@ -77,7 +59,3 @@ export const IconWrapper = styled.div`
   width: 12px;
   font-size: 12px;
 `
-
-interface AccountNameProps {
-  onAccountNameEdit: () => void
-}

@@ -1,13 +1,9 @@
-import { addAddressPadding } from "starknet"
 import urlJoin from "url-join"
 
 import { Network } from "../../shared/network"
 import { DEVNET } from "../../shared/network/defaults"
 import { settingsStore } from "../../shared/settings"
-import {
-  defaultBlockExplorerKey,
-  defaultBlockExplorers,
-} from "../../shared/settings/defaultBlockExplorers"
+import { defaultBlockExplorers } from "../../shared/settings/defaultBlockExplorers"
 import { useKeyValueStorage } from "../../shared/storage/hooks"
 
 export const useBlockExplorerTitle = () => {

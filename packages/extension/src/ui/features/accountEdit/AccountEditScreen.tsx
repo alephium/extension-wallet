@@ -25,10 +25,12 @@ import { useAccount } from "../accounts/accounts.state"
 import { useCurrentNetwork } from "../networks/useNetworks"
 import { AccountEditName } from "./AccountEditName"
 import { Button, CopyTooltip } from "@argent/ui"
+import { useTranslation } from "react-i18next"
 
 const { ExpandIcon, HideIcon, AlertIcon } = icons
 
 export const AccountEditScreen: FC = () => {
+  const { t } = useTranslation()
   const currentNetwork = useCurrentNetwork()
   const { accountAddress = "" } = useParams<{ accountAddress: string }>()
   const navigate = useNavigate()
@@ -40,7 +42,7 @@ export const AccountEditScreen: FC = () => {
   })
   const accountName = account
     ? getAccountName(account, accountNames)
-    : "Not found"
+    : t("Not found")
 
   const [liveEditingAccountName, setLiveEditingAccountName] =
     useState(accountName)
@@ -140,7 +142,7 @@ export const AccountEditScreen: FC = () => {
                 borderBottomRightRadius="lg"
                 p={2}
               >
-                <AddressCopyButton address={nip19.npubEncode(account?.publicKey)} type="nostr public key" title="Nostr" />
+                <AddressCopyButton address={nip19.npubEncode(account?.publicKey)} type={t("nostr public key")} title="Nostr" />
               </Center>
             }
           </Flex>
@@ -152,20 +154,20 @@ export const AccountEditScreen: FC = () => {
             }
             rightIcon={<ExpandIcon />}
           >
-            View on explorer
+            {t("View on explorer")}
           </ButtonCell>
           <ButtonCell
             onClick={() => account && handleHideOrDeleteAccount(account)}
             icon={<HideIcon />}
           >
-            {showDelete ? "Delete" : "Hide"} account
+            {showDelete ? t("Delete account") : t("Hide account")}
           </ButtonCell>
           <ButtonCell
             color={"error.500"}
             onClick={() => navigate(routes.exportPrivateKey())}
             icon={<AlertIcon />}
           >
-            Export private key
+            {t("Export private key")}
           </ButtonCell>
         </CellStack>
       </NavigationContainer>
@@ -174,15 +176,16 @@ export const AccountEditScreen: FC = () => {
 }
 
 const PublicKeyCopyButton: FC<{ publicKey: string }> = ({ publicKey }) => {
+  const { t } = useTranslation()
   return (
-    <CopyTooltip prompt={'Click to copy public key'} copyValue={publicKey}>
+    <CopyTooltip prompt={t('Click to copy public key')} copyValue={publicKey}>
       <Button
         size="3xs"
         color={"white50"}
         bg={"transparent"}
         _hover={{ bg: "neutrals.700", color: "text" }}
       >
-        {`Public Key: ${shortPublicKey(publicKey)}`}
+        {`${t("Public Key")}: ${shortPublicKey(publicKey)}`}
       </Button>
     </CopyTooltip>
   )

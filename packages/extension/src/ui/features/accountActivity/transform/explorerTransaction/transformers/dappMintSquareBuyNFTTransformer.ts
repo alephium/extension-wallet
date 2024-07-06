@@ -2,6 +2,7 @@ import { NFTTransaction } from "../../type"
 import { getEntityWithName } from "../getEntityWithName"
 import { getParameter } from "../getParameter"
 import { IExplorerTransactionTransformer } from "./type"
+import i18n from "../../../../../../i18n"
 
 /** Mint Square buy NFT */
 
@@ -20,7 +21,7 @@ export default function ({
     if (call) {
       const action = "BUY"
       const entity = "NFT"
-      const displayName = "Buy NFT"
+      const displayName = i18n.t("Buy NFT")
       const contractAddress = events[2].address
       const tokenId = getParameter(events[2].parameters, "value")
       result = {

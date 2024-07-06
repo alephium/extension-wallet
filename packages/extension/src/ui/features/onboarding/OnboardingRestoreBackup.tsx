@@ -10,6 +10,7 @@ import { recoverBackup } from "../../services/backgroundRecovery"
 import { fileToString } from "../../services/files"
 import { OnboardingButton } from "./ui/OnboardingButton"
 import { OnboardingScreen } from "./ui/OnboardingScreen"
+import { useTranslation } from "react-i18next"
 
 const DropZone = styled.div`
   width: 100%;
@@ -36,6 +37,7 @@ const DropZone = styled.div`
 `
 
 export const OnboardingRestoreBackup: FC = () => {
+  const { t } = useTranslation()
   usePageTracking("restoreWalletWithFile")
   const navigate = useNavigate()
   const {
@@ -72,16 +74,16 @@ export const OnboardingRestoreBackup: FC = () => {
       <DropZone {...getRootProps()}>
         <input {...getInputProps()} />
         {disableSubmit ? (
-          <p>Drag &amp; drop your backup file here, or click to select it</p>
+          <p>{t("Drag &amp; drop your backup file here, or click to select it")}</p>
         ) : (
           <div>
-            <p>Backup selected:</p>
+            <p>{t("Backup selected")}:</p>
             <code>{acceptedFile.name}</code>
           </div>
         )}
       </DropZone>
       <OnboardingButton onClick={handleRestoreClick} disabled={disableSubmit}>
-        Restore backup
+        {t("Restore backup")}
       </OnboardingButton>
     </OnboardingScreen>
   )
