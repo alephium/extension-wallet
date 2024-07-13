@@ -4,27 +4,33 @@
 
 import {
   Address,
-  CallContractParams,
-  CallContractResult,
   Contract,
-  ContractEvent,
-  ContractFactory,
-  ContractInstance,
   ContractState,
+  TestContractResult,
+  HexString,
+  ContractFactory,
   EventSubscribeOptions,
   EventSubscription,
-  HexString,
+  CallContractParams,
+  CallContractResult,
   TestContractParams,
-  TestContractResult,
-  callMethod,
-  fetchContractState,
-  getContractEventsCurrentCount,
-  multicallMethods,
+  ContractEvent,
   subscribeContractEvent,
   subscribeContractEvents,
   testMethod,
+  callMethod,
+  multicallMethods,
+  fetchContractState,
+  ContractInstance,
+  getContractEventsCurrentCount,
+  TestContractParamsWithoutMaps,
+  TestContractResultWithoutMaps,
+  SignExecuteContractMethodParams,
+  SignExecuteScriptTxResult,
+  signExecuteMethod,
+  addStdIdToFields,
+  encodeContractFields,
 } from "@alephium/web3";
-
 import { default as ShinyTokenContractJson } from "../ShinyToken.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
@@ -56,6 +62,14 @@ export namespace ShinyTokenTypes {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
     };
+    transfer: {
+      params: CallContractParams<{ to: Address; amount: bigint }>;
+      result: CallContractResult<null>;
+    };
+    destroy: {
+      params: CallContractParams<{ to: Address }>;
+      result: CallContractResult<null>;
+    };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
     CallMethodTable[T]["params"];
@@ -69,12 +83,51 @@ export namespace ShinyTokenTypes {
       ? CallMethodTable[MaybeName]["result"]
       : undefined;
   };
+
+  export interface SignExecuteMethodTable {
+    getSymbol: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    getName: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    getDecimals: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    getTotalSupply: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    transfer: {
+      params: SignExecuteContractMethodParams<{ to: Address; amount: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+    destroy: {
+      params: SignExecuteContractMethodParams<{ to: Address }>;
+      result: SignExecuteScriptTxResult;
+    };
+  }
+  export type SignExecuteMethodParams<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["params"];
+  export type SignExecuteMethodResult<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["result"];
 }
 
 class Factory extends ContractFactory<
   ShinyTokenInstance,
   ShinyTokenTypes.Fields
 > {
+  encodeFields(fields: ShinyTokenTypes.Fields) {
+    return encodeContractFields(
+      addStdIdToFields(this.contract, fields),
+      this.contract.fieldsSig,
+      []
+    );
+  }
+
   getInitialFieldsWithDefaultValues() {
     return this.contract.getInitialFieldsWithDefaultValues() as ShinyTokenTypes.Fields;
   }
@@ -86,48 +139,51 @@ class Factory extends ContractFactory<
   tests = {
     getSymbol: async (
       params: Omit<
-        TestContractParams<ShinyTokenTypes.Fields, never>,
+        TestContractParamsWithoutMaps<ShinyTokenTypes.Fields, never>,
         "testArgs"
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getSymbol", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "getSymbol", params, getContractByCodeHash);
     },
     getName: async (
       params: Omit<
-        TestContractParams<ShinyTokenTypes.Fields, never>,
+        TestContractParamsWithoutMaps<ShinyTokenTypes.Fields, never>,
         "testArgs"
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getName", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "getName", params, getContractByCodeHash);
     },
     getDecimals: async (
       params: Omit<
-        TestContractParams<ShinyTokenTypes.Fields, never>,
+        TestContractParamsWithoutMaps<ShinyTokenTypes.Fields, never>,
         "testArgs"
       >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getDecimals", params);
+    ): Promise<TestContractResultWithoutMaps<bigint>> => {
+      return testMethod(this, "getDecimals", params, getContractByCodeHash);
     },
     getTotalSupply: async (
       params: Omit<
-        TestContractParams<ShinyTokenTypes.Fields, never>,
+        TestContractParamsWithoutMaps<ShinyTokenTypes.Fields, never>,
         "testArgs"
       >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getTotalSupply", params);
+    ): Promise<TestContractResultWithoutMaps<bigint>> => {
+      return testMethod(this, "getTotalSupply", params, getContractByCodeHash);
     },
     transfer: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         ShinyTokenTypes.Fields,
         { to: Address; amount: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "transfer", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "transfer", params, getContractByCodeHash);
     },
     destroy: async (
-      params: TestContractParams<ShinyTokenTypes.Fields, { to: Address }>
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "destroy", params);
+      params: TestContractParamsWithoutMaps<
+        ShinyTokenTypes.Fields,
+        { to: Address }
+      >
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "destroy", params, getContractByCodeHash);
     },
   };
 }
@@ -137,7 +193,8 @@ export const ShinyToken = new Factory(
   Contract.fromJson(
     ShinyTokenContractJson,
     "",
-    "5fa5fb7f1345ae13a578f49e9ddced90971c0ca97b6e0bf1ab17e64418d09ea5"
+    "9bdc139154d4e611dd391a5b262cc081d2519b9a3ccc95df943a98a9e3c67661",
+    []
   )
 );
 
@@ -151,7 +208,7 @@ export class ShinyTokenInstance extends ContractInstance {
     return fetchContractState(ShinyToken, this);
   }
 
-  methods = {
+  view = {
     getSymbol: async (
       params?: ShinyTokenTypes.CallMethodParams<"getSymbol">
     ): Promise<ShinyTokenTypes.CallMethodResult<"getSymbol">> => {
@@ -195,6 +252,61 @@ export class ShinyTokenInstance extends ContractInstance {
         params === undefined ? {} : params,
         getContractByCodeHash
       );
+    },
+    transfer: async (
+      params: ShinyTokenTypes.CallMethodParams<"transfer">
+    ): Promise<ShinyTokenTypes.CallMethodResult<"transfer">> => {
+      return callMethod(
+        ShinyToken,
+        this,
+        "transfer",
+        params,
+        getContractByCodeHash
+      );
+    },
+    destroy: async (
+      params: ShinyTokenTypes.CallMethodParams<"destroy">
+    ): Promise<ShinyTokenTypes.CallMethodResult<"destroy">> => {
+      return callMethod(
+        ShinyToken,
+        this,
+        "destroy",
+        params,
+        getContractByCodeHash
+      );
+    },
+  };
+
+  transact = {
+    getSymbol: async (
+      params: ShinyTokenTypes.SignExecuteMethodParams<"getSymbol">
+    ): Promise<ShinyTokenTypes.SignExecuteMethodResult<"getSymbol">> => {
+      return signExecuteMethod(ShinyToken, this, "getSymbol", params);
+    },
+    getName: async (
+      params: ShinyTokenTypes.SignExecuteMethodParams<"getName">
+    ): Promise<ShinyTokenTypes.SignExecuteMethodResult<"getName">> => {
+      return signExecuteMethod(ShinyToken, this, "getName", params);
+    },
+    getDecimals: async (
+      params: ShinyTokenTypes.SignExecuteMethodParams<"getDecimals">
+    ): Promise<ShinyTokenTypes.SignExecuteMethodResult<"getDecimals">> => {
+      return signExecuteMethod(ShinyToken, this, "getDecimals", params);
+    },
+    getTotalSupply: async (
+      params: ShinyTokenTypes.SignExecuteMethodParams<"getTotalSupply">
+    ): Promise<ShinyTokenTypes.SignExecuteMethodResult<"getTotalSupply">> => {
+      return signExecuteMethod(ShinyToken, this, "getTotalSupply", params);
+    },
+    transfer: async (
+      params: ShinyTokenTypes.SignExecuteMethodParams<"transfer">
+    ): Promise<ShinyTokenTypes.SignExecuteMethodResult<"transfer">> => {
+      return signExecuteMethod(ShinyToken, this, "transfer", params);
+    },
+    destroy: async (
+      params: ShinyTokenTypes.SignExecuteMethodParams<"destroy">
+    ): Promise<ShinyTokenTypes.SignExecuteMethodResult<"destroy">> => {
+      return signExecuteMethod(ShinyToken, this, "destroy", params);
     },
   };
 
