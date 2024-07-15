@@ -136,7 +136,7 @@ export const useNonFungibleTokensWithBalance = (
       const nonFungibleTokens: BaseTokenWithBalance[] = []
       for (const token of potentialNonFungibleTokens) {
         if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
-          const tokenType = await fetchImmutable(`${token.id}-token-type`, () => nodeProvider.guessStdInterfaceId(token.id))
+          const tokenType = await fetchImmutable(`${token.id}-token-type`, () => nodeProvider.guessStdTokenType(token.id))
           if (tokenType === 'non-fungible') {
             nonFungibleTokens.push({ id: token.id, networkId: networkId, balance: token.balance })
           }
@@ -332,7 +332,7 @@ async function getBalances(nodeProvider: NodeProvider, address: string): Promise
 async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
-    const tokenType = await fetchImmutable(`${tokenId}-token-type`, () => nodeProvider.guessStdInterfaceId(tokenId))
+    const tokenType = await fetchImmutable(`${tokenId}-token-type`, () => nodeProvider.guessStdTokenType(tokenId))
     if (tokenType !== 'fungible') {
       return undefined
     }
