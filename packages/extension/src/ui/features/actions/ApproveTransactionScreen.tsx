@@ -261,10 +261,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           selectedAccount.signer.keyType,
           selectedAccount.signer.derivationIndex,
         )
-        const signature = await app.signHash(
-          path,
-          Buffer.from(buildResult.result.txId, "hex"),
-        )
+        const signature = await app.signUnsignedTx(path, Buffer.from(buildResult.result.unsignedTx, "hex"))
         setLedgerState("succeeded")
         onSubmit({ ...buildResult, signature })
         await app.close()
