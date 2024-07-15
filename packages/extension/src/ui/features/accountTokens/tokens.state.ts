@@ -136,7 +136,7 @@ export const useNonFungibleTokensWithBalance = (
       const nonFungibleTokens: BaseTokenWithBalance[] = []
       for (const token of potentialNonFungibleTokens) {
         if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
-          const tokenType = await fetchImmutable(`${token.id}-token-type`, () => guessTokenType(nodeProvider, token.id))
+          const tokenType = await fetchImmutable(`${token.id}-token-type`, () => nodeProvider.guessStdInterfaceId(token.id))
           if (tokenType === 'non-fungible') {
             nonFungibleTokens.push({ id: token.id, networkId: networkId, balance: token.balance })
           }
@@ -332,7 +332,7 @@ async function getBalances(nodeProvider: NodeProvider, address: string): Promise
 async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
-    const tokenType = await fetchImmutable(`${tokenId}-token-type`, () => guessTokenType(nodeProvider, tokenId))
+    const tokenType = await fetchImmutable(`${tokenId}-token-type`, () => nodeProvider.guessStdInterfaceId(tokenId))
     if (tokenType !== 'fungible') {
       return undefined
     }
@@ -351,22 +351,5 @@ async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string)
   } catch (e) {
     console.debug(`Failed to fetch token metadata for ${tokenId}`, e)
     return undefined
-  }
-}
-
-// TODO: Add this to Web3 SDK when `000301` is standardized
-async function guessTokenType(
-  nodeProvider: NodeProvider,
-  tokenId: HexString
-): Promise<'fungible' | 'non-fungible' | undefined> {
-  const interfaceId = await nodeProvider.guessStdInterfaceId(tokenId)
-  switch (interfaceId) {
-    case '0001':
-      return 'fungible'
-    case '0003':
-    case '000301':
-      return 'non-fungible'
-    default:
-      return undefined
   }
 }
