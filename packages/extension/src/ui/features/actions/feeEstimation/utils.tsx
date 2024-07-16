@@ -10,5 +10,5 @@ export function getTooltipText(maxFee?: string, feeTokenBalance?: BigNumber) {
   }
   return `Insufficient balance to pay network fees. You need at least ${utils.formatEther(
     BigNumber.from(maxFee).sub(feeTokenBalance),
-  )} ETH more.`
+  )} ALPH more.`
 }
