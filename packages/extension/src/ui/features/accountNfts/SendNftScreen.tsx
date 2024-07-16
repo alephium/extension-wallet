@@ -223,11 +223,15 @@ export const SendNftScreen: FC = () => {
           </ColumnCenter>
           <StyledForm onSubmit={handleSubmit(onSubmit)}>
             <Column gap="12px">
-              <RowCentered>
-                <NftImageContainer>
-                  <img src={nft.metadata.image} alt={nft.metadata.name} />
-                </NftImageContainer>
-              </RowCentered>
+              {
+                nft.metadata.image ? (
+                  <RowCentered>
+                    <NftImageContainer>
+                      <img src={nft.metadata.image} alt={nft.metadata.name} />
+                    </NftImageContainer>
+                  </RowCentered>
+                ) : null
+              }
               <div>
                 {addressBookRecipient && accountName ? (
                   <AddressBookRecipient

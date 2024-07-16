@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, NodeProvider } from "@alephium/web3"
+import { ALPH_TOKEN_ID, HexString, NodeProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
