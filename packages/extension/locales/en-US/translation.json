@@ -345,5 +345,10 @@
   "Rejected": "Rejected",
   "Could not delete account": "Could not delete account",
   "Could not upgrade account": "Could not upgrade account",
-  "Invalid Seed Phrase": "Invalid Seed Phrase"
+  "Invalid Seed Phrase": "Invalid Seed Phrase",
+  "Verify in Ledger": "Verify in Ledger",
+  "Connect with Ledger": "Connect with Ledger",
+  "Failed to connect with Ledger, please try again": "Failed to connect with Ledger, please try again",
+  "Verify with Ledger": "Verify with Ledger",
+  "Failed to verify with Ledger, please try another device": "Failed to verify with Ledger, please try another device"
 }
