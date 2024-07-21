@@ -238,7 +238,7 @@
   "Connect a new Ledger": "Connect a new Ledger",
   "Plug in and unlock your Ledger device": "Plug in and unlock your Ledger device",
   "Open (or install) the Alephium Ledger app": "Open (or install) the Alephium Ledger app",
-  "The Alephium Ledger app needs to be installed manually.": "The Alephium Ledger app needs to be installed manually.",
+  "The Alephium app can be installed via Ledger Live.": "The Alephium app can be installed via Ledger Live.",
   "More information here.": "More information here.",
   "Schnorr is not supported for Alephium's ledger app yet": "Schnorr is not supported for Alephium's ledger app yet",
   "Alephium Ledger app is not connected, please follow the instructions above": "Alephium Ledger app is not connected, please follow the instructions above",
