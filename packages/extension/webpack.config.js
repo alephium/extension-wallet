@@ -153,6 +153,8 @@ module.exports = {
           chunks(chunk) {
             return chunk.name === 'main';
           },
+          minSize: 2000000,
+          maxSize: 4000000,
           cacheGroups: {
             tsxFiles: {
               test: /\.tsx?$/,
@@ -162,6 +164,16 @@ module.exports = {
             jsonFiles: {
               test: /\.json$/,
               priority: -5,
+              reuseExistingChunk: true
+            },
+            react: {
+              test: /[\\/]node_modules[\\/](react)[\\/]/,
+              priority: -10,
+              reuseExistingChunk: true
+            },
+            alephium: {
+              test: /[\\/]node_modules[\\/](@alephium)[\\/]/,
+              priority: -10,
               reuseExistingChunk: true
             },
             defaultVendors: {
