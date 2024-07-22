@@ -101,7 +101,7 @@ export const withdrawMintedToken = async (
     alephium,
     {
       initialFields: {
-        shinyTokenId: binToHex(contractIdFromAddress(tokenId)),
+        shinyToken: binToHex(contractIdFromAddress(tokenId)),
         to: alephium.connectedAccount.address,
         amount: BigInt(amount)
       }
@@ -145,7 +145,7 @@ export const destroyTokenContract = async (
     alephium,
     {
       initialFields: {
-        shinyTokenId: binToHex(contractIdFromAddress(tokenId)),
+        shinyToken: binToHex(contractIdFromAddress(tokenId)),
         to: alephium.connectedAccount.address,
       }
     }

@@ -1,15 +1,15 @@
 {
-  "version": "v2.8.0",
+  "version": "v3.3.0",
   "name": "Transfer",
   "bytecodeTemplate": "01010300000006{1}{2}0e0c{0}0104",
   "fieldsSig": {
     "names": [
-      "shinyTokenId",
+      "shinyToken",
       "to",
       "amount"
     ],
     "types": [
-      "ByteVec",
+      "ShinyToken",
       "Address",
       "U256"
     ],
