@@ -2,6 +2,7 @@ import { NFT, CollectionAndNFTMap } from "./alephium-nft.model"
 import { NFTCollection } from "./alephium-nft.model"
 import { Network } from "../../../shared/network"
 import { ExplorerProvider, NodeProvider } from "@alephium/web3"
+import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
 
 export const fetchCollectionAndNfts = async (
   nonFungibleTokenIds: string[],
@@ -25,7 +26,7 @@ export const fetchCollectionAndNfts = async (
     const nodeProvider = new NodeProvider(network.nodeUrl)
     const otherNonFungibleTokenIds = nonFungibleTokenIds.filter(id => nftMetadataz.findIndex((m) => m.id == id) == -1)
     for (const tokenId of otherNonFungibleTokenIds) {
-      const nftMetadata = await nodeProvider.fetchNFTMetaData(tokenId)
+      const nftMetadata = await fetchImmutable(`${tokenId}-nft-metadata`, () => nodeProvider.fetchNFTMetaData(tokenId))
       const collectionId = nftMetadata.collectionId
       if (parentAndTokenIds[collectionId]) {
         parentAndTokenIds[collectionId].push(tokenId)
@@ -60,7 +61,7 @@ export const fetchNFTCollection = async (
 export async function getNFT(collectionId: string, nftId: string, network: Network): Promise<NFT | undefined> {
   try {
     const nodeProvider = new NodeProvider(network.nodeUrl)
-    const nftMetadata = await nodeProvider.fetchNFTMetaData(nftId)
+    const nftMetadata = await fetchImmutable(`${nftId}-nft-metadata`, () => nodeProvider.fetchNFTMetaData(nftId))
     const metadataResponse = await fetch(nftMetadata.tokenUri)
     const metadata = await metadataResponse.json()
     return {
@@ -81,7 +82,7 @@ async function getCollectionMetadata(
   collectionId: string,
   nodeProvider: NodeProvider
 ) {
-  const metadata = await nodeProvider.fetchNFTCollectionMetaData(collectionId)
+  const metadata = await fetchImmutable(`${collectionId}-nft-collection-metadata`, () => nodeProvider.fetchNFTCollectionMetaData(collectionId))
   const metadataResponse = await fetch(metadata.collectionUri)
   return await metadataResponse.json()
 }

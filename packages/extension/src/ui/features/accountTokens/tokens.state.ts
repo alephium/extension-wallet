@@ -337,7 +337,7 @@ async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string)
       return undefined
     }
 
-    const metadata = await nodeProvider.fetchFungibleTokenMetaData(tokenId)
+    const metadata = await fetchImmutable(`${tokenId}-token-metadata`, () => nodeProvider.fetchFungibleTokenMetaData(tokenId))
     const token: Token = {
       id: tokenId,
       networkId: network.id,
