@@ -63,7 +63,7 @@ export const LedgerStartScreen: FC = () => {
             { title: t("Plug in and unlock your Ledger device") },
             {
               title: t("Open (or install) the Alephium Ledger app"),
-              description: <>{t("The Alephium Ledger app needs to be installed manually.")} <A href="https://docs.alephium.org/wallet/ledger" target="_blank">{t("More information here.")}</A></>,
+              description: <>{t("The Alephium app can be installed via Ledger Live.")} <A href="https://docs.alephium.org/wallet/ledger" target="_blank">{t("More information here.")}</A></>,
             },
           ]}
           style={{ marginBottom: 8 }}

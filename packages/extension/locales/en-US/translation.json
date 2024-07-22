@@ -238,7 +238,7 @@
   "Connect a new Ledger": "Connect a new Ledger",
   "Plug in and unlock your Ledger device": "Plug in and unlock your Ledger device",
   "Open (or install) the Alephium Ledger app": "Open (or install) the Alephium Ledger app",
-  "The Alephium Ledger app needs to be installed manually.": "The Alephium Ledger app needs to be installed manually.",
+  "The Alephium app can be installed via Ledger Live.": "The Alephium app can be installed via Ledger Live.",
   "More information here.": "More information here.",
   "Schnorr is not supported for Alephium's ledger app yet": "Schnorr is not supported for Alephium's ledger app yet",
   "Alephium Ledger app is not connected, please follow the instructions above": "Alephium Ledger app is not connected, please follow the instructions above",
@@ -345,5 +345,10 @@
   "Rejected": "Rejected",
   "Could not delete account": "Could not delete account",
   "Could not upgrade account": "Could not upgrade account",
-  "Invalid Seed Phrase": "Invalid Seed Phrase"
+  "Invalid Seed Phrase": "Invalid Seed Phrase",
+  "Verify in Ledger": "Verify in Ledger",
+  "Connect with Ledger": "Connect with Ledger",
+  "Failed to connect with Ledger, please try again": "Failed to connect with Ledger, please try again",
+  "Verify with Ledger": "Verify with Ledger",
+  "Failed to verify with Ledger, please try another device": "Failed to verify with Ledger, please try another device"
 }

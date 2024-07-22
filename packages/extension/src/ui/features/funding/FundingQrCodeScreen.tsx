@@ -1,12 +1,12 @@
 import { AlertDialog, BarBackButton, BarCloseButton, NavigationContainer } from "@argent/ui"
-import { FC, useCallback, useRef, useState } from "react"
+import { FC, useCallback, useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
 import { AccountAddress, AccountName } from "../../components/Address"
 import { IconButton } from "../../components/Button"
 import { CopyIconButton } from "../../components/CopyIconButton"
-import { CheckCircleIcon, AddRoundedIcon } from "../../components/Icons/MuiIcons"
+import { CheckCircleIcon, AddRoundedIcon, SafetyCheck } from "../../components/Icons/MuiIcons"
 import { PageWrapper } from "../../components/Page"
 import { routes } from "../../routes"
 import { formatTruncatedAddress, normalizeAddress } from "../../services/addresses"
@@ -18,11 +18,12 @@ import {
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { QrCode } from "./QrCode"
 import { testNodeWallet } from '@alephium/web3-test'
-import { web3 } from "@alephium/web3"
-import { defaultNetworks } from "../../../shared/network"
+import { getHDWalletPath } from "@alephium/web3-wallet"
 import { Flex } from "@chakra-ui/react"
 import i18n from "../../../i18n"
 import { useTranslation } from "react-i18next"
+import { getLedgerApp } from '../ledger/utils'
+import { set } from 'lodash-es'
 
 const Container = styled.div`
   padding: 0 20px;
@@ -47,6 +48,14 @@ const alterMessages = [
   {
     title: i18n.t("Request $ALPH"),
     message: i18n.t("The local Devnet is not available, please start one")
+  },
+  {
+    title: i18n.t("Connect with Ledger"),
+    message: i18n.t("Failed to connect with Ledger, please try again")
+  },
+  {
+    title: i18n.t("Verify with Ledger"),
+    message: i18n.t("Failed to verify with Ledger, please try another device")
   }
 ]
 
@@ -62,6 +71,8 @@ export const FundingQrCodeScreen: FC = () => {
   const copyAccountAddress = account ? normalizeAddress(account.address) : ""
   const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false)
   const [alterMessageIndex, setAlterMessageIndex] = useState(0)
+
+  const shouldShowLedgerVerify = account?.signer.type === 'ledger'
 
   /** Intercept 'copy' event and replace fragmented address with plain text address */
   const onCopyAddress = useCallback(
@@ -123,6 +134,30 @@ export const FundingQrCodeScreen: FC = () => {
     }
   }, [account?.address, account?.networkId, navigate])
 
+  const verifyLedger = useCallback(async () => {
+    if (account?.signer.type === 'ledger') {
+      const app = await getLedgerApp().catch((error) => {
+        console.error(`Failed in connecting with ledger`, error)
+        setAlterMessageIndex(2)
+        setAlertDialogIsOpen(true)
+        return null
+      })
+      if (!app) {
+        return
+      }
+      const path = getHDWalletPath(
+        account.signer.keyType,
+        account.signer.derivationIndex,
+      )
+      const [deviceAccount, _] = await app.getAccount(path, undefined, account.signer.keyType, true)
+      if (deviceAccount.address !== account.address) {
+        setAlterMessageIndex(3)
+        setAlertDialogIsOpen(true)
+      }
+      app.close()
+    }
+  }, [account])
+
   return (
     <NavigationContainer
       leftButton={<BarBackButton />}
@@ -147,11 +182,29 @@ export const FundingQrCodeScreen: FC = () => {
               ref={setAddressRef}
               aria-label={t("Full account address")}
             >
-              {formatTruncatedAddress(account.address, 6)}
+              {formatTruncatedAddress(account.address, 12)}
             </AccountAddress>
-            <StyledCopyIconButton size="s" copyValue={copyAccountAddress}>
-              {t("Copy address")}
-            </StyledCopyIconButton>
+            <div>
+              <StyledCopyIconButton size="s" copyValue={copyAccountAddress}>
+                {t("Copy address")}
+              </StyledCopyIconButton>
+            </div>
+            {
+              shouldShowLedgerVerify &&
+              <div>
+                <StyledIconButton
+                  size="s"
+                  icon={<SafetyCheck fontSize="inherit" />}
+                  clickedIcon={<CheckCircleIcon fontSize="inherit" />}
+                  clickedTimeout={5 * 60 * 1000}
+                  onClick={async () => {
+                    verifyLedger()
+                  }}
+                >
+                  {t("Verify with Ledger")}
+                </StyledIconButton>
+              </div>
+            }
             {account.networkId !== 'mainnet' &&
               <div>
                 <StyledIconButton
