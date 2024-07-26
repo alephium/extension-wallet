@@ -1,4 +1,4 @@
-import LedgerApp from '@alephium/ledger-app'
+import { AlephiumApp as LedgerApp } from '@alephium/ledger-app'
 import Transport from "@ledgerhq/hw-transport"
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
