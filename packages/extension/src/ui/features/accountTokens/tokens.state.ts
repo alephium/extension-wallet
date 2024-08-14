@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, HexString, NodeProvider } from "@alephium/web3"
+import { ALPH_TOKEN_ID, NodeProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
@@ -268,6 +268,7 @@ export const useAllTokensWithBalance = (
     },
     {
       refreshInterval: 30000,
+      dedupingInterval: 5000,
       shouldRetryOnError: (error: any) => {
         const errorCode = error?.status || error?.errorCode
         const suppressError =
@@ -337,17 +338,28 @@ async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string)
       return undefined
     }
 
-    const metadata = await fetchImmutable(`${tokenId}-token-metadata`, () => nodeProvider.fetchFungibleTokenMetaData(tokenId))
-    const token: Token = {
-      id: tokenId,
-      networkId: network.id,
-      name: Buffer.from(metadata.name, 'hex').toString('utf8'),
-      symbol: Buffer.from(metadata.symbol, 'hex').toString('utf8'),
-      decimals: metadata.decimals,
-      verified: false
-    }
+    const metadata = await fetchImmutable(`${tokenId}-token-metadata`, async () => {
+      try {
+        return (await nodeProvider.fetchFungibleTokenMetaData(tokenId))
+      } catch (e: any) {
+        if (e.message.startsWith('Failed to call contract')) {
+          return { name: undefined, symbol: undefined, decimals: 0 }
+        } else {
+          throw e
+        }
+      }
+    })
 
-    return token
+    if (metadata.name && metadata.symbol) {
+      return {
+        id: tokenId,
+        networkId: network.id,
+        name: Buffer.from(metadata.name, 'hex').toString('utf8'),
+        symbol: Buffer.from(metadata.symbol, 'hex').toString('utf8'),
+        decimals: metadata.decimals,
+        verified: false
+      }
+    }
   } catch (e) {
     console.debug(`Failed to fetch token metadata for ${tokenId}`, e)
     return undefined

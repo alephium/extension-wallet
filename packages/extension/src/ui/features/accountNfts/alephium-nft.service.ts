@@ -3,14 +3,22 @@ import { NFTCollection } from "./alephium-nft.model"
 import { Network } from "../../../shared/network"
 import { ExplorerProvider, NodeProvider } from "@alephium/web3"
 import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
+import { chunk } from 'lodash'
 
 export const fetchCollectionAndNfts = async (
   nonFungibleTokenIds: string[],
   network: Network
 ): Promise<CollectionAndNFTMap> => {
+  const maxSizeTokens = 80
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
   const parentAndTokenIds: CollectionAndNFTMap = {}
-  const nftMetadataz = await explorerProvider.tokens.postTokensNftMetadata(nonFungibleTokenIds)
+
+  const nftMetadataz = (await Promise.all(
+    chunk(nonFungibleTokenIds, maxSizeTokens).map((nftIds) =>
+      explorerProvider.tokens.postTokensNftMetadata(nftIds)
+    )
+  )).flat()
+
   for (const nftMetadata of nftMetadataz) {
     const tokenId = nftMetadata.id
     const collectionId = nftMetadata.collectionId

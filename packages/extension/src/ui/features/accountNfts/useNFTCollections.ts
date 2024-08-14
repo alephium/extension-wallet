@@ -22,6 +22,7 @@ export const useCollectionAndNFTs = (
     () => fetchCollectionAndNfts(nonFungibleTokenIds, network),
     {
       ...config,
+      dedupingInterval: 5000,
       refreshInterval: 30000,
     }
   )
