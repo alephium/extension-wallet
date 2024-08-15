@@ -2,7 +2,7 @@ import useSWR from "swr"
 import { Network } from "../../../shared/network"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
-import { SWRConfigCommon } from "../../services/swr"
+import { SWRConfigCommon, retryWhenRateLimited } from "../../services/swr"
 import { getNFT } from "./alephium-nft.service"
 import { laggy } from "./laggy"
 
@@ -22,6 +22,7 @@ export const useNFT = (
       revalidateOnMount: false,
       use: [laggy],
       suspense: true,
+      shouldRetryOnError: retryWhenRateLimited
     },
   )
   return { nft, ...rest }

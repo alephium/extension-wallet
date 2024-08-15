@@ -2,7 +2,7 @@ import useSWR from "swr"
 
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
-import { SWRConfigCommon } from "../../services/swr"
+import { SWRConfigCommon, retryWhenRateLimited } from "../../services/swr"
 
 import { Network } from "../../../shared/network"
 import { fetchNFTCollection, fetchCollectionAndNfts } from "./alephium-nft.service"
@@ -24,6 +24,7 @@ export const useCollectionAndNFTs = (
       ...config,
       dedupingInterval: 5000,
       refreshInterval: 30000,
+      shouldRetryOnError: retryWhenRateLimited
     }
   )
 
@@ -45,6 +46,7 @@ export const useNFTCollection = (
       ...config,
       refreshInterval: 60e3 /* 1 minute */,
       use: [laggy],
+      shouldRetryOnError: retryWhenRateLimited
     },
   )
   return { collection, ...rest }

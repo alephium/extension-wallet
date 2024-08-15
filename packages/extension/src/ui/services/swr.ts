@@ -104,3 +104,8 @@ export const swrCacheProvider: Cache = {
     }
   },
 }
+
+export const retryWhenRateLimited = (error: any) => {
+  const errorCode = error?.status || error?.errorCode
+  return errorCode && errorCode === 429
+}

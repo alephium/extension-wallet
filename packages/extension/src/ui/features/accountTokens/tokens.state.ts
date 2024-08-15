@@ -17,6 +17,7 @@ import { sortBy } from "lodash"
 import { addTokenToBalances } from "../../../shared/token/balance"
 import { Transaction, compareTransactions } from "../../../shared/transactions"
 import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
+import { retryWhenRateLimited } from "../../services/swr"
 
 type UseTokensWithBalance = UseTokensBase<TokenWithBalance>
 type UseBaseTokensWithBalance = UseTokensBase<BaseTokenWithBalance>
@@ -136,7 +137,7 @@ export const useNonFungibleTokensWithBalance = (
       const nonFungibleTokens: BaseTokenWithBalance[] = []
       for (const token of potentialNonFungibleTokens) {
         if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
-          const tokenType = await fetchImmutable(`${token.id}-token-type`, () => nodeProvider.guessStdTokenType(token.id))
+          const tokenType = await fetchImmutable(`token-type-${token.id}`, () => nodeProvider.guessStdTokenType(token.id))
           if (tokenType === 'non-fungible') {
             nonFungibleTokens.push({ id: token.id, networkId: networkId, balance: token.balance })
           }
@@ -146,7 +147,8 @@ export const useNonFungibleTokensWithBalance = (
       return nonFungibleTokens
     },
     {
-      refreshInterval: 30000
+      refreshInterval: 30000,
+      shouldRetryOnError: retryWhenRateLimited
     }
   )
 
@@ -204,12 +206,7 @@ export const useFungibleTokensWithBalance = (
     },
     {
       refreshInterval: 30000,
-      shouldRetryOnError: (error: any) => {
-        const errorCode = error?.status || error?.errorCode
-        const suppressError =
-          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
-        return suppressError
-      },
+      shouldRetryOnError: retryWhenRateLimited
     }
   )
   const tokenDetailsIsInitialising = !error && !fungibleTokens
@@ -269,12 +266,7 @@ export const useAllTokensWithBalance = (
     {
       refreshInterval: 30000,
       dedupingInterval: 5000,
-      shouldRetryOnError: (error: any) => {
-        const errorCode = error?.status || error?.errorCode
-        const suppressError =
-          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
-        return suppressError
-      },
+      shouldRetryOnError: retryWhenRateLimited
     }
   )
 
@@ -333,12 +325,12 @@ async function getBalances(nodeProvider: NodeProvider, address: string): Promise
 async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
-    const tokenType = await fetchImmutable(`${tokenId}-token-type`, () => nodeProvider.guessStdTokenType(tokenId))
+    const tokenType = await fetchImmutable(`token-type-${tokenId}`, () => nodeProvider.guessStdTokenType(tokenId))
     if (tokenType !== 'fungible') {
       return undefined
     }
 
-    const metadata = await fetchImmutable(`${tokenId}-token-metadata`, async () => {
+    const metadata = await fetchImmutable(`token-metadata-${tokenId}`, async () => {
       try {
         return (await nodeProvider.fetchFungibleTokenMetaData(tokenId))
       } catch (e: any) {

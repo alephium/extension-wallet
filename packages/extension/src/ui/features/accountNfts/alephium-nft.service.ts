@@ -29,7 +29,7 @@ export const fetchCollectionAndNfts = async (
     const nodeProvider = new NodeProvider(network.nodeUrl)
     const otherNonFungibleTokenIds = nftIds.filter(id => nftMetadataz.findIndex((m) => m.id == id) == -1)
     for (const tokenId of otherNonFungibleTokenIds) {
-      const nftMetadata = await fetchImmutable(`${tokenId}-nft-metadata`, () => nodeProvider.fetchNFTMetaData(tokenId))
+      const nftMetadata = await fetchImmutable(`nft-metadata-${tokenId}`, () => nodeProvider.fetchNFTMetaData(tokenId))
       const collectionId = nftMetadata.collectionId
       if (parentAndTokenIds[collectionId]) {
         parentAndTokenIds[collectionId].push(tokenId)
@@ -64,7 +64,7 @@ export const fetchNFTCollection = async (
 export async function getNFT(collectionId: string, nftId: string, network: Network): Promise<NFT | undefined> {
   try {
     const nodeProvider = new NodeProvider(network.nodeUrl)
-    const nftMetadata = await fetchImmutable(`${nftId}-nft-metadata`, () => nodeProvider.fetchNFTMetaData(nftId))
+    const nftMetadata = await fetchImmutable(`nft-metadata-${nftId}`, () => nodeProvider.fetchNFTMetaData(nftId))
     const metadataResponse = await fetch(nftMetadata.tokenUri)
     const metadata = await metadataResponse.json()
     return {
@@ -85,7 +85,7 @@ async function getCollectionMetadata(
   collectionId: string,
   nodeProvider: NodeProvider
 ) {
-  const metadata = await fetchImmutable(`${collectionId}-nft-collection-metadata`, () => nodeProvider.fetchNFTCollectionMetaData(collectionId))
+  const metadata = await fetchImmutable(`nft-collection-metadata-${collectionId}`, () => nodeProvider.fetchNFTCollectionMetaData(collectionId))
   const metadataResponse = await fetch(metadata.collectionUri)
   return await metadataResponse.json()
 }
