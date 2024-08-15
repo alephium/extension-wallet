@@ -4,33 +4,34 @@
 
 import {
   Address,
-  Contract,
-  ContractState,
-  TestContractResult,
-  HexString,
-  ContractFactory,
-  EventSubscribeOptions,
-  EventSubscription,
   CallContractParams,
   CallContractResult,
-  TestContractParams,
+  Contract,
   ContractEvent,
+  ContractFactory,
+  ContractInstance,
+  ContractState,
+  EventSubscribeOptions,
+  EventSubscription,
+  HexString,
+  SignExecuteContractMethodParams,
+  SignExecuteScriptTxResult,
+  TestContractParams,
+  TestContractParamsWithoutMaps,
+  TestContractResult,
+  TestContractResultWithoutMaps,
+  addStdIdToFields,
+  callMethod,
+  encodeContractFields,
+  fetchContractState,
+  getContractEventsCurrentCount,
+  multicallMethods,
+  signExecuteMethod,
   subscribeContractEvent,
   subscribeContractEvents,
   testMethod,
-  callMethod,
-  multicallMethods,
-  fetchContractState,
-  ContractInstance,
-  getContractEventsCurrentCount,
-  TestContractParamsWithoutMaps,
-  TestContractResultWithoutMaps,
-  SignExecuteContractMethodParams,
-  SignExecuteScriptTxResult,
-  signExecuteMethod,
-  addStdIdToFields,
-  encodeContractFields,
 } from "@alephium/web3";
+
 import { default as ShinyTokenContractJson } from "../ShinyToken.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
@@ -83,6 +84,10 @@ export namespace ShinyTokenTypes {
       ? CallMethodTable[MaybeName]["result"]
       : undefined;
   };
+  export type MulticallReturnType<Callss extends MultiCallParams[]> =
+    Callss["length"] extends 1
+      ? MultiCallResults<Callss[0]>
+      : { [index in keyof Callss]: MultiCallResults<Callss[index]> };
 
   export interface SignExecuteMethodTable {
     getSymbol: {
@@ -126,10 +131,6 @@ class Factory extends ContractFactory<
       this.contract.fieldsSig,
       []
     );
-  }
-
-  getInitialFieldsWithDefaultValues() {
-    return this.contract.getInitialFieldsWithDefaultValues() as ShinyTokenTypes.Fields;
   }
 
   at(address: string): ShinyTokenInstance {
@@ -310,14 +311,14 @@ export class ShinyTokenInstance extends ContractInstance {
     },
   };
 
-  async multicall<Calls extends ShinyTokenTypes.MultiCallParams>(
-    calls: Calls
-  ): Promise<ShinyTokenTypes.MultiCallResults<Calls>> {
+  async multicall<Callss extends ShinyTokenTypes.MultiCallParams[]>(
+    ...callss: Callss
+  ): Promise<ShinyTokenTypes.MulticallReturnType<Callss>> {
     return (await multicallMethods(
       ShinyToken,
       this,
-      calls,
+      callss,
       getContractByCodeHash
-    )) as ShinyTokenTypes.MultiCallResults<Calls>;
+    )) as ShinyTokenTypes.MulticallReturnType<Callss>;
   }
 }

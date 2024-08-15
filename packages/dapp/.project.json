@@ -1,41 +1,38 @@
 {
-  "fullNodeVersion": "v3.3.0",
+  "fullNodeVersion": "v3.5.0",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
     "ignoreUpdateFieldsCheckWarnings": false,
-    "ignoreCheckExternalCallerWarnings": false
+    "ignoreCheckExternalCallerWarnings": false,
+    "ignoreUnusedFunctionReturnWarnings": false
   },
   "infos": {
     "Destroy": {
       "sourceFile": "destroy.ral",
       "sourceCodeHash": "81d9d935ecd97844aa8bb59687865673567402bdc1b9fa610ce2e435f3f4c87d",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "",
-      "warnings": []
+      "codeHashDebug": ""
     },
     "IFungibleToken": {
       "sourceFile": "../../../node_modules/@alephium/web3/std/fungible_token_interface.ral",
       "sourceCodeHash": "62910bf11e1eeb6cb2fd468626ff606a9b06306b2b81590c3b10f6deb5966bde",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "",
-      "warnings": []
+      "codeHashDebug": ""
     },
     "ShinyToken": {
       "sourceFile": "shiny-token.ral",
       "sourceCodeHash": "b6fdc5d87df9a51ee1611196216db85f14ee257cf7487ad2d7676f6518336c09",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "9bdc139154d4e611dd391a5b262cc081d2519b9a3ccc95df943a98a9e3c67661",
-      "warnings": []
+      "codeHashDebug": "9bdc139154d4e611dd391a5b262cc081d2519b9a3ccc95df943a98a9e3c67661"
     },
     "Transfer": {
       "sourceFile": "transfer.ral",
       "sourceCodeHash": "2e2589a93623a069b127fd94f27a155d1794a80d1ee5f354457f61814e15bb40",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "",
-      "warnings": []
+      "codeHashDebug": ""
     }
   }
 }
