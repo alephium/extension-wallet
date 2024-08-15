@@ -103,17 +103,15 @@ async function getNftMetadataz(nftIds: string[], explorerProvider: ExplorerProvi
     }
   }
 
-  let newNftMetadataz: NFTMetadata[] = []
+  const newNftMetadataz: NFTMetadata[] = []
   if (nftIdsWithoutMetadata.length !== 0) {
-    newNftMetadataz = (await Promise.all(
-      chunk(nftIdsWithoutMetadata, maxSizeTokens).map((ids) =>
-        explorerProvider.tokens.postTokensNftMetadata(ids)
-      )
-    )).flat()
-  }
-
-  for (const newNftMetadata of newNftMetadataz) {
-    await storeImmutable(`${newNftMetadata.id}-nft-metadata`, newNftMetadata)
+    for (const ids of chunk(nftIdsWithoutMetadata, maxSizeTokens)) {
+      const newMetadataz = await explorerProvider.tokens.postTokensNftMetadata(ids)
+      newNftMetadataz.push(...newMetadataz)
+      for (const newMetadata of newMetadataz) {
+        await storeImmutable(`${newMetadata.id}-nft-metadata`, newMetadata)
+      }
+    }
   }
 
   return cachedNftMetadataz.concat(newNftMetadataz)
