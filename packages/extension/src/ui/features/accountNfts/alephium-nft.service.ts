@@ -2,23 +2,18 @@ import { NFT, CollectionAndNFTMap } from "./alephium-nft.model"
 import { NFTCollection } from "./alephium-nft.model"
 import { Network } from "../../../shared/network"
 import { ExplorerProvider, NodeProvider } from "@alephium/web3"
-import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
+import { fetchImmutable, getImmutable, storeImmutable } from "../../../shared/utils/fetchImmutable"
 import { chunk } from 'lodash'
+import { NFTMetadata } from "@alephium/web3/dist/src/api/api-explorer"
 
 export const fetchCollectionAndNfts = async (
-  nonFungibleTokenIds: string[],
+  nftIds: string[],
   network: Network
 ): Promise<CollectionAndNFTMap> => {
-  const maxSizeTokens = 80
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
   const parentAndTokenIds: CollectionAndNFTMap = {}
 
-  const nftMetadataz = (await Promise.all(
-    chunk(nonFungibleTokenIds, maxSizeTokens).map((nftIds) =>
-      explorerProvider.tokens.postTokensNftMetadata(nftIds)
-    )
-  )).flat()
-
+  const nftMetadataz = await getNftMetadataz(nftIds, explorerProvider)
   for (const nftMetadata of nftMetadataz) {
     const tokenId = nftMetadata.id
     const collectionId = nftMetadata.collectionId
@@ -30,9 +25,9 @@ export const fetchCollectionAndNfts = async (
   }
 
   // TODO: Fix explorer backend for 000301 NFTs
-  if (nftMetadataz.length != nonFungibleTokenIds.length) {
+  if (nftMetadataz.length != nftIds.length) {
     const nodeProvider = new NodeProvider(network.nodeUrl)
-    const otherNonFungibleTokenIds = nonFungibleTokenIds.filter(id => nftMetadataz.findIndex((m) => m.id == id) == -1)
+    const otherNonFungibleTokenIds = nftIds.filter(id => nftMetadataz.findIndex((m) => m.id == id) == -1)
     for (const tokenId of otherNonFungibleTokenIds) {
       const nftMetadata = await fetchImmutable(`${tokenId}-nft-metadata`, () => nodeProvider.fetchNFTMetaData(tokenId))
       const collectionId = nftMetadata.collectionId
@@ -93,4 +88,30 @@ async function getCollectionMetadata(
   const metadata = await fetchImmutable(`${collectionId}-nft-collection-metadata`, () => nodeProvider.fetchNFTCollectionMetaData(collectionId))
   const metadataResponse = await fetch(metadata.collectionUri)
   return await metadataResponse.json()
+}
+
+async function getNftMetadataz(nftIds: string[], explorerProvider: ExplorerProvider) {
+  const maxSizeTokens = 80
+  const cachedNftMetadataz: NFTMetadata[] = []
+  const nftIdsWithoutMetadata: string[] = []
+  for (const nftId of nftIds) {
+    const metadata = await getImmutable<NFTMetadata>(`${nftId}-nft-metadata`)
+    if (metadata?.id) {
+      cachedNftMetadataz.push(metadata)
+    } else {
+      nftIdsWithoutMetadata.push(nftId)
+    }
+  }
+
+  const newNftMetadataz = (await Promise.all(
+    chunk(nftIdsWithoutMetadata, maxSizeTokens).map((ids) =>
+      explorerProvider.tokens.postTokensNftMetadata(ids)
+    )
+  )).flat()
+
+  for (const newNftMetadata of newNftMetadataz) {
+    await storeImmutable(`${newNftMetadata.id}-nft-metadata`, newNftMetadata)
+  }
+
+  return cachedNftMetadataz.concat(newNftMetadataz)
 }
