@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill"
+import { getAccountSelector, withoutHiddenSelector } from "../shared/account/selectors"
 
 import { accountStore, getAccounts } from "../shared/account/store"
 import { globalActionQueueStore } from "../shared/actionQueue/store"
@@ -44,7 +45,9 @@ setTokenListUpdateAlarm()
 browser.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === transactionTrackerHistoryAlarm) {
     console.info("~> fetching transaction history")
-    await transactionTracker.loadHistory(await getAccounts())
+    const selectedAccount = await walletStore.get("selected")
+    const accountSelector = selectedAccount ? getAccountSelector(selectedAccount) : withoutHiddenSelector
+    await transactionTracker.loadHistory(await getAccounts(accountSelector))
   }
 
   if (alarm.name === transactionTrackerUpdateAlarm) {

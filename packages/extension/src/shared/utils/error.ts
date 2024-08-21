@@ -31,3 +31,11 @@ export const getErrorObject = (error: any, includeStack = true) => {
     // ignore parsing error
   }
 }
+
+const statusCodeRegex = /Status\s+code:\s+(\d{3})/
+export const extractStatusCode = (error: any): number | undefined => {
+  const match = (error instanceof Error) && error.message.match(statusCodeRegex)
+  if (match) {
+    return Number(match[1])
+  }
+}

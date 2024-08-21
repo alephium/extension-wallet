@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, HexString, NodeProvider } from "@alephium/web3"
+import { ALPH_TOKEN_ID, NodeProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
@@ -17,6 +17,7 @@ import { sortBy } from "lodash"
 import { addTokenToBalances } from "../../../shared/token/balance"
 import { Transaction, compareTransactions } from "../../../shared/transactions"
 import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
+import { retryWhenRateLimited } from "../../services/swr"
 
 type UseTokensWithBalance = UseTokensBase<TokenWithBalance>
 type UseBaseTokensWithBalance = UseTokensBase<BaseTokenWithBalance>
@@ -136,7 +137,7 @@ export const useNonFungibleTokensWithBalance = (
       const nonFungibleTokens: BaseTokenWithBalance[] = []
       for (const token of potentialNonFungibleTokens) {
         if (nonFungibleTokens.findIndex((t) => t.id == token.id) === -1) {
-          const tokenType = await fetchImmutable(`${token.id}-token-type`, () => nodeProvider.guessStdTokenType(token.id))
+          const tokenType = await fetchImmutable(`token-type-${token.id}`, () => nodeProvider.guessStdTokenType(token.id))
           if (tokenType === 'non-fungible') {
             nonFungibleTokens.push({ id: token.id, networkId: networkId, balance: token.balance })
           }
@@ -146,7 +147,8 @@ export const useNonFungibleTokensWithBalance = (
       return nonFungibleTokens
     },
     {
-      refreshInterval: 30000
+      refreshInterval: 30000,
+      shouldRetryOnError: retryWhenRateLimited
     }
   )
 
@@ -204,12 +206,7 @@ export const useFungibleTokensWithBalance = (
     },
     {
       refreshInterval: 30000,
-      shouldRetryOnError: (error: any) => {
-        const errorCode = error?.status || error?.errorCode
-        const suppressError =
-          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
-        return suppressError
-      },
+      shouldRetryOnError: retryWhenRateLimited
     }
   )
   const tokenDetailsIsInitialising = !error && !fungibleTokens
@@ -268,12 +265,8 @@ export const useAllTokensWithBalance = (
     },
     {
       refreshInterval: 30000,
-      shouldRetryOnError: (error: any) => {
-        const errorCode = error?.status || error?.errorCode
-        const suppressError =
-          errorCode && SUPPRESS_ERROR_STATUS.includes(errorCode)
-        return suppressError
-      },
+      dedupingInterval: 5000,
+      shouldRetryOnError: retryWhenRateLimited
     }
   )
 
@@ -332,22 +325,33 @@ async function getBalances(nodeProvider: NodeProvider, address: string): Promise
 async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
   const nodeProvider = new NodeProvider(network.nodeUrl)
   try {
-    const tokenType = await fetchImmutable(`${tokenId}-token-type`, () => nodeProvider.guessStdTokenType(tokenId))
+    const tokenType = await fetchImmutable(`token-type-${tokenId}`, () => nodeProvider.guessStdTokenType(tokenId))
     if (tokenType !== 'fungible') {
       return undefined
     }
 
-    const metadata = await fetchImmutable(`${tokenId}-token-metadata`, () => nodeProvider.fetchFungibleTokenMetaData(tokenId))
-    const token: Token = {
-      id: tokenId,
-      networkId: network.id,
-      name: Buffer.from(metadata.name, 'hex').toString('utf8'),
-      symbol: Buffer.from(metadata.symbol, 'hex').toString('utf8'),
-      decimals: metadata.decimals,
-      verified: false
-    }
+    const metadata = await fetchImmutable(`token-metadata-${tokenId}`, async () => {
+      try {
+        return (await nodeProvider.fetchFungibleTokenMetaData(tokenId))
+      } catch (e: any) {
+        if (e.message.startsWith('Failed to call contract')) {
+          return { name: undefined, symbol: undefined, decimals: 0 }
+        } else {
+          throw e
+        }
+      }
+    })
 
-    return token
+    if (metadata.name && metadata.symbol) {
+      return {
+        id: tokenId,
+        networkId: network.id,
+        name: Buffer.from(metadata.name, 'hex').toString('utf8'),
+        symbol: Buffer.from(metadata.symbol, 'hex').toString('utf8'),
+        decimals: metadata.decimals,
+        verified: false
+      }
+    }
   } catch (e) {
     console.debug(`Failed to fetch token metadata for ${tokenId}`, e)
     return undefined

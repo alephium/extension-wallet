@@ -1,5 +1,5 @@
 {
-  "version": "v3.3.0",
+  "version": "v3.5.0",
   "name": "ShinyToken",
   "bytecode": "050609121b40244041404f010000000102ce0002010000000102ce0102010000000102ce0202010000000102ce0302010202020008d36ee15a7b1600b11601ab160013c3038d7ea4c68000a8010201010003d320f98f621600b0",
   "codeHash": "9bdc139154d4e611dd391a5b262cc081d2519b9a3ccc95df943a98a9e3c67661",
@@ -30,9 +30,6 @@
   "functions": [
     {
       "name": "getSymbol",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
       "paramNames": [],
       "paramTypes": [],
       "paramIsMutable": [],
@@ -42,9 +39,6 @@
     },
     {
       "name": "getName",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
       "paramNames": [],
       "paramTypes": [],
       "paramIsMutable": [],
@@ -54,9 +48,6 @@
     },
     {
       "name": "getDecimals",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
       "paramNames": [],
       "paramTypes": [],
       "paramIsMutable": [],
@@ -66,9 +57,6 @@
     },
     {
       "name": "getTotalSupply",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
       "paramNames": [],
       "paramTypes": [],
       "paramIsMutable": [],
@@ -78,9 +66,6 @@
     },
     {
       "name": "transfer",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": true,
-      "isPublic": true,
       "paramNames": [
         "to",
         "amount"
@@ -97,9 +82,6 @@
     },
     {
       "name": "destroy",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": true,
-      "isPublic": true,
       "paramNames": [
         "to"
       ],

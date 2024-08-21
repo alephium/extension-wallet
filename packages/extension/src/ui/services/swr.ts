@@ -9,6 +9,7 @@ import useSWR, {
 } from "swr"
 
 import { reviveJsonBigNumber } from "../../shared/json"
+import { extractStatusCode } from "../../shared/utils/error"
 
 export interface SWRConfigCommon {
   suspense?: boolean
@@ -103,4 +104,9 @@ export const swrCacheProvider: Cache = {
       return swrPersistedCache.delete(key)
     }
   },
+}
+
+export const retryWhenRateLimited = (error: any) => {
+  const errorCode = error?.status || error?.errorCode || extractStatusCode(error)
+  return errorCode && errorCode === 429
 }

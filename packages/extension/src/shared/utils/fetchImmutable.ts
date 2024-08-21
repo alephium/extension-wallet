@@ -20,6 +20,14 @@ export async function fetchImmutable<Data>(key: string, fetcher: Fetcher<Data, s
   }
 }
 
+export async function getImmutable<Data>(key: string): Promise<Data | undefined> {
+  return await fetchImmutableStorage.get(key)
+}
+
+export async function storeImmutable<Data>(key: string, data: Data): Promise<void> {
+  return await fetchImmutableStorage.set(key, data)
+}
+
 export async function clearCache(key: string): Promise<void> {
   await fetchImmutableStorage.delete(key)
 }
