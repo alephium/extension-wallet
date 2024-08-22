@@ -1,5 +1,4 @@
 import { AlephiumApp as LedgerApp } from "@alephium/ledger-app"
-import { TokenMetadata, MAX_TOKEN_SIZE, MAX_TOKEN_SYMBOL_LENGTH } from "@alephium/ledger-app"
 import { ALPH_TOKEN_ID, ONE_ALPH, prettifyTokenAmount, TransactionBuilder } from "@alephium/web3"
 import { getHDWalletPath } from "@alephium/web3-wallet"
 import { L1, icons } from "@argent/ui"
@@ -11,14 +10,13 @@ import {
   ReviewTransactionResult,
   TransactionParams,
 } from "../../../shared/actionQueue/types"
-import { BaseTokenWithBalance, Token } from "../../../shared/token/type"
-import { isEqualTokenId } from "../../services/token"
+import { BaseTokenWithBalance } from "../../../shared/token/type"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import { usePageTracking } from "../../services/analytics"
 import { rejectAction } from "../../services/backgroundActions"
 import { Account } from "../accounts/Account"
-import { useAllTokensWithBalance, useFungibleTokensWithBalance } from "../accountTokens/tokens.state"
+import { useAllTokensWithBalance } from "../accountTokens/tokens.state"
 import { getLedgerApp } from "../ledger/utils"
 import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
@@ -211,7 +209,6 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     selectedAccount?.networkId ?? "unknown",
   )
 
-  const { tokenDetails: fungibleTokens } = useFungibleTokensWithBalance(selectedAccount)
   const useLedger =
     selectedAccount !== undefined && selectedAccount.signer.type === "ledger"
   const [ledgerState, setLedgerState] = useState<
@@ -265,7 +262,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           selectedAccount.signer.derivationIndex,
         )
         const unsignedTx = Buffer.from(buildResult.result.unsignedTx, "hex")
-        const signature = await ledgerSignTx(app, path, unsignedTx, fungibleTokens, transaction)
+        const signature = await app.signUnsignedTx(path, unsignedTx)
         setLedgerState("succeeded")
         onSubmit({ ...buildResult, signature })
         await app.close()
@@ -358,41 +355,4 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       <TxHashContainer txId={buildResult.result.txId}></TxHashContainer>
     </ConfirmScreen>
   )
-}
-
-async function ledgerSignTx(
-  ledgerApp: LedgerApp,
-  path: string,
-  unsignedTx: Buffer,
-  fungibleTokens: Token[],
-  params: TransactionParams
-) {
-  if (params.type !== 'TRANSFER') {
-    return ledgerApp.signUnsignedTx(path, unsignedTx)
-  }
-  const tokens: TokenMetadata[] = []
-  const allTokenIds = params
-    .params
-    .destinations
-    .map((d) => d.tokens?.map((t) => t.id) ?? [])
-    .flat()
-  for (const tokenId of allTokenIds) {
-    if (tokens.length === MAX_TOKEN_SIZE) {
-      break
-    }
-    if (tokens.find((t) => isEqualTokenId(t.tokenId, tokenId)) !== undefined) {
-      continue
-    }
-    const tokenInfo = fungibleTokens.find((t) => isEqualTokenId(t.id, tokenId))
-    if (tokenInfo === undefined || !tokenInfo.verified || tokenInfo.symbol.length > MAX_TOKEN_SYMBOL_LENGTH) {
-      continue
-    }
-    tokens.push({
-      version: 0,
-      tokenId: tokenInfo.id,
-      symbol: tokenInfo.symbol,
-      decimals: tokenInfo.decimals
-    })
-  }
-  return ledgerApp.signUnsignedTx(path, unsignedTx, tokens)
 }
