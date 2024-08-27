@@ -12,7 +12,7 @@ export const defaultNetworks: Network[] = [
   {
     id: 'mainnet',
     nodeUrl: 'https://node.mainnet.alephium.org',
-    explorerApiUrl: 'https://backend.mainnet.alephium.org',
+    explorerApiUrl: 'https://backend-8dce19.alephium.org',
     explorerUrl: 'https://explorer.alephium.org',
     name: 'Mainnet',
     readonly: true

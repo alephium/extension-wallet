@@ -22,7 +22,7 @@
     "https://node.testnet.alephium.org/*",
     "https://backend.testnet.alephium.org/*",
     "https://node.mainnet.alephium.org/*",
-    "https://backend.mainnet.alephium.org/*"
+    "https://backend-8dce19.alephium.org/*"
   ],
   "content_security_policy": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
   "icons": {

@@ -22,7 +22,7 @@
     "https://node.testnet.alephium.org/*",
     "https://backend.testnet.alephium.org/*",
     "https://node.mainnet.alephium.org/*",
-    "https://backend.mainnet.alephium.org/*"
+    "https://backend-8dce19.alephium.org/*"
   ],
   "icons": {
     "16": "assets/favicon-16.png",

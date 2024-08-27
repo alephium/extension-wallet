@@ -24,21 +24,6 @@ export const fetchCollectionAndNfts = async (
     }
   }
 
-  // TODO: Fix explorer backend for 000301 NFTs
-  if (nftMetadataz.length != nftIds.length) {
-    const nodeProvider = new NodeProvider(network.nodeUrl)
-    const otherNonFungibleTokenIds = nftIds.filter(id => nftMetadataz.findIndex((m) => m.id == id) == -1)
-    for (const tokenId of otherNonFungibleTokenIds) {
-      const nftMetadata = await fetchImmutable(`nft-metadata-${tokenId}`, () => nodeProvider.fetchNFTMetaData(tokenId))
-      const collectionId = nftMetadata.collectionId
-      if (parentAndTokenIds[collectionId]) {
-        parentAndTokenIds[collectionId].push(tokenId)
-      } else {
-        parentAndTokenIds[collectionId] = [tokenId]
-      }
-    }
-  }
-
   return parentAndTokenIds
 }
 
