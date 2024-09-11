@@ -99,7 +99,7 @@ export class Wallet {
 
   async submitSignedTx(account: WalletAccount, unsignedTx: string, signature: string): Promise<void> {
     const network = await this.getNetwork(account.networkId)
-    const nodeProvider = new NodeProvider(network.nodeUrl)
+    const nodeProvider = new NodeProvider(network.nodeUrl, network.nodeApiKey)
     await nodeProvider.transactions.postTransactionsSubmit({ unsignedTx, signature })
     return
   }
@@ -127,7 +127,7 @@ export class Wallet {
     }
 
     const network = await this.getNetwork(account.networkId)
-    const nodeProvider = new NodeProvider(network.nodeUrl)
+    const nodeProvider = new NodeProvider(network.nodeUrl, network.nodeApiKey)
     const privateKey = deriveHDWalletPrivateKey(session.secret, account.signer.keyType, account.signer.derivationIndex)
     return new PrivateKeyWallet({ privateKey, keyType: account.signer.keyType, nodeProvider })
   }

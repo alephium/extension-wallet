@@ -130,7 +130,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
       }
       this.#connectedAccount = account
       this.#connectedNetworkId = walletAccount.network.id
-      this.#nodeProvider = new NodeProvider(walletAccount.network.nodeUrl)
+      this.#nodeProvider = new NodeProvider(walletAccount.network.nodeUrl, walletAccount.network.nodeApiKey)
       if (walletAccount.network.explorerApiUrl) {
         this.#explorerProvider = new ExplorerProvider(
           walletAccount.network.explorerApiUrl,

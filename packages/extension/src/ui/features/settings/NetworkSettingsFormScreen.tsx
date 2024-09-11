@@ -5,9 +5,6 @@ import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
 import { Network, addNetwork, networkSchema } from "../../../shared/network"
-import { settingsStore } from "../../../shared/settings"
-import { defaultBlockExplorers } from "../../../shared/settings/defaultBlockExplorers"
-import { useKeyValueStorage } from "../../../shared/storage/hooks"
 import { useAppState } from "../../app.state"
 import { ControlledInputText } from "../../components/InputText"
 import { FormError, P } from "../../theme/Typography"
@@ -38,24 +35,9 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
   const { t } = useTranslation()
   const navigate = useNavigate()
 
-  const blockExplorerKey = useKeyValueStorage(settingsStore, "blockExplorerKey")
-  const settingsBlockExplorer = defaultBlockExplorers[blockExplorerKey]
-
   const defaultNetwork = useMemo<Network>(() => {
     if (props.mode === "add") {
-      return { id: "", name: "", chainId: 0, explorerApiUrl: "", nodeUrl: "" }
-    }
-    /** display selected block explorer url from settings for readonly network */
-    if (
-      props.network.readonly &&
-      (props.network.id === "mainnet-alpha" ||
-        props.network.id === "goerli-alpha")
-    ) {
-      const blockExplorerUrl = settingsBlockExplorer.url[props.network.id]
-      return {
-        ...props.network,
-        blockExplorerUrl,
-      }
+      return { name: "", id: "", nodeUrl: "", explorerApiUrl: "", explorerUrl: "" }
     }
     return props.network
     // due to an or type we need to check different values depending on the mode
@@ -102,21 +84,12 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
         })}
       >
         <Wrapper>
-          <P>{t("Here you can add your own custom network.")}</P>
           <ControlledInputText
             autoFocus
             autoComplete="off"
             control={control}
             placeholder={t("Network name")}
             name="name"
-            type="text"
-            disabled={defaultNetwork.readonly}
-          />
-          <ControlledInputText
-            autoComplete="off"
-            control={control}
-            placeholder={t("Internal ID")}
-            name="id"
             type="text"
             disabled
           />
@@ -126,7 +99,13 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
             placeholder={t("Node URL")}
             name="nodeUrl"
             type="url"
-            disabled={defaultNetwork.readonly}
+          />
+          <ControlledInputText
+            autoComplete="off"
+            control={control}
+            placeholder={t("Node API Key (Optional)")}
+            name="nodeApiKey"
+            type="text"
           />
           <ControlledInputText
             autoComplete="off"
@@ -134,7 +113,6 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
             placeholder={t("Explorer API URL")}
             name="explorerApiUrl"
             type="url"
-            disabled={defaultNetwork.readonly}
           />
           <ControlledInputText
             autoComplete="off"
@@ -142,7 +120,6 @@ export const NetworkSettingsFormScreen: FC<NetworkSettingsFormScreenProps> = (
             placeholder={t("Explorer URL")}
             name="explorerUrl"
             type="url"
-            disabled={defaultNetwork.readonly}
           />
 
           {Object.keys(errors).length > 0 && (

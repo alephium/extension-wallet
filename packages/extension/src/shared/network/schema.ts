@@ -10,10 +10,11 @@ export const networkSchema: Schema<Network> = object()
   .required()
   .shape({
     id: string().required().min(2).max(31),
-    name: string().required().min(2).max(128),
+    name: string().label("Network name").required().min(2).max(128),
     nodeUrl: string()
       .required()
       .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),
+    nodeApiKey: string().label("Node API Key").optional().min(32),
     explorerApiUrl: string()
       .required()
       .matches(REGEX_URL_WITH_LOCAL, "${path} must be a valid URL"),

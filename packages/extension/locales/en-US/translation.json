@@ -189,6 +189,7 @@
   "Network ID": "Network ID",
   "Name": "Name",
   "Node URL": "Node URL",
+  "Node API Key (Optional)": "Node API Key (Optional)",
   "Explorer URL": "Explorer URL",
   "Explorer API URL": "Explorer API URL",
   "Reject": "Reject",
