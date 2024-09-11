@@ -7,14 +7,13 @@ import {
   ExecutableScript,
   ExecuteScriptParams,
   ExecuteScriptResult,
-  HexString,
   Script,
   SignerProvider,
+  HexString,
 } from "@alephium/web3";
-
+import { getContractByCodeHash } from "./contracts";
 import { default as DestroyScriptJson } from "../Destroy.ral.json";
 import { default as TransferScriptJson } from "../Transfer.ral.json";
-import { getContractByCodeHash } from "./contracts";
 
 export const Destroy = new ExecutableScript<{
   shinyToken: HexString;
