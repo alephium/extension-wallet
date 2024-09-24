@@ -141,7 +141,7 @@ export const NetworkSettingsScreen: FC = () => {
               <RestoreDefaultsButtonIcon>
                 <RefreshIcon fontSize="inherit" />
               </RestoreDefaultsButtonIcon>
-              <div>{t("Restore default networks")}</div>
+              <div style={{ marginBottom: '4px' }}>{t("Restore default networks")}</div>
             </RestoreDefaultsButton>
           </Footer>
         )}
