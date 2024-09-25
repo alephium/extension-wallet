@@ -14,15 +14,14 @@ export const defaultNetworks: Network[] = [
     nodeUrl: 'https://node.mainnet.alephium.org',
     explorerApiUrl: 'https://backend.mainnet.alephium.org',
     explorerUrl: 'https://explorer.alephium.org',
-    name: 'Mainnet',
-    readonly: true
+    name: 'Mainnet'
   },
   {
     id: 'testnet',
     nodeUrl: 'https://node.testnet.alephium.org',
     explorerApiUrl: 'https://backend.testnet.alephium.org',
     explorerUrl: 'https://testnet.alephium.org',
-    name: 'Testnet',
+    name: 'Testnet'
   },
   DEVNET
 ]

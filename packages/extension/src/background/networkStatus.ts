@@ -39,7 +39,7 @@ export const getNetworkStatuses = async (
 }
 
 export const isNetworkHealthy = async (network: Network): Promise<boolean> => {
-  const nodeProvider = new NodeProvider(network.nodeUrl)
+  const nodeProvider = new NodeProvider(network.nodeUrl, network.nodeApiKey)
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
 
   return swr(`${network.id}-network-status`, async () => {

@@ -4,34 +4,34 @@
 
 import {
   Address,
-  CallContractParams,
-  CallContractResult,
   Contract,
-  ContractEvent,
-  ContractFactory,
-  ContractInstance,
   ContractState,
+  TestContractResult,
+  HexString,
+  ContractFactory,
   EventSubscribeOptions,
   EventSubscription,
-  HexString,
-  SignExecuteContractMethodParams,
-  SignExecuteScriptTxResult,
+  CallContractParams,
+  CallContractResult,
   TestContractParams,
-  TestContractParamsWithoutMaps,
-  TestContractResult,
-  TestContractResultWithoutMaps,
-  addStdIdToFields,
-  callMethod,
-  encodeContractFields,
-  fetchContractState,
-  getContractEventsCurrentCount,
-  multicallMethods,
-  signExecuteMethod,
+  ContractEvent,
   subscribeContractEvent,
   subscribeContractEvents,
   testMethod,
+  callMethod,
+  multicallMethods,
+  fetchContractState,
+  Asset,
+  ContractInstance,
+  getContractEventsCurrentCount,
+  TestContractParamsWithoutMaps,
+  TestContractResultWithoutMaps,
+  SignExecuteContractMethodParams,
+  SignExecuteScriptTxResult,
+  signExecuteMethod,
+  addStdIdToFields,
+  encodeContractFields,
 } from "@alephium/web3";
-
 import { default as ShinyTokenContractJson } from "../ShinyToken.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
@@ -84,10 +84,9 @@ export namespace ShinyTokenTypes {
       ? CallMethodTable[MaybeName]["result"]
       : undefined;
   };
-  export type MulticallReturnType<Callss extends MultiCallParams[]> =
-    Callss["length"] extends 1
-      ? MultiCallResults<Callss[0]>
-      : { [index in keyof Callss]: MultiCallResults<Callss[index]> };
+  export type MulticallReturnType<Callss extends MultiCallParams[]> = {
+    [index in keyof Callss]: MultiCallResults<Callss[index]>;
+  };
 
   export interface SignExecuteMethodTable {
     getSymbol: {
@@ -187,6 +186,14 @@ class Factory extends ContractFactory<
       return testMethod(this, "destroy", params, getContractByCodeHash);
     },
   };
+
+  stateForTest(
+    initFields: ShinyTokenTypes.Fields,
+    asset?: Asset,
+    address?: string
+  ) {
+    return this.stateForTest_(initFields, asset, address, undefined);
+  }
 }
 
 // Use this object to test and deploy the contract

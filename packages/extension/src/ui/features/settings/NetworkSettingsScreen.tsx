@@ -6,12 +6,12 @@ import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
 
 import {
+  defaultNetworks,
   removeNetwork,
   restoreDefaultCustomNetworks,
 } from "../../../shared/network"
-import { defaultCustomNetworks } from "../../../shared/network/storage"
 import { IconButton } from "../../components/IconButton"
-import { AddIcon, RefreshIcon } from "../../components/Icons/MuiIcons"
+import { RefreshIcon } from "../../components/Icons/MuiIcons"
 import { ResponsiveFixedBox } from "../../components/Responsive"
 import { Spinner } from "../../components/Spinner"
 import { routes } from "../../routes"
@@ -77,7 +77,7 @@ export const NetworkSettingsScreen: FC = () => {
   const [errorMessage, setErrorMessage] = useState("")
 
   const isDefaultCustomNetworks = useMemo(() => {
-    return isEqual(customNetworks, defaultCustomNetworks)
+    return isEqual(customNetworks, defaultNetworks)
   }, [customNetworks])
 
   const removeNetworkClick = useCallback(async (networkId: string) => {
@@ -124,7 +124,7 @@ export const NetworkSettingsScreen: FC = () => {
                   setSelectedCustomNetwork(network)
                   navigate(routes.settingsEditCustomNetwork())
                 }}
-                hideRemove={network.readonly}
+                hideRemove={true}
                 onRemoveClick={() => {
                   removeNetworkClick(network.id)
                 }}
@@ -132,12 +132,6 @@ export const NetworkSettingsScreen: FC = () => {
             ))
           )}
         </CellStack>
-
-        <Link to={routes.settingsAddCustomNetwork()}>
-          <IconButtonCenter size={48} style={{ marginTop: "32px" }}>
-            <AddIcon fontSize="large" />
-          </IconButtonCenter>
-        </Link>
 
         {!isDefaultCustomNetworks && (
           <Footer>
@@ -147,7 +141,7 @@ export const NetworkSettingsScreen: FC = () => {
               <RestoreDefaultsButtonIcon>
                 <RefreshIcon fontSize="inherit" />
               </RestoreDefaultsButtonIcon>
-              <div>{t("Restore default networks")}</div>
+              <div style={{ marginBottom: '4px' }}>{t("Restore default networks")}</div>
             </RestoreDefaultsButton>
           </Footer>
         )}

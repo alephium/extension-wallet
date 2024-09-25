@@ -4,6 +4,7 @@ export interface Network {
   nodeUrl: string
   explorerApiUrl: string
   explorerUrl?: string
+  nodeApiKey?: string
   readonly?: boolean
 }
 

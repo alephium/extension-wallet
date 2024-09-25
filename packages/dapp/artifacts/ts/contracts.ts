@@ -3,7 +3,6 @@
 /* eslint-disable */
 
 import { Contract, ContractFactory } from "@alephium/web3";
-
 import { ShinyToken } from ".";
 
 let contracts: ContractFactory<any>[] | undefined = undefined;
@@ -11,10 +10,7 @@ export function getContractByCodeHash(codeHash: string): Contract {
   if (contracts === undefined) {
     contracts = [ShinyToken];
   }
-  const c = contracts.find(
-    (c) =>
-      c.contract.codeHash === codeHash || c.contract.codeHashDebug === codeHash
-  );
+  const c = contracts.find((c) => c.contract.hasCodeHash(codeHash));
   if (c === undefined) {
     throw new Error("Unknown code with code hash: " + codeHash);
   }
