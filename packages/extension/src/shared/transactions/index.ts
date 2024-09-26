@@ -108,10 +108,10 @@ export async function getTransactionsPerAccount(
   return transactionsPerAccount
 }
 
-// Fetch the latest 20 transactions (at most)
+// Fetch 1 tx
 function buildGetTransactionsFn(metadataTransactions: Transaction[]) {
   return async (account: WalletAccount) => {
-    const limit = 20
+    const limit = 1
     const network = await getNetwork(account.networkId)
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
     const transactions = await explorerProvider.addresses.getAddressesAddressTransactions(account.address, { page: 1, limit })
