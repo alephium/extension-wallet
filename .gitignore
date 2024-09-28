@@ -1,3 +1,5 @@
+.gitignore
+
 .DS_Store
 Thumbs.db
 .idea/
@@ -15,3 +17,5 @@ sourcemaps
 coverage
 
 **/wasm/
+
+.ralph-lsp/
