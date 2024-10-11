@@ -36,23 +36,16 @@ export class LedgerAlephium {
     }
   
     const existingLedgerAccounts = await getAllLedgerAccounts(networkId)
-    const relevantAccounts = existingLedgerAccounts.filter((account) =>
-      account.signer.keyType === keyType && isAddressGroupMatched(account, targetAddressGroup)
-    )
-    relevantAccounts.sort((a, b) => a.signer.derivationIndex - b.signer.derivationIndex)
-    for (let i = 0; i < relevantAccounts.length; i++) {
-      const existingAccount = relevantAccounts[i]
-      const path = getHDWalletPath(keyType, existingAccount.signer.derivationIndex + 1)
+    var index = 0
+    while (true) {
+      const path = getHDWalletPath(keyType, index)
       const [newAccount, hdIndex] = await this.app.getAccount(path, targetAddressGroup, keyType)
       if (existingLedgerAccounts.find((account) => account.address === newAccount.address) === undefined) {
         await this.app.close()
         return [newAccount, hdIndex] as const
       }
+      index = hdIndex + 1
     }
-    const path = getHDWalletPath(keyType, 0)
-    const result = await this.app.getAccount(path, targetAddressGroup, keyType)
-    await this.app.close()
-    return result
   }
 
   async verifyAccount(account: Account): Promise<boolean> {
