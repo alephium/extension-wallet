@@ -26,6 +26,7 @@ import { useCurrentNetwork } from "../networks/useNetworks"
 import { AccountEditName } from "./AccountEditName"
 import { Button, CopyTooltip } from "@argent/ui"
 import { useTranslation } from "react-i18next"
+import { getHDWalletPath } from "@alephium/web3-wallet"
 
 const { ExpandIcon, HideIcon, AlertIcon } = icons
 
@@ -145,6 +146,18 @@ export const AccountEditScreen: FC = () => {
                 <AddressCopyButton address={nip19.npubEncode(account?.publicKey)} type={t("nostr public key")} title="Nostr" />
               </Center>
             }
+            { account !== undefined &&
+              <Center
+                border={"1px solid"}
+                borderColor={"border"}
+                borderTop={"none"}
+                borderBottomLeftRadius="lg"
+                borderBottomRightRadius="lg"
+                p={2}
+              >
+                <HDPathCopyButton hdPath={getHDWalletPath(account.signer.keyType, account.signer.derivationIndex)}/>
+              </Center>
+            }
           </Flex>
           <SpacerCell />
           <ButtonCell
@@ -177,6 +190,22 @@ export const AccountEditScreen: FC = () => {
         </CellStack>
       </NavigationContainer>
     </>
+  )
+}
+
+const HDPathCopyButton: FC<{ hdPath: string }> = ({ hdPath }) => {
+  const { t } = useTranslation()
+  return (
+    <CopyTooltip prompt={t('Click to copy HD path')} copyValue={hdPath}>
+      <Button
+        size="3xs"
+        color={"white50"}
+        bg={"transparent"}
+        _hover={{ bg: "neutrals.700", color: "text" }}
+      >
+        {`${t("HD Path")}: ${hdPath}`}
+      </Button>
+    </CopyTooltip>
   )
 }
 
