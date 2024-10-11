@@ -13,8 +13,8 @@ import { BlackCircle } from "./assets/BlackCircle"
 import { LedgerStartIllustration } from "./assets/LedgerStart"
 import { LedgerPage } from "./LedgerPage"
 import { Steps } from "./Steps"
-import { deriveAccount } from "./utils"
-import { addLedgerAccount, getAllLedgerAccounts } from "../accounts/useAddAccount"
+import { LedgerAlephium } from "./utils"
+import { addLedgerAccount } from "../accounts/useAddAccount"
 import { useTranslation } from "react-i18next"
 
 export const StyledButton = styled(Button)`
@@ -81,8 +81,9 @@ export const LedgerStartScreen: FC = () => {
 
             setDetecting(true)
             try {
-              const ledgerAccounts = await getAllLedgerAccounts(networkId)
-              const [account, hdIndex] = await deriveAccount(ledgerAccounts, addressGroup, keyType ?? "default")
+              const [account, hdIndex] = await LedgerAlephium
+                .create()
+                .then((ledger) => ledger.createNewAccount(networkId, addressGroup, keyType ?? "default"))
               addLedgerAccount(networkId, account, hdIndex)
               navigate(routes.ledgerDone())
             } catch (e) {
