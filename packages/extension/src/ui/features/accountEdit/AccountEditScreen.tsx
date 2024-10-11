@@ -162,13 +162,18 @@ export const AccountEditScreen: FC = () => {
           >
             {showDelete ? t("Delete account") : t("Hide account")}
           </ButtonCell>
-          <ButtonCell
-            color={"error.500"}
-            onClick={() => navigate(routes.exportPrivateKey())}
-            icon={<AlertIcon />}
-          >
-            {t("Export private key")}
-          </ButtonCell>
+          <>
+            {account?.signer.type === 'ledger'
+              ? <></>
+              : <ButtonCell
+                  color={"error.500"}
+                  onClick={() => navigate(routes.exportPrivateKey())}
+                  icon={<AlertIcon />}
+                >
+                  {t("Export private key")}
+                </ButtonCell>
+            }
+          </>
         </CellStack>
       </NavigationContainer>
     </>
