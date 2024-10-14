@@ -5,6 +5,10 @@ import { WalletAccount } from '../../../shared/wallet.model';
 import { getHDWalletPath } from '@alephium/web3-wallet';
 import { getAllLedgerAccounts } from '../accounts/useAddAccount';
 import { Account } from '../accounts/Account';
+import { AccountDiscovery } from '../../../shared/discovery';
+import { getNextPathIndex } from '../../../background/keys/keyDerivation';
+import { ExplorerProvider, groupOfAddress, KeyType } from '@alephium/web3';
+import { getNetwork } from '../../../shared/network';
 
 export const getLedgerTransport = async () => {
   try {
@@ -15,7 +19,7 @@ export const getLedgerTransport = async () => {
   return TransportWebUSB.create()
 }
 
-export class LedgerAlephium {
+export class LedgerAlephium extends AccountDiscovery {
   app: LedgerApp
 
   static async create(): Promise<LedgerAlephium> {
@@ -27,7 +31,34 @@ export class LedgerAlephium {
   }
 
   private constructor(app: LedgerApp) {
+    super()
     this.app = app
+  }
+
+  private async getAccount(startIndex: number, group: number | undefined, keyType: KeyType) {
+    const path = getHDWalletPath(keyType, startIndex)
+    return await this.app.getAccount(path, group, keyType)
+  }
+
+  private async deriveAccount(
+    networkId: string,
+    startIndex: number,
+    keyType: KeyType,
+    group?: number
+  ): Promise<WalletAccount> {
+    const [newAccount, hdIndex] = await this.getAccount(startIndex, group, keyType)
+    return {
+      address: newAccount.address,
+      networkId: networkId,
+      signer: {
+        type: "ledger" as const,
+        publicKey: newAccount.publicKey,
+        keyType: newAccount.keyType,
+        derivationIndex: hdIndex,
+        group: groupOfAddress(newAccount.address)
+      },
+      type: "alephium",
+    }
   }
 
   async createNewAccount(networkId: string, targetAddressGroup: number | undefined, keyType: string) {
@@ -38,8 +69,7 @@ export class LedgerAlephium {
     const existingLedgerAccounts = await getAllLedgerAccounts(networkId)
     var index = 0
     while (true) {
-      const path = getHDWalletPath(keyType, index)
-      const [newAccount, hdIndex] = await this.app.getAccount(path, targetAddressGroup, keyType)
+      const [newAccount, hdIndex] = await this.getAccount(index, targetAddressGroup, keyType)
       if (existingLedgerAccounts.find((account) => account.address === newAccount.address) === undefined) {
         await this.app.close()
         return [newAccount, hdIndex] as const
@@ -64,6 +94,28 @@ export class LedgerAlephium {
 
   async close() {
     await this.app.close()
+  }
+
+  public async discoverActiveAccounts(networkId: string): Promise<WalletAccount[]> {
+    const existingLedgerAccounts = await getAllLedgerAccounts(networkId)
+    const network = await getNetwork(networkId)
+    if (!network.explorerUrl) {
+      return []
+    }
+
+    console.info(`start discovering active ledger accounts for ${networkId}`)
+    const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+    const discoverAccount = (startIndex: number, group?: number): Promise<WalletAccount> => {
+      return this.deriveAccount(network.id, startIndex, 'default', group)
+    }
+    const walletAccounts = await this.deriveActiveAccountsForNetwork(explorerProvider, discoverAccount)
+    const newDiscoveredAccounts = walletAccounts.filter(account => !existingLedgerAccounts.find(a => a.address === account.address))
+    console.info(`Discovered ${newDiscoveredAccounts.length} new active accounts for ${networkId}`)
+    return newDiscoveredAccounts
+  }
+
+  nextPathIndexForDiscovery(indexes: number[]): number {
+    return getNextPathIndex(indexes)
   }
 }
 
