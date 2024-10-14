@@ -13,6 +13,8 @@ import { LoadingScreen } from "../actions/LoadingScreen"
 import { mapWalletAccountsToAccounts } from "../accounts/accounts.state"
 import { getDefaultAccountNameByIndex, useAccountMetadata } from "../accounts/accountMetadata.state"
 import { useTranslation } from "react-i18next"
+import { LedgerAlephium } from "../ledger/utils"
+import { addLedgerAccount } from "../accounts/useAddAccount"
 
 const { SearchIcon } = icons
 
@@ -35,15 +37,13 @@ const DeveloperSettings: FC = () => {
       })
   }, [])
 
-  const onDiscoverAccounts = useCallback(async () => {
-    setLoading(true)
+  const discoveryLocalAccounts = useCallback(async () => {
     try {
       const allWalletAccounts = await getAccounts(true)
       const allWalletAccountsOnNetwork = accountsOnNetwork(allWalletAccounts, currentNetwork.id)
       const result = await discoverAccounts(currentNetwork.id)
       if (result === "error") {
-        console.log("Error discovering accounts")
-        setLoading(false)
+        console.log("Error discovering local accounts")
       } else {
         const discoveredAccounts = mapWalletAccountsToAccounts(result.accounts)
         let accountIndex = allWalletAccountsOnNetwork.length
@@ -51,13 +51,39 @@ const DeveloperSettings: FC = () => {
           setAccountName(account.networkId, account.address, getDefaultAccountNameByIndex(account, accountIndex))
           accountIndex++
         })
-        setLoading(false)
       }
     } catch (e) {
-      console.log("Error discovering accounts", e)
-      setLoading(false)
+      console.log("Error discovering local accounts", e)
     }
   }, [currentNetwork.id, setAccountName])
+
+  const discoveryLedgerAccounts = useCallback(async () => {
+    try {
+      const allWalletAccounts = await getAccounts(true)
+      const allWalletAccountsOnNetwork = accountsOnNetwork(allWalletAccounts, currentNetwork.id)
+      let accountIndex = allWalletAccountsOnNetwork.length
+      const result = await LedgerAlephium.create().then((ledger) => ledger.discoverActiveAccounts(currentNetwork.id))
+      const discoveredAccounts = mapWalletAccountsToAccounts(result)
+      for (const account of discoveredAccounts) {
+        await addLedgerAccount(
+          currentNetwork.id,
+          { keyType: account.signer.keyType, address: account.address, group: account.signer.group, publicKey: account.signer.publicKey },
+          account.signer.derivationIndex
+        )
+        setAccountName(account.networkId, account.address, getDefaultAccountNameByIndex(account, accountIndex))
+        accountIndex++
+      }
+    } catch (e) {
+      console.log("Error discovering ledger accounts", e)
+    }
+  }, [currentNetwork.id, setAccountName])
+
+  const onDiscoverAccounts = useCallback(async () => {
+    setLoading(true)
+    await discoveryLocalAccounts()
+    await discoveryLedgerAccounts()
+    setLoading(false)
+  }, [setLoading, discoveryLocalAccounts, discoveryLedgerAccounts])
 
   if (loading) {
     return <LoadingScreen />
