@@ -65,11 +65,7 @@ const DeveloperSettings: FC = () => {
       const result = await LedgerAlephium.create().then((ledger) => ledger.discoverActiveAccounts(currentNetwork.id))
       const discoveredAccounts = mapWalletAccountsToAccounts(result)
       for (const account of discoveredAccounts) {
-        await addLedgerAccount(
-          currentNetwork.id,
-          { keyType: account.signer.keyType, address: account.address, group: account.signer.group, publicKey: account.signer.publicKey },
-          account.signer.derivationIndex
-        )
+        await addLedgerAccount(account)
         setAccountName(account.networkId, account.address, getDefaultAccountNameByIndex(account, accountIndex))
         accountIndex++
       }

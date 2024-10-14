@@ -69,12 +69,12 @@ export class LedgerAlephium extends AccountDiscovery {
     const existingLedgerAccounts = await getAllLedgerAccounts(networkId)
     var index = 0
     while (true) {
-      const [newAccount, hdIndex] = await this.getAccount(index, targetAddressGroup, keyType)
+      const newAccount = await this.deriveAccount(networkId, index, keyType, targetAddressGroup)
       if (existingLedgerAccounts.find((account) => account.address === newAccount.address) === undefined) {
         await this.app.close()
-        return [newAccount, hdIndex] as const
+        return newAccount
       }
-      index = hdIndex + 1
+      index = newAccount.signer.derivationIndex + 1
     }
   }
 
@@ -116,13 +116,5 @@ export class LedgerAlephium extends AccountDiscovery {
 
   nextPathIndexForDiscovery(indexes: number[]): number {
     return getNextPathIndex(indexes)
-  }
-}
-
-const isAddressGroupMatched = (account: WalletAccount, targetAddressGroup: number | undefined) => {
-  if (targetAddressGroup === undefined) {
-    return true
-  } else {
-    return account.signer.group === targetAddressGroup
   }
 }

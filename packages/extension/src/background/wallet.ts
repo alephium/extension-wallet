@@ -258,19 +258,7 @@ export class Wallet extends AccountDiscovery {
     }
   }
 
-  public async importLedgerAccount(account: Account, hdIndex: number, networkId: string): Promise<BaseWalletAccount> {
-    const walletAccount: WalletAccount = {
-      address: account.address,
-      networkId: networkId,
-      signer: {
-        type: "ledger" as const,
-        publicKey: account.publicKey,
-        keyType: account.keyType,
-        derivationIndex: hdIndex,
-        group: groupOfAddress(account.address)
-      },
-      type: "alephium",
-    }
+  public async importLedgerAccount(walletAccount: WalletAccount): Promise<BaseWalletAccount> {
     await this.walletStore.push([walletAccount])
     await this.selectAccount(walletAccount)
     return walletAccount

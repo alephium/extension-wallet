@@ -81,10 +81,10 @@ export const LedgerStartScreen: FC = () => {
 
             setDetecting(true)
             try {
-              const [account, hdIndex] = await LedgerAlephium
+              const account = await LedgerAlephium
                 .create()
                 .then((ledger) => ledger.createNewAccount(networkId, addressGroup, keyType ?? "default"))
-              addLedgerAccount(networkId, account, hdIndex)
+              addLedgerAccount(account)
               navigate(routes.ledgerDone())
             } catch (e) {
               console.error(e)
