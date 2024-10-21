@@ -106,7 +106,7 @@ export type ActionItem =
     }
   | {
       type: "ALPH_TRANSACTION"
-      payload: TransactionParams
+      payload: TransactionParams[]
     }
   | {
       type: "ALPH_SIGN_MESSAGE"

@@ -29,7 +29,35 @@ export const executeTransactionAction = async (
     )
   }
 
-  if (account !== undefined) {
+
+  addTransaction({
+    account: account,
+    hash: transaction.result.txId,
+    meta: {
+      request: transaction,
+    },
+  })
+
+  return { signature: finalSignature }
+}
+
+export const executeTransactionsAction = async (
+  transactions: ReviewTransactionResult[],
+  { wallet }: BackgroundService,
+  networkId: string,
+): Promise<{ signatures: string[] }> => {
+  const signatures: string[] = []
+  for (const transaction of transactions) {
+    const account = await wallet.getAccount({
+      address: transaction.params.signerAddress,
+      networkId: networkId,
+    })
+
+    const { signature } = await wallet.signAndSubmitUnsignedTx(account, {
+      signerAddress: account.address,
+      unsignedTx: transaction.result.unsignedTx,
+    })
+
     addTransaction({
       account: account,
       hash: transaction.result.txId,
@@ -37,7 +65,9 @@ export const executeTransactionAction = async (
         request: transaction,
       },
     })
+
+    signatures.push(signature)
   }
 
-  return { signature: finalSignature }
+  return { signatures }
 }

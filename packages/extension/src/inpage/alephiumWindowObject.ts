@@ -10,12 +10,17 @@ import {
   KeyType,
   NetworkId,
   NodeProvider,
+  SignChainedTxParams,
+  SignChainedTxResult,
+  SignDeployContractChainedTxResult,
   SignDeployContractTxParams,
+  SignExecuteScriptChainedTxResult,
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
   SignMessageParams,
   SignMessageResult,
+  SignTransferChainedTxResult,
   SignTransferTxParams,
   SignTransferTxResult,
   SignUnsignedTxParams,
@@ -148,7 +153,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
     signAndSubmitTransferTx = async (
       params: SignTransferTxParams,
     ): Promise<SignTransferTxResult> => {
-      const result = (
+      const [txResult] = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -157,14 +162,14 @@ export const alephiumWindowObject: AlephiumWindowObject =
             salt: Date.now().toString(),
           }),
         )
-      ).result as SignTransferTxResult
-      return result
+      ).result
+      return txResult.result as SignTransferTxResult
     }
 
     signAndSubmitDeployContractTx = async (
       params: SignDeployContractTxParams,
     ): Promise<SignDeployContractTxResult> => {
-      const result = (
+      const [txResult] = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -173,14 +178,15 @@ export const alephiumWindowObject: AlephiumWindowObject =
             salt: Date.now().toString(),
           }),
         )
-      ).result as SignDeployContractTxResult
-      return { ...result }
+      ).result
+
+      return txResult.result as SignDeployContractTxResult
     }
 
     signAndSubmitExecuteScriptTx = async (
       params: SignExecuteScriptTxParams,
     ): Promise<SignExecuteScriptTxResult> => {
-      const result = (
+      const [txResult] = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -189,14 +195,14 @@ export const alephiumWindowObject: AlephiumWindowObject =
             salt: Date.now().toString(),
           }),
         )
-      ).result as SignExecuteScriptTxResult
-      return result
+      ).result
+      return txResult.result as SignExecuteScriptTxResult
     }
 
     signAndSubmitUnsignedTx = async (
       params: SignUnsignedTxParams,
     ): Promise<SignUnsignedTxResult> => {
-      const result = (
+      const [txResult] = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -205,8 +211,96 @@ export const alephiumWindowObject: AlephiumWindowObject =
             salt: Date.now().toString(),
           }),
         )
-      ).result as SignUnsignedTxResult
-      return result
+      ).result
+
+      return txResult.result as SignUnsignedTxResult
+    }
+
+    signAndSubmitChainedTx = async (
+      params: SignChainedTxParams[],
+    ): Promise<SignChainedTxResult[]> => {
+      if (params.length === 0) {
+        throw Error("Empty transaction params")
+      }
+
+      const transactionParamz: TransactionParams[] = params.map(param => {
+        const paramsType = param.type
+        const salt = Date.now().toString()
+        switch (paramsType) {
+          case 'Transfer':
+            return {
+              type: 'TRANSFER',
+              params: { networkId: this.connectedNetworkId, ...param },
+              salt
+            }
+          case 'DeployContract':
+            return {
+              type: 'DEPLOY_CONTRACT',
+              params: { networkId: this.connectedNetworkId, ...param },
+              salt
+            }
+          case 'ExecuteScript':
+            return {
+              type: 'EXECUTE_SCRIPT',
+              params: { networkId: this.connectedNetworkId, ...param },
+              salt
+            }
+          default:
+            throw new Error(`Unsupported transaction type: ${paramsType}`);
+          }
+      })
+
+      sendMessage({ type: "ALPH_EXECUTE_TRANSACTION", data: transactionParamz })
+
+      const { actionHash } = await waitForMessage(
+        "ALPH_EXECUTE_TRANSACTION_RES",
+        USER_ACTION_TIMEOUT,
+      )
+
+      sendMessage({ type: "ALPH_OPEN_UI" })
+
+      const result = await Promise.race([
+        waitForMessage(
+          "ALPH_TRANSACTION_SUBMITTED",
+          USER_ACTION_TIMEOUT_LONGER,
+          (x) => x.data.actionHash === actionHash,
+        ),
+        waitForMessage(
+          "ALPH_TRANSACTION_FAILED",
+          USER_ACTION_TIMEOUT,
+          (x) => x.data.actionHash === actionHash,
+        )
+          .then((res) => res)
+          .catch(() => {
+            const error = "User action time out"
+            sendMessage({
+              type: "ALPH_TRANSACTION_FAILED",
+              data: { actionHash, error },
+            })
+            return { error }
+          }),
+      ])
+
+      if ("error" in result) {
+        throw Error(result.error)
+      }
+
+      const signedChainedTxResult = result.result.map(txResult => {
+          const txResultType = txResult.type
+          switch (txResultType) {
+            case 'TRANSFER':
+              return { type: 'Transfer', ...txResult.result } as SignTransferChainedTxResult;
+            case 'DEPLOY_CONTRACT':
+              return { type: 'DeployContract', ...txResult.result } as SignDeployContractChainedTxResult;
+            case 'EXECUTE_SCRIPT':
+              return { type: 'ExecuteScript', ...txResult.result } as SignExecuteScriptChainedTxResult;
+            default:
+              throw new Error(`Unsupported transaction type: ${txResultType}`);
+          }
+        }
+      )
+
+      return signedChainedTxResult;
     }
 
     signUnsignedTx = async (
@@ -218,7 +312,6 @@ export const alephiumWindowObject: AlephiumWindowObject =
         throw new Error("Invalid unsigned tx")
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       sendMessage({
         type: "ALPH_SIGN_UNSIGNED_TX",
         data: {
@@ -368,7 +461,6 @@ export const alephiumWindowObject: AlephiumWindowObject =
     ) {
       this.#checkParams(params)
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const data = dataBuilder(
         params,
         window.location.host,
@@ -376,7 +468,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
         this.connectedAccount!.keyType,
       )
 
-      sendMessage({ type: "ALPH_EXECUTE_TRANSACTION", data })
+      sendMessage({ type: "ALPH_EXECUTE_TRANSACTION", data: [data] })
       const { actionHash } = await waitForMessage(
         "ALPH_EXECUTE_TRANSACTION_RES",
         USER_ACTION_TIMEOUT,

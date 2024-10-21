@@ -32,7 +32,7 @@ export const ActionScreen: FC = () => {
   const [action] = actions
   const isLastAction = actions.length === 1
   const signerAccount = useAccount(action.type === 'ALPH_TRANSACTION' && selectedAccount
-    ? { address: action.payload.params.signerAddress, networkId: action.payload.params.networkId ?? selectedAccount.networkId }
+    ? { address: action.payload[0].params.signerAddress, networkId: action.payload[0].params.networkId ?? selectedAccount.networkId }  // FIXME: always use the first payload
     : (action.type === 'ALPH_SIGN_MESSAGE' || action.type === 'ALPH_SIGN_UNSIGNED_TX') && selectedAccount
       ? { address: action.payload.signerAddress, networkId: action.payload.networkId ?? selectedAccount.networkId }
       : undefined
@@ -134,20 +134,30 @@ export const ActionScreen: FC = () => {
     case "ALPH_TRANSACTION":
       return (
         <ApproveTransactionScreen
-          transaction={action.payload}
+          transactionParams={action.payload}
           actionHash={action.meta.hash}
-          onSubmit={async (builtTransaction) => {
+          onSubmit={async (builtTransactions) => {
             analytics.track("signedTransaction", {
               networkId: selectedAccount?.networkId || "unknown",
             })
-            if (!builtTransaction || "error" in builtTransaction) {
+
+            if (!builtTransactions || builtTransactions.length === 0) {
               useAppState.setState({
-                error: `${t('Transaction building failed')}: ${builtTransaction?.error || t("unknown")}`,
+                error: `${t('Transaction building failed')}`,
                 isLoading: false,
               })
               navigate(routes.error())
             } else {
-              await approveAction(action, builtTransaction)
+              const errorTransaction = builtTransactions.find(tx => 'error' in tx);
+              if (errorTransaction && 'error' in errorTransaction) {
+                useAppState.setState({
+                  error: `${t('Transaction building failed')}: ${errorTransaction.error}`,
+                  isLoading: false,
+                })
+                navigate(routes.error())
+              }
+
+              await approveAction(action, builtTransactions)
               useAppState.setState({ isLoading: true })
               const result = await Promise.race([
                 waitForMessage(
