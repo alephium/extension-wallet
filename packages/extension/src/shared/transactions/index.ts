@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, DUST_AMOUNT, ExplorerProvider, NodeProvider, ONE_ALPH, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignExecuteScriptChainedTxParams, SignTransferChainedTxParams, TransactionBuilder } from "@alephium/web3"
+import { ALPH_TOKEN_ID, DEFAULT_GAS_PRICE, DUST_AMOUNT, ExplorerProvider, NodeProvider, ONE_ALPH, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignExecuteScriptChainedTxParams, SignTransferChainedTxParams, TransactionBuilder } from "@alephium/web3"
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call } from "starknet"
 import { ReviewTransactionResult, TransactionParams } from "../actionQueue/types"
@@ -374,7 +374,7 @@ export async function checkBalances(
   transactionParams: TransactionParams
 ): Promise<Map<string, BigNumber> | undefined> {
   const expectedBalances: Map<string, BigNumber> = new Map()
-  const gasFee = BigInt(5000000)  // Maximal gas fee per tx
+  const gasFee = BigInt(5000000) * DEFAULT_GAS_PRICE  // Maximal gas fee per tx
   switch (transactionParams.type) {
     case 'TRANSFER':
       transactionParams.params.destinations.forEach((destination) => {
