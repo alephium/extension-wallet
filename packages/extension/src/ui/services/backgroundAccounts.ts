@@ -1,4 +1,4 @@
-import { KeyType, Account } from "@alephium/web3"
+import { KeyType } from "@alephium/web3"
 import { sendMessage, waitForMessage } from "../../shared/messages"
 import {
   ArgentAccountType,
@@ -33,8 +33,8 @@ export const discoverAccounts = async (networkId: string) => {
   }
 }
 
-export const importNewLedgerAccount = async (account: Account, hdIndex: number, networkId: string) => {
-  sendMessage({ type: "ALPH_NEW_LEDGER_ACCOUNT", data: { account, hdIndex, networkId } })
+export const importNewLedgerAccount = async (account: WalletAccount) => {
+  sendMessage({ type: "ALPH_NEW_LEDGER_ACCOUNT", data: { account } })
   try {
     return await Promise.race([
       waitForMessage("ALPH_NEW_LEDGER_ACCOUNT_RES"),

@@ -1,4 +1,4 @@
-import { KeyType, Account } from "@alephium/web3"
+import { KeyType } from "@alephium/web3"
 import { useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -7,6 +7,7 @@ import { getAccounts, selectAccount } from "../../services/backgroundAccounts"
 import { recover } from "../recovery/recovery.service"
 import { createAccount } from "./accounts.service"
 import { importNewLedgerAccount } from '../../services/backgroundAccounts'
+import { WalletAccount } from "../../../shared/wallet.model"
 
 export const useAddAccount = () => {
   const navigate = useNavigate()
@@ -22,10 +23,10 @@ export const useAddAccount = () => {
   return { addAccount }
 }
 
-export const addLedgerAccount = async (networkId: string, account: Account, hdIndex: number) => {
-  await importNewLedgerAccount(account, hdIndex, networkId)
+export const addLedgerAccount = async (account: WalletAccount) => {
+  await importNewLedgerAccount(account)
   // switch background wallet to the account that was selected
-  await selectAccount({ address: account.address, networkId: networkId })
+  await selectAccount({ address: account.address, networkId: account.networkId })
 }
 
 export const getAllLedgerAccounts = async (networkId: string) => {
