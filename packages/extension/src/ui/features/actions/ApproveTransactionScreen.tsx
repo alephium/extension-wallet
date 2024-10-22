@@ -1,6 +1,4 @@
-import { AlephiumApp as LedgerApp } from "@alephium/ledger-app"
 import { ALPH_TOKEN_ID, ONE_ALPH, prettifyTokenAmount, TransactionBuilder } from "@alephium/web3"
-import { getHDWalletPath } from "@alephium/web3-wallet"
 import { L1, icons } from "@argent/ui"
 import { Flex, Text } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useState } from "react"
@@ -17,7 +15,7 @@ import { usePageTracking } from "../../services/analytics"
 import { rejectAction } from "../../services/backgroundActions"
 import { Account } from "../accounts/Account"
 import { useAllTokensWithBalance } from "../accountTokens/tokens.state"
-import { getLedgerApp } from "../ledger/utils"
+import { LedgerAlephium } from "../ledger/utils"
 import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
 import { ConfirmPageProps } from "./DeprecatedConfirmScreen"
@@ -214,7 +212,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   const [ledgerState, setLedgerState] = useState<
     "detecting" | "notfound" | "signing" | "succeeded" | "failed"
   >()
-  const [ledgerApp, setLedgerApp] = useState<LedgerApp>()
+  const [ledgerApp, setLedgerApp] = useState<LedgerAlephium>()
   const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokensWithBalance(selectedAccount)
 
   // TODO: handle error
@@ -252,20 +250,15 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     setLedgerState(oldState => oldState === undefined ? "detecting" : oldState)
 
     if (buildResult) {
-      let app: LedgerApp | undefined
+      let app: LedgerAlephium | undefined
       try {
-        app = await getLedgerApp()
+        app = await LedgerAlephium.create()
         setLedgerApp(app)
         setLedgerState("signing")
-        const path = getHDWalletPath(
-          selectedAccount.signer.keyType,
-          selectedAccount.signer.derivationIndex,
-        )
         const unsignedTx = Buffer.from(buildResult.result.unsignedTx, "hex")
-        const signature = await app.signUnsignedTx(path, unsignedTx)
+        const signature = await app.signUnsignedTx(selectedAccount, unsignedTx)
         setLedgerState("succeeded")
         onSubmit({ ...buildResult, signature })
-        await app.close()
       } catch (e) {
         if (app === undefined) {
           setLedgerState(oldState => oldState === undefined || oldState === "detecting" ? "notfound" : oldState)

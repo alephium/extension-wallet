@@ -91,9 +91,9 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
         throw Error("you need an open session")
       }
 
-      const { account, hdIndex, networkId } = msg.data
+      const { account } = msg.data
       try {
-        const baseAccount = await wallet.importLedgerAccount(account, hdIndex, networkId)
+        const baseAccount = await wallet.importLedgerAccount(account)
         return sendMessageToUi({
           type: "ALPH_NEW_LEDGER_ACCOUNT_RES",
           data: {
@@ -105,7 +105,7 @@ export const handleAccountMessage: HandleMessage<AccountMessage> = async ({
 
         analytics.track("createAccount", {
           status: "failure",
-          networkId: networkId,
+          networkId: account.networkId,
           errorMessage: error,
         })
 

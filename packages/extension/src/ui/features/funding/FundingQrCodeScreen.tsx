@@ -18,11 +18,10 @@ import {
 import { useSelectedAccount } from "../accounts/accounts.state"
 import { QrCode } from "./QrCode"
 import { testNodeWallet } from '@alephium/web3-test'
-import { getHDWalletPath } from "@alephium/web3-wallet"
 import { Flex } from "@chakra-ui/react"
 import i18n from "../../../i18n"
 import { useTranslation } from "react-i18next"
-import { getLedgerApp } from '../ledger/utils'
+import { LedgerAlephium } from '../ledger/utils'
 import { set } from 'lodash-es'
 
 const Container = styled.div`
@@ -136,7 +135,7 @@ export const FundingQrCodeScreen: FC = () => {
 
   const verifyLedger = useCallback(async () => {
     if (account?.signer.type === 'ledger') {
-      const app = await getLedgerApp().catch((error) => {
+      const app = await LedgerAlephium.create().catch((error) => {
         console.error(`Failed in connecting with ledger`, error)
         setAlterMessageIndex(2)
         setAlertDialogIsOpen(true)
@@ -145,12 +144,7 @@ export const FundingQrCodeScreen: FC = () => {
       if (!app) {
         return
       }
-      const path = getHDWalletPath(
-        account.signer.keyType,
-        account.signer.derivationIndex,
-      )
-      const [deviceAccount, _] = await app.getAccount(path, undefined, account.signer.keyType, true)
-      if (deviceAccount.address !== account.address) {
+      if (await app.verifyAccount(account)) {
         setAlterMessageIndex(3)
         setAlertDialogIsOpen(true)
       }
