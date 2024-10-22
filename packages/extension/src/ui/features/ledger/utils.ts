@@ -6,7 +6,6 @@ import { getHDWalletPath } from '@alephium/web3-wallet';
 import { getAllLedgerAccounts } from '../accounts/useAddAccount';
 import { Account } from '../accounts/Account';
 import { AccountDiscovery } from '../../../shared/discovery';
-import { getNextPathIndex } from '../../../background/keys/keyDerivation';
 import { ExplorerProvider, groupOfAddress, KeyType } from '@alephium/web3';
 import { getNetwork } from '../../../shared/network';
 
@@ -67,7 +66,7 @@ export class LedgerAlephium extends AccountDiscovery {
     }
   
     const existingLedgerAccounts = await getAllLedgerAccounts(networkId)
-    var index = 0
+    let index = 0
     while (true) {
       const newAccount = await this.deriveAccount(networkId, index, keyType, targetAddressGroup)
       if (existingLedgerAccounts.find((account) => account.address === newAccount.address) === undefined) {
@@ -105,16 +104,12 @@ export class LedgerAlephium extends AccountDiscovery {
 
     console.info(`start discovering active ledger accounts for ${networkId}`)
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-    const discoverAccount = (startIndex: number, group?: number): Promise<WalletAccount> => {
-      return this.deriveAccount(network.id, startIndex, 'default', group)
+    const discoverAccount = (startIndex: number): Promise<WalletAccount> => {
+      return this.deriveAccount(network.id, startIndex, 'default')
     }
     const walletAccounts = await this.deriveActiveAccountsForNetwork(explorerProvider, discoverAccount)
     const newDiscoveredAccounts = walletAccounts.filter(account => !existingLedgerAccounts.find(a => a.address === account.address))
     console.info(`Discovered ${newDiscoveredAccounts.length} new active accounts for ${networkId}`)
     return newDiscoveredAccounts
-  }
-
-  nextPathIndexForDiscovery(indexes: number[]): number {
-    return getNextPathIndex(indexes)
   }
 }

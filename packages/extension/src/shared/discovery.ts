@@ -4,63 +4,51 @@ import { WalletAccount } from './wallet.model'
 const minGap = 5
 const derivationBatchSize = 10
 
-export abstract class AccountDiscovery {
-  abstract nextPathIndexForDiscovery(indexes: number[]): number
+class DerivedAccountsPerGroup {
+  accounts: WalletAccount[]
+  gap: number
 
-  public async deriveActiveAccountsForNetwork(
-    explorerProvider: ExplorerProvider,
-    deriveAccount: (startIndex: number, group?: number) => Promise<WalletAccount>
-  ): Promise<WalletAccount[]> {
-    const walletAccounts: WalletAccount[] = []
-    for (let group = 0; group < TOTAL_NUMBER_OF_GROUPS; group++) {
-      const walletAccountsForGroup = await this.deriveActiveAccountsForGroup(
-        explorerProvider,
-        [],
-        [],
-        (startIndex: number) => deriveAccount(startIndex, group)
-      )
-      walletAccounts.push(...walletAccountsForGroup)
-    }
-
-    return walletAccounts
+  constructor() {
+    this.accounts = []
+    this.gap = 0
   }
 
-  private async deriveActiveAccountsForGroup(
+  addAccount(account: WalletAccount, active: boolean) {
+    if (!this.isComplete()) {
+      if (!active) {
+        this.gap += 1
+      } else {
+        this.gap = 0
+        this.accounts.push(account)
+      }
+    }
+  }
+
+  isComplete(): boolean {
+    return this.gap >= minGap
+  }
+}
+
+export abstract class AccountDiscovery {
+  public async deriveActiveAccountsForNetwork(
     explorerProvider: ExplorerProvider,
-    allWalletAccounts: { wallet: WalletAccount, active: boolean }[],
-    activeWalletAccounts: WalletAccount[],
     deriveAccount: (startIndex: number) => Promise<WalletAccount>
   ): Promise<WalletAccount[]> {
-    const gapSatisfied = (allWalletAccounts.length >= minGap) && allWalletAccounts.slice(-minGap).every(item => !item.active);
-    if (gapSatisfied) {
-      return activeWalletAccounts
-    } else {
-      let startIndex = this.nextPathIndexForDiscovery(allWalletAccounts.map(account => account.wallet.signer.derivationIndex))
+    const allAccounts = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map(() => new DerivedAccountsPerGroup())
+    let startIndex = 0
+    while (allAccounts.some((a) => !a.isComplete())) {
       const newWalletAccounts = []
       for (let i = 0; i < derivationBatchSize; i++) {
-        const newWalletAccount = await deriveAccount(startIndex)
+        const newWalletAccount = await deriveAccount(startIndex + i)
         newWalletAccounts.push(newWalletAccount)
-        startIndex = newWalletAccount.signer.derivationIndex + 1
       }
-
+      startIndex += derivationBatchSize
       const results = await explorerProvider.addresses.postAddressesUsed(newWalletAccounts.map(account => account.address))
-
-      const updatedActiveWalletAccounts = activeWalletAccounts
-      for (let i = 0; i < derivationBatchSize; i++) {
-        const newWalletAccount = newWalletAccounts[i]
-        const result = results[i]
-        if (result) {
-          updatedActiveWalletAccounts.push(newWalletAccount)
-        }
-        allWalletAccounts.push({ wallet: newWalletAccount, active: result })
-      }
-
-      return this.deriveActiveAccountsForGroup(
-        explorerProvider,
-        allWalletAccounts,
-        updatedActiveWalletAccounts,
-        deriveAccount
-      )
+      newWalletAccounts.forEach((account, index) => {
+        const accountsPerGroup = allAccounts[account.signer.group]
+        accountsPerGroup.addAccount(account, results[index])
+      })
     }
+    return allAccounts.flatMap((a) => a.accounts)
   }
 }

@@ -10,7 +10,6 @@ import {
   publicKeyFromPrivateKey,
   groupOfAddress,
   KeyType,
-  Account,
   ExplorerProvider
 } from "@alephium/web3"
 import {
@@ -461,8 +460,8 @@ export class Wallet extends AccountDiscovery {
 
     console.info(`start discovering active accounts for ${networkId}`)
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-    const discoverAccount = (startIndex: number, group?: number): Promise<WalletAccount> => {
-      return Promise.resolve(this.deriveAccount(session.secret, startIndex, network.id, 'default', group))
+    const discoverAccount = (startIndex: number): Promise<WalletAccount> => {
+      return Promise.resolve(this.deriveAccount(session.secret, startIndex, network.id, 'default'))
     }
     const walletAccounts = await this.deriveActiveAccountsForNetwork(explorerProvider, discoverAccount)
     const newDiscoveredAccounts = walletAccounts.filter(account => !accountsForNetwork.find(a => a.address === account.address))
@@ -475,9 +474,5 @@ export class Wallet extends AccountDiscovery {
     }
     console.info(`Discovered ${newDiscoveredAccounts.length} new active accounts for ${networkId}`)
     return newDiscoveredAccounts
-  }
-
-  nextPathIndexForDiscovery(indexes: number[]): number {
-    return getNextPathIndex(indexes)
   }
 }
