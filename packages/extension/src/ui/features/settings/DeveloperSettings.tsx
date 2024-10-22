@@ -77,14 +77,9 @@ const DeveloperSettings: FC = () => {
   const onDiscoverAccounts = useCallback(async () => {
     setLoading(true)
     await discoveryLocalAccounts()
-    setLoading(false)
-  }, [setLoading, discoveryLocalAccounts])
-
-  const onDiscoverLedgerAccounts = useCallback(async () => {
-    setLoading(true)
     await discoveryLedgerAccounts()
     setLoading(false)
-  }, [setLoading, discoveryLedgerAccounts])
+  }, [setLoading, discoveryLocalAccounts, discoveryLedgerAccounts])
 
   if (loading) {
     return <LoadingScreen />
@@ -123,13 +118,6 @@ const DeveloperSettings: FC = () => {
           title={t("Discover accounts")}
         >
           {t("Discover accounts")}
-        </ButtonCell>
-        <ButtonCell
-          rightIcon={<SearchIcon fontSize="inherit" />}
-          onClick={onDiscoverLedgerAccounts}
-          title={t("Discover ledger accounts")}
-        >
-          {t("Discover ledger accounts")}
         </ButtonCell>
       </CellStack>
     </>
