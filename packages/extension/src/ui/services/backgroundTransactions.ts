@@ -6,7 +6,7 @@ import { DeclareContract } from "../../shared/udc/type"
 import { BaseWalletAccount } from "../../shared/wallet.model"
 
 export const executeTransaction = (data: TransactionParams) => {
-  return sendMessage({ type: "ALPH_EXECUTE_TRANSACTION", data })
+  return sendMessage({ type: "ALPH_EXECUTE_TRANSACTION", data: [data] })
 }
 
 export const getEstimatedFee = async (call: Call | Call[]) => {

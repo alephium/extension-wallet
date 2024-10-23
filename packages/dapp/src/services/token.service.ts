@@ -83,7 +83,7 @@ export const mintToken = async (
       decimals: 0n,
       totalSupply: BigInt(mintAmount)
     },
-    initialAttoAlphAmount: BigInt(1100000000000000000),
+    initialAttoAlphAmount: web3.MINIMAL_CONTRACT_DEPOSIT,
     issueTokenAmount: BigInt(mintAmount),
   })
 }

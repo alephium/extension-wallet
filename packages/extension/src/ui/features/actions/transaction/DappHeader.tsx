@@ -1,12 +1,12 @@
 import { H5, P4, icons } from "@argent/ui"
 import { Box, Flex } from "@chakra-ui/react"
 import React, { useMemo } from "react"
-import { TransactionParams } from "../../../../shared/actionQueue/types"
+import { ReviewTransactionResult, TransactionParams } from "../../../../shared/actionQueue/types"
 
 import { useTranslation } from "react-i18next"
 
 export interface DappHeaderProps {
-  transaction: TransactionParams
+  transaction: ReviewTransactionResult
 }
 
 export const DappHeader = ({
@@ -62,7 +62,7 @@ const {
   MulticallIcon
 } = icons
 
-const TransactionIcon = ({transaction}: {transaction: TransactionParams}) => {
+const TransactionIcon = ({transaction}: {transaction: ReviewTransactionResult}) => {
   switch (transaction.type) {
     case 'TRANSFER':
       return <SendIcon fontSize={"4xl"} color="white" />

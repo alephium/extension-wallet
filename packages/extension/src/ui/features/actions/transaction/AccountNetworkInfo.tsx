@@ -6,10 +6,11 @@ import { PrettyAccountAddress } from "../../accounts/PrettyAccountAddress"
 import { useTranslation } from "react-i18next"
 
 interface AccountNetworkInfoProps {
-  account: Account
+  accountAddress: string
+  networkId: string
 }
 
-export const AccountNetworkInfo = ({ account }: AccountNetworkInfoProps) => {
+export const AccountNetworkInfo = ({ accountAddress, networkId }: AccountNetworkInfoProps) => {
   const { t } = useTranslation()
   return (
     <VStack
@@ -25,8 +26,8 @@ export const AccountNetworkInfo = ({ account }: AccountNetworkInfoProps) => {
         </P4>
         <PrettyAccountAddress
           size={6}
-          accountAddress={account.address}
-          networkId={account.networkId}
+          accountAddress={accountAddress}
+          networkId={networkId}
           bold
         />
       </Flex>
@@ -35,7 +36,7 @@ export const AccountNetworkInfo = ({ account }: AccountNetworkInfoProps) => {
           {t("Network")}
         </P4>
         <P4 fontWeight="bold" color="white">
-          {account.networkName}
+          {networkId}
         </P4>
       </Flex>
     </VStack>

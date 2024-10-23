@@ -3,6 +3,7 @@ import {
   ActionItem,
   ExtQueueItem,
   ReviewTransactionResult,
+  TransactionResult,
 } from "../shared/actionQueue/types"
 import { MessageType } from "../shared/messages"
 import { addNetwork, getNetworks } from "../shared/network"
@@ -12,7 +13,7 @@ import { assertNever } from "../ui/services/assertNever"
 import { analytics } from "./analytics"
 import { BackgroundService } from "./background"
 import { openUi } from "./openUi"
-import { executeTransactionAction } from "./transactions/transactionExecution"
+import { executeTransactionsAction, executeTransactionAction } from "./transactions/transactionExecution"
 import { transactionWatcher } from "./transactions/transactionWatcher"
 
 export const handleActionApproval = async (
@@ -49,21 +50,61 @@ export const handleActionApproval = async (
     }
 
     case "ALPH_TRANSACTION": {
-      const { signature: signatureOpt, ...transaction } =
-        additionalData as ReviewTransactionResult & { signature?: string }
+      const transactions = additionalData as ReviewTransactionResult[]
       try {
-        const { signature } = await executeTransactionAction(
-          transaction,
-          signatureOpt,
-          background,
-          transaction.params.networkId,
-        )
+        if (transactions.length === 0) {
+          return {
+            type: "ALPH_TRANSACTION_FAILED",
+            data: { actionHash, error: "No transactions to execute" },
+          }
+        }
 
-        transactionWatcher.refresh()
+        let results: TransactionResult[]
+        if (transactions.length === 1) {
+          const { signature: signatureOpt, ...transaction } =
+            transactions[0] as ReviewTransactionResult & { signature?: string }
+
+          const { signature } = await executeTransactionAction(
+            transaction,
+            signatureOpt,
+            background,
+            transaction.params.networkId,
+          )
+
+          transactionWatcher.refresh()
+
+          results = [
+            {
+              type: transaction.type,
+              result: {
+                ...transaction.result,
+                signature
+              }
+            }
+          ] as TransactionResult[]
+        } else {
+          const { signatures } = await executeTransactionsAction(
+            transactions,
+            background,
+            transactions[0].params.networkId,
+          )
+
+          transactionWatcher.refresh()
+
+          results = transactions.map((transaction, index) => (
+            {
+              type: transaction.type,
+              result: {
+                ...transaction.result,
+                signature: signatures[index],
+              }
+            }
+          )) as TransactionResult[]
+        }
 
         return {
           type: "ALPH_TRANSACTION_SUBMITTED",
-          data: { result: { ...transaction.result, signature }, actionHash },
+          data: { result: results, actionHash },
         }
       } catch (error: unknown) {
         return {

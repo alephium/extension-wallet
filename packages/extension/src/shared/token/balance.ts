@@ -1,4 +1,4 @@
-import { explorer, ExplorerProvider, ALPH_TOKEN_ID } from "@alephium/web3"
+import { explorer, ExplorerProvider, ALPH_TOKEN_ID, NodeProvider } from "@alephium/web3"
 import { getNetwork } from "../network"
 import { BaseWalletAccount } from "../wallet.model"
 import { BigNumber } from "ethers"
@@ -31,4 +31,14 @@ export function addTokenToBalances(balances: Map<string, BigNumber>, tokenId: st
   } else {
     balances.set(tokenId, tokenBalance.add(amount))
   }
+}
+
+export async function getBalances(nodeProvider: NodeProvider, address: string): Promise<Map<string, BigNumber>> {
+  const result = await nodeProvider.addresses.getAddressesAddressBalance(address)
+  const balances = new Map<string, BigNumber>()
+  balances.set(ALPH_TOKEN_ID, BigNumber.from(result.balance))
+  if (result.tokenBalances !== undefined) {
+    result.tokenBalances.forEach((token) => addTokenToBalances(balances, token.id, BigNumber.from(token.amount)))
+  }
+  return balances
 }

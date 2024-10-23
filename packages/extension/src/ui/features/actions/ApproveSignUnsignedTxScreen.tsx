@@ -50,7 +50,7 @@ export const ApproveSignUnsignedTxScreen: FC<ApproveSignUnsignedTxScreenProps> =
         </Flex>
       }
       { selectedAccount &&
-        <AccountNetworkInfo account={selectedAccount}/>
+        <AccountNetworkInfo accountAddress={selectedAccount.address} networkId={selectedAccount.networkId}/>
       }
       <TxHashContainer txId={txId}/>
       {

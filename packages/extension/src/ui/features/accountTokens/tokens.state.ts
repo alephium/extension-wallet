@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, NodeProvider } from "@alephium/web3"
+import { NodeProvider } from "@alephium/web3"
 import { BigNumber } from "ethers"
 import { memoize } from "lodash-es"
 import { useEffect, useMemo, useRef } from "react"
@@ -14,7 +14,7 @@ import { getAccountIdentifier } from "../../../shared/wallet.service"
 import { useAccount } from "../accounts/accounts.state"
 import { useAccountTransactions } from "../accounts/accountTransactions.state"
 import { sortBy } from "lodash"
-import { addTokenToBalances } from "../../../shared/token/balance"
+import { getBalances } from "../../../shared/token/balance"
 import { Transaction, compareTransactions } from "../../../shared/transactions"
 import { fetchImmutable } from "../../../shared/utils/fetchImmutable"
 import { retryWhenRateLimited } from "../../services/swr"
@@ -310,16 +310,6 @@ function hasNewPendingTx(prevTxs: Transaction[], newTxs: Transaction[]): boolean
   }
 
   return false
-}
-
-async function getBalances(nodeProvider: NodeProvider, address: string): Promise<Map<string, BigNumber>> {
-  const result = await nodeProvider.addresses.getAddressesAddressBalance(address)
-  const balances = new Map<string, BigNumber>()
-  balances.set(ALPH_TOKEN_ID, BigNumber.from(result.balance))
-  if (result.tokenBalances !== undefined) {
-    result.tokenBalances.forEach((token) => addTokenToBalances(balances, token.id, BigNumber.from(token.amount)))
-  }
-  return balances
 }
 
 async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string): Promise<Token | undefined> {
