@@ -10,6 +10,7 @@ import { BaseTokenWithBalance } from "../token/type"
 import { BigNumber } from "ethers"
 import { addTokenToBalances, getBalances } from "../token/balance"
 import i18n from "../../i18n"
+import { tokenListStore } from "../token/storage"
 
 export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_MEMPOOL' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED' | 'REMOVED_FROM_MEMPOOL';
 
@@ -225,7 +226,11 @@ export async function tryBuildTransactions(
       }
 
       const [firstMissingTokenId, firstMissingAmount] = missingBalances.entries().next().value;
-      const tokenSymbol = firstMissingTokenId === ALPH_TOKEN_ID ? 'ALPH' : firstMissingTokenId;
+      const tokenListTokens = await tokenListStore.get()
+      const tokenSymbol = firstMissingTokenId === ALPH_TOKEN_ID ?
+        'ALPH' : tokenListTokens.tokens.find(token =>
+          token.id === firstMissingTokenId && token.networkId === selectedAccount.networkId
+        )?.symbol ?? firstMissingTokenId
       const expectedStr = firstMissingAmount.toString();
       const haveStr = (tokensWithBalance.find(t => t.id === firstMissingTokenId)?.balance || '0').toString();
       const errorMsg = i18n.t("Insufficient token {{ tokenSymbol }}, expected at least {{ expectedStr }}, got {{ haveStr }}", { tokenSymbol, expectedStr, haveStr })
