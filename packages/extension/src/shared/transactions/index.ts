@@ -1,10 +1,10 @@
-import { ALPH_TOKEN_ID, DEFAULT_GAS_PRICE, DUST_AMOUNT, ExplorerProvider, NodeProvider, ONE_ALPH, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignExecuteScriptChainedTxParams, SignTransferChainedTxParams, TransactionBuilder } from "@alephium/web3"
+import { ALPH_TOKEN_ID, DEFAULT_GAS_PRICE, DUST_AMOUNT, ExplorerProvider, MINIMAL_CONTRACT_DEPOSIT, NodeProvider, SignTransferChainedTxParams, TransactionBuilder } from "@alephium/web3"
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call } from "starknet"
 import { ReviewTransactionResult, TransactionParams } from "../actionQueue/types"
 import { WalletAccount } from "../wallet.model"
 import { AlephiumExplorerTransaction } from "../explorer/type"
-import { mapAlephiumTransactionToTransaction } from "./transformers"
+import { mapAlephiumTransactionToTransaction, signedChainedTxResultToReviewTransactionResult, transactionParamsToSignChainedTxParams } from "./transformers"
 import { getNetwork } from "../network"
 import { BaseTokenWithBalance } from "../token/type"
 import { BigNumber } from "ethers"
@@ -132,73 +132,6 @@ function buildGetTransactionsFn(metadataTransactions: Transaction[]) {
       ),
     )
   }
-}
-
-export function transactionParamsToSignChainedTxParams(
-  transactionParams: TransactionParams
-): SignChainedTxParams {
-  switch (transactionParams.type) {
-    case "TRANSFER":
-      return {
-        type: 'Transfer',
-        ...transactionParams.params
-      } as SignTransferChainedTxParams
-    case "DEPLOY_CONTRACT":
-      return {
-        type: 'DeployContract',
-        ...transactionParams.params
-        } as SignDeployContractChainedTxParams
-    case "EXECUTE_SCRIPT":
-      return {
-        type: 'ExecuteScript',
-        ...transactionParams.params
-      } as SignExecuteScriptChainedTxParams
-    default:
-      throw new Error(`Unsupported transaction type: ${transactionParams.type}`);
-  }
-}
-
-export function signedChainedTxParamsToTransactionParams(
-  signedChainedTxParams: SignChainedTxParams,
-  networkId: string
-): TransactionParams {
-  const paramsType = signedChainedTxParams.type
-  const salt = Date.now().toString()
-  switch (paramsType) {
-    case 'Transfer':
-      return {
-        type: 'TRANSFER',
-        params: { networkId, ...signedChainedTxParams },
-        salt
-      }
-    case 'DeployContract':
-      return {
-        type: 'DEPLOY_CONTRACT',
-        params: { networkId, ...signedChainedTxParams },
-        salt
-      }
-    case 'ExecuteScript':
-      return {
-        type: 'EXECUTE_SCRIPT',
-        params: { networkId, ...signedChainedTxParams },
-        salt
-      }
-    default:
-      throw new Error(`Unsupported transaction type: ${paramsType}`);
-  }
-}
-
-export function signedChainedTxResultToReviewTransactionResult(
-  signedChainedTxParams: SignChainedTxParams,
-  signedChainedTxResult: Omit<SignChainedTxResult, 'signature'>,
-  networkId: string
-): ReviewTransactionResult {
-  const txParams = signedChainedTxParamsToTransactionParams(signedChainedTxParams, networkId)
-  return {
-    type: txParams.type,
-    params: txParams.params,
-    result: signedChainedTxResult
-  } as ReviewTransactionResult
 }
 
 export async function tryBuildChainedTransactions(
@@ -374,7 +307,7 @@ export async function checkBalances(
   transactionParams: TransactionParams
 ): Promise<Map<string, BigNumber> | undefined> {
   const expectedBalances: Map<string, BigNumber> = new Map()
-  const gasFee = BigInt(5000000) * DEFAULT_GAS_PRICE  // Maximal gas fee per tx
+
   switch (transactionParams.type) {
     case 'TRANSFER':
       transactionParams.params.destinations.forEach((destination) => {
@@ -388,7 +321,7 @@ export async function checkBalances(
       addTokenToBalances(expectedBalances, ALPH_TOKEN_ID,
         transactionParams.params.initialAttoAlphAmount !== undefined
           ? BigNumber.from(transactionParams.params.initialAttoAlphAmount)
-          : BigNumber.from(ONE_ALPH)
+          : BigNumber.from(MINIMAL_CONTRACT_DEPOSIT)
       )
       if (transactionParams.params.initialTokenAmounts !== undefined) {
         transactionParams.params.initialTokenAmounts.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
@@ -401,10 +334,14 @@ export async function checkBalances(
       if (transactionParams.params.tokens !== undefined) {
         transactionParams.params.tokens.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
       }
+
       break
     case 'UNSIGNED_TX':
       return
   }
+
+  const maxGasAmountPerTx = 5000000
+  const gasFee = BigInt(transactionParams.params.gasAmount ?? maxGasAmountPerTx) * BigInt(transactionParams.params.gasPrice ?? DEFAULT_GAS_PRICE)
   addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(gasFee))
 
   const zero = BigNumber.from(0)
@@ -424,4 +361,3 @@ export async function checkBalances(
   }
   return undefined
 }
-

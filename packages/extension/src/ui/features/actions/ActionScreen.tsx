@@ -31,11 +31,9 @@ export const ActionScreen: FC = () => {
 
   const [action] = actions
   const isLastAction = actions.length === 1
-  const signerAccount = useAccount(action.type === 'ALPH_TRANSACTION' && selectedAccount
-    ? { address: action.payload[0].params.signerAddress, networkId: action.payload[0].params.networkId ?? selectedAccount.networkId }  // FIXME: always use the first payload
-    : (action.type === 'ALPH_SIGN_MESSAGE' || action.type === 'ALPH_SIGN_UNSIGNED_TX') && selectedAccount
-      ? { address: action.payload.signerAddress, networkId: action.payload.networkId ?? selectedAccount.networkId }
-      : undefined
+  const signerAccount = useAccount((action.type === 'ALPH_SIGN_MESSAGE' || action.type === 'ALPH_SIGN_UNSIGNED_TX') && selectedAccount
+    ? { address: action.payload.signerAddress, networkId: action.payload.networkId ?? selectedAccount.networkId }
+    : undefined
   )
 
   const closePopup = useCallback(() => {
@@ -155,39 +153,38 @@ export const ActionScreen: FC = () => {
                   isLoading: false,
                 })
                 navigate(routes.error())
-              }
-
-              await approveAction(action, builtTransactions)
-              useAppState.setState({ isLoading: true })
-              const result = await Promise.race([
-                waitForMessage(
-                  "ALPH_TRANSACTION_SUBMITTED",
-                  ({ data }) => data.actionHash === action.meta.hash,
-                ),
-                waitForMessage(
-                  "ALPH_TRANSACTION_FAILED",
-                  ({ data }) => data.actionHash === action.meta.hash,
-                ),
-              ])
-              // (await) blocking as the window may closes afterwards
-              await analytics.track("sentTransaction", {
-                success: !("error" in result),
-                networkId: selectedAccount?.networkId || t("unknown"),
-              })
-              if ("error" in result) {
-                useAppState.setState({
-                  error: `${t('Sending transaction failed')}: ${result.error}`,
-                  isLoading: false,
-                })
-                navigate(routes.error())
               } else {
-                closePopupIfLastAction()
-                useAppState.setState({ isLoading: false })
+                await approveAction(action, builtTransactions)
+                useAppState.setState({ isLoading: true })
+                const result = await Promise.race([
+                  waitForMessage(
+                    "ALPH_TRANSACTION_SUBMITTED",
+                    ({ data }) => data.actionHash === action.meta.hash,
+                  ),
+                  waitForMessage(
+                    "ALPH_TRANSACTION_FAILED",
+                    ({ data }) => data.actionHash === action.meta.hash,
+                  ),
+                ])
+                // (await) blocking as the window may closes afterwards
+                await analytics.track("sentTransaction", {
+                  success: !("error" in result),
+                  networkId: selectedAccount?.networkId || t("unknown"),
+                })
+                if ("error" in result) {
+                  useAppState.setState({
+                    error: `${t('Sending transaction failed')}: ${result.error}`,
+                    isLoading: false,
+                  })
+                  navigate(routes.error())
+                } else {
+                  closePopupIfLastAction()
+                  useAppState.setState({ isLoading: false })
+                }
               }
             }
           }}
           onReject={onReject}
-          selectedAccount={signerAccount}
         />
       )
 

@@ -12,15 +12,12 @@ import {
   NodeProvider,
   SignChainedTxParams,
   SignChainedTxResult,
-  SignDeployContractChainedTxResult,
   SignDeployContractTxParams,
-  SignExecuteScriptChainedTxResult,
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
   SignExecuteScriptTxResult,
   SignMessageParams,
   SignMessageResult,
-  SignTransferChainedTxResult,
   SignTransferTxParams,
   SignTransferTxResult,
   SignUnsignedTxParams,
@@ -34,6 +31,7 @@ import { TransactionParams } from "../shared/actionQueue/types"
 import { sendMessage, waitForMessage } from "./messageActions"
 import { getIsPreauthorized, removePreAuthorization } from "./messaging"
 import { handleAddTokenRequest } from "./requestMessageHandlers"
+import { signedChainedTxParamsToTransactionParams, transactionResultToSignUnsignedTxResult } from "../shared/transactions/transformers"
 
 const VERSION = `${process.env.VERSION}`
 const USER_ACTION_TIMEOUT = 10 * 60 * 1000
@@ -223,32 +221,9 @@ export const alephiumWindowObject: AlephiumWindowObject =
         throw Error("Empty transaction params")
       }
 
-      const transactionParamz: TransactionParams[] = params.map(param => {
-        const paramsType = param.type
-        const salt = Date.now().toString()
-        switch (paramsType) {
-          case 'Transfer':
-            return {
-              type: 'TRANSFER',
-              params: { networkId: this.connectedNetworkId, ...param },
-              salt
-            }
-          case 'DeployContract':
-            return {
-              type: 'DEPLOY_CONTRACT',
-              params: { networkId: this.connectedNetworkId, ...param },
-              salt
-            }
-          case 'ExecuteScript':
-            return {
-              type: 'EXECUTE_SCRIPT',
-              params: { networkId: this.connectedNetworkId, ...param },
-              salt
-            }
-          default:
-            throw new Error(`Unsupported transaction type: ${paramsType}`);
-          }
-      })
+      const transactionParamz: TransactionParams[] = params.map(param =>
+        signedChainedTxParamsToTransactionParams(param, this.#connectedNetworkId!)
+      )
 
       sendMessage({ type: "ALPH_EXECUTE_TRANSACTION", data: transactionParamz })
 
@@ -259,7 +234,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
 
       sendMessage({ type: "ALPH_OPEN_UI" })
 
-      const result = await Promise.race([
+      const txMessage = await Promise.race([
         waitForMessage(
           "ALPH_TRANSACTION_SUBMITTED",
           USER_ACTION_TIMEOUT_LONGER,
@@ -281,26 +256,11 @@ export const alephiumWindowObject: AlephiumWindowObject =
           }),
       ])
 
-      if ("error" in result) {
-        throw Error(result.error)
+      if ("error" in txMessage) {
+        throw Error(txMessage.error)
       }
 
-      const signedChainedTxResult = result.result.map(txResult => {
-          const txResultType = txResult.type
-          switch (txResultType) {
-            case 'TRANSFER':
-              return { type: 'Transfer', ...txResult.result } as SignTransferChainedTxResult;
-            case 'DEPLOY_CONTRACT':
-              return { type: 'DeployContract', ...txResult.result } as SignDeployContractChainedTxResult;
-            case 'EXECUTE_SCRIPT':
-              return { type: 'ExecuteScript', ...txResult.result } as SignExecuteScriptChainedTxResult;
-            default:
-              throw new Error(`Unsupported transaction type: ${txResultType}`);
-          }
-        }
-      )
-
-      return signedChainedTxResult;
+      return txMessage.result.map(res => transactionResultToSignUnsignedTxResult(res))
     }
 
     signUnsignedTx = async (
