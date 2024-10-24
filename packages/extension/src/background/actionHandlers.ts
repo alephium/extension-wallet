@@ -1,4 +1,4 @@
-import { binToHex, codec, groupIndexOfTransaction, hexToBinUnsafe } from "@alephium/web3"
+import { binToHex, codec, groupIndexOfTransaction, hexToBinUnsafe, TransactionBuilder } from "@alephium/web3"
 import { getAccounts } from "../shared/account/store"
 import {
   ActionItem,
@@ -16,6 +16,7 @@ import { openUi } from "./openUi"
 import { executeTransactionAction } from "./transactions/transactionExecution"
 import { transactionWatcher } from "./transactions/transactionWatcher"
 import blake from 'blakejs'
+import { account } from "../../e2e/apis/account"
 
 export const handleActionApproval = async (
   action: ExtQueueItem<ActionItem>,
@@ -124,7 +125,11 @@ export const handleActionApproval = async (
             data: { actionHash, result },
           }
         } else {
-          const result = { signature: signatureOpt, ...buildUnsignedTx(action.payload.unsignedTx) }
+          const signUnsignedTxResult = TransactionBuilder.buildUnsignedTx({
+            signerAddress: account.address,
+            unsignedTx: action.payload.unsignedTx
+          })
+          const result = { signature: signatureOpt, ...signUnsignedTxResult }
           return {
             type: "ALPH_SIGN_UNSIGNED_TX_SUCCESS",
             data: { actionHash, result },
@@ -275,21 +280,5 @@ export const handleActionRejection = async (
 
     default:
       assertNever(action)
-  }
-}
-
-// TODO: use the function from web3-sdk
-function buildUnsignedTx(unsignedTx: string) {
-  const unsignedTxBin = hexToBinUnsafe(unsignedTx)
-  const decoded = codec.unsignedTxCodec.decode(unsignedTxBin)
-  const txId = binToHex(blake.blake2b(unsignedTxBin, undefined, 32))
-  const [fromGroup, toGroup] = groupIndexOfTransaction(decoded)
-  return {
-    fromGroup: fromGroup,
-    toGroup: toGroup,
-    unsignedTx,
-    txId,
-    gasAmount: decoded.gasAmount,
-    gasPrice: decoded.gasPrice
   }
 }

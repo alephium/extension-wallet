@@ -99,7 +99,7 @@ async function buildTransaction(
       return {
         type: transaction.type,
         params: transaction.params,
-        result: await builder.buildUnsignedTx(transaction.params),
+        result: TransactionBuilder.buildUnsignedTx(transaction.params),
       }
   }
 }
