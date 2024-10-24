@@ -1,6 +1,5 @@
 import { ALPH_TOKEN_ID, ONE_ALPH, prettifyTokenAmount, TransactionBuilder } from "@alephium/web3"
-import { L1, icons } from "@argent/ui"
-import { Flex, Text } from "@chakra-ui/react"
+import { Flex } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useState } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
 
@@ -15,7 +14,6 @@ import { usePageTracking } from "../../services/analytics"
 import { rejectAction } from "../../services/backgroundActions"
 import { Account } from "../accounts/Account"
 import { useAllTokensWithBalance } from "../accountTokens/tokens.state"
-import { LedgerAlephium } from "../ledger/utils"
 import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
 import { ConfirmPageProps } from "./DeprecatedConfirmScreen"
@@ -30,31 +28,7 @@ import { BigNumber } from "ethers"
 import { addTokenToBalances } from "../../../shared/token/balance"
 import { useTranslation } from "react-i18next"
 import i18n from "../../../i18n"
-
-const { AlertIcon } = icons
-
-const LedgerStatus = ({ ledgerState }: { ledgerState: string | undefined }): JSX.Element => {
-  const { t } = useTranslation()
-  return (
-    ledgerState === "notfound" ?
-      <Flex
-        direction="column"
-        backgroundColor="#330105"
-        boxShadow="menu"
-        py="3.5"
-        px="3.5"
-        borderRadius="xl"
-      >
-        <Flex gap="1" align="center">
-          <Text color="errorText">
-            <AlertIcon />
-          </Text>
-          <L1 color="errorText">{t("The Ledger app is not connected")}</L1>
-        </Flex>
-      </Flex>
-      : <></>
-  )
-}
+import { getConfirmationTextByState, LedgerStatus, useLedgerApp } from "./LedgerStatus"
 
 const minimalGasFee = BigInt(20000) * BigInt(100000000000)
 
@@ -207,13 +181,21 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     selectedAccount?.networkId ?? "unknown",
   )
 
-  const useLedger =
-    selectedAccount !== undefined && selectedAccount.signer.type === "ledger"
-  const [ledgerState, setLedgerState] = useState<
-    "detecting" | "notfound" | "signing" | "succeeded" | "failed"
-  >()
-  const [ledgerApp, setLedgerApp] = useState<LedgerAlephium>()
   const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokensWithBalance(selectedAccount)
+
+  const useLedger = selectedAccount !== undefined && selectedAccount.signer.type === "ledger"
+  const ledgerSubmit = useCallback((signature: string) => {
+    if (buildResult) {
+      onSubmit({ ...buildResult, signature })
+    }
+  }, [onSubmit, buildResult])
+  const { ledgerState, ledgerApp, ledgerSign } = useLedgerApp({
+    selectedAccount,
+    unsignedTx: buildResult?.result.unsignedTx,
+    onSubmit: ledgerSubmit,
+    navigate,
+    onReject
+  })
 
   // TODO: handle error
   useEffect(() => {
@@ -243,39 +225,6 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     build()
   }, [nodeUrl, selectedAccount, transaction, tokenDetailsIsInitialising, actionHash, navigate, t])
 
-  const ledgerSign = useCallback(async () => {
-    if (selectedAccount === undefined) {
-      return
-    }
-    setLedgerState(oldState => oldState === undefined ? "detecting" : oldState)
-
-    if (buildResult) {
-      let app: LedgerAlephium | undefined
-      try {
-        app = await LedgerAlephium.create()
-        setLedgerApp(app)
-        setLedgerState("signing")
-        const unsignedTx = Buffer.from(buildResult.result.unsignedTx, "hex")
-        const signature = await app.signUnsignedTx(selectedAccount, unsignedTx)
-        setLedgerState("succeeded")
-        onSubmit({ ...buildResult, signature })
-      } catch (e) {
-        if (app === undefined) {
-          setLedgerState(oldState => oldState === undefined || oldState === "detecting" ? "notfound" : oldState)
-          setTimeout(ledgerSign, 1000)
-        } else {
-          await app.close()
-          setLedgerState("failed")
-          if (onReject !== undefined) {
-            onReject()
-          } else {
-            navigate(-1)
-          }
-        }
-      }
-    }
-  }, [selectedAccount, buildResult, onSubmit, onReject, navigate])
-
   if (!selectedAccount) {
     rejectAction(actionHash, t("No account found for network {{ networkId }}", { networkId }))
     return <Navigate to={routes.accounts()} />
@@ -287,21 +236,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
   return (
     <ConfirmScreen
-      confirmButtonText={
-        !useLedger
-          ? t("Sign")
-          : ledgerState === undefined
-          ? t("Sign with Ledger")
-          : (ledgerState === "detecting") || (ledgerState === "notfound")
-          ? t("Ledger: Detecting")
-          : ledgerState === "signing"
-          ? t("Ledger: Signing")
-          : ledgerState === "succeeded"
-          ? t("Ledger: Succeeded")
-          : ledgerState === "failed"
-          ? t("Ledger: Failed")
-          : ledgerState
-      }
+      confirmButtonText={!useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState))}
       confirmButtonDisabled={ledgerState !== undefined}
       rejectButtonText={t("Cancel")}
       selectedAccount={selectedAccount}

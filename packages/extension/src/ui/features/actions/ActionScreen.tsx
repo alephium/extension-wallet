@@ -207,8 +207,8 @@ export const ActionScreen: FC = () => {
       return (
         <ApproveSignUnsignedTxScreen
           params={action.payload}
-          onSubmit={async () => {
-            await approveAction(action)
+          onSubmit={async (signatureOpt) => {
+            await approveAction(action, signatureOpt)
             useAppState.setState({ isLoading: true })
             const result = await Promise.race([
               waitForMessage(

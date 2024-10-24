@@ -1,6 +1,6 @@
 import { binToHex, hexToBinUnsafe, SignUnsignedTxParams } from "@alephium/web3"
 import { H6, H2, P4, CopyTooltip } from "@argent/ui"
-import { FC } from "react"
+import { FC, useCallback } from "react"
 
 import { ConfirmPageProps } from "./DeprecatedConfirmScreen"
 import { Box, Flex, VStack } from "@chakra-ui/react"
@@ -9,30 +9,69 @@ import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import blake from 'blakejs'
 import { TxHashContainer } from "./TxHashContainer"
 import { useTranslation } from "react-i18next"
+import { getConfirmationTextByState, LedgerStatus, useLedgerApp } from "./LedgerStatus"
+import { useNavigate } from "react-router-dom"
 
 interface ApproveSignUnsignedTxScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
   params: SignUnsignedTxParams & { host: string }
-  onSubmit: (data: SignUnsignedTxParams) => void
+  onSubmit: (result: { signatureOpt: string | undefined }) => void
 }
 
 export const ApproveSignUnsignedTxScreen: FC<ApproveSignUnsignedTxScreenProps> = ({
   params,
   onSubmit,
+  onReject,
   selectedAccount,
   ...props
 }) => {
   const { t } = useTranslation()
   const txId = binToHex(blake.blake2b(hexToBinUnsafe(params.unsignedTx), undefined, 32))
+
+  const navigate = useNavigate()
+  const useLedger = selectedAccount !== undefined && selectedAccount.signer.type === "ledger"
+  const ledgerSubmit = useCallback((signature: string) => {
+    onSubmit({ signatureOpt: signature })
+  }, [onSubmit])
+  const { ledgerState, ledgerApp, ledgerSign } = useLedgerApp({
+    selectedAccount,
+    unsignedTx: params.unsignedTx,
+    onSubmit: ledgerSubmit,
+    navigate,
+    onReject
+  })
+
   return (
     <ConfirmScreen
-      confirmButtonText="Sign"
+      confirmButtonText={!useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState))}
+      confirmButtonDisabled={ledgerState !== undefined}
       confirmButtonBackgroundColor="neutrals.800"
       rejectButtonText="Cancel"
       showHeader={false}
       scrollable={false}
       selectedAccount={selectedAccount}
-      onSubmit={() => onSubmit(params)}
+      onSubmit={() => {
+        if (useLedger) {
+          ledgerSign()
+        } else {
+          onSubmit({ signatureOpt: undefined })
+        }
+      }}
+      onReject={() => {
+        if (ledgerApp !== undefined) {
+          ledgerApp.close()
+        }
+        if (onReject !== undefined) {
+          onReject()
+        } else {
+          navigate(-1)
+        }
+      }}
+      footer={
+        <Flex direction="column" gap="1">
+          <LedgerStatus ledgerState={ledgerState} />
+        </Flex>
+      }
       {...props}
     >
       {
