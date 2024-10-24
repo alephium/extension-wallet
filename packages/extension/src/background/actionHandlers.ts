@@ -1,4 +1,4 @@
-import { binToHex, codec, groupIndexOfTransaction, hexToBinUnsafe, TransactionBuilder } from "@alephium/web3"
+import { TransactionBuilder } from "@alephium/web3"
 import { getAccounts } from "../shared/account/store"
 import {
   ActionItem,
@@ -15,8 +15,6 @@ import { BackgroundService } from "./background"
 import { openUi } from "./openUi"
 import { executeTransactionAction } from "./transactions/transactionExecution"
 import { transactionWatcher } from "./transactions/transactionWatcher"
-import blake from 'blakejs'
-import { account } from "../../e2e/apis/account"
 
 export const handleActionApproval = async (
   action: ExtQueueItem<ActionItem>,
@@ -109,15 +107,14 @@ export const handleActionApproval = async (
     case "ALPH_SIGN_UNSIGNED_TX": {
       const { signatureOpt } = additionalData as { signatureOpt: string | undefined }
       try {
+        const account = await wallet.getAccount({
+          address: action.payload.signerAddress,
+          networkId: action.payload.networkId,
+        })
+        if (!account) {
+          throw Error("No selected account")
+        }
         if (signatureOpt === undefined) {
-          const account = await wallet.getAccount({
-            address: action.payload.signerAddress,
-            networkId: action.payload.networkId,
-          })
-          if (!account) {
-            throw Error("No selected account")
-          }
-
           const result = await wallet.signUnsignedTx(account, action.payload)
 
           return {
