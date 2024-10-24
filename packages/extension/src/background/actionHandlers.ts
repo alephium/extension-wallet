@@ -76,22 +76,32 @@ export const handleActionApproval = async (
     }
 
     case "ALPH_SIGN_MESSAGE": {
-      const account = await wallet.getAccount({
-        address: action.payload.signerAddress,
-        networkId: action.payload.networkId,
-      })
-      if (!account) {
-        throw Error("No selected account")
-      }
+      try {
+        const account = await wallet.getAccount({
+          address: action.payload.signerAddress,
+          networkId: action.payload.networkId,
+        })
+        if (!account) {
+          throw Error("No selected account")
+        }
+        if (account.signer.type === 'ledger') {
+          throw Error("Signing messages with Ledger accounts is not supported")
+        }
 
-      const result = await wallet.signMessage(account, action.payload)
+        const result = await wallet.signMessage(account, action.payload)
 
-      return {
-        type: "ALPH_SIGN_MESSAGE_SUCCESS",
-        data: {
-          signature: result.signature,
-          actionHash,
-        },
+        return {
+          type: "ALPH_SIGN_MESSAGE_SUCCESS",
+          data: {
+            signature: result.signature,
+            actionHash,
+          },
+        }
+      } catch (error) {
+        return {
+          type: "ALPH_SIGN_MESSAGE_FAILURE",
+          data: { actionHash, error: `${error}` },
+        }
       }
     }
 

@@ -186,6 +186,7 @@
   "Transaction building failed": "Transaction building failed",
   "Sending transaction failed": "Sending transaction failed",
   "Sign unsigned tx failed": "Sign unsigned tx failed",
+  "Sign message failed": "Sign message failed",
   "Add Network": "Add Network",
   "Switch Network": "Switch Network",
   "Network ID": "Network ID",
