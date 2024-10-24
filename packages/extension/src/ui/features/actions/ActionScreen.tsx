@@ -233,7 +233,7 @@ export const ActionScreen: FC = () => {
             ])
             if ("error" in result) {
               useAppState.setState({
-                error: `${t('Sign unsigned tx failed')}: ${result.error}`,
+                error: `${t('Sign raw tx failed')}: ${result.error}`,
                 isLoading: false,
               })
               navigate(routes.error())

@@ -84,7 +84,7 @@ export const ApproveSignUnsignedTxScreen: FC<ApproveSignUnsignedTxScreenProps> =
         mt="3"
         gap="6"
         >
-          <H2>{t("Sign Unsigned TX")}</H2>
+          <H2>{t("Sign Raw TX")}</H2>
           <H6>{params.host}</H6>
         </Flex>
       }
@@ -105,7 +105,7 @@ export const ApproveSignUnsignedTxScreen: FC<ApproveSignUnsignedTxScreenProps> =
             w="full"
           >
             <P4 color="neutrals.300" fontWeight="bold">
-              {t("Unsigned TX")}
+              {t("Raw TX")}
             </P4>
             <P4
               color="neutrals.400"
