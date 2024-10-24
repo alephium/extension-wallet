@@ -9,8 +9,10 @@ import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import blake from 'blakejs'
 import { TxHashContainer } from "./TxHashContainer"
 import { useTranslation } from "react-i18next"
-import { getConfirmationTextByState, LedgerStatus, useLedgerApp } from "./LedgerStatus"
+import { LedgerStatus } from "./LedgerStatus"
 import { useNavigate } from "react-router-dom"
+import { useLedgerApp } from "../ledger/useLedgerApp"
+import { getConfirmationTextByState } from "../ledger/types"
 
 interface ApproveSignUnsignedTxScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {

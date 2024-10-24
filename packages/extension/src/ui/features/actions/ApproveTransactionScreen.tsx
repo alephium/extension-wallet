@@ -28,7 +28,9 @@ import { BigNumber } from "ethers"
 import { addTokenToBalances } from "../../../shared/token/balance"
 import { useTranslation } from "react-i18next"
 import i18n from "../../../i18n"
-import { getConfirmationTextByState, LedgerStatus, useLedgerApp } from "./LedgerStatus"
+import { LedgerStatus } from "./LedgerStatus"
+import { useLedgerApp } from "../ledger/useLedgerApp"
+import { getConfirmationTextByState } from "../ledger/types"
 
 const minimalGasFee = BigInt(20000) * BigInt(100000000000)
 
