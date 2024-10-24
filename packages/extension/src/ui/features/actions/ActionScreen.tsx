@@ -188,15 +188,26 @@ export const ActionScreen: FC = () => {
           onSubmit={async () => {
             await approveAction(action)
             useAppState.setState({ isLoading: true })
-            await waitForMessage(
-              "ALPH_SIGN_MESSAGE_SUCCESS",
-              ({ data }) => data.actionHash === action.meta.hash,
-            )
-            await analytics.track("signedMessage", {
-              networkId: selectedAccount?.networkId || t("unknown"),
-            })
-            closePopupIfLastAction()
-            useAppState.setState({ isLoading: false })
+            const result = await Promise.race([
+              waitForMessage(
+                'ALPH_SIGN_MESSAGE_SUCCESS',
+                ({ data }) => data.actionHash === action.meta.hash,
+              ),
+              waitForMessage(
+                'ALPH_SIGN_MESSAGE_FAILURE',
+                ({ data }) => data.actionHash === action.meta.hash,
+              ),
+            ])
+            if ("error" in result) {
+              useAppState.setState({
+                error: `${t('Sign message failed')}: ${result.error}`,
+                isLoading: false,
+              })
+              navigate(routes.error())
+            } else {
+              closePopupIfLastAction()
+              useAppState.setState({ isLoading: false })
+            }
           }}
           onReject={onReject}
           selectedAccount={signerAccount}
@@ -207,8 +218,8 @@ export const ActionScreen: FC = () => {
       return (
         <ApproveSignUnsignedTxScreen
           params={action.payload}
-          onSubmit={async () => {
-            await approveAction(action)
+          onSubmit={async (signatureOpt) => {
+            await approveAction(action, signatureOpt)
             useAppState.setState({ isLoading: true })
             const result = await Promise.race([
               waitForMessage(
@@ -222,7 +233,7 @@ export const ActionScreen: FC = () => {
             ])
             if ("error" in result) {
               useAppState.setState({
-                error: `${t('Sign unsigned tx failed')}: ${result.error}`,
+                error: `${t('Sign raw tx failed')}: ${result.error}`,
                 isLoading: false,
               })
               navigate(routes.error())
