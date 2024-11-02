@@ -85,10 +85,10 @@ export function useArrayStorage<T>(
   )
 
   useEffect(() => {
-    storage.get().then(set)
+    storage.get(selector).then(set)
     const sub = storage.subscribe(set)
     return () => sub()
   }, [selector, storage, set])
 
-  return useMemo(() => value.filter(selector), [value, selector])
+  return value
 }
