@@ -6,6 +6,9 @@ import { WalletAccount } from "../wallet.model"
 import { AlephiumExplorerTransaction } from "../explorer/type"
 import { mapAlephiumTransactionToTransaction } from "./transformers"
 import { getNetwork } from "../network"
+import { walletStore } from "../wallet/walletStore"
+import { getOtherAccountsSelector, withoutHiddenSelector } from "../account/selectors"
+import { getAccounts } from "../account/store"
 
 export type Status = 'NOT_RECEIVED' | 'RECEIVED' | 'PENDING' | 'ACCEPTED_ON_MEMPOOL' | 'ACCEPTED_ON_L2' | 'ACCEPTED_ON_CHAIN' | 'REJECTED' | 'REMOVED_FROM_MEMPOOL';
 
@@ -127,5 +130,27 @@ function buildGetTransactionsFn(metadataTransactions: Transaction[]) {
         )?.meta,
       ),
     )
+  }
+}
+
+export async function pruneTransactionsInfiniteScrollCache() {
+  const selectedAccount = await walletStore.get("selected")
+  const accountSelector = selectedAccount ? getOtherAccountsSelector(selectedAccount) : withoutHiddenSelector
+  const accounts = await getAccounts(accountSelector)
+
+  for (const account of accounts) {
+    const network = await getNetwork(account.networkId)
+    const explorerApiUrl = network?.explorerApiUrl
+    if (!explorerApiUrl) {
+      continue
+    }
+
+    const transactionsInfiniteScrollCacheKey = `${explorerApiUrl}/addresses/${account.address}/transactions`
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.includes(transactionsInfiniteScrollCacheKey)) {
+        localStorage.removeItem(key)
+      }
+    }
   }
 }

@@ -15,11 +15,13 @@ import SoftReloadProvider from "./services/resetAndReload"
 import { useSentryInit } from "./services/sentry"
 import { swrCacheProvider } from "./services/swr"
 import { ThemeProvider, muiTheme } from "./theme"
+import { pruneTransactionsInfiniteScrollCache } from "../shared/transactions"
 
 export const App: FC = () => {
   useTracking()
   useSentryInit()
   updateTokenList()
+  pruneTransactionsInfiniteScrollCache()
 
   return (
     <SoftReloadProvider>
