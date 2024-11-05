@@ -1,6 +1,6 @@
 {
   "name": "@alephium/extension",
-  "version": "0.9.10",
+  "version": "0.9.11",
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
@@ -81,8 +81,8 @@
     "push-release-branch": "git push --set-upstream origin release/v$npm_package_version --follow-tags"
   },
   "dependencies": {
-    "@argent/stack-router": "^0.9.10",
-    "@argent/ui": "^0.9.10",
+    "@argent/stack-router": "^0.9.11",
+    "@argent/ui": "^0.9.11",
     "@chakra-ui/icons": "^2.0.15",
     "@chakra-ui/react": "2.5.1",
     "@extend-chrome/messages": "^1.2.2",
