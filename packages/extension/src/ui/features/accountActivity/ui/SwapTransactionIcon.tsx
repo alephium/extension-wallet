@@ -29,6 +29,7 @@ export const SwapTransactionIcon: FC<SwapTransactionIconProps> = ({
         <TokenIcon
           name={fromToken?.name || "?"}
           url={fromToken?.logoURI}
+          originChain={fromToken?.originChain}
           size={fromIconSize}
           position={"absolute"}
           left={0}
@@ -39,6 +40,7 @@ export const SwapTransactionIcon: FC<SwapTransactionIconProps> = ({
       <TokenIcon
         name={toToken?.name || "?"}
         url={toToken?.logoURI}
+        originChain={toToken?.originChain}
         size={toIconSize}
         position={"absolute"}
         right={0}

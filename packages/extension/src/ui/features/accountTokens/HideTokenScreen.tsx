@@ -49,7 +49,7 @@ export const HideTokenScreen: FC = () => {
     return <Navigate to={routes.accountTokens()} />
   }
 
-  const { name, logoURI } = toTokenView(token)
+  const { name, logoURI, originChain } = toTokenView(token)
 
   const handleSubmit = () => {
     try {
@@ -68,7 +68,7 @@ export const HideTokenScreen: FC = () => {
       onSubmit={handleSubmit}
     >
       <TokenTitle>
-        <TokenIcon url={logoURI} name={name} size={12} verified={token.verified} />
+        <TokenIcon url={logoURI} name={name} size={12} verified={token.verified} originChain={originChain} />
         <TokenName>{name}</TokenName>
       </TokenTitle>
       {error && <FormError>{error}</FormError>}

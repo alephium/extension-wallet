@@ -22,6 +22,7 @@ export interface Token extends Required<RequestToken> {
   logoURI?: string
   showAlways?: boolean
   verified?: boolean
+  originChain?: string
 }
 
 export interface TokenListTokens {
