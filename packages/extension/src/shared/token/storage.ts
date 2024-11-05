@@ -35,7 +35,8 @@ export const tokenSchema: yup.Schema<Token> = baseTokenSchema
     showAlways: yup.boolean(),
     description: yup.string(),
     verified: yup.boolean(),
-    originChain: yup.string()
+    originChain: yup.string(),
+    unchainedLogoURI: yup.string().url()
   })
 
 export async function addToken(token: Token, verified: boolean) {

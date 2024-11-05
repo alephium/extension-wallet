@@ -80,7 +80,7 @@ export const TransactionIcon: FC<TransactionIconProps> = ({
     const { token } = transaction
     if (token) {
       const src = getTokenIconUrl({
-        url: token.logoURI,
+        logoURI: token.logoURI,
         name: token.name,
       })
       badgeComponent = <Image src={src} />
@@ -89,7 +89,7 @@ export const TransactionIcon: FC<TransactionIconProps> = ({
     const { toToken } = transaction
     if (toToken) {
       const src = getTokenIconUrl({
-        url: toToken.logoURI,
+        logoURI: toToken.logoURI,
         name: toToken.name,
       })
       badgeComponent = <Image src={src} />

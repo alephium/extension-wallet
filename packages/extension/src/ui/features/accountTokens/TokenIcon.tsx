@@ -10,27 +10,28 @@ export interface TokenIconProps
   extends Pick<ComponentProps<typeof Circle>, "size">,
   ComponentProps<typeof Image> {
   name: string
-  url?: string
+  logoURI?: string
   verified?: boolean
   originChain?: string
+  unchainedLogoURI?: string
 }
 
 export const getTokenIconUrl = ({
-  url,
+  logoURI,
   name,
-}: Pick<TokenIconProps, "url" | "name">) => {
-  if (url && url.length) {
-    return url
+}: Pick<TokenIconProps, "logoURI" | "name">) => {
+  if (logoURI && logoURI.length) {
+    return logoURI
   }
   const background = getColor(name)
   return generateAvatarImage(name, { background })
 }
 
-export const TokenIcon: FC<TokenIconProps> = ({ name, url, size, verified, originChain, ...rest }) => {
-  const src = getTokenIconUrl({ url, name })
+export const TokenIcon: FC<TokenIconProps> = ({ name, logoURI, size, verified, originChain, unchainedLogoURI, ...rest }) => {
+  const overlayChainLogo = originChain && verified && unchainedLogoURI
 
   const originChainIcon = () => {
-    if (!originChain || !verified) {
+    if (!overlayChainLogo) {
       return undefined
     }
 
@@ -43,6 +44,8 @@ export const TokenIcon: FC<TokenIconProps> = ({ name, url, size, verified, origi
         return undefined
     }
   }
+
+  const src = getTokenIconUrl({ logoURI: overlayChainLogo ? unchainedLogoURI : logoURI, name })
 
   return (
     <Circle
@@ -75,7 +78,7 @@ export const TokenIcon: FC<TokenIconProps> = ({ name, url, size, verified, origi
           </Circle>
         </Tooltip>
       )}
-      {(originChain && verified) && (
+      {overlayChainLogo && (
         <Circle
           overflow={"hidden"}
           position={"absolute"}
