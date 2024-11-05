@@ -107,7 +107,7 @@ export const PrettyAccountAddress: FC<PrettyAccountAddressProps> = ({
   return (
     <Flex alignItems={"center"} gap={2}>
       {icon && accountName && (
-        <TokenIcon url={accountImageUrl} name={accountAddress} size={size} verified={true} />
+        <TokenIcon logoURI={accountImageUrl} name={accountAddress} size={size} verified={true} />
       )}
       {bold ? (
         <P4 fontWeight="bold" color="white">
