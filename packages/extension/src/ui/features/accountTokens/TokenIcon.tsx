@@ -38,7 +38,7 @@ export const TokenIcon: FC<TokenIconProps> = ({ name, logoURI, size, verified, o
     switch (originChain.toLowerCase()) {
       case 'bsc':
         return <BSCIcon />
-      case 'ethereum':
+      case 'eth':
         return <EthereumIcon />
       default:
         return undefined
