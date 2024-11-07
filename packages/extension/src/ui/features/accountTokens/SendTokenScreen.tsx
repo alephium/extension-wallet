@@ -394,7 +394,7 @@ export const SendTokenScreen: FC = () => {
   if (!tokenWithBalance) {
     return <Navigate to={routes.accounts()} />
   }
-  const { id, name, symbol, balance, decimals, logoURI, verified, originChain, unchainedLogoURI } = toTokenView(tokenWithBalance)
+  const { id, name, symbol, balance, decimals, logoURI, verified, originChain, unchainedLogoURI, showAlways } = toTokenView(tokenWithBalance)
 
   const handleMaxClick = () => {
     setMaxClicked(true)
@@ -438,7 +438,7 @@ export const SendTokenScreen: FC = () => {
       />
       <NavigationContainer
         leftButton={<BarBackButton />}
-        rightButton={<TokenMenuDeprecated tokenId={id} />}
+        rightButton={<TokenMenuDeprecated tokenId={id} canHideToken={!showAlways} />}
         scrollContent={t("Send {{ token }}", { token: symbol })}
       >
         <>

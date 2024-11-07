@@ -2,7 +2,7 @@ import { FC, useState } from "react"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
 
-import { removeToken } from "../../../shared/token/storage"
+import { hideToken } from "../../../shared/token/storage"
 import { useAppState } from "../../app.state"
 import { Alert } from "../../components/Alert"
 import { routes } from "../../routes"
@@ -53,7 +53,7 @@ export const HideTokenScreen: FC = () => {
 
   const handleSubmit = () => {
     try {
-      removeToken(token)
+      hideToken(token)
       navigate(routes.accountTokens())
     } catch {
       setError(t("Token not hidden"))

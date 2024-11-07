@@ -24,6 +24,7 @@ export interface Token extends Required<RequestToken> {
   verified?: boolean
   originChain?: string
   unchainedLogoURI?: string
+  hide?: boolean
 }
 
 export interface TokenListTokens {

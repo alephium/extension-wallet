@@ -51,7 +51,7 @@ const ButtonSpacer = styled.div`
 `
 
 function isValidUrl(url: string | undefined): boolean {
-  return !!url && yup.string().url().isValidSync(url)
+  return !url || !!url && yup.string().url().isValidSync(url)
 }
 
 const isDataComplete = (data: Partial<Token>): data is Token => {

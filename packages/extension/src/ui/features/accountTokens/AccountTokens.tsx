@@ -1,6 +1,6 @@
 import { CellStack } from "@argent/ui"
 import { Flex, VStack } from "@chakra-ui/react"
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
 import { Account } from "../accounts/Account"
 import {
   getAccountName,
@@ -12,7 +12,8 @@ import { StatusMessageBannerContainer } from "../statusMessage/StatusMessageBann
 import { AccountTokensButtons } from "./AccountTokensButtons"
 import { AccountTokensHeader } from "./AccountTokensHeader"
 import { TokenList } from "./TokenList"
-import { useFungibleTokensWithBalance } from "./tokens.state"
+import { networkIdSelector, useFungibleTokensWithBalance } from "./tokens.state"
+import { tokenStore } from "../../../shared/token/storage"
 
 interface AccountTokensProps {
   account: Account
@@ -23,23 +24,37 @@ export const AccountTokens: FC<AccountTokensProps> = ({ account }) => {
   const { isBackupRequired } = useBackupRequired()
   const { tokenDetails: tokensForAccount } = useFungibleTokensWithBalance(account)
   const accountName = getAccountName(account, accountNames)
+  const [hiddenTokenIds, setHiddenTokenIds] = useState<string[]>([])
 
   const showBackupBanner = isBackupRequired
+  const visibleTokensForAccount = tokensForAccount.filter((token) => !hiddenTokenIds.includes(token.id))
+
+  useEffect(() => {
+    tokenStore.get(networkIdSelector(account.networkId)).then((storedTokens) => {
+      const tokenIds: string[] = []
+      for (const token of storedTokens) {
+        if (token.hide) {
+          tokenIds.push(token.id)
+        }
+      }
+      setHiddenTokenIds(tokenIds)
+    })
+  }, [tokensForAccount, account.networkId])
 
   return (
     <Flex direction={"column"} data-testid="account-tokens">
       <VStack spacing={6} mt={4} mb={6}>
         <AccountTokensHeader
           account={account}
-          tokens={tokensForAccount}
+          tokens={visibleTokensForAccount}
           accountName={accountName}
         />
-        <AccountTokensButtons tokens={tokensForAccount} />
+        <AccountTokensButtons tokens={visibleTokensForAccount} />
       </VStack>
       <CellStack pt={0}>
         <StatusMessageBannerContainer />
         {showBackupBanner && <RecoveryBanner />}
-        <TokenList variant={'no-currency'} account={account} tokens={tokensForAccount} showNewTokenButton />
+        <TokenList variant={'no-currency'} account={account} tokens={visibleTokensForAccount} showNewTokenButton />
       </CellStack>
     </Flex>
   )

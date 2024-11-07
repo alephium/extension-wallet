@@ -41,7 +41,7 @@ export const tokenSchema: yup.Schema<Token> = baseTokenSchema
 
 export async function addToken(token: Token, verified: boolean) {
   await assertSchema(tokenSchema, token)
-  return tokenStore.push({ verified, ...token })
+  return tokenStore.push({ verified, hide: false, ...token })
 }
 
 export async function hasToken(token: BaseToken) {
@@ -64,6 +64,11 @@ export async function getToken(token: BaseToken) {
 export async function removeToken(token: BaseToken) {
   await assertSchema(baseTokenSchema, token)
   return tokenStore.remove((t) => equalToken(t, token))
+}
+
+export async function hideToken(token: Token) {
+  await assertSchema(tokenSchema, token)
+  return tokenStore.push({ ...token, hide: true })
 }
 
 export async function updateTokenList() {
@@ -96,7 +101,7 @@ export async function updateTokenListNow() {
 
 export async function getTokenList(): Promise<Token[]> {
   const tokenListTokens = await tokenListStore.get()
-  return tokenListTokens.tokens.map((t) => ({ ...t, verified: true }))
+  return tokenListTokens.tokens
 }
 
 async function fetchTokenListByUrl(url: string): Promise<TokenList> {
