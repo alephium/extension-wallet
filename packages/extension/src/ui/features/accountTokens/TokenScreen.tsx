@@ -101,14 +101,14 @@ export const TokenScreen: FC = () => {
     return <Navigate to={routes.accounts()} />
   }
 
-  const { id, name, symbol, logoURI, verified, originChain, unchainedLogoURI } = toTokenView(token)
+  const { id, name, symbol, logoURI, verified, originChain, unchainedLogoURI, showAlways } = toTokenView(token)
   const displayBalance = prettifyTokenBalance(token, false)
   const isLoading = isValidating || tokenDetailsIsInitialising
 
   return (
     <NavigationContainer
       leftButton={<BarBackButton />}
-      rightButton={<TokenMenuDeprecated tokenId={id} />}
+      rightButton={<TokenMenuDeprecated tokenId={id} canHideToken={!showAlways} />}
       title={name === "Ether" ? "Ethereum" : name}
     >
       <TokenScreenWrapper>
