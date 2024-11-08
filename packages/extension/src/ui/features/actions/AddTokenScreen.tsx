@@ -51,14 +51,14 @@ const ButtonSpacer = styled.div`
 `
 
 function isValidUrl(url: string | undefined): boolean {
-  return !url || !!url && yup.string().url().isValidSync(url)
+  return !!url && yup.string().url().isValidSync(url)
 }
 
 const isDataComplete = (data: Partial<Token>): data is Token => {
   if (
     data.id &&
     isValidTokenId(data.id) &&
-    isValidUrl(data.logoURI) &&
+    (!data.logoURI || isValidUrl(data.logoURI)) &&
     data.decimals?.toString() &&
     data.name &&
     data.symbol
