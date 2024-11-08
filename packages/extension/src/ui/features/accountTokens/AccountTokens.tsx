@@ -1,6 +1,6 @@
 import { CellStack } from "@argent/ui"
 import { Flex, VStack } from "@chakra-ui/react"
-import { FC, useEffect, useState } from "react"
+import { FC, useEffect, useMemo, useState } from "react"
 import { Account } from "../accounts/Account"
 import {
   getAccountName,
@@ -27,7 +27,11 @@ export const AccountTokens: FC<AccountTokensProps> = ({ account }) => {
   const [hiddenTokenIds, setHiddenTokenIds] = useState<string[]>([])
 
   const showBackupBanner = isBackupRequired
-  const visibleTokensForAccount = tokensForAccount.filter((token) => !hiddenTokenIds.includes(token.id))
+
+  const visibleTokensForAccount = useMemo(
+    () => tokensForAccount.filter((token) => !hiddenTokenIds.includes(token.id)),
+    [tokensForAccount, hiddenTokenIds]
+  )
 
   useEffect(() => {
     tokenStore.get(networkIdSelector(account.networkId)).then((storedTokens) => {
