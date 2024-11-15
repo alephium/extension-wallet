@@ -43,6 +43,11 @@ declare global {
     alephiumProviders?: Record<string, AlephiumWindowObject>
     nostr?: NostrObject
   }
+
+  interface WindowEventMap {
+    'announceAlephiumProvider': CustomEvent,
+    'requestAlephiumProvider': Event
+  }
 }
 
 export interface NostrObject {
