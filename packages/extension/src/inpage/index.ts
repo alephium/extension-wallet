@@ -52,7 +52,17 @@ function attachNostrProvider() {
   }
 }
 
+function announceProvider() {
+  const event = new CustomEvent('announceAlephiumProvider', {
+    detail: Object.freeze({ provider: alephiumWindowObject })
+  })
+  const handler = () => window.dispatchEvent(event)
+  handler()
+  window.addEventListener('requestAlephiumProvider', handler)
+}
+
 function attach() {
+  announceProvider()
   attachAlephiumProvider()
   attachNostrProvider()
 }
@@ -62,15 +72,8 @@ attach()
 window.addEventListener(
   "message",
   async ({ data }: MessageEvent<WindowMessageType>) => {
-    const { alephiumProviders } = window
-    const alephium = alephiumProviders?.alephium
-
-    if (!alephium) {
-      return
-    }
-
     if (data.type === "ALPH_DISCONNECT_ACCOUNT") {
-      await alephium.disconnect()
+      await alephiumWindowObject.disconnect()
     }
   },
 )
