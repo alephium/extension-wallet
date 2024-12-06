@@ -197,3 +197,24 @@ messageStream.subscribe(async ([msg, sender]) => {
 // open onboarding flow on initial install
 
 initOnboarding()
+
+const registerInPageContentScript = async () => {
+  try {
+    await browser.scripting.registerContentScripts([
+      {
+        id: 'inpage',
+        matches: ["<all_urls>"],
+        js: ['inpage.js'],
+        runAt: 'document_start',
+        world: 'MAIN',
+        allFrames: true,
+      },
+    ]);
+  } catch (err) {
+    console.warn(`Dropped attempt to register inpage content script. ${err}`);
+  }
+};
+
+if (browser.runtime.getManifest().manifest_version === 3) {
+  registerInPageContentScript();
+}
