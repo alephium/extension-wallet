@@ -2,7 +2,7 @@ import { TokenList } from "@alephium/token-list"
 import * as yup from "yup"
 import { ArrayStorage, ObjectStorage } from "../storage"
 import { assertSchema } from "../utils/schema"
-import { BaseToken, Token, TokenListTokens } from "./type"
+import { BaseToken, Token, TokenListTokens, HiddenToken } from "./type"
 import { alphTokens, convertTokenList, equalToken } from "./utils"
 
 export const tokenStore = new ArrayStorage([] as Token[], {
@@ -14,6 +14,11 @@ export const tokenStore = new ArrayStorage([] as Token[], {
 export const tokenListStore = new ObjectStorage<TokenListTokens>({ tokens: alphTokens } as TokenListTokens, {
   namespace: "core:token-list",
   areaName: "local"
+})
+
+export const hiddenTokenStore = new ArrayStorage([] as HiddenToken[], {
+  namespace: "core:hidden-tokens",
+  areaName: "local",
 })
 
 export const baseTokenSchema: yup.Schema<BaseToken> = yup
@@ -32,7 +37,6 @@ export const tokenSchema: yup.Schema<Token> = baseTokenSchema
     symbol: yup.string().required("Symbol is required"),
     decimals: yup.number().required("Decimals is required"),
     logoURI: yup.string().url(),
-    showAlways: yup.boolean(),
     description: yup.string(),
     verified: yup.boolean(),
     originChain: yup.string(),
@@ -41,7 +45,8 @@ export const tokenSchema: yup.Schema<Token> = baseTokenSchema
 
 export async function addToken(token: Token, verified: boolean) {
   await assertSchema(tokenSchema, token)
-  return tokenStore.push({ verified, hide: false, ...token })
+  await hiddenTokenStore.remove((t) => t.id === token.id)
+  return tokenStore.push({ verified, ...token })
 }
 
 export async function hasToken(token: BaseToken) {
@@ -63,12 +68,14 @@ export async function getToken(token: BaseToken) {
 
 export async function removeToken(token: BaseToken) {
   await assertSchema(baseTokenSchema, token)
+  await hiddenTokenStore.remove((t) => t.id === token.id)
   return tokenStore.remove((t) => equalToken(t, token))
 }
 
 export async function hideToken(token: Token) {
   await assertSchema(tokenSchema, token)
-  return tokenStore.push({ ...token, hide: true })
+  await hiddenTokenStore.push({ id: token.id, networkId: token.networkId })
+  return tokenStore.push({ ...token })
 }
 
 export async function updateTokenList() {

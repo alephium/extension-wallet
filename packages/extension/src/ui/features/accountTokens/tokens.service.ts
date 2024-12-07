@@ -10,7 +10,6 @@ export interface TokenView {
   balance: string
 
   logoURI?: string
-  showAlways?: boolean
   verified?: boolean
   originChain?: string
   unchainedLogoURI?: string
