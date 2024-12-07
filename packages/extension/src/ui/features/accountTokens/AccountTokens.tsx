@@ -12,8 +12,8 @@ import { StatusMessageBannerContainer } from "../statusMessage/StatusMessageBann
 import { AccountTokensButtons } from "./AccountTokensButtons"
 import { AccountTokensHeader } from "./AccountTokensHeader"
 import { TokenList } from "./TokenList"
-import { networkIdSelector, useFungibleTokensWithBalance } from "./tokens.state"
-import { tokenStore } from "../../../shared/token/storage"
+import { useFungibleTokensWithBalance, hiddenTokensNetworkIdSelector } from "./tokens.state"
+import { hiddenTokenStore } from "../../../shared/token/storage"
 
 interface AccountTokensProps {
   account: Account
@@ -34,14 +34,8 @@ export const AccountTokens: FC<AccountTokensProps> = ({ account }) => {
   )
 
   useEffect(() => {
-    tokenStore.get(networkIdSelector(account.networkId)).then((storedTokens) => {
-      const tokenIds: string[] = []
-      for (const token of storedTokens) {
-        if (token.hide) {
-          tokenIds.push(token.id)
-        }
-      }
-      setHiddenTokenIds(tokenIds)
+    hiddenTokenStore.get(hiddenTokensNetworkIdSelector(account.networkId)).then((hiddenTokens) => {
+      setHiddenTokenIds(hiddenTokens.map((t) => t.id))
     })
   }, [tokensForAccount, account.networkId])
 

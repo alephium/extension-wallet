@@ -7,7 +7,7 @@ import { getNetwork, Network } from "../../../shared/network"
 
 import { useArrayStorage, useObjectStorage } from "../../../shared/storage/hooks"
 import { addToken, removeToken, tokenListStore, tokenStore } from "../../../shared/token/storage"
-import { BaseToken, BaseTokenWithBalance, Token, TokenListTokens, TokenWithBalance } from "../../../shared/token/type"
+import { BaseToken, BaseTokenWithBalance, Token, TokenListTokens, TokenWithBalance, HiddenToken } from "../../../shared/token/type"
 import { alphTokens, equalToken } from "../../../shared/token/utils"
 import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { getAccountIdentifier } from "../../../shared/wallet.service"
@@ -96,7 +96,7 @@ export const useToken = (baseToken: BaseToken): Token | undefined => {
 
   const tokenFromTokenList = tokenListTokens.tokens.find((t) => equalToken(t, baseToken))
   if (tokenFromTokenList) {
-    return { ...tokenFromTokenList, verified: true, showAlways: true }
+    return { ...tokenFromTokenList, verified: true }
   }
 
   if (token === undefined && baseToken.networkId === 'devnet') {
@@ -189,8 +189,7 @@ export const useFungibleTokensWithBalance = (
         if (result.findIndex((t) => t[0].id === userToken.id) === -1) {
           const foundIndex = cachedTokens.findIndex((token) => token.id == userToken.id)
           if (foundIndex !== -1) {
-            const index = cachedTokens[foundIndex].showAlways ? -1 : foundIndex
-            result.push([{ balance: userToken.balance, ...cachedTokens[foundIndex] }, index])
+            result.push([{ balance: userToken.balance, ...cachedTokens[foundIndex] }, foundIndex])
           } else {
             const token = await fetchFungibleTokenFromFullNode(network, userToken.id)
             if (token) {
@@ -357,3 +356,7 @@ async function fetchFungibleTokenFromFullNode(network: Network, tokenId: string)
     return undefined
   }
 }
+
+export const hiddenTokensNetworkIdSelector = memoize(
+  (networkId: string) => (token: HiddenToken) => token.networkId === networkId,
+)
