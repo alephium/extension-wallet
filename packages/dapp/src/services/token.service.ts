@@ -76,7 +76,7 @@ export const mintToken = async (
     throw Error("alephium object not initialized")
   }
 
-  return ShinyToken.deploy(alephium, {
+  const txParamsForDeployment = await ShinyToken.contract.txParamsForDeployment(alephium, {
     initialFields: {
       name: stringToHex("ShinyToken"),
       symbol: stringToHex("SHINY"),
@@ -84,8 +84,11 @@ export const mintToken = async (
       totalSupply: BigInt(mintAmount)
     },
     initialAttoAlphAmount: BigInt(1100000000000000000),
-    issueTokenAmount: BigInt(mintAmount),
+    issueTokenAmount: BigInt(mintAmount)
   })
+
+  const result = await alephium.signAndSubmitDeployContractTx(txParamsForDeployment)
+  return { ...result, contractInstance: ShinyToken.at(result.contractAddress) }
 }
 
 export const withdrawMintedToken = async (
