@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v3.6.2",
+  "fullNodeVersion": "v3.10.0",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -17,7 +17,7 @@
       "codeHashDebug": ""
     },
     "IFungibleToken": {
-      "sourceFile": "../../../../../../.npm/_npx/f1b120e1b513c04c/node_modules/@alephium/web3/std/fungible_token_interface.ral",
+      "sourceFile": "../../../node_modules/@alephium/web3/std/fungible_token_interface.ral",
       "sourceCodeHash": "62910bf11e1eeb6cb2fd468626ff606a9b06306b2b81590c3b10f6deb5966bde",
       "bytecodeDebugPatch": "",
       "codeHashDebug": ""

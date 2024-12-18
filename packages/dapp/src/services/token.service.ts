@@ -97,7 +97,7 @@ export const withdrawMintedToken = async (
     throw Error("alephium object not initialized")
   }
 
-  return Transfer.execute(
+  const result = await Transfer.execute(
     alephium,
     {
       initialFields: {
@@ -107,6 +107,8 @@ export const withdrawMintedToken = async (
       }
     }
   )
+
+  return { ...result, simulatedOutputs: [] }
 }
 export const transferToken = async (
   tokenId: string,

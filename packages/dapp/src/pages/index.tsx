@@ -35,11 +35,13 @@ const Home: NextPage = () => {
   }, [isConnected])
 
   const handleConnectClick = async () => {
+    console.log('handleConnectClick')
     const wallet = await connectWallet(
       () => {
         return Promise.resolve(setConnected(false))
       }
     )
+    console.log('wallet', wallet)
     setAddress(wallet?.address)
     setNetwork('devnet')
     setConnected(!!wallet)

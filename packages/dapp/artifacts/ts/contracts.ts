@@ -3,6 +3,7 @@
 /* eslint-disable */
 
 import { Contract, ContractFactory } from "@alephium/web3";
+
 import { ShinyToken } from ".";
 
 let contracts: ContractFactory<any>[] | undefined = undefined;
