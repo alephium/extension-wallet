@@ -41,7 +41,7 @@ export const importNewLedgerAccount = async (account: WalletAccount) => {
       waitForMessage("ALPH_NEW_LEDGER_ACCOUNT_REJ").then(() => "error" as const),
     ])
   } catch {
-    throw Error(i18n.t("Could add new ledger account"))
+    throw Error(i18n.t("Could not add new ledger account"))
   }
 }
 
