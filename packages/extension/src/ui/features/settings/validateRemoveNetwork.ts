@@ -1,4 +1,4 @@
-import i18n from "../../../i18n"
+import i18n from "../../features/localization/i18n"
 import { getNetworkSelector } from "../../../shared/account/selectors"
 import { accountStore } from "../../../shared/account/store"
 import { useAppState } from "../../app.state"

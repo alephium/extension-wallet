@@ -65,6 +65,7 @@ import { useEntryRoute } from "./useEntryRoute"
 import { AddTokenScreen } from "./features/actions/AddTokenScreen"
 import { LedgerStartScreen } from "./features/ledger/start"
 import { LedgerDoneScreen } from "./features/ledger/done"
+import { SettingsLanguageScreen } from "./features/localization/SettingsLanguageScreen"
 
 const ResponsiveContainer = chakra(ResponsiveBox, {
   baseStyle: {
@@ -211,6 +212,11 @@ const walletRoutes = (
       presentation="push"
       path={routes.settingsPrivacyStatement.path}
       element={<SettingsPrivacyStatementScreen />}
+    />
+    <Route
+      presentation="push"
+      path={routes.settingsLanguage.path}
+      element={<SettingsLanguageScreen />}
     />
     <Route
       presentation="modal"

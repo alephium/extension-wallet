@@ -2,7 +2,7 @@ import { includesAddress } from "../../../../../../shared/knownDapps"
 import { isEqualAddress } from "../../../../../services/addresses"
 import { NFTTransaction, NFTTransferTransaction } from "../../type"
 import { IExplorerTransactionTransformer } from "./type"
-import i18n from "../../../../../../i18n"
+import i18n from "../../../../../features/localization/i18n"
 
 /** adds erc721 token transfer data */
 

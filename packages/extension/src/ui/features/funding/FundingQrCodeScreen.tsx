@@ -19,7 +19,7 @@ import { useSelectedAccount } from "../accounts/accounts.state"
 import { QrCode } from "./QrCode"
 import { testNodeWallet } from '@alephium/web3-test'
 import { Flex } from "@chakra-ui/react"
-import i18n from "../../../i18n"
+import i18n from "../../features/localization/i18n"
 import { useTranslation } from "react-i18next"
 import { LedgerAlephium } from '../ledger/utils'
 import { set } from 'lodash-es'

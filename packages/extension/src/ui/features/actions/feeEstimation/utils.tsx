@@ -1,5 +1,5 @@
 import { BigNumber, utils } from "ethers"
-import i18n from "../../../../i18n"
+import i18n from "../../../features/localization/i18n"
 
 export function getTooltipText(maxFee?: string, feeTokenBalance?: BigNumber) {
   if (!maxFee || !feeTokenBalance) {

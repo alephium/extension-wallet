@@ -4,7 +4,7 @@ import styled from "styled-components"
 import { useLoadingProgress } from "../../app.state"
 import { Spinner } from "../../components/Spinner"
 import { Greetings } from "../lock/Greetings"
-import i18n from "../../../i18n"
+import i18n from "../../features/localization/i18n"
 
 const LoadingScreenWrapper = styled.div`
   display: flex;

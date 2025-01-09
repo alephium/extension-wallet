@@ -32,6 +32,7 @@ const {
   LinkIcon,
   PasswordIcon,
   ShieldIcon,
+  SettingsIcon,
 } = icons
 
 export const Title = styled.h3`
@@ -138,6 +139,12 @@ export const SettingsScreen: FC = () => {
             leftIcon={<CodeIcon />}
             to={routes.settingsDeveloper()}
             title={t("Developer settings")}
+          />
+
+          <SettingsMenuItem
+            leftIcon={<SettingsIcon />}
+            to={routes.settingsLanguage()}
+            title="Language"
           />
 
           {isPrivacySettingsEnabled && (

@@ -1,7 +1,7 @@
 import { getTokenForContractAddress } from "../../getTokenForContractAddress"
 import { isSwapTransaction } from "../../is"
 import { IExplorerTransactionTransformer } from "./type"
-import i18n from "../../../../../../i18n"
+import i18n from "../../../../../features/localization/i18n"
 
 /** adds token swap tokens */
 
