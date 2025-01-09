@@ -132,6 +132,7 @@ export const routes = {
   ),
   settingsDappConnections: route("/settings/dapp-connections"),
   settingsPrivacy: route("/settings/privacy"),
+  settingsLanguage: route("/settings/language"),
   settingsDeveloper: route("/settings/developer-settings"),
   settingsExperimental: route("/settings/developer-settings/experimental"),
   settingsBlockExplorer: route("/settings/developer-settings/block-explorer"),

@@ -7,7 +7,7 @@ import {
 } from "../../shared/wallet.model"
 import { walletStore } from "../../shared/wallet/walletStore"
 import { decryptFromBackground, generateEncryptedSecret } from "./crypto"
-import i18n from "../../i18n"
+import i18n from "../features/localization/i18n"
 
 export const createNewAccount = async (networkId: string, keyType: KeyType, group?: number) => {
   sendMessage({ type: "ALPH_NEW_ACCOUNT", data: { networkId: networkId, keyType: keyType, group: group } })
