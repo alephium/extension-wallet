@@ -13,17 +13,11 @@
     "default_title": "Alephium",
     "default_popup": "index.html"
   },
-  "host_permissions": [
-    "file://*/*",
-    "http://*/*",
-    "https://*/*"
-  ],
   "permissions": [
     "alarms",
     "tabs",
     "storage",
     "notifications",
-    "scripting",
     "http://localhost/*",
     "https://node.testnet.alephium.org/*",
     "https://backend.testnet.alephium.org/*",

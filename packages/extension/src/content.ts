@@ -4,21 +4,14 @@ import { WindowMessageType } from "./shared/messages"
 import { messageStream, sendMessage } from "./shared/messages"
 
 const container = document.head || document.documentElement
-const alephiumExtensionId = browser.runtime.id
+const script = document.createElement("script")
 
-let tag: HTMLElement
-if (browser.runtime.getManifest().manifest_version === 3) {
-  const divTag = document.createElement("div")
-  divTag.style.display = 'none'
-  tag = divTag
-} else {
-  const scriptTag = document.createElement("script")
-  scriptTag.src = browser.runtime.getURL("inpage.js")
-  tag = scriptTag
-}
-tag.id = 'alephium-extension'
-tag.setAttribute('data-extension-id', alephiumExtensionId)
-container.insertBefore(tag, container.children[0])
+script.src = browser.runtime.getURL("inpage.js")
+const alephiumExtensionId = browser.runtime.id
+script.id = "alephium-extension"
+script.setAttribute("data-extension-id", alephiumExtensionId)
+
+container.insertBefore(script, container.children[0])
 
 window.addEventListener(
   "message",
