@@ -1,3 +1,4 @@
+import { TransactionBuilder } from "@alephium/web3"
 import { getAccounts } from "../shared/account/store"
 import {
   ActionItem,
@@ -115,26 +116,6 @@ export const handleActionApproval = async (
     }
 
     case "ALPH_SIGN_MESSAGE": {
-      const account = await wallet.getAccount({
-        address: action.payload.signerAddress,
-        networkId: action.payload.networkId,
-      })
-      if (!account) {
-        throw Error("No selected account")
-      }
-
-      const result = await wallet.signMessage(account, action.payload)
-
-      return {
-        type: "ALPH_SIGN_MESSAGE_SUCCESS",
-        data: {
-          signature: result.signature,
-          actionHash,
-        },
-      }
-    }
-
-    case "ALPH_SIGN_UNSIGNED_TX": {
       try {
         const account = await wallet.getAccount({
           address: action.payload.signerAddress,
@@ -143,12 +124,54 @@ export const handleActionApproval = async (
         if (!account) {
           throw Error("No selected account")
         }
+        if (account.signer.type === 'ledger') {
+          throw Error("Signing messages with Ledger accounts is not supported")
+        }
 
-        const result = await wallet.signUnsignedTx(account, action.payload)
+        const result = await wallet.signMessage(account, action.payload)
 
         return {
-          type: "ALPH_SIGN_UNSIGNED_TX_SUCCESS",
-          data: { actionHash, result },
+          type: "ALPH_SIGN_MESSAGE_SUCCESS",
+          data: {
+            signature: result.signature,
+            actionHash,
+          },
+        }
+      } catch (error) {
+        return {
+          type: "ALPH_SIGN_MESSAGE_FAILURE",
+          data: { actionHash, error: `${error}` },
+        }
+      }
+    }
+
+    case "ALPH_SIGN_UNSIGNED_TX": {
+      const { signatureOpt } = additionalData as { signatureOpt: string | undefined }
+      try {
+        const account = await wallet.getAccount({
+          address: action.payload.signerAddress,
+          networkId: action.payload.networkId,
+        })
+        if (!account) {
+          throw Error("No selected account")
+        }
+        if (signatureOpt === undefined) {
+          const result = await wallet.signUnsignedTx(account, action.payload)
+
+          return {
+            type: "ALPH_SIGN_UNSIGNED_TX_SUCCESS",
+            data: { actionHash, result },
+          }
+        } else {
+          const signUnsignedTxResult = TransactionBuilder.buildUnsignedTx({
+            signerAddress: account.address,
+            unsignedTx: action.payload.unsignedTx
+          })
+          const result = { signature: signatureOpt, ...signUnsignedTxResult }
+          return {
+            type: "ALPH_SIGN_UNSIGNED_TX_SUCCESS",
+            data: { actionHash, result },
+          }
         }
       } catch (error) {
         return {

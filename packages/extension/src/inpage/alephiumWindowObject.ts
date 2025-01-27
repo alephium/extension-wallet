@@ -119,12 +119,6 @@ export const alephiumWindowObject: AlephiumWindowObject =
         throw Error("User aborted")
       }
 
-      const { alephiumProviders } = window
-      const alephium = alephiumProviders?.alephium
-      if (!alephium) {
-        throw Error("No alephium object detected")
-      }
-
       const account = {
         address: walletAccount.address,
         publicKey: walletAccount.signer.publicKey,

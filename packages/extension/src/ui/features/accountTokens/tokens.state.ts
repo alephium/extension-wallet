@@ -30,7 +30,7 @@ interface UseTokensBase<T> {
   error?: any
 }
 
-const networkIdSelector = memoize(
+export const networkIdSelector = memoize(
   (networkId: string) => (token: Token) => token.networkId === networkId,
 )
 
@@ -96,7 +96,7 @@ export const useToken = (baseToken: BaseToken): Token | undefined => {
 
   const tokenFromTokenList = tokenListTokens.tokens.find((t) => equalToken(t, baseToken))
   if (tokenFromTokenList) {
-    return { ...tokenFromTokenList, verified: true }
+    return { ...tokenFromTokenList, verified: true, showAlways: true }
   }
 
   if (token === undefined && baseToken.networkId === 'devnet') {

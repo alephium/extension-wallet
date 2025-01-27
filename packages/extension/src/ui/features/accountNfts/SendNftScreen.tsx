@@ -50,6 +50,7 @@ import { Destination, DUST_AMOUNT } from "@alephium/web3"
 import { sendTransferTransaction } from "../../services/transactions"
 import { useNFT } from "./useNfts"
 import { useTranslation } from "react-i18next"
+import { isMp4Url } from "./alephium-nft.service"
 
 export const NftImageContainer = styled.div`
   width: 96px;
@@ -227,7 +228,21 @@ export const SendNftScreen: FC = () => {
                 nft.metadata.image ? (
                   <RowCentered>
                     <NftImageContainer>
-                      <img src={nft.metadata.image} alt={nft.metadata.name} />
+                      {isMp4Url(nft.metadata.image) ? (
+                        <video
+                          src={nft.metadata.image}
+                          style={{
+                            borderRadius: '8px',
+                            objectFit: 'cover'
+                          }}
+                          loop
+                          muted
+                          playsInline
+                          autoPlay = {false}
+                        />
+                      ) : (
+                        <img src={nft.metadata.image} alt={nft.metadata.name} />
+                      )}
                     </NftImageContainer>
                   </RowCentered>
                 ) : null

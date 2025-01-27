@@ -4,28 +4,49 @@ import { ComponentProps, FC } from "react"
 import { generateAvatarImage } from "../../../shared/avatarImage"
 import { WarningIconRounded } from "../../components/Icons/WarningIconRounded"
 import { getColor } from "../accounts/accounts.service"
-
+import { BSCIcon } from "../../components/Icons/BSCIcon"
+import { EthereumIcon } from "../../components/Icons/EthereumIcon"
 export interface TokenIconProps
   extends Pick<ComponentProps<typeof Circle>, "size">,
   ComponentProps<typeof Image> {
   name: string
-  url?: string
+  logoURI?: string
   verified?: boolean
+  originChain?: string
+  unchainedLogoURI?: string
 }
 
 export const getTokenIconUrl = ({
-  url,
+  logoURI,
   name,
-}: Pick<TokenIconProps, "url" | "name">) => {
-  if (url && url.length) {
-    return url
+}: Pick<TokenIconProps, "logoURI" | "name">) => {
+  if (logoURI && logoURI.length) {
+    return logoURI
   }
   const background = getColor(name)
   return generateAvatarImage(name, { background })
 }
 
-export const TokenIcon: FC<TokenIconProps> = ({ name, url, size, verified, ...rest }) => {
-  const src = getTokenIconUrl({ url, name })
+export const TokenIcon: FC<TokenIconProps> = ({ name, logoURI, size, verified, originChain, unchainedLogoURI, ...rest }) => {
+  const overlayChainLogo = originChain && verified && unchainedLogoURI
+
+  const originChainIcon = () => {
+    if (!overlayChainLogo) {
+      return undefined
+    }
+
+    switch (originChain.toLowerCase()) {
+      case 'bsc':
+        return <BSCIcon />
+      case 'eth':
+        return <EthereumIcon />
+      default:
+        return undefined
+    }
+  }
+
+  const src = getTokenIconUrl({ logoURI: overlayChainLogo ? unchainedLogoURI : logoURI, name })
+
   return (
     <Circle
       size={size}
@@ -56,6 +77,17 @@ export const TokenIcon: FC<TokenIconProps> = ({ name, url, size, verified, ...re
             <WarningIconRounded />
           </Circle>
         </Tooltip>
+      )}
+      {overlayChainLogo && (
+        <Circle
+          overflow={"hidden"}
+          position={"absolute"}
+          right={-1}
+          top={-1}
+          size={Math.min(32, Math.round((size as number * 12) / 24))}
+        >
+          {originChainIcon()}
+        </Circle>
       )}
     </Circle>
   )

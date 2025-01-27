@@ -12,6 +12,7 @@ import { Nft } from "./NFT"
 import { NftFigure } from "./NftFigure"
 import { useNFTCollection } from "./useNFTCollections"
 import { useTranslation } from "react-i18next"
+import { isMp4Url } from "./alephium-nft.service"
 
 export const CollectionNfts: FC = () => {
   const { t } = useTranslation()
@@ -48,12 +49,28 @@ export const CollectionNfts: FC = () => {
       }
       scrollContent={
         <>
-          <Image
-            w="28px"
-            h="28px"
-            src={collection?.metadata.image}
-            borderRadius="lg"
-          />
+          {collection?.metadata.image && isMp4Url(collection.metadata.image) ? (
+            <video
+              style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '8px',
+                objectFit: 'cover'
+              }}
+              src={collection.metadata.image}
+              muted
+              playsInline
+              loop
+              autoPlay = {false}
+            />
+          ) : (
+            <Image
+              w="28px"
+              h="28px"
+              src={collection?.metadata.image}
+              borderRadius="lg"
+            />
+          )}
           <H6>{collection?.metadata.name}</H6>
         </>
       }

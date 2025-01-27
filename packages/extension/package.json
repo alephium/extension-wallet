@@ -1,15 +1,15 @@
 {
   "name": "@alephium/extension",
-  "version": "0.9.8",
+  "version": "0.9.17",
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
     "@alephium/get-extension-wallet": "^1.8.2",
     "@alephium/ledger-app": "0.6.0",
-    "@alephium/token-list": "0.0.19",
-    "@alephium/web3": "^1.8.2",
-    "@alephium/web3-test": "^1.8.2",
-    "@alephium/web3-wallet": "^1.8.2",
+    "@alephium/token-list": "0.0.20",
+    "@alephium/web3": "^1.8.5",
+    "@alephium/web3-test": "^1.8.5",
+    "@alephium/web3-wallet": "^1.8.5",
     "@ledgerhq/hw-transport-webusb": "6.29.0",
     "@ledgerhq/hw-transport-webhid": "6.29.0",
     "@playwright/test": "^1.23.0",
@@ -81,8 +81,8 @@
     "push-release-branch": "git push --set-upstream origin release/v$npm_package_version --follow-tags"
   },
   "dependencies": {
-    "@argent/stack-router": "^0.9.8",
-    "@argent/ui": "^0.9.8",
+    "@argent/stack-router": "^0.9.17",
+    "@argent/ui": "^0.9.17",
     "@chakra-ui/icons": "^2.0.15",
     "@chakra-ui/react": "2.5.1",
     "@extend-chrome/messages": "^1.2.2",

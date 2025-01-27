@@ -58,7 +58,7 @@ const isDataComplete = (data: Partial<Token>): data is Token => {
   if (
     data.id &&
     isValidTokenId(data.id) &&
-    isValidUrl(data.logoURI) &&
+    (!data.logoURI || isValidUrl(data.logoURI)) &&
     data.decimals?.toString() &&
     data.name &&
     data.symbol
