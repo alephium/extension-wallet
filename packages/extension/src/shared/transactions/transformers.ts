@@ -1,7 +1,8 @@
 import { Transaction } from "../../shared/transactions"
 import { WalletAccount } from "../../shared/wallet.model"
-import { explorer, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignDeployContractChainedTxResult, SignExecuteScriptChainedTxParams, SignExecuteScriptChainedTxResult, SignTransferChainedTxParams, SignTransferChainedTxResult, SignUnsignedTxResult } from '@alephium/web3'
-import { ReviewTransactionResult, TransactionParams, TransactionResult } from "../../shared/actionQueue/types";
+import { binToHex, explorer, hexToBinUnsafe, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignDeployContractChainedTxResult, SignExecuteScriptChainedTxParams, SignExecuteScriptChainedTxResult, SignGrouplessTransferTxParams, SignGrouplessTxParams, SignTransferChainedTxParams, SignTransferChainedTxResult, SignTransferTxParams, SignUnsignedTxResult } from '@alephium/web3'
+import { ReviewTransactionResult, TransactionParams, TransactionPayload, TransactionResult } from "../../shared/actionQueue/types";
+import { codec } from "@alephium/web3";
 
 export const mapAlephiumTransactionToTransaction = (
   transaction: explorer.Transaction,
@@ -99,4 +100,88 @@ export function transactionResultToSignUnsignedTxResult(
     default:
       throw new Error(`Unsupported transaction type: ${txResultType}`);
   }
+}
+
+export function transactionParamsToSignGrouplessTxParams(
+  transactionParams: TransactionParams
+): SignGrouplessTxParams {
+  switch (transactionParams.type) {
+    case "TRANSFER":
+      return {
+        fromAddress: transactionParams.params.signerAddress,
+        destinations: transactionParams.params.destinations,
+        gasPrice: transactionParams.params.gasPrice
+      }
+    case "DEPLOY_CONTRACT":
+      return {
+        fromAddress: transactionParams.params.signerAddress,
+        bytecode: transactionParams.params.bytecode,
+        initialAttoAlphAmount: transactionParams.params.initialAttoAlphAmount,
+        initialTokenAmounts: transactionParams.params.initialTokenAmounts,
+        issueTokenAmount: transactionParams.params.issueTokenAmount,
+        issueTokenTo: transactionParams.params.issueTokenTo,
+        gasPrice: transactionParams.params.gasPrice
+      }
+    case "EXECUTE_SCRIPT":
+      return {
+        fromAddress: transactionParams.params.signerAddress,
+        bytecode: transactionParams.params.bytecode,
+        attoAlphAmount: transactionParams.params.attoAlphAmount,
+        tokens: transactionParams.params.tokens,
+        gasPrice: transactionParams.params.gasPrice,
+        gasEstimationMultiplier: transactionParams.params.gasEstimationMultiplier
+      }
+    default:
+      throw new Error(`Unsupported transaction type: ${transactionParams.type}`)
+  }
+}
+
+export function grouplessTxResultToReviewTransactionResult(
+  signGrouplessTxResults: Omit<SignChainedTxResult, 'signature'>[],
+  transactionParams: TransactionParams
+): ReviewTransactionResult[] {
+  if (signGrouplessTxResults.length === 0) {
+    throw new Error("No groupless transaction results returned")
+  }
+
+  const lastIndex = signGrouplessTxResults.length - 1
+  const initialResults = signGrouplessTxResults.slice(0, lastIndex)
+  const lastResult = signGrouplessTxResults[lastIndex]
+
+  const initialTransactions = initialResults.map((signGrouplessTxResult) => {
+    if (signGrouplessTxResult.type !== 'Transfer') {
+      throw new Error(`Invalid transaction type in groupless transfer: expected 'Transfer' but got '${signGrouplessTxResult.type}'.`)
+    }
+
+    const unsignedTx = codec.unsignedTxCodec.decode(hexToBinUnsafe(signGrouplessTxResult.unsignedTx))
+    // TODO: Display move of assets for initial transactions properly
+    const destinations = unsignedTx.fixedOutputs.map(output => ({
+      address: transactionParams.params.signerAddress,
+      attoAlphAmount: output.amount,
+      tokens: output.tokens?.map(token => ({
+        id: binToHex(token.tokenId),
+        amount: token.amount
+      }))
+    }))
+    const params: TransactionPayload<SignTransferTxParams> = {
+      networkId: transactionParams.params.networkId,
+      signerAddress: transactionParams.params.signerAddress,
+      signerKeyType: transactionParams.params.signerKeyType,
+      destinations: destinations,
+      gasPrice: unsignedTx.gasPrice,
+    }
+    return {
+      type: "TRANSFER",
+      params,
+      result: signGrouplessTxResult
+    } as ReviewTransactionResult
+  })
+
+  const lastTransaction = {
+    type: transactionParams.type,
+    params: transactionParams.params,
+    result: lastResult
+  } as ReviewTransactionResult
+
+  return [...initialTransactions, lastTransaction]
 }

@@ -21,7 +21,7 @@ import { DappHeader } from "./transaction/DappHeader"
 import { TransactionsList } from "./transaction/TransactionsList"
 import { TxHashContainer } from "./TxHashContainer"
 import { useTranslation } from "react-i18next"
-import { tryBuildChainedTransactions, tryBuildTransactions } from "../../../shared/transactions"
+import { tryBuildChainedTransactions, tryBuildGrouplessTransactions, tryBuildTransactions } from "../../../shared/transactions"
 import { IconButton } from "@mui/material"
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons"
 import { getAccounts } from "../../../shared/account/store"
@@ -96,22 +96,38 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
         })
 
         let results: ReviewTransactionResult[]
-        if (transactionParams.length === 0) {
-          throw new Error("Transaction params are empty")
-        } else if (transactionParams.length === 1) {
-          results = await tryBuildTransactions(
-            nodeUrl,
-            allUserTokens,
-            selectedAccount,
-            walletAccounts,
-            transactionParams[0],
-            useLedger
-          )
-        } else {
+
+        if (selectedAccount.type === "alephium-groupless") {
           if (useLedger) {
-            throw new Error("Ledger does not support chained transactions")
+            throw new Error("Ledger does not support groupless address")
           }
-          results = await tryBuildChainedTransactions(nodeUrl, walletAccounts, transactionParams)
+          if (transactionParams.length === 1) {
+            results = await tryBuildGrouplessTransactions(
+              nodeUrl,
+              transactionParams[0],
+            )
+          } else {
+            // TODO: actually it could, depending on how the full endpoint looks like
+            throw new Error("Groupless address does not support chained transactions")
+          }
+        } else {
+          if (transactionParams.length === 0) {
+            throw new Error("Transaction params are empty")
+          } else if (transactionParams.length === 1) {
+            results = await tryBuildTransactions(
+              nodeUrl,
+              allUserTokens,
+              selectedAccount,
+              walletAccounts,
+              transactionParams[0],
+              useLedger
+            )
+          } else {
+            if (useLedger) {
+              throw new Error("Ledger does not support chained transactions")
+            }
+            results = await tryBuildChainedTransactions(nodeUrl, walletAccounts, transactionParams)
+          }
         }
 
         setBuildResults(results)

@@ -24,6 +24,7 @@ import { AlephiumLogo } from "../../components/Icons/ArgentXLogo"
 import { LedgerIcon } from "../../components/Icons/LedgerIcon"
 import styled from "styled-components"
 import { useTranslation } from "react-i18next"
+import { KeyType } from "@alephium/web3"
 
 const StyledAlephiumLogo = styled(AlephiumLogo)`
   font-size: 20px;
@@ -36,22 +37,32 @@ interface MenuSelectorProps {
   title: string
   options: readonly string[]
   setValue: (value: string) => void
+  displayItem?: (title: string, option: string) => string
+  disabled?: boolean
 }
 
-export const MemuSelector: FC<MenuSelectorProps> = ({ title, options, setValue }) => {
+export const MemuSelector: FC<MenuSelectorProps> = ({ title, options, setValue, displayItem, disabled }) => {
   const [currentOption, setCurrentOption] = useState<string>()
 
+  const displayFunc = displayItem ?? ((title: string, option: string): string => `${title}: ${option}`)
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<ChevronDownIcon />} w={'140px'} size={"xs"} margin="1">
-        {title}: {currentOption ?? options[0]}
+      <MenuButton
+        as={Button}
+        rightIcon={<ChevronDownIcon />}
+        w={'140px'}
+        size={"xs"}
+        margin="1"
+        isDisabled={disabled}
+      >
+        {displayFunc(title, currentOption ?? options[0])}
       </MenuButton>
       <Portal>
         <MenuList p={0} minW="0" w={'140px'}>
           {options.map(option => {
             const isCurrent = option === currentOption
             return (<MenuItem w="inherit" key={option} onClick={() => { setCurrentOption(option); setValue(option) }} sx={isCurrent ? { backgroundColor: "neutrals.600", } : {}}>
-              {title}: {option}
+              {displayFunc(title, option)}
               {/* <Flex
                   ml={"auto"}
                   justifyContent={"flex-end"}
@@ -69,7 +80,7 @@ export const MemuSelector: FC<MenuSelectorProps> = ({ title, options, setValue }
 }
 
 const groupOptions = ["any", ...Array.from(Array(TOTAL_NUMBER_OF_GROUPS).keys()).map(g => `${g}`)]
-const signOptions = ["default", "schnorr"] as const
+const signOptions = ["Groupless", "Default", "Schnorr"] as const
 
 export const AddAccount: FC = () => {
   const { t } = useTranslation()
@@ -80,8 +91,16 @@ export const AddAccount: FC = () => {
 
   const { addAccount } = useAddAccount()
 
+  // Force group to "any" when Groupless is selected
+  const handleSignMethodChange = (value: string) => {
+    setSignMethod(value)
+    if (value === "Groupless") {
+      setGroup("any")
+    }
+  }
+
   const parsedGroup = group === "any" ? undefined : parseInt(group)
-  const parsedKeyType = signMethod === "default" ? "default" : "bip340-schnorr"
+  const parsedKeyType = (signMethod === "Schnorr" ? "bip340-schnorr" : signMethod.toLowerCase()) as KeyType
 
   return (
     <>
@@ -89,9 +108,19 @@ export const AddAccount: FC = () => {
       <PageWrapper>
         <Title>{t("Add a new account")}</Title>
         <Flex marginBottom={5}>
-          <MemuSelector title="Group" options={groupOptions} setValue={setGroup}></MemuSelector>
+          <MemuSelector
+            title="Sign"
+            options={signOptions}
+            setValue={handleSignMethodChange}
+            displayItem={(_, option) => option}
+          ></MemuSelector>
           <Spacer />
-          <MemuSelector title="Sign" options={signOptions} setValue={setSignMethod}></MemuSelector>
+          <MemuSelector
+            title="Group"
+            options={groupOptions}
+            setValue={setGroup}
+            disabled={signMethod === "Groupless"}
+          ></MemuSelector>
         </Flex>
         <OptionsWrapper>
           <Option
@@ -102,7 +131,7 @@ export const AddAccount: FC = () => {
             onClick={() => addAccount(parsedKeyType, parsedGroup).catch(() => setHasError(true))}
           />
           {
-            parsedKeyType !== "bip340-schnorr" &&
+            parsedKeyType === "default" &&
             <A
               href={`/index.html?goto=ledger&networkId=${switcherNetworkId}&group=${parsedGroup}&keyType=${parsedKeyType}`}
               targetBlank

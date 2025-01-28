@@ -17,7 +17,7 @@ import {
   signUnsignedTx,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
-import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3, MessageHasher, prettifyAttoAlphAmount, isHexString } from "@alephium/web3"
+import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3, MessageHasher, prettifyAttoAlphAmount, isHexString, isGrouplessAddress, TOTAL_NUMBER_OF_GROUPS } from "@alephium/web3"
 
 type Status = "idle" | "approve" | "pending" | "success" | "failure"
 
@@ -36,14 +36,16 @@ export const TokenDapp: FC<{
   const [transactionStatus, setTransactionStatus] = useState<Status>("idle")
   const [transactionError, setTransactionError] = useState("")
   const [addTokenError, setAddTokenError] = useState("")
-  const [transferTokenAddress, setTransferTokenAddress] = useState("")
-  const [destroyTokenAddress, setDestroyTokenAddress] = useState("")
+  const [transferTokenId, setTransferTokenId] = useState("")
+  const [destroyTokenId, setDestroyTokenId] = useState("")
   const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>([])
   const [alphBalance, setAlphBalance] = useState<{ balance: string, lockedBalance: string } | undefined>()
   const [mintedToken, setMintedToken] = useState<string | undefined>()
   const [transferingMintedToken, setTransferingMintedToken] = useState<boolean>(false)
   const [selectedTokenBalance, setSelectedTokenBalance] = useState<{ value: TokenBalance, label: string } | undefined>()
   const [alephium, setAlephium] = useState<AlephiumWindowObject | undefined>(undefined)
+  const [selectedGroup, setSelectedGroup] = useState<number>(0)
+  const isGroupless = isGrouplessAddress(address)
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus)
 
@@ -150,7 +152,12 @@ export const TokenDapp: FC<{
       setTransactionStatus("approve")
 
       console.log("mint", mintAmount)
-      const result = await mintToken(mintAmount, network)
+      let result
+      if (isGroupless) {
+        result = await mintToken(mintAmount, network, selectedGroup)
+      } else {
+        result = await mintToken(mintAmount, network)
+      }
       console.log(result)
 
       setMintedToken(result.contractInstance.address)
@@ -168,7 +175,7 @@ export const TokenDapp: FC<{
       setTransactionStatus("approve")
 
       console.log("transfer", { transferTo, transferAmount })
-      const result = await transferToken(transferTokenAddress, transferTo, transferAmount, network)
+      const result = await transferToken(transferTokenId, transferTo, transferAmount, network)
       console.log(result)
 
       setLastTransactionHash(result.txId)
@@ -184,7 +191,7 @@ export const TokenDapp: FC<{
       e.preventDefault()
       setTransactionStatus("approve")
 
-      const destroyTokenContractResult = await destroyTokenContract(destroyTokenAddress)
+      const destroyTokenContractResult = await destroyTokenContract(destroyTokenId)
       setLastTransactionHash(destroyTokenContractResult.txId)
 
       setTransactionStatus("pending")
@@ -375,6 +382,23 @@ export const TokenDapp: FC<{
                 onChange={(e) => setMintAmount(e.target.value)}
               />
 
+              {isGroupless && (
+                <>
+                  <label htmlFor="group-select">Select Group</label>
+                  <select
+                    id="group-select"
+                    value={selectedGroup}
+                    onChange={(e) => setSelectedGroup(Number(e.target.value))}
+                  >
+                    {Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (_, i) => i).map((group) => (
+                      <option key={group} value={group}>
+                        Group {group}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
+
               <input type="submit" />
             </form>
           )
@@ -382,13 +406,13 @@ export const TokenDapp: FC<{
         <form onSubmit={handleTransferSubmit}>
           <h2 className={styles.title}>Transfer token</h2>
 
-          <label htmlFor="transfer-token-address">Token Id</label>
+          <label htmlFor="transfer-token-id">Token Id</label>
           <input
             type="text"
-            id="transfer-to"
+            id="transfer-token-id"
             name="fname"
-            value={transferTokenAddress}
-            onChange={(e) => setTransferTokenAddress(e.target.value)}
+            value={transferTokenId}
+            onChange={(e) => setTransferTokenId(e.target.value)}
           />
 
           <label htmlFor="transfer-to">To</label>
@@ -414,13 +438,13 @@ export const TokenDapp: FC<{
         <form onSubmit={handleDestroyTokenSubmit}>
           <h2 className={styles.title}>Destroy token contract</h2>
 
-          <label htmlFor="destroy-token-address">Token Id</label>
+          <label htmlFor="destroy-token-id">Token Id</label>
           <input
             type="text"
-            id="destroy-token-address"
+            id="destroy-token-id"
             name="fname"
-            value={destroyTokenAddress}
-            onChange={(e) => setDestroyTokenAddress(e.target.value)}
+            value={destroyTokenId}
+            onChange={(e) => setDestroyTokenId(e.target.value)}
           />
           <input type="submit" disabled={buttonsDisabled} value="Destroy" />
         </form>

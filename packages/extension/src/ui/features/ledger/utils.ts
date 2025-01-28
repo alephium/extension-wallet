@@ -35,6 +35,9 @@ export class LedgerAlephium extends AccountDiscovery {
   }
 
   private async getAccount(startIndex: number, group: number | undefined, keyType: KeyType) {
+    if (keyType !== "default") {
+      throw Error("Unsupported key type for ledger account: " + keyType)
+    }
     const path = getHDWalletPath(keyType, startIndex)
     return await this.app.getAccount(path, group, keyType)
   }
@@ -62,7 +65,7 @@ export class LedgerAlephium extends AccountDiscovery {
 
   async createNewAccount(networkId: string, targetAddressGroup: number | undefined, keyType: string) {
     if (keyType !== "default") {
-      throw Error("Unsupported key type: " + keyType)
+      throw Error("Unsupported key type for ledger account: " + keyType)
     }
   
     const existingLedgerAccounts = await getAllLedgerAccounts(networkId)
@@ -78,6 +81,9 @@ export class LedgerAlephium extends AccountDiscovery {
   }
 
   async verifyAccount(account: Account): Promise<boolean> {
+    if (account.signer.keyType !== "default") {
+      throw Error("Unsupported key type: " + account.signer.keyType)
+    }
     const path = getHDWalletPath(account.signer.keyType, account.signer.derivationIndex)
     const [deviceAccount, _] = await this.app.getAccount(path, undefined, account.signer.keyType, true)
     await this.app.close()

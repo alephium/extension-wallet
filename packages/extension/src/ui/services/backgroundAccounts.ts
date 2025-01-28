@@ -1,7 +1,7 @@
 import { KeyType } from "@alephium/web3"
 import { sendMessage, waitForMessage } from "../../shared/messages"
 import {
-  ArgentAccountType,
+  AlephiumAccountType,
   BaseWalletAccount,
   WalletAccount,
 } from "../../shared/wallet.model"
@@ -95,7 +95,7 @@ export const deleteAccount = async (address: string, networkId: string) => {
 
 export const upgradeAccount = async (
   wallet: BaseWalletAccount,
-  targetImplementationType?: ArgentAccountType,
+  targetImplementationType?: AlephiumAccountType,
 ) => {
   sendMessage({
     type: "ALPH_UPGRADE_ACCOUNT",
