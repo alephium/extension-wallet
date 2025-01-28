@@ -7,7 +7,7 @@ import { BaseWalletAccount } from "../../../shared/wallet.model"
 import { accountsEqual } from "../../../shared/wallet.service"
 import { startSession } from "../../services/backgroundSessions"
 import { Account } from "./Account"
-import i18n from "../../../i18n"
+import i18n from "../../features/localization/i18n"
 
 const { toBN } = number
 

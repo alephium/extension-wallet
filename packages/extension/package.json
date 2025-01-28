@@ -98,6 +98,7 @@
     "cross-env": "^7.0.3",
     "ethers": "^5.5.1",
     "i18next": "^23.11.5",
+    "i18next-browser-languagedetector": "^8.0.2",
     "jose": "^4.3.6",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.88.0",

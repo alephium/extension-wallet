@@ -2,7 +2,7 @@ import { NFTTransaction } from "../../type"
 import { getEntityWithName } from "../getEntityWithName"
 import { getParameter } from "../getParameter"
 import { IExplorerTransactionTransformer } from "./type"
-import i18n from "../../../../../../i18n"
+import i18n from "../../../../../features/localization/i18n"
 
 /** Mint Square buy NFT */
 

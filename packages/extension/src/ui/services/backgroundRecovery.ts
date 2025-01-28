@@ -1,4 +1,4 @@
-import i18n from "../../i18n"
+import i18n from "../features/localization/i18n"
 import { sendMessage, waitForMessage } from "../../shared/messages"
 import { encryptForBackground } from "./crypto"
 

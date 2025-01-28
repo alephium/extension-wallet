@@ -5,7 +5,7 @@ import {
 import { NFTTransferTransaction } from "../../type"
 import { getCallsFromTransaction } from "../getCallsFromTransaction"
 import { ITransactionTransformer } from "./type"
-import i18n from "../../../../../../i18n"
+import i18n from "../../../../../features/localization/i18n"
 
 /** adds erc721 token transfer data */
 

@@ -1,7 +1,7 @@
 import { TokenApproveTransaction } from "../../type"
 import { getParameter } from "../getParameter"
 import { IExplorerTransactionTransformer } from "./type"
-import i18n from "../../../../../../i18n"
+import i18n from "../../../../../features/localization/i18n"
 
 /** adds erc20 token approve data */
 
