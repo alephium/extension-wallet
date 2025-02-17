@@ -23,6 +23,7 @@ import {
   SignUnsignedTxParams,
   SignUnsignedTxResult,
   groupOfAddress,
+  isGrouplessAddressWithGroupIndex,
   isHexString,
   networkIds,
 } from "@alephium/web3"
@@ -145,7 +146,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
     signAndSubmitTransferTx = async (
       params: SignTransferTxParams,
     ): Promise<SignTransferTxResult> => {
-      const [txResult] = (
+      const txResults = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -155,13 +156,14 @@ export const alephiumWindowObject: AlephiumWindowObject =
           }),
         )
       ).result
+      const txResult = txResults[txResults.length - 1]
       return txResult.result as SignTransferTxResult
     }
 
     signAndSubmitDeployContractTx = async (
       params: SignDeployContractTxParams,
     ): Promise<SignDeployContractTxResult> => {
-      const [txResult] = (
+      const txResults = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -171,14 +173,14 @@ export const alephiumWindowObject: AlephiumWindowObject =
           }),
         )
       ).result
-
+      const txResult = txResults[txResults.length - 1]
       return txResult.result as SignDeployContractTxResult
     }
 
     signAndSubmitExecuteScriptTx = async (
       params: SignExecuteScriptTxParams,
     ): Promise<SignExecuteScriptTxResult> => {
-      const [txResult] = (
+      const txResults = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -188,6 +190,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
           }),
         )
       ).result
+      const txResult = txResults[txResults.length - 1]
       return txResult.result as SignExecuteScriptTxResult
     }
 
@@ -395,7 +398,11 @@ export const alephiumWindowObject: AlephiumWindowObject =
         throw Error("No connection")
       }
 
-      if (signerAddress !== this.connectedAccount?.address) {
+      let updatedSignerAddress = signerAddress
+      if (isGrouplessAddressWithGroupIndex(signerAddress)) {
+        updatedSignerAddress = signerAddress.slice(0, -2)
+      }
+      if (updatedSignerAddress !== this.connectedAccount?.address) {
         throw Error(
           `Unauthorized address. Expected: ${this.connectedAccount?.address}, got: ${signerAddress}`,
         )

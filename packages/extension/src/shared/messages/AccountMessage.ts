@@ -1,6 +1,6 @@
 import { KeyType } from "@alephium/web3";
 import {
-  ArgentAccountType,
+  AlephiumAccountType,
   BaseWalletAccount,
   WalletAccount,
 } from "../wallet.model"
@@ -37,7 +37,7 @@ export type AccountMessage =
       type: "ALPH_UPGRADE_ACCOUNT"
       data: {
         wallet: BaseWalletAccount
-        targetImplementationType?: ArgentAccountType
+        targetImplementationType?: AlephiumAccountType
       }
     }
   | { type: "ALPH_UPGRADE_ACCOUNT_RES" }
