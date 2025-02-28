@@ -44,6 +44,8 @@ export const TokenDapp: FC<{
   const [transferingMintedToken, setTransferingMintedToken] = useState<boolean>(false)
   const [selectedTokenBalance, setSelectedTokenBalance] = useState<{ value: TokenBalance, label: string } | undefined>()
   const [alephium, setAlephium] = useState<AlephiumWindowObject | undefined>(undefined)
+  const [withdrawTransferTo, setWithdrawTransferTo] = useState<string>("")
+  const [withdrawType, setWithdrawType] = useState<"withdraw-only" | "withdraw-and-transfer">("withdraw-only")
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus)
 
@@ -199,9 +201,17 @@ export const TokenDapp: FC<{
       e.preventDefault()
       if (mintedToken) {
         setTransactionStatus("approve")
-        console.log("transfer", { transferTo, transferAmount, mintedToken })
+        console.log("transfer", {
+          transferTo: withdrawType === "withdraw-and-transfer" ? withdrawTransferTo : alephium?.connectedAccount?.address,
+          transferAmount: mintAmount,
+          mintedToken
+        })
 
-        const result = await withdrawMintedToken(mintAmount, mintedToken)
+        const result = await withdrawMintedToken(
+          mintAmount,
+          mintedToken,
+          withdrawType === "withdraw-and-transfer" ? withdrawTransferTo : undefined
+        )
 
         setLastTransactionHash(result.txId)
         setTransactionStatus("pending")
@@ -335,19 +345,52 @@ export const TokenDapp: FC<{
         {
           (mintedToken && alephium?.connectedAccount) ? (
             <form onSubmit={handleWithdrawMintedTokenSubmit}>
-              <h2 className={styles.title}>Withdraw all minted token</h2>
+              <h2 className={styles.title}>Withdraw minted token</h2>
               <label htmlFor="token-address">Token Address</label>
-              <p>{mintedToken}</p>
+              <p style={{ wordBreak: "break-all", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {mintedToken}
+              </p>
+
+              <div>
+                <label style={{ marginRight: '1em' }}>
+                  <input
+                    type="radio"
+                    value="withdraw-only"
+                    checked={withdrawType === "withdraw-only"}
+                    onChange={(e) => setWithdrawType("withdraw-only")}
+                  />
+                  Withdraw to my address
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="withdraw-and-transfer"
+                    checked={withdrawType === "withdraw-and-transfer"}
+                    onChange={(e) => setWithdrawType("withdraw-and-transfer")}
+                  />
+                  Transfer to another address
+                </label>
+              </div>
 
               <label htmlFor="transfer-to">To</label>
-              <input
-                type="text"
-                id="transfer-to"
-                name="fname"
-                disabled
-                value={alephium.connectedAccount.address}
-                onChange={(e) => setTransferTo(e.target.value)}
-              />
+              {withdrawType === "withdraw-only" ? (
+                <input
+                  type="text"
+                  id="transfer-to"
+                  name="fname"
+                  disabled
+                  value={alephium.connectedAccount.address}
+                />
+              ) : (
+                <input
+                  type="text"
+                  id="transfer-to"
+                  name="fname"
+                  value={withdrawTransferTo}
+                  onChange={(e) => setWithdrawTransferTo(e.target.value)}
+                  placeholder="Enter recipient address"
+                />
+              )}
 
               <label htmlFor="transfer-amount">Amount</label>
               <input
@@ -356,12 +399,14 @@ export const TokenDapp: FC<{
                 name="fname"
                 disabled
                 value={mintAmount}
-                onChange={(e) => setTransferAmount(e.target.value)}
               />
               <br />
-              <input type="submit" disabled={buttonsDisabled} value="Withdraw" />
+              <input
+                type="submit"
+                disabled={buttonsDisabled || (withdrawType === "withdraw-and-transfer" && !withdrawTransferTo)}
+                value={withdrawType === "withdraw-only" ? "Withdraw" : "Withdraw and Transfer"}
+              />
             </form>
-
           ) : (
             <form onSubmit={handleMintSubmit}>
               <h2 className={styles.title}>Mint token</h2>

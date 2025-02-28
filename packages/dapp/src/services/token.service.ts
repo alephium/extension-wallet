@@ -1,6 +1,6 @@
 import { getDefaultAlephiumWallet } from "@alephium/get-extension-wallet"
 import * as web3 from '@alephium/web3'
-import { binToHex, contractIdFromAddress, DUST_AMOUNT, stringToHex } from '@alephium/web3'
+import { binToHex, contractIdFromAddress, DUST_AMOUNT, SignTransferChainedTxParams, stringToHex } from '@alephium/web3'
 import { Destroy, ShinyToken, ShinyTokenInstance, Transfer } from '../../artifacts/ts'
 
 export const erc20TokenAddressByNetwork = {
@@ -90,23 +90,48 @@ export const mintToken = async (
 
 export const withdrawMintedToken = async (
   amount: string,
-  tokenId: string
+  tokenAddress: string,
+  transferTo?: string
 ): Promise<web3.SignExecuteScriptTxResult> => {
   const alephium = await getDefaultAlephiumWallet()
   if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
     throw Error("alephium object not initialized")
   }
 
-  return Transfer.execute(
-    alephium,
-    {
+  const tokenId = binToHex(contractIdFromAddress(tokenAddress))
+  if (!transferTo) {
+    return Transfer.execute(
+      alephium,
+      {
+        initialFields: {
+          shinyToken: tokenId,
+          to: alephium.connectedAccount.address,
+          amount: BigInt(amount)
+        }
+      }
+    )
+  } else {
+    const withdrawParams = await Transfer.script.txParamsForExecution(alephium, {
       initialFields: {
-        shinyToken: binToHex(contractIdFromAddress(tokenId)),
+        shinyToken: tokenId,
         to: alephium.connectedAccount.address,
         amount: BigInt(amount)
       }
+    })
+    const transferParams: SignTransferChainedTxParams = {
+      signerAddress: alephium.connectedAccount.address,
+      destinations: [
+        { address: transferTo, attoAlphAmount: DUST_AMOUNT, tokens: [{ id: tokenId, amount: BigInt(amount) }] }
+      ],
+      type: 'Transfer'
     }
-  )
+    const [_, withdrawTxResult] = await alephium.signAndSubmitChainedTx([
+      { ...withdrawParams, type: 'ExecuteScript' },
+      { ...transferParams, type: 'Transfer' }
+    ])
+
+    return withdrawTxResult as web3.SignExecuteScriptChainedTxResult
+  }
 }
 export const transferToken = async (
   tokenId: string,
