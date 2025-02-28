@@ -145,7 +145,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
     signAndSubmitTransferTx = async (
       params: SignTransferTxParams,
     ): Promise<SignTransferTxResult> => {
-      const [txResult] = (
+      const txResults = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -155,13 +155,15 @@ export const alephiumWindowObject: AlephiumWindowObject =
           }),
         )
       ).result
+
+      const txResult = txResults[txResults.length - 1]
       return txResult.result as SignTransferTxResult
     }
 
     signAndSubmitDeployContractTx = async (
       params: SignDeployContractTxParams,
     ): Promise<SignDeployContractTxResult> => {
-      const [txResult] = (
+      const txResults = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -172,13 +174,14 @@ export const alephiumWindowObject: AlephiumWindowObject =
         )
       ).result
 
+      const txResult = txResults[txResults.length - 1]
       return txResult.result as SignDeployContractTxResult
     }
 
     signAndSubmitExecuteScriptTx = async (
       params: SignExecuteScriptTxParams,
     ): Promise<SignExecuteScriptTxResult> => {
-      const [txResult] = (
+      const txResults = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -188,6 +191,8 @@ export const alephiumWindowObject: AlephiumWindowObject =
           }),
         )
       ).result
+
+      const txResult = txResults[txResults.length - 1]
       return txResult.result as SignExecuteScriptTxResult
     }
 
