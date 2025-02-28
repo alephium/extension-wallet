@@ -128,6 +128,72 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     build()
   }, [nodeUrl, selectedAccount, transactionParams, tokenDetailsIsInitialising, actionHash, navigate, t])
 
+  const getButtonConfig = () => {
+    // Single transaction case - use default behavior
+    if (buildResults?.length === 1) {
+      return {
+        confirmButtonText: !useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState)),
+        rejectButtonText: t("Cancel"),
+        onConfirm: () => {
+          if (useLedger) {
+            ledgerSign()
+          } else {
+            onSubmit(buildResults)
+          }
+        },
+        onReject: () => {
+          if (ledgerApp !== undefined) {
+            ledgerApp.close()
+          }
+          if (onReject !== undefined) {
+            onReject()
+          } else {
+            navigate(-1)
+          }
+        }
+      }
+    }
+
+    // Multiple transactions case
+    if (currentIndex === 0) {
+      return {
+        confirmButtonText: t("Next"),
+        rejectButtonText: t("Cancel"),
+        onConfirm: () => setCurrentIndex(prev => prev + 1),
+        onReject: () => {
+          if (onReject !== undefined) {
+            onReject()
+          } else {
+            navigate(-1)
+          }
+        }
+      }
+    }
+
+    if (currentIndex === buildResults!.length - 1) {
+      return {
+        confirmButtonText: !useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState)),
+        rejectButtonText: t("Back"),
+        onConfirm: () => {
+          if (useLedger) {
+            ledgerSign()
+          } else {
+            onSubmit(buildResults)
+          }
+        },
+        onReject: () => setCurrentIndex(prev => prev - 1)
+      }
+    }
+
+    // Middle transactions
+    return {
+      confirmButtonText: t("Next"),
+      rejectButtonText: t("Back"),
+      onConfirm: () => setCurrentIndex(prev => prev + 1),
+      onReject: () => setCurrentIndex(prev => prev - 1)
+    }
+  }
+
   if (!selectedAccount) {
     rejectAction(actionHash, t("No account found for network {{ networkId }}", { networkId }))
     return <Navigate to={routes.accounts()} />
@@ -137,29 +203,16 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     return <LoadingScreen />
   }
 
+  const buttonConfig = getButtonConfig()
+
   return (
     <ConfirmScreen
-      confirmButtonText={!useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState))}
+      confirmButtonText={buttonConfig.confirmButtonText}
       confirmButtonDisabled={ledgerState !== undefined}
-      rejectButtonText={t("Cancel")}
+      rejectButtonText={buttonConfig.rejectButtonText}
       selectedAccount={selectedAccount}
-      onSubmit={() => {
-        if (useLedger) {
-          ledgerSign()
-        } else {
-          onSubmit(buildResults)
-        }
-      }}
-      onReject={() => {
-        if (ledgerApp !== undefined) {
-          ledgerApp.close()
-        }
-        if (onReject !== undefined) {
-          onReject()
-        } else {
-          navigate(-1)
-        }
-      }}
+      onSubmit={buttonConfig.onConfirm}
+      onReject={buttonConfig.onReject}
       showHeader={false}
       footer={
         buildResults.length > 0 && (
