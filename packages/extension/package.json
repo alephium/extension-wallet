@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "@alephium/get-extension-wallet": "^1.7.3",
+    "@alephium/get-extension-wallet": "^1.8.2",
     "@alephium/ledger-app": "0.6.0",
     "@alephium/token-list": "0.0.20",
     "@alephium/web3": "^1.8.5",

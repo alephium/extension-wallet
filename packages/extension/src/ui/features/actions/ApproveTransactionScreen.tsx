@@ -1,5 +1,4 @@
-import { ALPH_TOKEN_ID, ONE_ALPH, prettifyTokenAmount, TransactionBuilder } from "@alephium/web3"
-import { Flex } from "@chakra-ui/react"
+import { Flex, Text } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useState } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
 
@@ -7,12 +6,10 @@ import {
   ReviewTransactionResult,
   TransactionParams,
 } from "../../../shared/actionQueue/types"
-import { BaseTokenWithBalance } from "../../../shared/token/type"
 import { useAppState } from "../../app.state"
 import { routes } from "../../routes"
 import { usePageTracking } from "../../services/analytics"
 import { rejectAction } from "../../services/backgroundActions"
-import { Account } from "../accounts/Account"
 import { useAllTokensWithBalance } from "../accountTokens/tokens.state"
 import { useNetwork } from "../networks/useNetworks"
 import { ConfirmScreen } from "./ConfirmScreen"
@@ -23,149 +20,29 @@ import { AccountNetworkInfo } from "./transaction/AccountNetworkInfo"
 import { DappHeader } from "./transaction/DappHeader"
 import { TransactionsList } from "./transaction/TransactionsList"
 import { TxHashContainer } from "./TxHashContainer"
-import { getToken } from "../../../shared/token/storage"
-import { BigNumber } from "ethers"
-import { addTokenToBalances } from "../../../shared/token/balance"
 import { useTranslation } from "react-i18next"
-import i18n from "../../../i18n"
+import { tryBuildChainedTransactions, tryBuildTransactions } from "../../../shared/transactions"
+import { IconButton } from "@mui/material"
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons"
+import { getAccounts } from "../../../shared/account/store"
+import { useSelectedAccount } from "../accounts/accounts.state"
 import { LedgerStatus } from "./LedgerStatus"
 import { useLedgerApp } from "../ledger/useLedgerApp"
 import { getConfirmationTextByState } from "../ledger/types"
 
-const minimalGasFee = BigInt(20000) * BigInt(100000000000)
-
 export interface ApproveTransactionScreenProps
   extends Omit<ConfirmPageProps, "onSubmit"> {
   actionHash: string
-  transaction: TransactionParams
+  transactionParams: TransactionParams[]
   onSubmit: (
     result:
-      | (ReviewTransactionResult & { signature?: string })
-      | { error: string }
+      | (ReviewTransactionResult & { signature?: string } | { error: string })[]
       | undefined,
   ) => void
 }
 
-async function tryBuildTransaction(
-  nodeUrl: string,
-  tokensWithBalance: BaseTokenWithBalance[],
-  account: Account,
-  transaction: TransactionParams
-): Promise<ReviewTransactionResult> {
-  const builder = TransactionBuilder.from(nodeUrl)
-  try {
-    return await buildTransaction(builder, account, transaction)
-  } catch (error) {
-    const errMsg = await checkBalances(tokensWithBalance, transaction, account.networkId)
-    if (errMsg !== undefined) {
-      throw new Error(errMsg)
-    }
-    throw error
-  }
-}
-
-async function buildTransaction(
-  builder: TransactionBuilder,
-  account: Account,
-  transaction: TransactionParams
-): Promise<ReviewTransactionResult> {
-  switch (transaction.type) {
-    case "TRANSFER":
-      return {
-        type: transaction.type,
-        params: transaction.params,
-        result: await builder.buildTransferTx(
-          transaction.params,
-          account.publicKey,
-        ),
-      }
-    case "DEPLOY_CONTRACT":
-      return {
-        type: transaction.type,
-        params: transaction.params,
-        result: await builder.buildDeployContractTx(
-          transaction.params,
-          account.publicKey,
-        ),
-      }
-    case "EXECUTE_SCRIPT":
-      return {
-        type: transaction.type,
-        params: transaction.params,
-        result: await builder.buildExecuteScriptTx(
-          transaction.params,
-          account.publicKey,
-        ),
-      }
-    case "UNSIGNED_TX":
-      return {
-        type: transaction.type,
-        params: transaction.params,
-        result: TransactionBuilder.buildUnsignedTx(transaction.params),
-      }
-  }
-}
-
-export async function checkBalances(
-  tokensWithBalance: BaseTokenWithBalance[],
-  transaction: TransactionParams,
-  networkId: string
-): Promise<string | undefined> {
-  const expectedBalances: Map<string, BigNumber> = new Map()
-  switch (transaction.type) {
-    case 'TRANSFER':
-      transaction.params.destinations.forEach((destination) => {
-        addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(destination.attoAlphAmount))
-        if (destination.tokens !== undefined) {
-          destination.tokens.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
-        }
-      })
-      break
-    case 'DEPLOY_CONTRACT':
-      addTokenToBalances(expectedBalances, ALPH_TOKEN_ID,
-        transaction.params.initialAttoAlphAmount !== undefined
-          ? BigNumber.from(transaction.params.initialAttoAlphAmount)
-          : BigNumber.from(ONE_ALPH)
-      )
-      if (transaction.params.initialTokenAmounts !== undefined) {
-        transaction.params.initialTokenAmounts.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
-      }
-      break
-    case 'EXECUTE_SCRIPT':
-      if (transaction.params.attoAlphAmount !== undefined) {
-        addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(transaction.params.attoAlphAmount))
-      }
-      if (transaction.params.tokens !== undefined) {
-        transaction.params.tokens.forEach((token) => addTokenToBalances(expectedBalances, token.id, BigNumber.from(token.amount)))
-      }
-      break
-    case 'UNSIGNED_TX':
-      return
-  }
-  addTokenToBalances(expectedBalances, ALPH_TOKEN_ID, BigNumber.from(minimalGasFee))
-
-  const zero = BigNumber.from(0)
-  for (const [tokenId, amount] of expectedBalances) {
-    if (zero.eq(amount)) {
-      continue
-    }
-    const token = tokensWithBalance.find((t) => t.id === tokenId)
-    const tokenBalance = token?.balance
-    if (tokenBalance === undefined || tokenBalance.lt(amount)) {
-      const tokenInfo = await getToken({ id: tokenId, networkId })
-      const tokenSymbol = tokenInfo?.symbol ?? tokenId
-      const tokenDecimals = tokenInfo?.decimals ?? 0
-      const expectedStr = prettifyTokenAmount(amount.toBigInt(), tokenDecimals)
-      const haveStr = prettifyTokenAmount((tokenBalance ?? zero).toBigInt(), tokenDecimals)
-      return i18n.t("Insufficient token {{ tokenSymbol }}, expected at least {{ expectedStr }}, got {{ haveStr }}", { tokenSymbol, expectedStr, haveStr })
-    }
-  }
-  return undefined
-}
-
 export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
-  transaction,
-  selectedAccount,
+  transactionParams,
   actionHash,
   onSubmit,
   onReject,
@@ -173,27 +50,34 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const selectedAccount = useSelectedAccount()
+
   usePageTracking("signTransaction", {
     networkId: selectedAccount?.networkId || "unknown",
   })
-  const [buildResult, setBuildResult] = useState<
-    ReviewTransactionResult | undefined
+  const [buildResults, setBuildResults] = useState<
+    ReviewTransactionResult[] | undefined
   >()
   const { id: networkId, nodeUrl } = useNetwork(
     selectedAccount?.networkId ?? "unknown",
   )
-
+  const [currentIndex, setCurrentIndex] = useState(0)
   const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokensWithBalance(selectedAccount)
 
   const useLedger = selectedAccount !== undefined && selectedAccount.signer.type === "ledger"
   const ledgerSubmit = useCallback((signature: string) => {
-    if (buildResult) {
-      onSubmit({ ...buildResult, signature })
+    if (buildResults) {
+      if (buildResults.length !== 1) {
+        throw new Error("Ledger does not support chained transactions")
+      }
+
+      const buildResult = buildResults[0]
+      onSubmit([{ ...buildResult, signature }])
     }
-  }, [onSubmit, buildResult])
+  }, [onSubmit, buildResults])
   const { ledgerState, ledgerApp, ledgerSign } = useLedgerApp({
     selectedAccount,
-    unsignedTx: buildResult?.result.unsignedTx,
+    unsignedTx: buildResults?.[0].result.unsignedTx,
     onSubmit: ledgerSubmit,
     navigate,
     onReject
@@ -207,13 +91,30 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       }
 
       try {
-        const buildResult = await tryBuildTransaction(
-          nodeUrl,
-          allUserTokens,
-          selectedAccount,
-          transaction
-        )
-        setBuildResult(buildResult)
+        const walletAccounts = await getAccounts((account) => {
+          return account.networkId === selectedAccount.networkId && !account.hidden
+        })
+
+        let results: ReviewTransactionResult[]
+        if (transactionParams.length === 0) {
+          throw new Error("Transaction params are empty")
+        } else if (transactionParams.length === 1) {
+          results = await tryBuildTransactions(
+            nodeUrl,
+            allUserTokens,
+            selectedAccount,
+            walletAccounts,
+            transactionParams[0],
+            useLedger
+          )
+        } else {
+          if (useLedger) {
+            throw new Error("Ledger does not support chained transactions")
+          }
+          results = await tryBuildChainedTransactions(nodeUrl, walletAccounts, transactionParams)
+        }
+
+        setBuildResults(results)
       } catch (e: any) {
         useAppState.setState({
           error: `${t("Transaction building failed")}: ${e.toString()}`,
@@ -225,52 +126,105 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     }
 
     build()
-  }, [nodeUrl, selectedAccount, transaction, tokenDetailsIsInitialising, actionHash, navigate, t])
+  }, [nodeUrl, selectedAccount, transactionParams, tokenDetailsIsInitialising, actionHash, navigate, t])
+
+  const getButtonConfig = () => {
+    // Single transaction case - use default behavior
+    if (buildResults?.length === 1) {
+      return {
+        confirmButtonText: !useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState)),
+        rejectButtonText: t("Cancel"),
+        onConfirm: () => {
+          if (useLedger) {
+            ledgerSign()
+          } else {
+            onSubmit(buildResults)
+          }
+        },
+        onReject: () => {
+          if (ledgerApp !== undefined) {
+            ledgerApp.close()
+          }
+          if (onReject !== undefined) {
+            onReject()
+          } else {
+            navigate(-1)
+          }
+        }
+      }
+    }
+
+    // Multiple transactions case
+    if (currentIndex === 0) {
+      return {
+        confirmButtonText: t("Next"),
+        rejectButtonText: t("Cancel"),
+        onConfirm: () => setCurrentIndex(prev => prev + 1),
+        onReject: () => {
+          if (onReject !== undefined) {
+            onReject()
+          } else {
+            navigate(-1)
+          }
+        }
+      }
+    }
+
+    if (currentIndex === buildResults!.length - 1) {
+      return {
+        confirmButtonText: !useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState)),
+        rejectButtonText: t("Back"),
+        onConfirm: () => {
+          if (useLedger) {
+            ledgerSign()
+          } else {
+            onSubmit(buildResults)
+          }
+        },
+        onReject: () => setCurrentIndex(prev => prev - 1)
+      }
+    }
+
+    // Middle transactions
+    return {
+      confirmButtonText: t("Next"),
+      rejectButtonText: t("Back"),
+      onConfirm: () => setCurrentIndex(prev => prev + 1),
+      onReject: () => setCurrentIndex(prev => prev - 1)
+    }
+  }
 
   if (!selectedAccount) {
     rejectAction(actionHash, t("No account found for network {{ networkId }}", { networkId }))
     return <Navigate to={routes.accounts()} />
   }
 
-  if (!buildResult) {
+  if (buildResults === undefined) {
     return <LoadingScreen />
   }
 
+  const buttonConfig = getButtonConfig()
+
   return (
     <ConfirmScreen
-      confirmButtonText={!useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState))}
+      confirmButtonText={buttonConfig.confirmButtonText}
       confirmButtonDisabled={ledgerState !== undefined}
-      rejectButtonText={t("Cancel")}
+      rejectButtonText={buttonConfig.rejectButtonText}
       selectedAccount={selectedAccount}
-      onSubmit={() => {
-        if (useLedger) {
-          ledgerSign()
-        } else {
-          onSubmit(buildResult)
-        }
-      }}
-      onReject={() => {
-        if (ledgerApp !== undefined) {
-          ledgerApp.close()
-        }
-        if (onReject !== undefined) {
-          onReject()
-        } else {
-          navigate(-1)
-        }
-      }}
+      onSubmit={buttonConfig.onConfirm}
+      onReject={buttonConfig.onReject}
       showHeader={false}
       footer={
-        buildResult && (
+        buildResults.length > 0 && (
           <Flex direction="column" gap="1">
             <LedgerStatus ledgerState={ledgerState} />
             <FeeEstimation
               onErrorChange={() => {
                 return
               }}
-              accountAddress={selectedAccount.address}
-              networkId={selectedAccount.networkId}
-              transaction={buildResult}
+              accountAddress={buildResults[currentIndex].params.signerAddress}
+              networkId={buildResults[currentIndex].params.networkId}
+              transaction={buildResults[currentIndex]}
               actionHash={actionHash}
             />
           </Flex>
@@ -278,11 +232,17 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       }
       {...props}
     >
-      <DappHeader transaction={transaction} />
-
-      <TransactionsList networkId={networkId} transactionReview={buildResult} />
-      <AccountNetworkInfo account={selectedAccount} />
-      <TxHashContainer txId={buildResult.result.txId}></TxHashContainer>
+      <DappHeader transaction={buildResults[currentIndex]} />
+      {buildResults.length > 1 && (
+        <Flex justify="center" mb={2} mt={-2}>
+          <Text fontSize="sm" fontWeight="medium">
+            {`${currentIndex + 1} / ${buildResults.length}`}
+          </Text>
+        </Flex>
+      )}
+      <TransactionsList networkId={networkId} transactionReview={buildResults[currentIndex]} />
+      <AccountNetworkInfo accountAddress={buildResults[currentIndex].params.signerAddress} networkId={networkId} />
+      <TxHashContainer txId={buildResults[currentIndex].result.txId}></TxHashContainer>
     </ConfirmScreen>
   )
 }
