@@ -459,7 +459,7 @@ export const TokenDapp: FC<{
         <form onSubmit={handleDestroyTokenSubmit}>
           <h2 className={styles.title}>Destroy token contract</h2>
 
-          <label htmlFor="destroy-token-address">Token Id</label>
+          <label htmlFor="destroy-token-address">Token Address</label>
           <input
             type="text"
             id="destroy-token-address"
