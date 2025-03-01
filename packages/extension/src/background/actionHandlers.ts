@@ -82,10 +82,24 @@ export const handleActionApproval = async (
             }
           ] as TransactionResult[]
         } else {
+          const networkId = transactions[0].params.networkId
+
+          // Check that all transactions have the same networkId
+          const allSameNetwork = transactions.slice(1).every(
+            transaction => transaction.params.networkId === networkId
+          )
+
+          if (!allSameNetwork) {
+            return {
+              type: "ALPH_TRANSACTION_FAILED",
+              data: { actionHash, error: "All transactions must have the same networkId" },
+            }
+          }
+
           const { signatures } = await executeTransactionsAction(
             transactions,
             background,
-            transactions[0].params.networkId,
+            networkId,
           )
 
           transactionWatcher.refresh()

@@ -233,38 +233,16 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       {...props}
     >
       <DappHeader transaction={buildResults[currentIndex]} />
+      {buildResults.length > 1 && (
+        <Flex justify="center" mb={2} mt={-2}>
+          <Text fontSize="sm" fontWeight="medium">
+            {`${currentIndex + 1} / ${buildResults.length}`}
+          </Text>
+        </Flex>
+      )}
       <TransactionsList networkId={networkId} transactionReview={buildResults[currentIndex]} />
       <AccountNetworkInfo accountAddress={buildResults[currentIndex].params.signerAddress} networkId={networkId} />
       <TxHashContainer txId={buildResults[currentIndex].result.txId}></TxHashContainer>
-      {
-        buildResults.length > 1 && (
-          <Flex direction="column" align="center">
-            <Flex>
-              <IconButton
-                aria-label="Previous transaction"
-                onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                disabled={currentIndex === 0}
-                size="small"
-              >
-              <ChevronLeftIcon />
-              </IconButton>
-              <Flex justify="center" align="center" mx={2}>
-                <Text fontSize="sm" fontWeight="medium">
-                  {`${currentIndex + 1} of ${buildResults.length}`}
-                </Text>
-              </Flex>
-              <IconButton
-                aria-label="Next transaction"
-                onClick={() => setCurrentIndex(prev => Math.min(buildResults.length - 1, prev + 1))}
-                disabled={currentIndex === buildResults.length - 1}
-                size="small"
-              >
-              <ChevronRightIcon />
-              </IconButton>
-            </Flex>
-          </Flex>
-        )
-      }
     </ConfirmScreen>
   )
 }

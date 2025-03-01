@@ -27,7 +27,7 @@ export const DappHeader = ({
   }, [t, transaction.type])
 
   return (
-    <Box mb="6" mt="3">
+    <Box mb="2" mt="3">
     <Flex
       direction="column"
       justifyContent="center"
