@@ -53,7 +53,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   const selectedAccount0 = useSelectedAccount()
 
   const getSignerAccount = useCallback(() => {
-    if (transactionParams.length == 1) {
+    if (transactionParams.length === 1) {
       return {
         address: transactionParams[0].params.signerAddress,
         networkId: transactionParams[0].params.networkId
