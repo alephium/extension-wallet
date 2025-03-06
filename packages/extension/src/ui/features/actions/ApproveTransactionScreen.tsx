@@ -25,7 +25,7 @@ import { tryBuildChainedTransactions, tryBuildTransactions } from "../../../shar
 import { IconButton } from "@mui/material"
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons"
 import { getAccounts } from "../../../shared/account/store"
-import { useSelectedAccount } from "../accounts/accounts.state"
+import { useAccount, useSelectedAccount } from "../accounts/accounts.state"
 import { LedgerStatus } from "./LedgerStatus"
 import { useLedgerApp } from "../ledger/useLedgerApp"
 import { getConfirmationTextByState } from "../ledger/types"
@@ -50,7 +50,20 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const selectedAccount = useSelectedAccount()
+  const selectedAccount0 = useSelectedAccount()
+
+  const getSignerAccount = useCallback(() => {
+    if (transactionParams.length == 1) {
+      return {
+        address: transactionParams[0].params.signerAddress,
+        networkId: transactionParams[0].params.networkId
+      }
+    }
+    return undefined
+  }, [transactionParams])
+
+  const signerAccount = useAccount(getSignerAccount())
+  const selectedAccount = signerAccount ?? selectedAccount0
 
   usePageTracking("signTransaction", {
     networkId: selectedAccount?.networkId || "unknown",
