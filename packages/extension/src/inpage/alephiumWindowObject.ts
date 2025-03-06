@@ -10,6 +10,8 @@ import {
   KeyType,
   NetworkId,
   NodeProvider,
+  SignChainedTxParams,
+  SignChainedTxResult,
   SignDeployContractTxParams,
   SignDeployContractTxResult,
   SignExecuteScriptTxParams,
@@ -29,6 +31,7 @@ import { TransactionParams } from "../shared/actionQueue/types"
 import { sendMessage, waitForMessage } from "./messageActions"
 import { getIsPreauthorized, removePreAuthorization } from "./messaging"
 import { handleAddTokenRequest } from "./requestMessageHandlers"
+import { signedChainedTxParamsToTransactionParams, transactionResultToSignUnsignedTxResult } from "../shared/transactions/transformers"
 
 const VERSION = `${process.env.VERSION}`
 const USER_ACTION_TIMEOUT = 10 * 60 * 1000
@@ -116,12 +119,6 @@ export const alephiumWindowObject: AlephiumWindowObject =
         throw Error("User aborted")
       }
 
-      const { alephiumProviders } = window
-      const alephium = alephiumProviders?.alephium
-      if (!alephium) {
-        throw Error("No alephium object detected")
-      }
-
       const account = {
         address: walletAccount.address,
         publicKey: walletAccount.signer.publicKey,
@@ -148,7 +145,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
     signAndSubmitTransferTx = async (
       params: SignTransferTxParams,
     ): Promise<SignTransferTxResult> => {
-      const result = (
+      const txResults = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -157,14 +154,16 @@ export const alephiumWindowObject: AlephiumWindowObject =
             salt: Date.now().toString(),
           }),
         )
-      ).result as SignTransferTxResult
-      return result
+      ).result
+
+      const txResult = txResults[txResults.length - 1]
+      return txResult.result as SignTransferTxResult
     }
 
     signAndSubmitDeployContractTx = async (
       params: SignDeployContractTxParams,
     ): Promise<SignDeployContractTxResult> => {
-      const result = (
+      const txResults = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -173,14 +172,16 @@ export const alephiumWindowObject: AlephiumWindowObject =
             salt: Date.now().toString(),
           }),
         )
-      ).result as SignDeployContractTxResult
-      return { ...result }
+      ).result
+
+      const txResult = txResults[txResults.length - 1]
+      return txResult.result as SignDeployContractTxResult
     }
 
     signAndSubmitExecuteScriptTx = async (
       params: SignExecuteScriptTxParams,
     ): Promise<SignExecuteScriptTxResult> => {
-      const result = (
+      const txResults = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -189,14 +190,16 @@ export const alephiumWindowObject: AlephiumWindowObject =
             salt: Date.now().toString(),
           }),
         )
-      ).result as SignExecuteScriptTxResult
-      return result
+      ).result
+
+      const txResult = txResults[txResults.length - 1]
+      return txResult.result as SignExecuteScriptTxResult
     }
 
     signAndSubmitUnsignedTx = async (
       params: SignUnsignedTxParams,
     ): Promise<SignUnsignedTxResult> => {
-      const result = (
+      const [txResult] = (
         await this.#executeAlephiumTransaction(
           params,
           (p, host, networkId, keyType) => ({
@@ -205,8 +208,58 @@ export const alephiumWindowObject: AlephiumWindowObject =
             salt: Date.now().toString(),
           }),
         )
-      ).result as SignUnsignedTxResult
-      return result
+      ).result
+
+      return txResult.result as SignUnsignedTxResult
+    }
+
+    signAndSubmitChainedTx = async (
+      params: SignChainedTxParams[],
+    ): Promise<SignChainedTxResult[]> => {
+      if (params.length === 0) {
+        throw Error("Empty transaction params")
+      }
+
+      const transactionParamz: TransactionParams[] = params.map(param =>
+        signedChainedTxParamsToTransactionParams(param, this.#connectedNetworkId!)
+      )
+
+      sendMessage({ type: "ALPH_EXECUTE_TRANSACTION", data: transactionParamz })
+
+      const { actionHash } = await waitForMessage(
+        "ALPH_EXECUTE_TRANSACTION_RES",
+        USER_ACTION_TIMEOUT,
+      )
+
+      sendMessage({ type: "ALPH_OPEN_UI" })
+
+      const txMessage = await Promise.race([
+        waitForMessage(
+          "ALPH_TRANSACTION_SUBMITTED",
+          USER_ACTION_TIMEOUT_LONGER,
+          (x) => x.data.actionHash === actionHash,
+        ),
+        waitForMessage(
+          "ALPH_TRANSACTION_FAILED",
+          USER_ACTION_TIMEOUT,
+          (x) => x.data.actionHash === actionHash,
+        )
+          .then((res) => res)
+          .catch(() => {
+            const error = "User action time out"
+            sendMessage({
+              type: "ALPH_TRANSACTION_FAILED",
+              data: { actionHash, error },
+            })
+            return { error }
+          }),
+      ])
+
+      if ("error" in txMessage) {
+        throw Error(txMessage.error)
+      }
+
+      return txMessage.result.map(res => transactionResultToSignUnsignedTxResult(res))
     }
 
     signUnsignedTx = async (
@@ -218,7 +271,6 @@ export const alephiumWindowObject: AlephiumWindowObject =
         throw new Error("Invalid unsigned tx")
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       sendMessage({
         type: "ALPH_SIGN_UNSIGNED_TX",
         data: {
@@ -368,7 +420,6 @@ export const alephiumWindowObject: AlephiumWindowObject =
     ) {
       this.#checkParams(params)
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const data = dataBuilder(
         params,
         window.location.host,
@@ -376,7 +427,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
         this.connectedAccount!.keyType,
       )
 
-      sendMessage({ type: "ALPH_EXECUTE_TRANSACTION", data })
+      sendMessage({ type: "ALPH_EXECUTE_TRANSACTION", data: [data] })
       const { actionHash } = await waitForMessage(
         "ALPH_EXECUTE_TRANSACTION_RES",
         USER_ACTION_TIMEOUT,

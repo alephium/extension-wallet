@@ -9,6 +9,7 @@ import { TransactionParams, TransactionResult } from "../actionQueue/types"
 import { Transaction } from "../transactions"
 import { DeclareContract } from "../udc/type"
 import { BaseWalletAccount } from "../wallet.model"
+import { SignChainedTxParams } from "@alephium/web3"
 
 export interface EstimateFeeResponse {
   amount: string
@@ -28,13 +29,13 @@ export interface DeclareDeployEstimateFeeResponse
 export type TransactionMessage =
   | {
       type: "ALPH_EXECUTE_TRANSACTION"
-      data: TransactionParams
+      data: TransactionParams[]
     }
   | { type: "ALPH_EXECUTE_TRANSACTION_RES"; data: { actionHash: string } }
   | { type: "TRANSACTION_UPDATES"; data: Transaction[] }
   | {
       type: "ALPH_TRANSACTION_SUBMITTED"
-      data: { result: TransactionResult["result"]; actionHash: string }
+      data: { result: TransactionResult[]; actionHash: string }
     }
   | {
       type: "ALPH_TRANSACTION_FAILED"

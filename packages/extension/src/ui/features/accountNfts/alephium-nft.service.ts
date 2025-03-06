@@ -101,3 +101,7 @@ async function getNftMetadataz(nftIds: string[], explorerProvider: ExplorerProvi
 
   return cachedNftMetadataz.concat(newNftMetadataz)
 }
+
+export const isMp4Url = (url: string) => {
+  return url.toLowerCase().endsWith('.mp4')
+}

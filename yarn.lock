@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"@alephium/cli@^1.7.3":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-1.7.3.tgz#85555c25dd7f3e8e3e33addf9fa74eda435a3083"
-  integrity sha512-mz7VcqUlfW8812AMw3lKrhHIrbcGTtFeRwiuoEXGE+zgIOWrZNu1E+648/rC89ekV/xxGIxPlesCMDET67ULPA==
+"@alephium/cli@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-1.8.2.tgz#9cc8b0617b2fee763a283e3f0607d17f31d18bae"
+  integrity sha512-iBxqcgXTPR51Mmt/WtCpZVA/Kay3gn3cT74QyETSdgic0lP2LCPhbs+XUeNLIYS1fDJSVdeFzt4ZD4p+BdbAbw==
   dependencies:
-    "@alephium/web3" "^1.7.3"
-    "@alephium/web3-wallet" "^1.7.3"
+    "@alephium/web3" "^1.8.2"
+    "@alephium/web3-wallet" "^1.8.2"
     "@swc/core" "^1.4.1"
     commander "^9.5.0"
     cross-fetch "^3.1.5"
@@ -18,12 +18,12 @@
     jest "^28.1.3"
     prettier "^2.8.7"
 
-"@alephium/get-extension-wallet@^1.7.3":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-1.7.3.tgz#72974a691cf0c15c1e8eb7bea8888131ede35140"
-  integrity sha512-g/Pw3rg2P0aVIPRJ4Nnpyb41WTfzaZTvE+8Ge6HBPzpWP9w95gzj8CqEHfoV2zg2MkmbU6gL0x0rtoDTOYkSKQ==
+"@alephium/get-extension-wallet@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-1.8.2.tgz#1600d7631ce57e03bf493f0e149b310a15b6c20d"
+  integrity sha512-4rFRq0LhMOaoz9RE6g0fzRMD+KxfY03rKVSOIOJ0/89inlhIZG2QHsr5jcDjo7Z8JkU83vt/9OAymYFAMYypNw==
   dependencies:
-    "@alephium/web3" "^1.7.3"
+    "@alephium/web3" "^1.8.2"
     bowser "^2.11.0"
 
 "@alephium/ledger-app@0.6.0":
@@ -35,27 +35,27 @@
     "@ledgerhq/hw-transport" "6.31.0"
     blakejs "^1.2.1"
 
-"@alephium/token-list@0.0.19":
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/@alephium/token-list/-/token-list-0.0.19.tgz#caf6b3c5fcf69495373b9d6ed9e0850f779f52f9"
-  integrity sha512-5DJjIue90c1zEXdqSICBbzi4nCQEx/VX85Elcbi3wP2UIBwaR9TH7gQDqPR1/OABXYgh+hMhnke6K/Yk0QVUgQ==
+"@alephium/token-list@0.0.20":
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/@alephium/token-list/-/token-list-0.0.20.tgz#9e5e6c6bc4650ff2fb5fb4b5cef213452d9414c4"
+  integrity sha512-0JoFLsdxqp2M0k0ohsCe0F+tdMEJ1LjJQrNm4s+3c8CY2dDnTNbH1zxPPQ9xF2HbTUHbhAN9VCMB1SmWRuMm7g==
   dependencies:
     cross-fetch "^3.1.8"
 
-"@alephium/web3-test@^1.8.3":
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-1.8.3.tgz#c2ac50374281eb2b416000c0b6e7e686bd967c26"
-  integrity sha512-btut4b4/uuAGzLAudatK0R7JA5HsVn+a+sbmzmFw26TGqAMiEdjBlFGHtXYowdlla+ozdgreiQARhXhCrMTlVA==
+"@alephium/web3-test@^1.8.5":
+  version "1.8.5"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-1.8.5.tgz#72e9253015166ec7cec07dd59a5f590dadebde09"
+  integrity sha512-nv2yj6+pnaAuCleqOzFy6p/siiNS3WUBNFB2EzKCzqhP+jwdGWztJweSDvLQKuvVQFZFS0CoxXkucAe2Kmx5hA==
   dependencies:
-    "@alephium/web3" "^1.8.3"
-    "@alephium/web3-wallet" "^1.8.3"
+    "@alephium/web3" "^1.8.5"
+    "@alephium/web3-wallet" "^1.8.5"
 
-"@alephium/web3-wallet@^1.7.3":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-1.7.3.tgz#7ff34b25853689b906ddfb12948104a6fe40437f"
-  integrity sha512-jR5hq4dZX7qkslZBMILK5wuZ/3nfQzfIWkOrT9Gln/lZ9ilLdBMIpIbVPKHbHz40fihWJDCu1UOvtw8B8p8dUg==
+"@alephium/web3-wallet@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-1.8.2.tgz#fb39b8590c4dc1aa5115e4af0e13487012f1d55d"
+  integrity sha512-DjnfQBltmWflYBMsTpdl5ULMXlRvDvgVmeh8LFTTEvo0YpawdLvJ2NB4Fdfj1Y/PH3fz5+dyMFBSJ6NdLYjkTQ==
   dependencies:
-    "@alephium/web3" "^1.7.3"
+    "@alephium/web3" "^1.8.2"
     "@noble/secp256k1" "1.7.1"
     "@types/node" "^16.18.23"
     bip32 "3.1.0"
@@ -63,12 +63,12 @@
     elliptic "6.5.4"
     fs-extra "10.0.1"
 
-"@alephium/web3-wallet@^1.8.3":
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-1.8.3.tgz#34e331ffe65357caf36b0f4963926da958b42b48"
-  integrity sha512-tTdUbL31t7RSXL6LouZQ2rCQrZLuTbyH4S7j4+9JCkQ3xMH/nWyinIBPODqSBCOdVvZNGQ53B2g23GXvsZDrpA==
+"@alephium/web3-wallet@^1.8.5":
+  version "1.8.5"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-1.8.5.tgz#d7bb513605cbb2f2c456cd367e33e4c079505966"
+  integrity sha512-PbkE+nE3nX/QZ94E3/gyDNwLbkFEvQz0CXH29QHF+yd5ccAelfb7lBX3XW7rhG0pGA32caJlfoUBmgt8yLHUew==
   dependencies:
-    "@alephium/web3" "^1.8.3"
+    "@alephium/web3" "^1.8.5"
     "@noble/secp256k1" "1.7.1"
     "@types/node" "^16.18.23"
     bip32 "3.1.0"
@@ -93,10 +93,10 @@
     path-browserify "^1.0.1"
     stream-browserify "^3.0.0"
 
-"@alephium/web3@^1.7.3":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-1.7.3.tgz#4ebaa45fca0bb7cbce1fc6c55e047c51b197d472"
-  integrity sha512-TvhHorYNctw9f31cuhpECpo2Ym3sMvBmCWquVqEMZ/gsF2PVeMLAFtG7QsHG625x41OSRAsfbBuQzT3lq2K/yw==
+"@alephium/web3@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-1.8.2.tgz#2586e8c112bba3a26db7b862800addb4142c565d"
+  integrity sha512-iqaPSflaXj7bz3kmkTZOFpCQpvG6CXFS5PaeiE9+bxCgf1FNCf6Q/4Ms7DQuRbZ2U8sDlTbLTH/RYBy5giPADg==
   dependencies:
     "@noble/secp256k1" "1.7.1"
     base-x "4.0.0"
@@ -110,10 +110,10 @@
     path-browserify "^1.0.1"
     stream-browserify "^3.0.0"
 
-"@alephium/web3@^1.8.3":
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-1.8.3.tgz#3cdcd5d3449783d2a7b7e6a16a7273bea6de343c"
-  integrity sha512-F2qrgcEZDZRv4RiN/7fGHphErsxSK5PjPrJWbffkSXak1z5xZT7aRsU6tr8gsubNF2JitmWL2i7P1oUJj8scFA==
+"@alephium/web3@^1.8.5":
+  version "1.8.5"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-1.8.5.tgz#722b1c9003e2867dbb289aa23f4e53fc9e8b17a5"
+  integrity sha512-5T4/o/QPfyQEyWpqreC3glfCexzglV6V8nGZ6z5oDmni1l0itYRDnDz5WeD1/J/c2Y8DIlasqsVD1Oaxze8heg==
   dependencies:
     "@noble/secp256k1" "1.7.1"
     base-x "4.0.0"
@@ -21316,7 +21316,16 @@ string-natural-compare@^3.0.1:
   resolved "https://registry.yarnpkg.com/string-natural-compare/-/string-natural-compare-3.0.1.tgz#7a42d58474454963759e8e8b7ae63d71c1e7fdf4"
   integrity sha512-n3sPwynL1nwKi3WJ6AIsClwBMa0zTi54fn2oLU6ndfTSIO05xaznjSf15PcBZU6FNWbmN5Q6cxT4V5hGvB4taw==
 
-"string-width-cjs@npm:string-width@^4.2.0", "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.0.0, string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.2, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
+"string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.0.0, string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.2, string-width@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -21416,7 +21425,7 @@ stringify-object@^3.3.0:
     is-obj "^1.0.1"
     is-regexp "^1.0.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -21429,6 +21438,13 @@ strip-ansi@^3.0.1:
   integrity sha512-VhumSSbBqDTP8p2ZLKj40UjBCV4+v8bUSEpUb4KjRgWk9pbqGF4REFj6KEagidb2f/M6AzC0EmFyDNGaw9OCzg==
   dependencies:
     ansi-regex "^2.0.0"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
 
 strip-ansi@^7.0.1:
   version "7.0.1"
@@ -23749,7 +23765,7 @@ worker-rpc@^0.1.0:
   dependencies:
     microevent.ts "~0.1.1"
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
@@ -23762,6 +23778,15 @@ wrap-ansi@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-6.2.0.tgz#e9393ba07102e6c91a3b221478f0257cd2856e53"
   integrity sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
+wrap-ansi@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
+  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
   dependencies:
     ansi-styles "^4.0.0"
     string-width "^4.1.0"

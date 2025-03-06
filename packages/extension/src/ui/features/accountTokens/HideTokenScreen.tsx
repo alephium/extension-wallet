@@ -2,7 +2,7 @@ import { FC, useState } from "react"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
 
-import { removeToken } from "../../../shared/token/storage"
+import { hideToken } from "../../../shared/token/storage"
 import { useAppState } from "../../app.state"
 import { Alert } from "../../components/Alert"
 import { routes } from "../../routes"
@@ -49,11 +49,11 @@ export const HideTokenScreen: FC = () => {
     return <Navigate to={routes.accountTokens()} />
   }
 
-  const { name, logoURI } = toTokenView(token)
+  const { name, logoURI, originChain, unchainedLogoURI } = toTokenView(token)
 
   const handleSubmit = () => {
     try {
-      removeToken(token)
+      hideToken(token)
       navigate(routes.accountTokens())
     } catch {
       setError(t("Token not hidden"))
@@ -68,7 +68,7 @@ export const HideTokenScreen: FC = () => {
       onSubmit={handleSubmit}
     >
       <TokenTitle>
-        <TokenIcon url={logoURI} name={name} size={12} verified={token.verified} />
+        <TokenIcon logoURI={logoURI} name={name} size={12} verified={token.verified} originChain={originChain} unchainedLogoURI={unchainedLogoURI} />
         <TokenName>{name}</TokenName>
       </TokenTitle>
       {error && <FormError>{error}</FormError>}

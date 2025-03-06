@@ -77,9 +77,9 @@ const TokenBalanceContainer = styled(RowCentered)`
   align-items: baseline;
 `
 
-const tokenIcon = (name: string, size: number, logoURI?: string, verified?: boolean) => {
+const tokenIcon = (name: string, size: number, logoURI?: string, verified?: boolean, originChain?: string, unchainedLogoURI?: string) => {
   return logoURI ? (
-    <TokenIcon name={name} url={logoURI} size={size} verified={verified} />
+    <TokenIcon name={name} logoURI={logoURI} size={size} verified={verified} originChain={originChain} unchainedLogoURI={unchainedLogoURI} />
   ) : (
     <Ghost size={size * 0.7} />
   )
@@ -101,20 +101,20 @@ export const TokenScreen: FC = () => {
     return <Navigate to={routes.accounts()} />
   }
 
-  const { id, name, symbol, logoURI, verified } = toTokenView(token)
+  const { id, name, symbol, logoURI, verified, originChain, unchainedLogoURI, showAlways } = toTokenView(token)
   const displayBalance = prettifyTokenBalance(token, false)
   const isLoading = isValidating || tokenDetailsIsInitialising
 
   return (
     <NavigationContainer
       leftButton={<BarBackButton />}
-      rightButton={<TokenMenuDeprecated tokenId={id} />}
+      rightButton={<TokenMenuDeprecated tokenId={id} canHideToken={!showAlways} />}
       title={name === "Ether" ? "Ethereum" : name}
     >
       <TokenScreenWrapper>
         <TokenHeader hasCurrencyValue={!!currencyValue}>
           <ColumnCenter>
-            {tokenIcon(name, 12, logoURI, verified)}
+            {tokenIcon(name, 12, logoURI, verified, originChain, unchainedLogoURI)}
             <TokenBalanceContainer>
               <LoadingPulse
                 isLoading={isLoading}

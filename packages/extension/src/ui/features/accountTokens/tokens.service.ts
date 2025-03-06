@@ -12,6 +12,8 @@ export interface TokenView {
   logoURI?: string
   showAlways?: boolean
   verified?: boolean
+  originChain?: string
+  unchainedLogoURI?: string
 }
 
 const formatTokenBalanceToCharLength =
