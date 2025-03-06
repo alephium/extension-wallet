@@ -62,10 +62,11 @@ export const handleActionApproval = async (
 
         let results: TransactionResult[]
         if (transactions.length === 1) {
-          const transaction = transactions[0] as ReviewTransactionResult
+          const transaction = transactions[0] as ReviewTransactionResult & { signature?: string }
 
           const { signature } = await executeTransactionAction(
             transaction,
+            transaction.signature,
             background,
             transaction.params.networkId,
           )
