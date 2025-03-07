@@ -73,7 +73,7 @@ export function getUpdatesFromLatestTransactions(
 export function getPruneTransactions(
   existingTransactions: Transaction[],
 ): TransactionUpdates {
-  const maxPersistedTxsPerWalletAccount = 50
+  const maxPersistedTxsPerWalletAccount = 25
   const transactionsByWalletAccount = groupBy(existingTransactions, (tx) => `${tx.account.address}-${tx.account.networkId}`)
   const transactionsToPrune: Transaction[] = []
   forEach(transactionsByWalletAccount, (transactionsPerWalletAccount, _) => {
