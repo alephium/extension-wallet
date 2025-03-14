@@ -26,13 +26,13 @@
     "@alephium/web3" "^1.8.2"
     bowser "^2.11.0"
 
-"@alephium/ledger-app@0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@alephium/ledger-app/-/ledger-app-0.6.0.tgz#60fffa10b707391cd4bcfecfcb6592658c9621e5"
-  integrity sha512-qszjWh1R30YRaxggPSa6le9Hu1XFQTKFJnn2C7z8QLC6I5DcF4QRjFPbeRJVSSZc2GMvLsIvt7oUlFLjcvBiHA==
+"@alephium/ledger-app@0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@alephium/ledger-app/-/ledger-app-0.6.1.tgz#40e895f869c3ba7cacc00d5a3c301d9210bca82d"
+  integrity sha512-eSB1WisTiTiZCPrDcA+HMG5WLLavxN4usMBbmq05tFsWsiAUtbgoN7yBQWsL1CzjivenmPrMOmTrcKxRRdcdzQ==
   dependencies:
     "@alephium/web3" "^1.5.0"
-    "@ledgerhq/hw-transport" "6.31.0"
+    "@ledgerhq/hw-transport" "^6.31.4"
     blakejs "^1.2.1"
 
 "@alephium/token-list@0.0.20":
@@ -3647,21 +3647,6 @@
     rxjs "^7.8.1"
     semver "^7.3.5"
 
-"@ledgerhq/devices@^8.4.0":
-  version "8.4.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-8.4.0.tgz#f3a03576d4a53d731bdaa212a00bd0adbfb86fb1"
-  integrity sha512-TUrMlWZJ+5AFp2lWMw4rGQoU+WtjIqlFX5SzQDL9phaUHrt4TFierAGHsaj5+tUHudhD4JhIaLI2cn1NOyq5NQ==
-  dependencies:
-    "@ledgerhq/errors" "^6.17.0"
-    "@ledgerhq/logs" "^6.12.0"
-    rxjs "^7.8.1"
-    semver "^7.3.5"
-
-"@ledgerhq/errors@^6.17.0":
-  version "6.17.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-6.17.0.tgz#0d56361fe6eb7de3b239e661710679f933f1fcca"
-  integrity sha512-xnOVpy/gUUkusEORdr2Qhw3Vd0MGfjyVGgkGR9Ck6FXE26OIdIQ3tNmG5BdZN+gwMMFJJVxxS4/hr0taQfZ43w==
-
 "@ledgerhq/errors@^6.19.1":
   version "6.19.1"
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-6.19.1.tgz#d9ac45ad4ff839e468b8f63766e665537aaede58"
@@ -3686,16 +3671,6 @@
     "@ledgerhq/errors" "^6.19.1"
     "@ledgerhq/hw-transport" "^6.31.4"
     "@ledgerhq/logs" "^6.12.0"
-
-"@ledgerhq/hw-transport@6.31.0":
-  version "6.31.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-6.31.0.tgz#82d8154bbcec8dc0104009a646159190fba5ae76"
-  integrity sha512-BY1poLk8vlJdIYngp8Zfaa/V9n14dqgt1G7iNetVRhJVFEKp9EYONeC3x6q/N7x81LUpzBk6M+T+s46Z4UiXHw==
-  dependencies:
-    "@ledgerhq/devices" "^8.4.0"
-    "@ledgerhq/errors" "^6.17.0"
-    "@ledgerhq/logs" "^6.12.0"
-    events "^3.3.0"
 
 "@ledgerhq/hw-transport@^6.31.4":
   version "6.31.4"
