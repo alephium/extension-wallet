@@ -10,7 +10,8 @@ import {
   publicKeyFromPrivateKey,
   groupOfAddress,
   KeyType,
-  ExplorerProvider
+  ExplorerProvider,
+  isGrouplessAddressWithGroupIndex,
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
@@ -320,8 +321,9 @@ export class Wallet extends AccountDiscovery {
 
   public async getAccount({ address, networkId }: { address: string, networkId?: string }) {
     const accounts = await this.walletStore.get()
+    const updatedAddress = isGrouplessAddressWithGroupIndex(address) ? address.slice(0, -2) : address
     const account = find(accounts, (account) =>
-      account.address === address && (networkId === undefined || account.networkId === networkId)
+      account.address === updatedAddress && (networkId === undefined || account.networkId === networkId)
     )
 
     if (!account) {
@@ -425,6 +427,11 @@ export class Wallet extends AccountDiscovery {
   }
 
   public deriveAccount(secret: string, startIndex: number, networkId: string, keyType: KeyType, forGroup?: number): WalletAccount {
+    if (keyType === 'groupless' && forGroup !== undefined) {
+      // Shall we allow for selecting default group?
+      throw new Error("Groupless account cannot have explicit group")
+    }
+
     const [privateKey, index] = forGroup === undefined ? [deriveHDWalletPrivateKey(secret, keyType, startIndex), startIndex]
       : deriveHDWalletPrivateKeyForGroup(secret, forGroup, keyType, startIndex)
     const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
@@ -440,7 +447,7 @@ export class Wallet extends AccountDiscovery {
         derivationIndex: index,
         group: groupOfAddress(newAddress)
       },
-      type: "alephium",
+      type: keyType === 'groupless' ? "alephium-groupless" : "alephium",
     }
   }
 
