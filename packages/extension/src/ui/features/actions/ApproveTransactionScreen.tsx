@@ -110,6 +110,10 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 
         let results: ReviewTransactionResult[]
 
+        if (transactionParams.length === 0) {
+          throw new Error("Transaction params are empty")
+        }
+
         if (selectedAccount.type === "alephium-groupless") {
           if (useLedger) {
             throw new Error("Ledger does not support groupless address")
@@ -124,9 +128,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
             throw new Error("Groupless address does not support chained transactions")
           }
         } else {
-          if (transactionParams.length === 0) {
-            throw new Error("Transaction params are empty")
-          } else if (transactionParams.length === 1) {
+          if (transactionParams.length === 1) {
             results = await tryBuildTransactions(
               nodeUrl,
               allUserTokens,
