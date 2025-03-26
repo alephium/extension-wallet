@@ -25,7 +25,7 @@ import { tryBuildChainedTransactions, tryBuildGrouplessTransactions, tryBuildTra
 import { IconButton } from "@mui/material"
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons"
 import { getAccounts } from "../../../shared/account/store"
-import { useSelectedAccount } from "../accounts/accounts.state"
+import { useAccount, useSelectedAccount } from "../accounts/accounts.state"
 import { LedgerStatus } from "./LedgerStatus"
 import { useLedgerApp } from "../ledger/useLedgerApp"
 import { getConfirmationTextByState } from "../ledger/types"
@@ -50,7 +50,20 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
 }) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const selectedAccount = useSelectedAccount()
+  const selectedAccount0 = useSelectedAccount()
+
+  const getSignerAccount = useCallback(() => {
+    if (transactionParams.length === 1) {
+      return {
+        address: transactionParams[0].params.signerAddress,
+        networkId: transactionParams[0].params.networkId
+      }
+    }
+    return undefined
+  }, [transactionParams])
+
+  const signerAccount = useAccount(getSignerAccount())
+  const selectedAccount = signerAccount ?? selectedAccount0
 
   usePageTracking("signTransaction", {
     networkId: selectedAccount?.networkId || "unknown",
@@ -144,6 +157,72 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     build()
   }, [nodeUrl, selectedAccount, transactionParams, tokenDetailsIsInitialising, actionHash, navigate, t])
 
+  const getButtonConfig = () => {
+    // Single transaction case - use default behavior
+    if (buildResults?.length === 1) {
+      return {
+        confirmButtonText: !useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState)),
+        rejectButtonText: t("Cancel"),
+        onConfirm: () => {
+          if (useLedger) {
+            ledgerSign()
+          } else {
+            onSubmit(buildResults)
+          }
+        },
+        onReject: () => {
+          if (ledgerApp !== undefined) {
+            ledgerApp.close()
+          }
+          if (onReject !== undefined) {
+            onReject()
+          } else {
+            navigate(-1)
+          }
+        }
+      }
+    }
+
+    // Multiple transactions case
+    if (currentIndex === 0) {
+      return {
+        confirmButtonText: t("Next"),
+        rejectButtonText: t("Cancel"),
+        onConfirm: () => setCurrentIndex(prev => prev + 1),
+        onReject: () => {
+          if (onReject !== undefined) {
+            onReject()
+          } else {
+            navigate(-1)
+          }
+        }
+      }
+    }
+
+    if (currentIndex === buildResults!.length - 1) {
+      return {
+        confirmButtonText: !useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState)),
+        rejectButtonText: t("Back"),
+        onConfirm: () => {
+          if (useLedger) {
+            ledgerSign()
+          } else {
+            onSubmit(buildResults)
+          }
+        },
+        onReject: () => setCurrentIndex(prev => prev - 1)
+      }
+    }
+
+    // Middle transactions
+    return {
+      confirmButtonText: t("Next"),
+      rejectButtonText: t("Back"),
+      onConfirm: () => setCurrentIndex(prev => prev + 1),
+      onReject: () => setCurrentIndex(prev => prev - 1)
+    }
+  }
+
   if (!selectedAccount) {
     rejectAction(actionHash, t("No account found for network {{ networkId }}", { networkId }))
     return <Navigate to={routes.accounts()} />
@@ -153,29 +232,16 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     return <LoadingScreen />
   }
 
+  const buttonConfig = getButtonConfig()
+
   return (
     <ConfirmScreen
-      confirmButtonText={!useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState))}
+      confirmButtonText={buttonConfig.confirmButtonText}
       confirmButtonDisabled={ledgerState !== undefined}
-      rejectButtonText={t("Cancel")}
+      rejectButtonText={buttonConfig.rejectButtonText}
       selectedAccount={selectedAccount}
-      onSubmit={() => {
-        if (useLedger) {
-          ledgerSign()
-        } else {
-          onSubmit(buildResults)
-        }
-      }}
-      onReject={() => {
-        if (ledgerApp !== undefined) {
-          ledgerApp.close()
-        }
-        if (onReject !== undefined) {
-          onReject()
-        } else {
-          navigate(-1)
-        }
-      }}
+      onSubmit={buttonConfig.onConfirm}
+      onReject={buttonConfig.onReject}
       showHeader={false}
       footer={
         buildResults.length > 0 && (
@@ -196,38 +262,16 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       {...props}
     >
       <DappHeader transaction={buildResults[currentIndex]} />
+      {buildResults.length > 1 && (
+        <Flex justify="center" mb={2} mt={-2}>
+          <Text fontSize="sm" fontWeight="medium">
+            {`${currentIndex + 1} / ${buildResults.length}`}
+          </Text>
+        </Flex>
+      )}
       <TransactionsList networkId={networkId} transactionReview={buildResults[currentIndex]} />
       <AccountNetworkInfo accountAddress={buildResults[currentIndex].params.signerAddress} networkId={networkId} />
       <TxHashContainer txId={buildResults[currentIndex].result.txId}></TxHashContainer>
-      {
-        buildResults.length > 1 && (
-          <Flex direction="column" align="center">
-            <Flex>
-              <IconButton
-                aria-label="Previous transaction"
-                onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                disabled={currentIndex === 0}
-                size="small"
-              >
-              <ChevronLeftIcon />
-              </IconButton>
-              <Flex justify="center" align="center" mx={2}>
-                <Text fontSize="sm" fontWeight="medium">
-                  {`${currentIndex + 1} of ${buildResults.length}`}
-                </Text>
-              </Flex>
-              <IconButton
-                aria-label="Next transaction"
-                onClick={() => setCurrentIndex(prev => Math.min(buildResults.length - 1, prev + 1))}
-                disabled={currentIndex === buildResults.length - 1}
-                size="small"
-              >
-              <ChevronRightIcon />
-              </IconButton>
-            </Flex>
-          </Flex>
-        )
-      }
     </ConfirmScreen>
   )
 }

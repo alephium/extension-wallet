@@ -156,6 +156,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
           }),
         )
       ).result
+
       const txResult = txResults[txResults.length - 1]
       return txResult.result as SignTransferTxResult
     }
@@ -173,6 +174,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
           }),
         )
       ).result
+
       const txResult = txResults[txResults.length - 1]
       return txResult.result as SignDeployContractTxResult
     }
@@ -190,6 +192,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
           }),
         )
       ).result
+
       const txResult = txResults[txResults.length - 1]
       return txResult.result as SignExecuteScriptTxResult
     }

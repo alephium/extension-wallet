@@ -1,6 +1,6 @@
 import { getDefaultAlephiumWallet } from "@alephium/get-extension-wallet"
 import * as web3 from '@alephium/web3'
-import { binToHex, contractIdFromAddress, DUST_AMOUNT, stringToHex, isGrouplessAddress } from '@alephium/web3'
+import { binToHex, contractIdFromAddress, DUST_AMOUNT, SignTransferChainedTxParams, isGrouplessAddress, stringToHex } from '@alephium/web3'
 import { Destroy, ShinyToken, ShinyTokenInstance, Transfer } from '../../artifacts/ts'
 
 export const erc20TokenAddressByNetwork = {
@@ -85,8 +85,9 @@ export const mintToken = async (amount: string, network: string, group?: number)
 
 export const withdrawMintedToken = async (
   amount: string,
-  tokenAddress: string
-): Promise<Omit<web3.SignExecuteScriptTxResult, "simulationResult">> => {
+  tokenAddress: string,
+  transferTo?: string
+): Promise<web3.SignExecuteScriptTxResult> => {
   const alephium = await getDefaultAlephiumWallet()
   if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
     throw Error("alephium object not initialized")
@@ -98,17 +99,42 @@ export const withdrawMintedToken = async (
     toAddress = `${toAddress}:${groupIndex}`
   }
 
-  return Transfer.execute(
-    alephium,
-    {
+  const tokenId = binToHex(contractIdFromAddress(tokenAddress))
+  if (!transferTo) {
+    return Transfer.execute(
+      alephium,
+      {
+        initialFields: {
+          shinyToken: tokenId,
+          to: toAddress,
+          amount: BigInt(amount)
+        }
+      }
+    )
+  } else {
+    const withdrawParams = await Transfer.script.txParamsForExecution(alephium, {
       initialFields: {
-        shinyToken: binToHex(contractIdFromAddress(tokenAddress)),
+        shinyToken: tokenId,
         to: toAddress,
         amount: BigInt(amount)
       }
+    })
+    const transferParams: SignTransferChainedTxParams = {
+      signerAddress: toAddress,
+      destinations: [
+        { address: transferTo, attoAlphAmount: DUST_AMOUNT, tokens: [{ id: tokenId, amount: BigInt(amount) }] }
+      ],
+      type: 'Transfer'
     }
-  )
+    const [_, withdrawTxResult] = await alephium.signAndSubmitChainedTx([
+      { ...withdrawParams, type: 'ExecuteScript' },
+      { ...transferParams, type: 'Transfer' }
+    ])
+
+    return withdrawTxResult as web3.SignExecuteScriptChainedTxResult
+  }
 }
+
 export const transferToken = async (
   tokenId: string,
   transferTo: string,

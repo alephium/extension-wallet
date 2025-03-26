@@ -4,7 +4,7 @@ import { BackgroundService } from "../background"
 
 export const executeTransactionAction = async (
   transaction: ReviewTransactionResult,
-  signatureOpt: string | undefined,
+  signatureOpt: string | undefined,   // For ledger, the signature is already provided
   { wallet }: BackgroundService,
   networkId: string,
 ): Promise<{ signature: string }> => {
@@ -28,7 +28,6 @@ export const executeTransactionAction = async (
       signatureOpt,
     )
   }
-
 
   addTransaction({
     account: account,
