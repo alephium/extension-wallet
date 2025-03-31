@@ -1,6 +1,6 @@
 import { Transaction } from "../../shared/transactions"
 import { WalletAccount } from "../../shared/wallet.model"
-import { addressFromLockupScript, binToHex, bs58, explorer, hexToBinUnsafe, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignDeployContractChainedTxResult, SignExecuteScriptChainedTxParams, SignExecuteScriptChainedTxResult, SignGrouplessTransferTxParams, SignGrouplessTxParams, SignTransferChainedTxParams, SignTransferChainedTxResult, SignTransferTxParams, SignUnsignedTxResult, web3 } from '@alephium/web3'
+import { addressFromLockupScript, binToHex, explorer, hexToBinUnsafe, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignDeployContractChainedTxResult, SignExecuteScriptChainedTxParams, SignExecuteScriptChainedTxResult, SignGrouplessTransferTxParams, SignGrouplessTxParams, SignTransferChainedTxParams, SignTransferChainedTxResult, SignTransferTxParams } from '@alephium/web3'
 import { ReviewTransactionResult, TransactionParams, TransactionPayload, TransactionResult } from "../../shared/actionQueue/types";
 import { codec } from "@alephium/web3";
 
