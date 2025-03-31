@@ -11,6 +11,8 @@ import {
 import { TokenIcon } from "../accountTokens/TokenIcon"
 import { useAccountMetadata } from "./accountMetadata.state"
 import { getNetworkAccountImageUrl } from "./accounts.service"
+import { groupOfAddress } from "@alephium/web3"
+import { hasExplicitGroupIndex, isGrouplessAddress } from "@alephium/web3"
 
 export const getAccountNameForAddress = (
   accountAddress: string,

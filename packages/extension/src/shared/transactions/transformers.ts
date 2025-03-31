@@ -1,6 +1,6 @@
 import { Transaction } from "../../shared/transactions"
 import { WalletAccount } from "../../shared/wallet.model"
-import { binToHex, explorer, hexToBinUnsafe, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignDeployContractChainedTxResult, SignExecuteScriptChainedTxParams, SignExecuteScriptChainedTxResult, SignGrouplessTransferTxParams, SignGrouplessTxParams, SignTransferChainedTxParams, SignTransferChainedTxResult, SignTransferTxParams, SignUnsignedTxResult } from '@alephium/web3'
+import { addressFromLockupScript, binToHex, bs58, explorer, hexToBinUnsafe, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignDeployContractChainedTxResult, SignExecuteScriptChainedTxParams, SignExecuteScriptChainedTxResult, SignGrouplessTransferTxParams, SignGrouplessTxParams, SignTransferChainedTxParams, SignTransferChainedTxResult, SignTransferTxParams, SignUnsignedTxResult, web3 } from '@alephium/web3'
 import { ReviewTransactionResult, TransactionParams, TransactionPayload, TransactionResult } from "../../shared/actionQueue/types";
 import { codec } from "@alephium/web3";
 
@@ -154,15 +154,16 @@ export function grouplessTxResultToReviewTransactionResult(
     }
 
     const unsignedTx = codec.unsignedTxCodec.decode(hexToBinUnsafe(signGrouplessTxResult.unsignedTx))
-    // TODO: Display move of assets for initial transactions properly
-    const destinations = unsignedTx.fixedOutputs.map(output => ({
-      address: transactionParams.params.signerAddress,
-      attoAlphAmount: output.amount,
-      tokens: output.tokens?.map(token => ({
-        id: binToHex(token.tokenId),
-        amount: token.amount
-      }))
-    }))
+    const destinations = unsignedTx.fixedOutputs.map(output => {
+      return {
+        address: addressFromLockupScript(output.lockupScript),
+        attoAlphAmount: output.amount,
+        tokens: output.tokens?.map(token => ({
+          id: binToHex(token.tokenId),
+          amount: token.amount
+        }))
+      }
+    })
     const params: TransactionPayload<SignTransferTxParams> = {
       networkId: transactionParams.params.networkId,
       signerAddress: transactionParams.params.signerAddress,
