@@ -1,4 +1,4 @@
-import { ALPH_TOKEN_ID, DEFAULT_GAS_PRICE, DUST_AMOUNT, ExplorerProvider, MINIMAL_CONTRACT_DEPOSIT, NodeProvider, SignChainedTxResult, SignGrouplessDeployContractTxParams, SignGrouplessExecuteScriptTxParams, SignGrouplessTransferTxParams, SignTransferChainedTxParams, TransactionBuilder } from "@alephium/web3"
+import { ALPH_TOKEN_ID, DEFAULT_GAS_PRICE, DUST_AMOUNT, ExplorerProvider, GrouplessBuildTxResult, MINIMAL_CONTRACT_DEPOSIT, NodeProvider, SignDeployContractTxResult, SignExecuteScriptTxResult, SignTransferChainedTxParams, SignTransferTxResult, TransactionBuilder } from "@alephium/web3"
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call } from "starknet"
 import { ReviewTransactionResult, TransactionParams } from "../actionQueue/types"
@@ -164,27 +164,28 @@ export async function tryBuildChainedTransactions(
 
 export async function tryBuildGrouplessTransactions(
   nodeUrl: string,
+  account: WalletAccount,
   transactionParams: TransactionParams
 ): Promise<ReviewTransactionResult[]> {
   const builder = TransactionBuilder.from(nodeUrl)
   const signGrouplessTxParams = transactionParamsToSignGrouplessTxParams(transactionParams)
-  let signGrouplessTxResults: Omit<SignChainedTxResult, 'signature'>[]
+  let signGrouplessTxResult: GrouplessBuildTxResult<SignTransferTxResult | SignDeployContractTxResult | SignExecuteScriptTxResult>
 
   switch (transactionParams.type) {
     case "TRANSFER":
-      signGrouplessTxResults = await builder.buildGrouplessTransferTx(signGrouplessTxParams as SignGrouplessTransferTxParams)
+      signGrouplessTxResult = await builder.buildTransferTx(transactionParams.params, account.signer.publicKey) as GrouplessBuildTxResult<SignTransferTxResult>
       break
     case "DEPLOY_CONTRACT":
-      signGrouplessTxResults = await builder.buildGrouplessDeployContractTx(signGrouplessTxParams as SignGrouplessDeployContractTxParams)
+      signGrouplessTxResult = await builder.buildDeployContractTx(transactionParams.params, account.signer.publicKey) as GrouplessBuildTxResult<SignDeployContractTxResult>
       break
     case "EXECUTE_SCRIPT":
-      signGrouplessTxResults = await builder.buildGrouplessExecuteScriptTx(signGrouplessTxParams as SignGrouplessExecuteScriptTxParams)
+      signGrouplessTxResult = await builder.buildExecuteScriptTx(transactionParams.params, account.signer.publicKey) as GrouplessBuildTxResult<SignExecuteScriptTxResult>
       break
     default:
       throw new Error(`Unsupported transaction type: ${transactionParams.type}`)
   }
 
-  return grouplessTxResultToReviewTransactionResult(signGrouplessTxResults, transactionParams)
+  return grouplessTxResultToReviewTransactionResult(signGrouplessTxResult, transactionParams)
 }
 
 export async function tryBuildTransactions(
@@ -297,7 +298,7 @@ async function buildTransaction(
         result: await builder.buildTransferTx(
           transactionParams.params,
           account.signer.publicKey,
-        ),
+        ) as Omit<SignTransferTxResult, 'signature'>,
       }
     case "DEPLOY_CONTRACT":
       return {
@@ -306,7 +307,7 @@ async function buildTransaction(
         result: await builder.buildDeployContractTx(
           transactionParams.params,
           account.signer.publicKey,
-        ),
+        ) as Omit<SignDeployContractTxResult, 'signature'>,
       }
     case "EXECUTE_SCRIPT":
       return {
@@ -315,7 +316,7 @@ async function buildTransaction(
         result: await builder.buildExecuteScriptTx(
           transactionParams.params,
           account.signer.publicKey,
-        ),
+        ) as Omit<SignExecuteScriptTxResult, 'signature'>,
       }
     case "UNSIGNED_TX":
       return {

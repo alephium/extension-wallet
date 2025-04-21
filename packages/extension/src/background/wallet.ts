@@ -427,7 +427,7 @@ export class Wallet extends AccountDiscovery {
   }
 
   public deriveAccount(secret: string, startIndex: number, networkId: string, keyType: KeyType, forGroup?: number): WalletAccount {
-    if (keyType === 'groupless' && forGroup !== undefined) {
+    if (keyType === 'gl-secp256k1' && forGroup !== undefined) {
       // Shall we allow for selecting default group?
       throw new Error("Groupless account cannot have explicit group")
     }
@@ -447,7 +447,7 @@ export class Wallet extends AccountDiscovery {
         derivationIndex: index,
         group: groupOfAddress(newAddress)
       },
-      type: keyType === 'groupless' ? "alephium-groupless" : "alephium",
+      type: keyType === 'gl-secp256k1' ? "gl-secp256k1" : "alephium",
     }
   }
 

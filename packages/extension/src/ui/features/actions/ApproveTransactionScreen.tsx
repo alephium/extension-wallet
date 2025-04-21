@@ -114,13 +114,14 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           throw new Error("Transaction params are empty")
         }
 
-        if (selectedAccount.type === "alephium-groupless") {
+        if (selectedAccount.type === "gl-secp256k1") {
           if (useLedger) {
             throw new Error("Ledger does not support groupless address")
           }
           if (transactionParams.length === 1) {
             results = await tryBuildGrouplessTransactions(
               nodeUrl,
+              selectedAccount,
               transactionParams[0],
             )
           } else {

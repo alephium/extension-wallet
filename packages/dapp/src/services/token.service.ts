@@ -157,7 +157,7 @@ export const transferToken = async (
       }
       ]
     }]
-  })
+  }) as web3.SignTransferTxResult
 }
 
 export const destroyTokenContract = async (

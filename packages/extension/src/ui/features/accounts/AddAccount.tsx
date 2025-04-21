@@ -100,7 +100,7 @@ export const AddAccount: FC = () => {
   }
 
   const parsedGroup = group === "any" ? undefined : parseInt(group)
-  const parsedKeyType = (signMethod === "Schnorr" ? "bip340-schnorr" : signMethod.toLowerCase()) as KeyType
+  const parsedKeyType = signMethod === "Schnorr" ? "bip340-schnorr" : signMethod === "Groupless" ? "gl-secp256k1" : signMethod.toLowerCase() as KeyType
 
   return (
     <>

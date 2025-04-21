@@ -1,6 +1,25 @@
 import { Transaction } from "../../shared/transactions"
 import { WalletAccount } from "../../shared/wallet.model"
-import { addressFromLockupScript, binToHex, explorer, hexToBinUnsafe, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignDeployContractChainedTxResult, SignExecuteScriptChainedTxParams, SignExecuteScriptChainedTxResult, SignGrouplessTransferTxParams, SignGrouplessTxParams, SignTransferChainedTxParams, SignTransferChainedTxResult, SignTransferTxParams } from '@alephium/web3'
+import {
+  addressFromLockupScript,
+  binToHex,
+  explorer,
+  GrouplessBuildTxResult,
+  hexToBinUnsafe,
+  SignChainedTxParams,
+  SignChainedTxResult,
+  SignDeployContractChainedTxParams,
+  SignDeployContractChainedTxResult,
+  SignExecuteScriptChainedTxParams,
+  SignExecuteScriptChainedTxResult,
+  SignGrouplessTxParams,
+  SignTransferChainedTxParams,
+  SignTransferChainedTxResult,
+  SignTransferTxParams,
+  SignTransferTxResult,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxResult
+} from '@alephium/web3'
 import { ReviewTransactionResult, TransactionParams, TransactionPayload, TransactionResult } from "../../shared/actionQueue/types";
 import { codec } from "@alephium/web3";
 
@@ -137,22 +156,10 @@ export function transactionParamsToSignGrouplessTxParams(
 }
 
 export function grouplessTxResultToReviewTransactionResult(
-  signGrouplessTxResults: Omit<SignChainedTxResult, 'signature'>[],
+  signGrouplessTxResult: GrouplessBuildTxResult<SignTransferTxResult | SignDeployContractTxResult | SignExecuteScriptTxResult>,
   transactionParams: TransactionParams
 ): ReviewTransactionResult[] {
-  if (signGrouplessTxResults.length === 0) {
-    throw new Error("No groupless transaction results returned")
-  }
-
-  const lastIndex = signGrouplessTxResults.length - 1
-  const initialResults = signGrouplessTxResults.slice(0, lastIndex)
-  const lastResult = signGrouplessTxResults[lastIndex]
-
-  const initialTransactions = initialResults.map((signGrouplessTxResult) => {
-    if (signGrouplessTxResult.type !== 'Transfer') {
-      throw new Error(`Invalid transaction type in groupless transfer: expected 'Transfer' but got '${signGrouplessTxResult.type}'.`)
-    }
-
+  const initialTransactions = signGrouplessTxResult.transferTxs.map((signGrouplessTxResult) => {
     const unsignedTx = codec.unsignedTxCodec.decode(hexToBinUnsafe(signGrouplessTxResult.unsignedTx))
     const destinations = unsignedTx.fixedOutputs.map(output => {
       return {
@@ -181,7 +188,7 @@ export function grouplessTxResultToReviewTransactionResult(
   const lastTransaction = {
     type: transactionParams.type,
     params: transactionParams.params,
-    result: lastResult
+    result: signGrouplessTxResult.tx
   } as ReviewTransactionResult
 
   return [...initialTransactions, lastTransaction]
