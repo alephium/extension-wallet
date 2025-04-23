@@ -12,7 +12,6 @@ import {
   SignDeployContractChainedTxResult,
   SignExecuteScriptChainedTxParams,
   SignExecuteScriptChainedTxResult,
-  SignGrouplessTxParams,
   SignTransferChainedTxParams,
   SignTransferChainedTxResult,
   SignTransferTxParams,
@@ -118,40 +117,6 @@ export function transactionResultToSignUnsignedTxResult(
       return { type: 'ExecuteScript', ...txResult.result } as SignExecuteScriptChainedTxResult;
     default:
       throw new Error(`Unsupported transaction type: ${txResultType}`);
-  }
-}
-
-export function transactionParamsToSignGrouplessTxParams(
-  transactionParams: TransactionParams
-): SignGrouplessTxParams {
-  switch (transactionParams.type) {
-    case "TRANSFER":
-      return {
-        fromAddress: transactionParams.params.signerAddress,
-        destinations: transactionParams.params.destinations,
-        gasPrice: transactionParams.params.gasPrice
-      }
-    case "DEPLOY_CONTRACT":
-      return {
-        fromAddress: transactionParams.params.signerAddress,
-        bytecode: transactionParams.params.bytecode,
-        initialAttoAlphAmount: transactionParams.params.initialAttoAlphAmount,
-        initialTokenAmounts: transactionParams.params.initialTokenAmounts,
-        issueTokenAmount: transactionParams.params.issueTokenAmount,
-        issueTokenTo: transactionParams.params.issueTokenTo,
-        gasPrice: transactionParams.params.gasPrice
-      }
-    case "EXECUTE_SCRIPT":
-      return {
-        fromAddress: transactionParams.params.signerAddress,
-        bytecode: transactionParams.params.bytecode,
-        attoAlphAmount: transactionParams.params.attoAlphAmount,
-        tokens: transactionParams.params.tokens,
-        gasPrice: transactionParams.params.gasPrice,
-        gasEstimationMultiplier: transactionParams.params.gasEstimationMultiplier
-      }
-    default:
-      throw new Error(`Unsupported transaction type: ${transactionParams.type}`)
   }
 }
 

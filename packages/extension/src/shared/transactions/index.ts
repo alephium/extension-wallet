@@ -4,7 +4,7 @@ import { Call } from "starknet"
 import { ReviewTransactionResult, TransactionParams } from "../actionQueue/types"
 import { WalletAccount } from "../wallet.model"
 import { AlephiumExplorerTransaction } from "../explorer/type"
-import { grouplessTxResultToReviewTransactionResult, mapAlephiumTransactionToTransaction, signedChainedTxResultToReviewTransactionResult, transactionParamsToSignChainedTxParams, transactionParamsToSignGrouplessTxParams } from "./transformers"
+import { grouplessTxResultToReviewTransactionResult, mapAlephiumTransactionToTransaction, signedChainedTxResultToReviewTransactionResult, transactionParamsToSignChainedTxParams } from "./transformers"
 import { getNetwork } from "../network"
 import { BaseTokenWithBalance } from "../token/type"
 import { BigNumber } from "ethers"
@@ -168,7 +168,6 @@ export async function tryBuildGrouplessTransactions(
   transactionParams: TransactionParams
 ): Promise<ReviewTransactionResult[]> {
   const builder = TransactionBuilder.from(nodeUrl)
-  const signGrouplessTxParams = transactionParamsToSignGrouplessTxParams(transactionParams)
   let signGrouplessTxResult: GrouplessBuildTxResult<SignTransferTxResult | SignDeployContractTxResult | SignExecuteScriptTxResult>
 
   switch (transactionParams.type) {
