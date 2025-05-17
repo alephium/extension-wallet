@@ -124,6 +124,7 @@
     "url-join": "^5.0.0",
     "webextension-polyfill": "^0.10.0",
     "yup": "^1.0.0-beta.4",
-    "zustand": "^3.6.5"
+    "zustand": "^3.6.5",
+    "@metamask/browser-passworder": "6.0.0"
   }
 }

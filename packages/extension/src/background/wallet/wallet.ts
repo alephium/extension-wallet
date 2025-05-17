@@ -20,23 +20,24 @@ import {
 import { find } from "lodash-es"
 import browser from "webextension-polyfill"
 
-import { withHiddenSelector } from "../shared/account/selectors"
+import { withHiddenSelector } from "../../shared/account/selectors"
 import {
   Network,
   defaultNetwork,
-} from "../shared/network"
+} from "../../shared/network"
 import {
   IArrayStorage,
   IKeyValueStorage,
   IObjectStorage,
   ObjectStorage,
-} from "../shared/storage"
-import { BaseWalletAccount, WalletAccount } from "../shared/wallet.model"
-import { accountsEqual } from "../shared/wallet.service"
-import { getNextPathIndex } from "./keys/keyDerivation"
-import backupSchema from "./schema/backup.schema"
-import { BrowserStorage, walletEncrypt, walletOpen } from './utils/walletStore'
-import { AccountDiscovery } from '../shared/discovery'
+} from "../../shared/storage"
+import { BaseWalletAccount, WalletAccount } from "../../shared/wallet.model"
+import { accountsEqual } from "../../shared/wallet.service"
+import { getNextPathIndex } from "../keys/keyDerivation"
+import backupSchema from "../schema/backup.schema"
+import { BrowserStorage, walletEncrypt, walletOpen } from '../utils/walletStore'
+import { AccountDiscovery } from '../../shared/discovery'
+import { ISecretStorageService } from './session/interface'
 
 const isDev = process.env.NODE_ENV === "development"
 
@@ -82,7 +83,7 @@ export class Wallet extends AccountDiscovery {
   constructor(
     private readonly store: IKeyValueStorage<WalletStorageProps>,
     private readonly walletStore: IArrayStorage<WalletAccount>,
-    private readonly sessionStore: IObjectStorage<WalletSession | null>,
+    private readonly secretStorageService: ISecretStorageService,
     private readonly getNetwork: GetNetwork,
   ) {
     super()
@@ -120,7 +121,7 @@ export class Wallet extends AccountDiscovery {
   }
 
   public async getPrivateKeySigner(account: WalletAccount): Promise<PrivateKeyWallet> {
-    const session = await this.sessionStore.get()
+    const session = await this.secretStorageService.decrypt()
     if (!this.isSessionOpen() || !session?.secret) {
       throw new Error("No seed")
     }
@@ -142,11 +143,12 @@ export class Wallet extends AccountDiscovery {
   }
 
   public async isSessionOpen(): Promise<boolean> {
-    return (await this.sessionStore.get()) !== null
+    const secret = await this.secretStorageService.decrypt()
+    return secret !== null && secret !== undefined
   }
 
   public async getSeedPhrase(): Promise<string> {
-    const session = await this.sessionStore.get()
+    const session = await this.secretStorageService.decrypt()
 
     if (!(await this.isSessionOpen()) || !session) {
       throw new Error("Session is not open")
@@ -156,7 +158,7 @@ export class Wallet extends AccountDiscovery {
   }
 
   public async restoreSeedPhrase(seedPhrase: string, newPassword: string) {
-    const session = await this.sessionStore.get()
+    const session = await this.secretStorageService.decrypt()
     if ((await this.isInitialized()) || session) {
       throw new Error("Wallet is already initialized")
     }
@@ -171,7 +173,7 @@ export class Wallet extends AccountDiscovery {
   }
 
   public async startAlephiumSession(password: string): Promise<boolean> {
-    const session = await this.sessionStore.get()
+    const session = await this.secretStorageService.decrypt(password)
     if (session) {
       return true
     }
@@ -200,8 +202,8 @@ export class Wallet extends AccountDiscovery {
   }
 
   public async checkPassword(password: string): Promise<boolean> {
-    const session = await this.sessionStore.get()
-    return session?.password === password
+    const session = await this.secretStorageService.decrypt(password)
+    return session !== null && session !== undefined
   }
 
   static checkAccount(account: WalletAccount, networkId?: string, keyType?: KeyType, group?: number): boolean {
@@ -211,7 +213,7 @@ export class Wallet extends AccountDiscovery {
   }
 
   public async newAccount(networkId: string, keyType: KeyType, forGroup?: number): Promise<WalletAccount> {
-    const session = await this.sessionStore.get()
+    const session = await this.secretStorageService.decrypt()
     if (!this.isSessionOpen() || !session) {
       throw Error("no open session")
     }
@@ -241,7 +243,7 @@ export class Wallet extends AccountDiscovery {
   }
 
   public async newAlephiumAccount(networkId: string, keyType: KeyType, group?: number): Promise<WalletAccount> {
-    const session = await this.sessionStore.get()
+    const session = await this.secretStorageService.decrypt()
     if (!this.isSessionOpen() || !session) {
       throw Error("no open session")
     }
@@ -332,7 +334,7 @@ export class Wallet extends AccountDiscovery {
   }
 
   public async lock() {
-    await this.sessionStore.set(this.sessionStore.defaults)
+    await this.secretStorageService.clear()
   }
 
   public async exportBackup(): Promise<{ url: string; filename: string }> {
@@ -350,7 +352,7 @@ export class Wallet extends AccountDiscovery {
   }
 
   public async exportPrivateKey(): Promise<string> {
-    const session = await this.sessionStore.get()
+    const session = await this.secretStorageService.decrypt()
     if (!this.isSessionOpen() || !session?.secret) {
       throw new Error("Session is not open")
     }
@@ -384,7 +386,7 @@ export class Wallet extends AccountDiscovery {
   }
 
   private async setSession(secret: string, password: string) {
-    await this.sessionStore.set({ secret, password })
+    await this.secretStorageService.encrypt({ secret, password }, password)
 
     if (!browser.alarms.onAlarm.hasListener(this.sessionTimeoutListener)) {
       browser.alarms.onAlarm.addListener(this.sessionTimeoutListener)
@@ -448,7 +450,7 @@ export class Wallet extends AccountDiscovery {
     const accountsForNetwork = await this.walletStore.get(account => account.networkId == networkId)
     const selectedAccount = await this.getSelectedAccount()
 
-    const session = await this.sessionStore.get()
+    const session = await this.secretStorageService.decrypt()
     if (!(await this.isSessionOpen()) || !session) {
       throw Error("no open session")
     }

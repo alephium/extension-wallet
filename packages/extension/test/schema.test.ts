@@ -1,7 +1,7 @@
 import { expect, test } from "vitest"
 
 import backupSchema from "../src/background/schema/backup.schema"
-import { Wallet } from "../src/background/wallet"
+import { Wallet } from "../src/background/wallet/wallet"
 import backupWrong from "./backup_wrong.mock.json"
 import backupEthers from "./backup-ethers.mock.json"
 import backup from "./backup.mock.json"

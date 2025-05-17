@@ -29,7 +29,7 @@ import {
 } from "../DeprecatedConfirmScreen"
 import { DappIcon } from "./DappIcon"
 import { useDappDisplayAttributes } from "./useDappDisplayAttributes"
-import { Wallet } from "../../../../background/wallet"
+import { Wallet } from "../../../../background/wallet/wallet"
 import { Option } from "../../../components/Options"
 import { AlephiumLogo } from "../../../components/Icons/ArgentXLogo"
 import { createAccount } from "../../accounts/accounts.service"
