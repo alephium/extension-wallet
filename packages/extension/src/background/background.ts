@@ -5,7 +5,7 @@ import { MessageType } from "../shared/messages"
 import { Queue } from "./actionQueue"
 import { MessagingKeys } from "./keys/messagingKeys"
 import { TransactionTracker } from "./transactions/tracking"
-import { Wallet } from "./wallet"
+import { Wallet } from "./wallet/wallet"
 
 export interface BackgroundService {
   wallet: Wallet

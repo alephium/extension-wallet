@@ -36,7 +36,8 @@ import { handleTokenMessaging } from "./tokenMessaging"
 import { initBadgeText } from "./transactions/badgeText"
 import { transactionTracker } from "./transactions/tracking"
 import { handleTransactionMessage } from "./transactions/transactionMessaging"
-import { Wallet, sessionStore } from "./wallet"
+import { Wallet, sessionStore } from "./wallet/wallet"
+import { secretStorageService } from "./wallet/session"
 
 setTransactionTrackerHistoryAlarm()
 setTransactionTrackerUpdateAlarm()
@@ -137,7 +138,7 @@ messageStream.subscribe(async ([msg, sender]) => {
   const wallet = new Wallet(
     walletStore,
     accountStore,
-    sessionStore,
+    secretStorageService,
     getNetwork,
   )
 
