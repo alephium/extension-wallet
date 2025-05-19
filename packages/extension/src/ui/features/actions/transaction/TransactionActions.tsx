@@ -1,4 +1,4 @@
-import { Token as Web3Token, Number256, prettifyAttoAlphAmount, prettifyTokenAmount } from "@alephium/web3"
+import { Token as Web3Token, Number256, prettifyAttoAlphAmount, prettifyTokenAmount, isGrouplessAddress, groupOfAddress, isGrouplessAddressWithoutGroupIndex, hasExplicitGroupIndex } from "@alephium/web3"
 import { CopyTooltip, P4 } from "@argent/ui"
 import {
   Accordion,
@@ -84,10 +84,23 @@ export function useExtractActions(transaction: ReviewTransactionResult, networkI
   switch (transaction.type) {
     case 'TRANSFER':
       return transaction.params.destinations.map((destination) => {
-        [addressName, found] = prettifyAddressName(destination.address, networkId, accountNames, contacts)
+        let destinationAddress = destination.address
+        const isGroupless = isGrouplessAddress(destination.address)
+        if (isGroupless && hasExplicitGroupIndex(destination.address)) {
+           destinationAddress = destinationAddress.slice(0, destinationAddress.length - 2)
+        }
+
+        [addressName, found] = prettifyAddressName(destinationAddress, networkId, accountNames, contacts)
+
+        let toAddress = addressName
+        if (found && isGroupless) {
+          const group = groupOfAddress(destination.address)
+          toAddress = `${addressName} (${group})`
+        }
+
         return {
-          header: { key: t('Send'), value: found ? '' : formatTruncatedAddress(destination.address) },
-          details: [{ key: `${t('To')}:`, value: addressName }, ...getActionsFromAmounts(networkId, destination, tokensInNetwork)]
+          header: { key: t('Send'), value: '' },
+          details: [{ key: `${t('To')}:`, value: toAddress }, ...getActionsFromAmounts(networkId, destination, tokensInNetwork)]
         }
       })
     case 'DEPLOY_CONTRACT':

@@ -1,4 +1,4 @@
-import { groupOfAddress, KeyType } from "@alephium/web3"
+import { groupOfAddress, isGrouplessAddress, KeyType } from "@alephium/web3"
 import { H6, L2, P4, icons, typographyStyles } from "@argent/ui"
 import { Circle, Flex, Image, Text, Tooltip, chakra } from "@chakra-ui/react"
 import { ComponentProps, FC } from "react"
@@ -170,7 +170,7 @@ export const AccountListItem: FC<AccountListItemProps> = ({
           </Flex>
           <Flex gap={2} color={"neutrals.300"}>
             <P4 fontWeight={"semibold"}>
-              {formatTruncatedAddress(accountAddress)} / {t("Group")}:{groupOfAddress(accountAddress)}
+              {formatTruncatedAddress(accountAddress)}{!isGrouplessAddress(accountAddress) && ` / ${t('Group')}: ${groupOfAddress(accountAddress)}`}
             </P4>
           </Flex>
         </Flex>
