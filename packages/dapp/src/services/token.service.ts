@@ -102,8 +102,8 @@ export const withdrawMintedToken = async (
   const tokenId = binToHex(contractIdFromAddress(tokenAddress))
   if (!transferTo) {
     return Transfer.execute(
-      alephium,
       {
+        signer: alephium,
         initialFields: {
           shinyToken: tokenId,
           to: toAddress,
@@ -112,7 +112,8 @@ export const withdrawMintedToken = async (
       }
     )
   } else {
-    const withdrawParams = await Transfer.script.txParamsForExecution(alephium, {
+    const withdrawParams = await Transfer.script.txParamsForExecution({
+      signer: alephium,
       initialFields: {
         shinyToken: tokenId,
         to: toAddress,
@@ -175,8 +176,8 @@ export const destroyTokenContract = async (
   }
 
   return Destroy.execute(
-    alephium,
     {
+      signer: alephium,
       initialFields: {
         shinyToken: tokenId,
         to: toAddress,
