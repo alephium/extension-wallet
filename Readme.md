@@ -14,7 +14,6 @@
 First clone this repository on your machine then run:
 
 ```bash
-export MANIFEST_VERSION=v3
 yarn install --frozen-lockfile # setup dependencies
 yarn build                     # run build process for all packages
 ```
