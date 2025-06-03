@@ -14,8 +14,9 @@
 First clone this repository on your machine then run:
 
 ```bash
-yarn        # setup dependencies
-yarn build  # run build process for all packages
+export MANIFEST_VERSION=v3
+yarn install --frozen-lockfile # setup dependencies
+yarn build                     # run build process for all packages
 ```
 
 To load the locally built extension into your browser, follow one of this guide:
