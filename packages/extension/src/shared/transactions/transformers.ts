@@ -153,7 +153,7 @@ export function grouplessTxResultToReviewTransactionResult(
   const lastTransaction = {
     type: transactionParams.type,
     params: transactionParams.params,
-    result: signGrouplessTxResult.tx
+    result: signGrouplessTxResult as any
   } as ReviewTransactionResult
 
   return [...initialTransactions, lastTransaction]
