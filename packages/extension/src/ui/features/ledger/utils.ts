@@ -38,7 +38,7 @@ export class LedgerAlephium extends AccountDiscovery {
     checkKeyType(keyType)
 
     const path = getHDWalletPath(keyType, startIndex)
-    return await this.app.getAccount(path, group, 'default')
+    return await this.app.getAccount(path, group, keyType)
   }
 
   private async deriveAccount(
@@ -68,7 +68,7 @@ export class LedgerAlephium extends AccountDiscovery {
     const existingLedgerAccounts = await getAllLedgerAccounts(networkId)
     let index = 0
     while (true) {
-      const newAccount = await this.deriveAccount(networkId, index, 'default', targetAddressGroup)
+      const newAccount = await this.deriveAccount(networkId, index, keyType as KeyType, targetAddressGroup)
       if (existingLedgerAccounts.find((account) => account.address === newAccount.address) === undefined) {
         await this.app.close()
         return newAccount
@@ -78,19 +78,21 @@ export class LedgerAlephium extends AccountDiscovery {
   }
 
   async verifyAccount(account: Account): Promise<boolean> {
-    checkKeyType(account.signer.keyType)
+    const keyType = account.signer.keyType
+    checkKeyType(keyType)
 
-    const path = getHDWalletPath('default', account.signer.derivationIndex)
-    const [deviceAccount, _] = await this.app.getAccount(path, undefined, 'default', true)
+    const path = getHDWalletPath(keyType, account.signer.derivationIndex)
+    const [deviceAccount, _] = await this.app.getAccount(path, undefined, keyType, true)
     await this.app.close()
     return deviceAccount.address !== account.address
   }
 
   async signUnsignedTx(account: Account, unsignedTx: Buffer) {
-    checkKeyType(account.signer.keyType)
+    const keyType = account.signer.keyType
+    checkKeyType(keyType)
 
-    const hdPath = getHDWalletPath('default', account.signer.derivationIndex)
-    const signature = await this.app.signUnsignedTx(hdPath, unsignedTx)
+    const hdPath = getHDWalletPath(keyType, account.signer.derivationIndex)
+    const signature = await this.app.signUnsignedTx(hdPath, unsignedTx, keyType)
     await this.app.close()
     return signature
   }
@@ -119,7 +121,7 @@ export class LedgerAlephium extends AccountDiscovery {
 }
 
 const checkKeyType = (keyType: string) => {
-  if (keyType !== "default") {
+  if (keyType !== "default" && keyType !== 'gl-secp256k1') {
     throw Error("Unsupported key type for ledger account: " + keyType)
   }
 }

@@ -131,7 +131,7 @@ export const AddAccount: FC = () => {
             onClick={() => addAccount(parsedKeyType, parsedGroup).catch(() => setHasError(true))}
           />
           {
-            parsedKeyType === "default" &&
+            (parsedKeyType === "default" || parsedKeyType === 'gl-secp256k1') &&
             <A
               href={`/index.html?goto=ledger&networkId=${switcherNetworkId}&group=${parsedGroup}&keyType=${parsedKeyType}`}
               targetBlank
