@@ -1,14 +1,15 @@
 import { Box, Tooltip } from "@chakra-ui/react"
-import { FC, PropsWithChildren, useEffect, useRef, useState } from "react"
+import { FC, ReactNode, useEffect, useRef, useState } from "react"
 import CopyToClipboard from "react-copy-to-clipboard"
 
 import { useOnClickOutside } from "../hooks"
 
-interface CopyTooltipProps extends PropsWithChildren {
+interface CopyTooltipProps {
   copyValue: string
   prompt?: string
   message?: string
   autoDismiss?: boolean
+  children?: ReactNode
 }
 
 export const CopyTooltip: FC<CopyTooltipProps> = ({
