@@ -94,7 +94,6 @@ export const AccountSelect: FC<IAccountSelect> = ({
       onChange={handleChange}
       input={<StyledOutlinedInput />}
       IconComponent={KeyboardArrowDownRounded}
-      /* @ts-expect-error valid 'component' key is missing in MUI types @see https://github.com/mui/material-ui/pull/32404 */
       MenuProps={SelectMenuProps}
       {...divProps}
     >

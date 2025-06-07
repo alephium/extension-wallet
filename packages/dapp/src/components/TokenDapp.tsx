@@ -307,7 +307,7 @@ export const TokenDapp: FC<{
                 <Select
                   value={selectedTokenBalance}
                   onChange={
-                    (selected) => {
+                    (selected: any) => {
                       selected && setSelectedTokenBalance(selected)
                     }
                   }

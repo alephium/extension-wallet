@@ -124,7 +124,7 @@ export function grouplessTxResultToReviewTransactionResult(
   signGrouplessTxResult: GrouplessBuildTxResult<SignTransferTxResult | SignDeployContractTxResult | SignExecuteScriptTxResult>,
   transactionParams: TransactionParams
 ): ReviewTransactionResult[] {
-  const initialTransactions = signGrouplessTxResult.transferTxs.map((signGrouplessTxResult) => {
+  const initialTransactions = signGrouplessTxResult.fundingTxs?.map((signGrouplessTxResult) => {
     const unsignedTx = codec.unsignedTxCodec.decode(hexToBinUnsafe(signGrouplessTxResult.unsignedTx))
     const destinations = unsignedTx.fixedOutputs.map(output => {
       return {
@@ -148,12 +148,12 @@ export function grouplessTxResultToReviewTransactionResult(
       params,
       result: signGrouplessTxResult
     } as ReviewTransactionResult
-  })
+  }) ?? []
 
   const lastTransaction = {
     type: transactionParams.type,
     params: transactionParams.params,
-    result: signGrouplessTxResult.tx
+    result: signGrouplessTxResult
   } as ReviewTransactionResult
 
   return [...initialTransactions, lastTransaction]
