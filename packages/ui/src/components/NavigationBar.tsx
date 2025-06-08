@@ -40,13 +40,16 @@ const TitleContainer = chakra(AbsoluteFlex, {
   },
 })
 
-export interface NavigationBarProps extends PropsWithChildren {
+export interface NavigationBarProps extends PropsWithChildren<{}> {
   isAbsolute?: boolean
   leftButton?: ReactNode
   title?: ReactNode
   rightButton?: ReactNode
   scroll?: ScrollProps
   scrollContent?: ReactNode
+  description?: string
+  icon?: ReactNode
+  action?: ReactNode
 }
 
 export const BarIconButton: FC<ComponentProps<typeof Button>> = ({

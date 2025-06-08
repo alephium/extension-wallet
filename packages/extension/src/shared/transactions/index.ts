@@ -1,10 +1,10 @@
-import { ALPH_TOKEN_ID, DEFAULT_GAS_PRICE, DUST_AMOUNT, ExplorerProvider, MINIMAL_CONTRACT_DEPOSIT, NodeProvider, SignTransferChainedTxParams, TransactionBuilder } from "@alephium/web3"
+import { ALPH_TOKEN_ID, DEFAULT_GAS_PRICE, DUST_AMOUNT, ExplorerProvider, GrouplessBuildTxResult, MINIMAL_CONTRACT_DEPOSIT, NodeProvider, SignDeployContractTxResult, SignExecuteScriptTxResult, SignTransferChainedTxParams, SignTransferTxResult, TransactionBuilder } from "@alephium/web3"
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call } from "starknet"
 import { ReviewTransactionResult, TransactionParams } from "../actionQueue/types"
 import { WalletAccount } from "../wallet.model"
 import { AlephiumExplorerTransaction } from "../explorer/type"
-import { mapAlephiumTransactionToTransaction, signedChainedTxResultToReviewTransactionResult, transactionParamsToSignChainedTxParams } from "./transformers"
+import { grouplessTxResultToReviewTransactionResult, mapAlephiumTransactionToTransaction, signedChainedTxResultToReviewTransactionResult, transactionParamsToSignChainedTxParams } from "./transformers"
 import { getNetwork } from "../network"
 import { BaseTokenWithBalance } from "../token/type"
 import { BigNumber } from "ethers"
@@ -75,12 +75,6 @@ export const getInFlightTransactions = (
     ({ status }) =>
       TRANSACTION_STATUSES_TO_TRACK.includes(status)
   )
-
-export function nameTransaction(calls: Call | Call[]) {
-  const callsArray = Array.isArray(calls) ? calls : [calls]
-  const entrypointNames = callsArray.map((call) => call.entrypoint)
-  return transactionNamesToTitle(entrypointNames)
-}
 
 export function transactionNamesToTitle(
   names: string | string[],
@@ -166,6 +160,31 @@ export async function tryBuildChainedTransactions(
     console.log("Error building chained transaction", error)
     throw error
   }
+}
+
+export async function tryBuildGrouplessTransactions(
+  nodeUrl: string,
+  account: WalletAccount,
+  transactionParams: TransactionParams
+): Promise<ReviewTransactionResult[]> {
+  const builder = TransactionBuilder.from(nodeUrl)
+  let signGrouplessTxResult: GrouplessBuildTxResult<SignTransferTxResult | SignDeployContractTxResult | SignExecuteScriptTxResult>
+
+  switch (transactionParams.type) {
+    case "TRANSFER":
+      signGrouplessTxResult = await builder.buildTransferTx(transactionParams.params, account.signer.publicKey) as GrouplessBuildTxResult<SignTransferTxResult>
+      break
+    case "DEPLOY_CONTRACT":
+      signGrouplessTxResult = await builder.buildDeployContractTx(transactionParams.params, account.signer.publicKey) as GrouplessBuildTxResult<SignDeployContractTxResult>
+      break
+    case "EXECUTE_SCRIPT":
+      signGrouplessTxResult = await builder.buildExecuteScriptTx(transactionParams.params, account.signer.publicKey) as GrouplessBuildTxResult<SignExecuteScriptTxResult>
+      break
+    default:
+      throw new Error(`Unsupported transaction type: ${transactionParams.type}`)
+  }
+
+  return grouplessTxResultToReviewTransactionResult(signGrouplessTxResult, transactionParams)
 }
 
 export async function tryBuildTransactions(
@@ -278,7 +297,7 @@ async function buildTransaction(
         result: await builder.buildTransferTx(
           transactionParams.params,
           account.signer.publicKey,
-        ),
+        ) as Omit<SignTransferTxResult, 'signature'>,
       }
     case "DEPLOY_CONTRACT":
       return {
@@ -287,7 +306,7 @@ async function buildTransaction(
         result: await builder.buildDeployContractTx(
           transactionParams.params,
           account.signer.publicKey,
-        ),
+        ) as Omit<SignDeployContractTxResult, 'signature'>,
       }
     case "EXECUTE_SCRIPT":
       return {
@@ -296,7 +315,7 @@ async function buildTransaction(
         result: await builder.buildExecuteScriptTx(
           transactionParams.params,
           account.signer.publicKey,
-        ),
+        ) as Omit<SignExecuteScriptTxResult, 'signature'>,
       }
     case "UNSIGNED_TX":
       return {

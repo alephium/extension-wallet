@@ -1,7 +1,26 @@
 import { Transaction } from "../../shared/transactions"
 import { WalletAccount } from "../../shared/wallet.model"
-import { explorer, SignChainedTxParams, SignChainedTxResult, SignDeployContractChainedTxParams, SignDeployContractChainedTxResult, SignExecuteScriptChainedTxParams, SignExecuteScriptChainedTxResult, SignTransferChainedTxParams, SignTransferChainedTxResult, SignUnsignedTxResult } from '@alephium/web3'
-import { ReviewTransactionResult, TransactionParams, TransactionResult } from "../../shared/actionQueue/types";
+import {
+  addressFromLockupScript,
+  binToHex,
+  explorer,
+  GrouplessBuildTxResult,
+  hexToBinUnsafe,
+  SignChainedTxParams,
+  SignChainedTxResult,
+  SignDeployContractChainedTxParams,
+  SignDeployContractChainedTxResult,
+  SignExecuteScriptChainedTxParams,
+  SignExecuteScriptChainedTxResult,
+  SignTransferChainedTxParams,
+  SignTransferChainedTxResult,
+  SignTransferTxParams,
+  SignTransferTxResult,
+  SignDeployContractTxResult,
+  SignExecuteScriptTxResult
+} from '@alephium/web3'
+import { ReviewTransactionResult, TransactionParams, TransactionPayload, TransactionResult } from "../../shared/actionQueue/types";
+import { codec } from "@alephium/web3";
 
 export const mapAlephiumTransactionToTransaction = (
   transaction: explorer.Transaction,
@@ -99,4 +118,43 @@ export function transactionResultToSignUnsignedTxResult(
     default:
       throw new Error(`Unsupported transaction type: ${txResultType}`);
   }
+}
+
+export function grouplessTxResultToReviewTransactionResult(
+  signGrouplessTxResult: GrouplessBuildTxResult<SignTransferTxResult | SignDeployContractTxResult | SignExecuteScriptTxResult>,
+  transactionParams: TransactionParams
+): ReviewTransactionResult[] {
+  const initialTransactions = signGrouplessTxResult.fundingTxs?.map((signGrouplessTxResult) => {
+    const unsignedTx = codec.unsignedTxCodec.decode(hexToBinUnsafe(signGrouplessTxResult.unsignedTx))
+    const destinations = unsignedTx.fixedOutputs.map(output => {
+      return {
+        address: addressFromLockupScript(output.lockupScript),
+        attoAlphAmount: output.amount,
+        tokens: output.tokens?.map(token => ({
+          id: binToHex(token.tokenId),
+          amount: token.amount
+        }))
+      }
+    })
+    const params: TransactionPayload<SignTransferTxParams> = {
+      networkId: transactionParams.params.networkId,
+      signerAddress: transactionParams.params.signerAddress,
+      signerKeyType: transactionParams.params.signerKeyType,
+      destinations: destinations,
+      gasPrice: unsignedTx.gasPrice,
+    }
+    return {
+      type: "TRANSFER",
+      params,
+      result: signGrouplessTxResult
+    } as ReviewTransactionResult
+  }) ?? []
+
+  const lastTransaction = {
+    type: transactionParams.type,
+    params: transactionParams.params,
+    result: signGrouplessTxResult
+  } as ReviewTransactionResult
+
+  return [...initialTransactions, lastTransaction]
 }
