@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from "react"
 import Select from 'react-select';
-import { AlephiumWindowObject, getDefaultAlephiumWallet } from '@alephium/get-extension-wallet'
 import {
   destroyTokenContract,
   getAlphBalance,
@@ -17,7 +16,8 @@ import {
   signUnsignedTx,
 } from "../services/wallet.service"
 import styles from "../styles/Home.module.css"
-import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3, MessageHasher, prettifyAttoAlphAmount, isHexString, isGrouplessAddress, TOTAL_NUMBER_OF_GROUPS } from "@alephium/web3"
+import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription, TxStatus, web3, MessageHasher, prettifyAttoAlphAmount, isGrouplessAddress, TOTAL_NUMBER_OF_GROUPS } from "@alephium/web3"
+import { useWallet } from "@alephium/web3-react";
 
 type Status = "idle" | "approve" | "pending" | "success" | "failure"
 
@@ -43,7 +43,7 @@ export const TokenDapp: FC<{
   const [mintedToken, setMintedToken] = useState<string | undefined>()
   const [transferingMintedToken, setTransferingMintedToken] = useState<boolean>(false)
   const [selectedTokenBalance, setSelectedTokenBalance] = useState<{ value: TokenBalance, label: string } | undefined>()
-  const [alephium, setAlephium] = useState<AlephiumWindowObject | undefined>(undefined)
+  const { signer, account } = useWallet()
   const [selectedGroup, setSelectedGroup] = useState<number>(0)
   const isGroupless = isGrouplessAddress(address)
   const [withdrawTransferTo, setWithdrawTransferTo] = useState<string>("")
@@ -58,33 +58,27 @@ export const TokenDapp: FC<{
   }
 
   useEffect(() => {
-    getTokenBalances(address).then(tokenBalances => {
+    getTokenBalances(signer, address).then(tokenBalances => {
       if (tokenBalances.length > 0) {
         setSelectedTokenBalance({ value: tokenBalances[0], label: tokenBalances[0].id })
       }
       setTokenBalances(tokenBalances)
     })
 
-    getAlphBalance(address).then(alphBalance => {
+    getAlphBalance(signer, address).then(alphBalance => {
       setAlphBalance(alphBalance)
     })
-
-    getDefaultAlephiumWallet().then(alephium => {
-      if (!!alephium) {
-        setAlephium(alephium)
-      }
-    })
-  }, [address])
+  }, [address, signer])
 
   useEffect(() => {
     ; (async () => {
       if (lastTransactionHash && transactionStatus === "pending") {
         setTransactionError("")
 
-        if (alephium?.nodeProvider) {
+        if (signer?.nodeProvider) {
           let subscription: TxStatusSubscription | undefined = undefined
           let txNotFoundRetryNums = 0
-          web3.setCurrentNodeProvider(alephium.nodeProvider)
+          web3.setCurrentNodeProvider(signer.nodeProvider)
 
           const subscriptionOptions: SubscribeOptions<TxStatus> = {
             pollingInterval: 3000,
@@ -144,7 +138,7 @@ export const TokenDapp: FC<{
         }
       }
     })()
-  }, [transactionStatus, lastTransactionHash, alephium?.nodeProvider, transferingMintedToken])
+  }, [transactionStatus, lastTransactionHash, signer?.nodeProvider, transferingMintedToken])
 
   const network = 'devnet'
 
@@ -156,9 +150,9 @@ export const TokenDapp: FC<{
       console.log("mint", mintAmount)
       let result
       if (isGroupless) {
-        result = await mintToken(mintAmount, network, selectedGroup)
+        result = await mintToken(signer, mintAmount, network, selectedGroup)
       } else {
-        result = await mintToken(mintAmount, network)
+        result = await mintToken(signer, mintAmount, network)
       }
       console.log(result)
 
@@ -177,7 +171,7 @@ export const TokenDapp: FC<{
       setTransactionStatus("approve")
 
       console.log("transfer", { transferTo, transferAmount })
-      const result = await transferToken(transferTokenId, transferTo, transferAmount, network)
+      const result = await transferToken(signer, account, transferTokenId, transferTo, transferAmount, network)
       console.log(result)
 
       setLastTransactionHash(result.txId)
@@ -193,7 +187,7 @@ export const TokenDapp: FC<{
       e.preventDefault()
       setTransactionStatus("approve")
 
-      const destroyTokenContractResult = await destroyTokenContract(destroyTokenId)
+      const destroyTokenContractResult = await destroyTokenContract(signer, account, destroyTokenId)
       setLastTransactionHash(destroyTokenContractResult.txId)
 
       setTransactionStatus("pending")
@@ -209,12 +203,14 @@ export const TokenDapp: FC<{
       if (mintedToken) {
         setTransactionStatus("approve")
         console.log("transfer", {
-          transferTo: withdrawType === "withdraw-and-transfer" ? withdrawTransferTo : alephium?.connectedAccount?.address,
+          transferTo: withdrawType === "withdraw-and-transfer" ? withdrawTransferTo : account?.address,
           transferAmount: mintAmount,
           mintedToken
         })
 
         const result = await withdrawMintedToken(
+          signer,
+          account,
           mintAmount,
           mintedToken,
           withdrawType === "withdraw-and-transfer" ? withdrawTransferTo : undefined
@@ -238,7 +234,7 @@ export const TokenDapp: FC<{
       setTransactionStatus("approve")
 
       console.log("sign", shortText, messageHasher)
-      const result = await signMessage(shortText, messageHasher)
+      const result = await signMessage(signer, account, shortText, messageHasher)
       console.log(result)
 
       setLastSig(result.signature)
@@ -255,7 +251,7 @@ export const TokenDapp: FC<{
       setTransactionStatus("approve")
 
       console.log("sign unsigned tx", unsignedTx)
-      const result = await signUnsignedTx(unsignedTx)
+      const result = await signUnsignedTx(signer, account, unsignedTx)
       console.log(result)
 
       setTxSignature(result.signature)
@@ -350,7 +346,7 @@ export const TokenDapp: FC<{
 
       <div className="columns">
         {
-          (mintedToken && alephium?.connectedAccount) ? (
+          (mintedToken && account) ? (
             <form onSubmit={handleWithdrawMintedTokenSubmit}>
               <h2 className={styles.title}>Withdraw minted token</h2>
               <label htmlFor="token-address">Token Address</label>
@@ -386,7 +382,7 @@ export const TokenDapp: FC<{
                   id="transfer-to"
                   name="fname"
                   disabled
-                  value={alephium.connectedAccount.address}
+                  value={account.address}
                 />
               ) : (
                 <input
