@@ -120,6 +120,7 @@ export const withdrawMintedToken = async (
     })
     const transferParams: SignTransferChainedTxParams = {
       signerAddress: toAddress,
+      signerKeyType: account.keyType,
       destinations: [
         { address: transferTo, attoAlphAmount: DUST_AMOUNT, tokens: [{ id: tokenId, amount: BigInt(amount) }] }
       ],
