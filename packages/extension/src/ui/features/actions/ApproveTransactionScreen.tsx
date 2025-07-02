@@ -114,7 +114,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           throw new Error("Transaction params are empty")
         }
 
-        if (selectedAccount.type === "gl-secp256k1") {
+        if (selectedAccount.type === "groupless") {
           if (useLedger) {
             throw new Error("Ledger does not support groupless address")
           }

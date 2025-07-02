@@ -108,8 +108,11 @@ export class LedgerAlephium extends AccountDiscovery {
 
     console.info(`start discovering active ledger accounts for ${networkId}`)
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-    const discoverAccount = (startIndex: number): Promise<WalletAccount> => {
-      return this.deriveAccount(network.id, startIndex, 'default')
+    const discoverAccount = async (startIndex: number): Promise<WalletAccount[]> => {
+      return [
+        await this.deriveAccount(network.id, startIndex, 'default'),
+        await this.deriveAccount(network.id, startIndex, 'gl-secp256k1')
+      ]
     }
     const walletAccounts = await this.deriveActiveAccountsForNetwork(explorerProvider, discoverAccount)
     const newDiscoveredAccounts = walletAccounts.filter(account => !existingLedgerAccounts.find(a => a.address === account.address))

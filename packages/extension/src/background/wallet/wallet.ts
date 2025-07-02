@@ -12,6 +12,7 @@ import {
   KeyType,
   ExplorerProvider,
   isGrouplessAddressWithGroupIndex,
+  isGrouplessAccount,
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
@@ -208,9 +209,13 @@ export class Wallet extends AccountDiscovery {
   }
 
   static checkAccount(account: WalletAccount, networkId?: string, keyType?: KeyType, group?: number): boolean {
-    return (networkId === undefined || account.networkId === networkId) &&
-      (keyType === undefined || account.signer.keyType === keyType) &&
-      (group === undefined || account.signer.group === group)
+    const networkCompatible = networkId === undefined || account.networkId === networkId
+    const keyTypeCompatible = keyType === undefined ||
+      account.signer.keyType === keyType ||
+      (keyType === 'default' && account.signer.keyType === 'gl-secp256k1') // return both default & gl-secp256k1 if keyType is default
+    const groupCompatible = group === undefined || account.type === "groupless" || account.signer.group === group
+
+    return networkCompatible && keyTypeCompatible && groupCompatible
   }
 
   public async newAccount(networkId: string, keyType: KeyType, forGroup?: number): Promise<WalletAccount> {
@@ -439,6 +444,7 @@ export class Wallet extends AccountDiscovery {
     const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
     const newAddress = addressFromPublicKey(publicKey, keyType)
 
+    const isGroupless = keyType === 'gl-secp256k1'
     return {
       address: newAddress,
       networkId: networkId,
@@ -449,7 +455,7 @@ export class Wallet extends AccountDiscovery {
         derivationIndex: index,
         group: groupOfAddress(newAddress)
       },
-      type: keyType === 'gl-secp256k1' ? "gl-secp256k1" : "alephium",
+      type: isGroupless ? "groupless" : "alephium",
     }
   }
 
@@ -469,8 +475,11 @@ export class Wallet extends AccountDiscovery {
 
     console.info(`start discovering active accounts for ${networkId}`)
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-    const discoverAccount = (startIndex: number): Promise<WalletAccount> => {
-      return Promise.resolve(this.deriveAccount(session.secret, startIndex, network.id, 'default'))
+    const discoverAccount = (startIndex: number): Promise<WalletAccount[]> => {
+      return Promise.resolve([
+        this.deriveAccount(session.secret, startIndex, network.id, 'gl-secp256k1'),
+        this.deriveAccount(session.secret, startIndex, network.id, 'default')
+      ])
     }
     const walletAccounts = await this.deriveActiveAccountsForNetwork(explorerProvider, discoverAccount)
     const newDiscoveredAccounts = walletAccounts.filter(account => !accountsForNetwork.find(a => a.address === account.address))
