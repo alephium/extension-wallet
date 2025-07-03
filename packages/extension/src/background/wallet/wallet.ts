@@ -434,6 +434,10 @@ export class Wallet extends AccountDiscovery {
   }
 
   public deriveAccount(secret: string, startIndex: number, networkId: string, keyType: KeyType, forGroup?: number): WalletAccount {
+    if (keyType !== 'gl-secp256k1' && keyType !== 'default') {
+      throw new Error(`Key type ${keyType} is not supported`)
+    }
+
     if (keyType === 'gl-secp256k1' && forGroup !== undefined) {
       // Shall we allow for selecting default group?
       throw new Error("Groupless account cannot have explicit group")
