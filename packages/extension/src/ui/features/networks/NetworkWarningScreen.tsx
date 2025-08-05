@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 
 import { routes, useReturnTo } from "../../routes"
 import { useNeedsToShowNetworkStatusWarning } from "./seenNetworkStatusWarning.state"
-import { useCurrentNetwork } from "./useNetworks"
+import { useCurrentNetwork, useNetworkStatuses } from "./useNetworks"
 import { useTranslation } from "react-i18next"
 
 const { NetworkIcon } = icons
@@ -15,8 +15,21 @@ export const NetworkWarningScreen: FC = () => {
   const navigate = useNavigate()
   const returnTo = useReturnTo()
   const network = useCurrentNetwork()
+  const { networkStatuses } = useNetworkStatuses()
   const [, updateNeedsToShowNetworkStatusWarning] =
     useNeedsToShowNetworkStatusWarning()
+
+  const currentNetworkStatus = networkStatuses[network.id]
+
+  const hasExplorerIssues = currentNetworkStatus && !currentNetworkStatus.explorerHealthy
+  const hasNodeIssues = currentNetworkStatus && !currentNetworkStatus.nodeHealthy
+
+  let message = t("There are connectivity issues for Alephium explorer or full node at the moment on {{ network }}", { network: network.name })
+  if (hasExplorerIssues && !hasNodeIssues) {
+    message = t("There are connectivity issues for Alephium explorer at the moment on {{ network }}", { network: network.name })
+  } else if (hasNodeIssues && !hasExplorerIssues) {
+    message = t("There are connectivity issues for Alephium full node at the moment on {{ network }}", { network: network.name })
+  }
 
   return (
     <Center flex={1} flexDirection={"column"} py={6} px={5}>
@@ -39,7 +52,7 @@ export const NetworkWarningScreen: FC = () => {
           {t("Network issues")}
         </H3>
         <P3 color="neutrals.100">
-          {t("There are connectivity issues for Alephium explorer or full node at the moment on {{ network }}", { network: network.name })}
+          {message}
         </P3>
       </Center>
       <Button
