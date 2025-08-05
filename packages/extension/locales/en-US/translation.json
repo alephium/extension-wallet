@@ -262,6 +262,8 @@
   "Selected network": "Selected network",
   "Network issues": "Network issues",
   "There are connectivity issues for Alephium explorer or full node at the moment on {{ network }}": "There are connectivity issues for Alephium explorer or full node at the moment on {{ network }}",
+  "There are connectivity issues for Alephium explorer at the moment on {{ network }}": "There are connectivity issues for Alephium explorer at the moment on {{ network }}",
+  "There are connectivity issues for Alephium full node at the moment on {{ network }}": "There are connectivity issues for Alephium full node at the moment on {{ network }}",
   "I understand": "I understand",
   "Pin the Alephium extension for quick access": "Pin the Alephium extension for quick access",
   "Alephium": "Alephium",

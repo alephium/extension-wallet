@@ -11,17 +11,28 @@ export const getTokenBalanceForAccount = async (
   account: BaseWalletAccount,
 ): Promise<string> => {
   const network = await getNetwork(account.networkId)
-  /** fallback to single call */
-  const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+  try {
+    const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
 
-  let result: explorer.AddressBalance
-  if (ALPH_TOKEN_ID === tokenId) {
-    result = await explorerProvider.addresses.getAddressesAddressBalance(account.address)
-  } else {
-    result = await explorerProvider.addresses.getAddressesAddressTokensTokenIdBalance(account.address, tokenId)
+    let result: explorer.AddressBalance
+    if (ALPH_TOKEN_ID === tokenId) {
+      result = await explorerProvider.addresses.getAddressesAddressBalance(account.address)
+    } else {
+      result = await explorerProvider.addresses.getAddressesAddressTokensTokenIdBalance(account.address, tokenId)
+    }
+    return result.balance
+  } catch (error) {
+    console.log('Explorer backend failed, falling back to full node', error)
+    const nodeProvider = new NodeProvider(network.nodeUrl, network.nodeApiKey)
+    const result = await nodeProvider.addresses.getAddressesAddressBalance(account.address)
+
+    if (ALPH_TOKEN_ID === tokenId) {
+      return result.balance
+    } else {
+      const tokenBalance = result.tokenBalances?.find(token => token.id === tokenId)
+      return tokenBalance?.amount || "0"
+    }
   }
-
-  return result.balance
 }
 
 export function addTokenToBalances(balances: Map<string, BigNumber>, tokenId: string, amount: BigNumber) {
