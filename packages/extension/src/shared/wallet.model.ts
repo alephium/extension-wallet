@@ -1,7 +1,10 @@
 import { KeyType } from "@alephium/web3"
 import { getNetwork, Network } from "./network"
 
-export type ArgentAccountType = "alephium"
+
+// "alephium" is grouped address
+export type AlephiumAccountType = "alephium" | "groupless"
+
 export type SignerType = "local_secret" | "ledger"
 export interface WalletAccountSigner {
   type: SignerType
@@ -21,7 +24,7 @@ export interface BaseWalletAccount {
 }
 
 export interface WalletAccount extends BaseWalletAccount, WithSigner {
-  type: ArgentAccountType
+  type: AlephiumAccountType
   hidden?: boolean
 }
 

@@ -88,6 +88,7 @@ module.exports = {
     new ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
       React: "react",
+      process: "process/browser",
     }),
 
     !isProd && // eslint should run before the build starts
@@ -135,7 +136,9 @@ module.exports = {
       fs: false,
       crypto: require.resolve('crypto-browserify'),
       stream: require.resolve('stream-browserify'),
-      path: require.resolve("path-browserify")
+      path: require.resolve("path-browserify"),
+      vm: require.resolve("vm-browserify"),
+      process: require.resolve("process/browser")
     },
     alias: {
       "@mui/styled-engine": "@mui/styled-engine-sc"

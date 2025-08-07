@@ -1,19 +1,17 @@
-import React, { FC } from "react"
+import React, { FC, ReactNode, PropsWithChildren } from "react"
 
 import { useScroll } from "../hooks"
 import { useScrollRestoration } from "../hooks/useScrollRestoration"
 import { NavigationBar, NavigationBarProps } from "./NavigationBar"
 import { ScrollContainer } from "./ScrollContainer"
 
-type BaseNavigationContainerProps = Omit<NavigationBarProps, "scroll">
-
-export interface NavigationContainerProps extends BaseNavigationContainerProps {
+export interface NavigationContainerProps extends NavigationBarProps {
   /** Unique id for persisting scroll position - if provided, scroll position will be restored when navigating 'back' to this component. See {@link useScrollRestoration} */
   scrollKey?: string
 }
 
 interface ScrollRestorationNavigationContainerProps
-  extends BaseNavigationContainerProps {
+  extends NavigationBarProps {
   scrollKey: string
 }
 
@@ -35,7 +33,7 @@ export const NavigationContainer: FC<NavigationContainerProps> = ({
 
 /** No `scrollKey`, no scroll restoration */
 
-const BaseNavigationContainer: FC<BaseNavigationContainerProps> = ({
+const BaseNavigationContainer: FC<NavigationBarProps> = ({
   children,
   ...rest
 }) => {
