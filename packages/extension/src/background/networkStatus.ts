@@ -2,6 +2,7 @@ import { ExplorerProvider, NodeProvider } from "@alephium/web3"
 import { Network, NetworkStatus } from "../shared/network"
 import { KeyValueStorage } from "../shared/storage"
 import { createStaleWhileRevalidateCache } from "./swr"
+import { NetworkHealthStatus } from "../shared/network/type"
 
 type SwrCacheKey = string
 
@@ -21,7 +22,12 @@ export const getNetworkStatus = async (
   network: Network,
 ): Promise<NetworkStatus> => {
   return isNetworkHealthy(network).then(healthy => {
-    return { id: network.id, healthy }
+    return {
+      id: network.id,
+      healthy: healthy.nodeHealthy && healthy.explorerHealthy,
+      nodeHealthy: healthy.nodeHealthy,
+      explorerHealthy: healthy.explorerHealthy,
+    }
   })
 }
 
@@ -38,19 +44,39 @@ export const getNetworkStatuses = async (
   )
 }
 
-export const isNetworkHealthy = async (network: Network): Promise<boolean> => {
+const checkServiceHealth = async <T>(
+  healthCheck: () => Promise<T>,
+  serviceName: string
+): Promise<boolean> => {
+  try {
+    const result = await healthCheck()
+    return !!result
+  } catch (exception) {
+    console.debug(`Exception when checking ${serviceName} health`, exception)
+    return false
+  }
+}
+
+
+export const isNetworkHealthy = async (network: Network): Promise<NetworkHealthStatus> => {
   const nodeProvider = new NodeProvider(network.nodeUrl, network.nodeApiKey)
   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
 
   return swr(`${network.id}-network-status`, async () => {
-    try {
-      const nodeReleaseVersion = (await nodeProvider.infos.getInfosVersion()).version
-      const explorerReleaseVersion = (await explorerProvider.infos.getInfos()).releaseVersion
+    const [nodeHealthy, explorerHealthy] = await Promise.all([
+      checkServiceHealth(
+        () => nodeProvider.infos.getInfosVersion().then(info => info.version),
+        'node'
+      ),
+      checkServiceHealth(
+        () => explorerProvider.infos.getInfos().then(info => info.releaseVersion),
+        'explorer'
+      )
+    ])
 
-      return !!nodeReleaseVersion && !!explorerReleaseVersion
-    } catch (exception) {
-      console.debug('Exception when checking network healthy', exception)
-      return false
+    return {
+      nodeHealthy,
+      explorerHealthy,
     }
   })
 }
