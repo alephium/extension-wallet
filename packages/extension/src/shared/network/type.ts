@@ -8,7 +8,13 @@ export interface Network {
   readonly?: boolean
 }
 
+export interface NetworkHealthStatus {
+  nodeHealthy: boolean
+  explorerHealthy: boolean
+}
 export interface NetworkStatus {
   id: Network['id']
   healthy: boolean
+  nodeHealthy: boolean
+  explorerHealthy: boolean
 }
