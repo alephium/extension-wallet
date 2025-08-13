@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"@alephium/cli@^v2.0.0-rc.2":
-  version "2.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-2.0.0-rc.2.tgz#5b80a3c2bed4dc09b71156f7d6149a36696b51bc"
-  integrity sha512-E/zQ+y+xZPOyZUBlPU2SixGsGY7xikCarhhgkU8lnHnUNrq1arsUZ4c6s8S27gdRNGChJRZ9s0S9b5ZJ7YFZFA==
+"@alephium/cli@^v2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-2.0.0.tgz#4d979e9934e44d68e0d416667b22927d0d894b85"
+  integrity sha512-UiKSE+iFmu/X/t4xirRn8LtLudcIFEF7ABNMSh5IsBdILUtQyziqjNpZKWAjhxa1qg94MlPj/SZ6ROVjcOPMLw==
   dependencies:
-    "@alephium/web3" "^2.0.0-rc.2"
-    "@alephium/web3-wallet" "^2.0.0-rc.2"
+    "@alephium/web3" "^2.0.0"
+    "@alephium/web3-wallet" "^2.0.0"
     "@swc/core" "^1.4.1"
     commander "^9.5.0"
     cross-fetch "^3.1.5"
@@ -18,12 +18,12 @@
     jest "^28.1.3"
     prettier "^2.8.7"
 
-"@alephium/get-extension-wallet@^v2.0.0-rc.2":
-  version "2.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-2.0.0-rc.2.tgz#c893a2999705c6d5c32359cf7b7d7e9a8c1d1086"
-  integrity sha512-R4yQvknb0VjyEmDDaDMSziXgdISneu0xhKdhb7MwXveiZ138L90aRNIhXiMMKGukdytNlhCB6LCDW4Cza94qBA==
+"@alephium/get-extension-wallet@^v2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-2.0.0.tgz#9f77f65516753e49d8ed9f92b7980452cd5417e4"
+  integrity sha512-to4NkkP5Mt5uniA8yjSWFsvLXTbkOO+wucmcBMpxXoohywatxuj8neUVVMXky3xut9WKinbQ3HreZG1zakJXCQ==
   dependencies:
-    "@alephium/web3" "^2.0.0-rc.2"
+    "@alephium/web3" "^2.0.0"
     bowser "^2.11.0"
 
 "@alephium/ledger-app@0.6.1":
@@ -42,20 +42,20 @@
   dependencies:
     cross-fetch "^3.1.8"
 
-"@alephium/web3-test@^v2.0.0-rc.2":
-  version "2.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-2.0.0-rc.2.tgz#c23770cf34bbd1c87fbea974c051fb387d656ddc"
-  integrity sha512-IV1jRNyuZUluF17weYYD/fxo1ITh6kCHTDPy8S9+BmgbLYMX6zFKudkGy/Ucw7JwxzulYE2L0EnXiwrcX0lkUw==
+"@alephium/web3-test@^v2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-2.0.0.tgz#0207c880b30c3d106f409af7915d99603f98bf4a"
+  integrity sha512-c72nSEs1pqXsrpg+cXPscSi9C7t9ofrPsFrwQsGt5fYS36I3RX4qo25aowmsmHonLBMpfga/3VG6evl7uXYjpg==
   dependencies:
-    "@alephium/web3" "^2.0.0-rc.2"
-    "@alephium/web3-wallet" "^2.0.0-rc.2"
+    "@alephium/web3" "^2.0.0"
+    "@alephium/web3-wallet" "^2.0.0"
 
-"@alephium/web3-wallet@^2.0.0-rc.2", "@alephium/web3-wallet@^v2.0.0-rc.2":
-  version "2.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-2.0.0-rc.2.tgz#54803ca072011477c3a944214a5618dc9672070a"
-  integrity sha512-+D9ldBGv068EnXgSRTYvN5w2l8b5nN2FGJSW1tWcIPnrkPagl142oO298XZr24sCmTNE3ui+gRD1gzCf42P8Sg==
+"@alephium/web3-wallet@^2.0.0", "@alephium/web3-wallet@^v2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-2.0.0.tgz#4f4a722aa7b63532ec2b0efa8fb5ce12001f497d"
+  integrity sha512-yo7cVta7nCKQAtH49aEJ4nREcLucgJ32PuXgef7N3FiwOG3ey9hWez66e+GZJHvkzax1FNPlUDRN7KPAfOJdLg==
   dependencies:
-    "@alephium/web3" "^2.0.0-rc.2"
+    "@alephium/web3" "^2.0.0"
     "@noble/secp256k1" "1.7.1"
     "@types/node" "^16.18.23"
     bip32 "3.1.0"
@@ -81,10 +81,10 @@
     path-browserify "^1.0.1"
     stream-browserify "^3.0.0"
 
-"@alephium/web3@^2.0.0-rc.2", "@alephium/web3@^v2.0.0-rc.2":
-  version "2.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-2.0.0-rc.2.tgz#73963319762a8dc249b24111247b6ff89190370b"
-  integrity sha512-RDA1sewjcyCdMeoy9wOORkUKQig1EVyk8WEvCdkeH+hTs+oyN8ziiKaqTnUKQkCQU7bSAiZAHMaf1HWNqa31Eg==
+"@alephium/web3@^2.0.0", "@alephium/web3@^v2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-2.0.0.tgz#6edeec0502509b39582e508328c8d9cbd4d9984c"
+  integrity sha512-pNQ4wZrkCDnbgRlZY99pRxHYkqQFMHapg7VI0j5kV/LtMDQk3/0GX6sDJj0XDk/zDrbF7+/odunhMY5XAB1aVQ==
   dependencies:
     "@noble/secp256k1" "1.7.1"
     base-x "4.0.0"
