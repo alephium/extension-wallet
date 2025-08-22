@@ -77,6 +77,20 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0)
   const { tokenDetails: allUserTokens, tokenDetailsIsInitialising } = useAllTokensWithBalance(selectedAccount)
 
+  const getDisplayBuildResult = () => {
+    if (!buildResults || buildResults.length === 0) {
+      return undefined
+    }
+
+    if (selectedAccount?.isGroupless() && buildResults.length > 1) {
+      return buildResults[buildResults.length - 1]
+    }
+    return buildResults[currentIndex]
+  }
+
+  const displayBuildResult = getDisplayBuildResult()
+  const isGrouplessOrSingleResult = buildResults?.length === 1 || selectedAccount?.isGroupless()
+
   const useLedger = selectedAccount !== undefined && selectedAccount.signer.type === "ledger"
   const ledgerSubmit = useCallback((signature: string) => {
     if (buildResults) {
@@ -90,7 +104,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   }, [onSubmit, buildResults])
   const { ledgerState, ledgerApp, ledgerSign } = useLedgerApp({
     selectedAccount,
-    unsignedTx: buildResults?.[0].result.unsignedTx,
+    unsignedTx: displayBuildResult?.result.unsignedTx,
     onSubmit: ledgerSubmit,
     navigate,
     onReject
@@ -114,7 +128,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
           throw new Error("Transaction params are empty")
         }
 
-        if (selectedAccount.type === "groupless") {
+        if (selectedAccount.isGroupless()) {
           if (useLedger) {
             throw new Error("Ledger does not support groupless address")
           }
@@ -161,8 +175,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
   }, [nodeUrl, selectedAccount, transactionParams, tokenDetailsIsInitialising, actionHash, navigate, t])
 
   const getButtonConfig = () => {
-    // Single transaction case - use default behavior
-    if (buildResults?.length === 1) {
+    if (isGrouplessOrSingleResult) {
       return {
         confirmButtonText: !useLedger ? t("Sign") : t(getConfirmationTextByState(ledgerState)),
         rejectButtonText: t("Cancel"),
@@ -186,7 +199,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       }
     }
 
-    // Multiple transactions case
+    // For chained transactions, show navigation
     if (currentIndex === 0) {
       return {
         confirmButtonText: t("Next"),
@@ -231,7 +244,7 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
     return <Navigate to={routes.accounts()} />
   }
 
-  if (buildResults === undefined) {
+  if (buildResults === undefined || !displayBuildResult) {
     return <LoadingScreen />
   }
 
@@ -247,16 +260,16 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       onReject={buttonConfig.onReject}
       showHeader={false}
       footer={
-        buildResults.length > 0 && (
+        displayBuildResult && (
           <Flex direction="column" gap="1">
             <LedgerStatus ledgerState={ledgerState} />
             <FeeEstimation
               onErrorChange={() => {
                 return
               }}
-              accountAddress={buildResults[currentIndex].params.signerAddress}
-              networkId={buildResults[currentIndex].params.networkId}
-              transaction={buildResults[currentIndex]}
+              accountAddress={displayBuildResult.params.signerAddress}
+              networkId={displayBuildResult.params.networkId}
+              transaction={displayBuildResult}
               actionHash={actionHash}
             />
           </Flex>
@@ -264,17 +277,17 @@ export const ApproveTransactionScreen: FC<ApproveTransactionScreenProps> = ({
       }
       {...props}
     >
-      <DappHeader transaction={buildResults[currentIndex]} />
-      {buildResults.length > 1 && (
+      <DappHeader transaction={displayBuildResult} />
+      {!isGrouplessOrSingleResult && (
         <Flex justify="center" mb={2} mt={-2}>
           <Text fontSize="sm" fontWeight="medium">
             {`${currentIndex + 1} / ${buildResults.length}`}
           </Text>
         </Flex>
       )}
-      <TransactionsList networkId={networkId} transactionReview={buildResults[currentIndex]} />
-      <AccountNetworkInfo accountAddress={buildResults[currentIndex].params.signerAddress} networkId={networkId} />
-      <TxHashContainer txId={buildResults[currentIndex].result.txId}></TxHashContainer>
+      <TransactionsList networkId={networkId} transactionReview={displayBuildResult} />
+      <AccountNetworkInfo accountAddress={displayBuildResult.params.signerAddress} networkId={networkId} />
+      <TxHashContainer txId={displayBuildResult.result.txId}></TxHashContainer>
     </ConfirmScreen>
   )
 }

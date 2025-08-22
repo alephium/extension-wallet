@@ -78,4 +78,8 @@ export class Account {
       address,
     }
   }
+
+  public isGroupless(): boolean {
+    return this.type === "groupless"
+  }
 }
