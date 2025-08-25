@@ -20,11 +20,9 @@ export interface RequestToken extends Omit<BaseToken, "networkId"> {
 export interface Token extends Required<RequestToken> {
   description?: string
   logoURI?: string
-  showAlways?: boolean
   verified?: boolean
   originChain?: string
   unchainedLogoURI?: string
-  hide?: boolean
 }
 
 export interface TokenListTokens {
@@ -34,4 +32,9 @@ export interface TokenListTokens {
 
 export interface TokenWithBalance extends Token {
   balance?: BigNumber
+}
+
+export interface HiddenToken {
+  id: string
+  networkId: string
 }
