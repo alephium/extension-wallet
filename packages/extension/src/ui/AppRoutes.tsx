@@ -1,8 +1,9 @@
-import { Route, Routes, RoutesConfig } from "@argent/stack-router"
+import { Route, RoutesConfig } from "@argent/stack-router"
 import { chakra } from "@chakra-ui/react"
 import { FC, ReactNode, isValidElement, useMemo } from "react"
 // import { Outlet, Route, Routes } from "react-router-dom" // reinstate in case of issues with @argent/stack-router
 import { Outlet, useLocation } from "react-router-dom"
+import {Routes} from "react-router-dom" // import Routes from react-router-dom
 
 import { useAppState } from "./app.state"
 import { ResponsiveBox } from "./components/Responsive"
