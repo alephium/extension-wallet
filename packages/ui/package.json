@@ -46,7 +46,8 @@
     "@emotion/styled": "^11.10.4",
     "@ethersproject/wordlists": "^5.7.0",
     "framer-motion": "^8.0.2",
-    "popmotion": "^11.0.5"
+    "popmotion": "^11.0.5",
+    "react-copy-to-clipboard": "^5.0.4"
   },
   "peerDependencies": {
     "@emotion/react": "^11.10.4",

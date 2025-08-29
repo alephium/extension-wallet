@@ -6,9 +6,11 @@ import { H5 } from "./Typography"
 
 const { HelpIcon } = icons
 
-export interface EmptyProps extends PropsWithChildren {
+export interface EmptyProps extends PropsWithChildren<{}> {
+  title?: string
+  description?: string
   icon?: ReactNode
-  title?: ReactNode
+  action?: ReactNode
 }
 
 export const Empty: FC<EmptyProps> = ({

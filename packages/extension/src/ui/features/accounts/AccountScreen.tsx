@@ -29,7 +29,7 @@ export const AccountScreen: FC<AccountScreenProps> = ({ tab }) => {
   let scrollKey = "accounts/AccountScreen"
   if (showEmpty) {
     return (
-      <AccountScreenEmpty onAddAccount={() => addAccount('default')} />
+      <AccountScreenEmpty onAddAccount={() => addAccount('gl-secp256k1')} />
     )
   } else if (shouldShowFullScreenStatusMessage) {
     return <StatusMessageFullScreenContainer />

@@ -32,15 +32,15 @@ class DerivedAccountsPerGroup {
 export abstract class AccountDiscovery {
   public async deriveActiveAccountsForNetwork(
     explorerProvider: ExplorerProvider,
-    deriveAccount: (startIndex: number) => Promise<WalletAccount>
+    deriveAccount: (startIndex: number) => Promise<WalletAccount[]>
   ): Promise<WalletAccount[]> {
     const allAccounts = Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map(() => new DerivedAccountsPerGroup())
     let startIndex = 0
     while (allAccounts.some((a) => !a.isComplete())) {
       const newWalletAccounts = []
       for (let i = 0; i < derivationBatchSize; i++) {
-        const newWalletAccount = await deriveAccount(startIndex + i)
-        newWalletAccounts.push(newWalletAccount)
+        const accounts = await deriveAccount(startIndex + i)
+        newWalletAccounts.push(...accounts)
       }
       startIndex += derivationBatchSize
       const results = await explorerProvider.addresses.postAddressesUsed(newWalletAccounts.map(account => account.address))

@@ -10,7 +10,9 @@ import {
   publicKeyFromPrivateKey,
   groupOfAddress,
   KeyType,
-  ExplorerProvider
+  ExplorerProvider,
+  isGrouplessAddressWithGroupIndex,
+  isGrouplessAccount,
 } from "@alephium/web3"
 import {
   PrivateKeyWallet,
@@ -207,9 +209,13 @@ export class Wallet extends AccountDiscovery {
   }
 
   static checkAccount(account: WalletAccount, networkId?: string, keyType?: KeyType, group?: number): boolean {
-    return (networkId === undefined || account.networkId === networkId) &&
-      (keyType === undefined || account.signer.keyType === keyType) &&
-      (group === undefined || account.signer.group === group)
+    const networkCompatible = networkId === undefined || account.networkId === networkId
+    const keyTypeCompatible = keyType === undefined ||
+      account.signer.keyType === keyType ||
+      (keyType === 'default' && account.signer.keyType === 'gl-secp256k1') // return both default & gl-secp256k1 if keyType is default
+    const groupCompatible = group === undefined || account.type === "groupless" || account.signer.group === group
+
+    return networkCompatible && keyTypeCompatible && groupCompatible
   }
 
   public async newAccount(networkId: string, keyType: KeyType, forGroup?: number): Promise<WalletAccount> {
@@ -322,8 +328,9 @@ export class Wallet extends AccountDiscovery {
 
   public async getAccount({ address, networkId }: { address: string, networkId?: string }) {
     const accounts = await this.walletStore.get()
+    const updatedAddress = isGrouplessAddressWithGroupIndex(address) ? address.slice(0, -2) : address
     const account = find(accounts, (account) =>
-      account.address === address && (networkId === undefined || account.networkId === networkId)
+      account.address === updatedAddress && (networkId === undefined || account.networkId === networkId)
     )
 
     if (!account) {
@@ -427,11 +434,21 @@ export class Wallet extends AccountDiscovery {
   }
 
   public deriveAccount(secret: string, startIndex: number, networkId: string, keyType: KeyType, forGroup?: number): WalletAccount {
+    if (keyType !== 'gl-secp256k1' && keyType !== 'default') {
+      throw new Error(`Key type ${keyType} is not supported`)
+    }
+
+    if (keyType === 'gl-secp256k1' && forGroup !== undefined) {
+      // Shall we allow for selecting default group?
+      throw new Error("Groupless account cannot have explicit group")
+    }
+
     const [privateKey, index] = forGroup === undefined ? [deriveHDWalletPrivateKey(secret, keyType, startIndex), startIndex]
       : deriveHDWalletPrivateKeyForGroup(secret, forGroup, keyType, startIndex)
     const publicKey = publicKeyFromPrivateKey(privateKey, keyType)
     const newAddress = addressFromPublicKey(publicKey, keyType)
 
+    const isGroupless = keyType === 'gl-secp256k1'
     return {
       address: newAddress,
       networkId: networkId,
@@ -442,7 +459,7 @@ export class Wallet extends AccountDiscovery {
         derivationIndex: index,
         group: groupOfAddress(newAddress)
       },
-      type: "alephium",
+      type: isGroupless ? "groupless" : "alephium",
     }
   }
 
@@ -462,8 +479,11 @@ export class Wallet extends AccountDiscovery {
 
     console.info(`start discovering active accounts for ${networkId}`)
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-    const discoverAccount = (startIndex: number): Promise<WalletAccount> => {
-      return Promise.resolve(this.deriveAccount(session.secret, startIndex, network.id, 'default'))
+    const discoverAccount = (startIndex: number): Promise<WalletAccount[]> => {
+      return Promise.resolve([
+        this.deriveAccount(session.secret, startIndex, network.id, 'gl-secp256k1'),
+        this.deriveAccount(session.secret, startIndex, network.id, 'default')
+      ])
     }
     const walletAccounts = await this.deriveActiveAccountsForNetwork(explorerProvider, discoverAccount)
     const newDiscoveredAccounts = walletAccounts.filter(account => !accountsForNetwork.find(a => a.address === account.address))

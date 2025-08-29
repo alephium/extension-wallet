@@ -23,6 +23,7 @@ import {
   SignUnsignedTxParams,
   SignUnsignedTxResult,
   groupOfAddress,
+  isGrouplessAddressWithGroupIndex,
   isHexString,
   networkIds,
 } from "@alephium/web3"
@@ -400,7 +401,11 @@ export const alephiumWindowObject: AlephiumWindowObject =
         throw Error("No connection")
       }
 
-      if (signerAddress !== this.connectedAccount?.address) {
+      let updatedSignerAddress = signerAddress
+      if (isGrouplessAddressWithGroupIndex(signerAddress)) {
+        updatedSignerAddress = signerAddress.slice(0, -2)
+      }
+      if (updatedSignerAddress !== this.connectedAccount?.address) {
         throw Error(
           `Unauthorized address. Expected: ${this.connectedAccount?.address}, got: ${signerAddress}`,
         )

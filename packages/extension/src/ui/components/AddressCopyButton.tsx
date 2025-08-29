@@ -1,10 +1,10 @@
-import { groupOfAddress } from "@alephium/web3"
 import { Button, CopyTooltip } from "@argent/ui"
 import { Box, Flex } from "@chakra-ui/react"
 import { FC } from "react"
 
 import { formatTruncatedAddress, normalizeAddress } from "../services/addresses"
 import { useTranslation } from "react-i18next"
+import { groupOfAddress, isGrouplessAddress } from "@alephium/web3"
 
 export interface AddressCopyButtonProps {
   address: string
@@ -48,12 +48,16 @@ export const AddressCopyButtonMain: FC<AddressCopyButtonMainProps> = ({ address 
           <Box>
             {formatTruncatedAddress(address, 6)}
           </Box>
-          <Box>
-            /
-          </Box>
-          <Box>
-            {t('Group')}: {groupOfAddress(address)}
-          </Box>
+          {!isGrouplessAddress(address) && (
+            <>
+              <Box>
+                /
+              </Box>
+              <Box>
+                {`${t('Group')}: ${groupOfAddress(address)}`}
+              </Box>
+            </>
+          )}
         </Flex>
       </Button>
     </CopyTooltip>

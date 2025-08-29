@@ -124,11 +124,14 @@ export const alertTheme = defineMultiStyleConfig({
 })
 
 export interface AlertProps
-  extends PropsWithChildren,
+  extends PropsWithChildren<{}>,
     Omit<ChakraAlertProps, "children"> {
   title?: string
   description?: string
   icon?: ReactNode
+  action?: ReactNode
+  onClose?: () => void
+  variant?: "info" | "warning" | "error" | "success"
 }
 
 /**

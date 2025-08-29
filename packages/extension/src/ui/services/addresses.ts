@@ -46,7 +46,7 @@ export const addressSchema = yup
       return ctx.createError({ message: 'Address is required' })
     }
 
-    if (!/^[1-9A-HJ-NP-Za-km-z]+$/.test(address)) {
+    if (!/^[1-9A-HJ-NP-Za-km-z:]+$/.test(address)) {
       return ctx.createError({ message: 'Invalid Address' })
     }
 

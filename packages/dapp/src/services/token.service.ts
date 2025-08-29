@@ -1,6 +1,6 @@
 import { getDefaultAlephiumWallet } from "@alephium/get-extension-wallet"
 import * as web3 from '@alephium/web3'
-import { binToHex, contractIdFromAddress, DUST_AMOUNT, SignTransferChainedTxParams, stringToHex } from '@alephium/web3'
+import { binToHex, contractIdFromAddress, DUST_AMOUNT, SignTransferChainedTxParams, isGrouplessAddress, stringToHex } from '@alephium/web3'
 import { Destroy, ShinyToken, ShinyTokenInstance, Transfer } from '../../artifacts/ts'
 
 export const erc20TokenAddressByNetwork = {
@@ -67,25 +67,20 @@ export const getAlphBalance = async (address: string) => {
   return balance
 }
 
-export const mintToken = async (
-  mintAmount: string,
-  network?: string
-): Promise<web3.DeployContractResult<ShinyTokenInstance>> => {
-  const alephium = await getDefaultAlephiumWallet()
-  if (!alephium?.connectedAccount || !alephium?.connectedNetworkId) {
-    throw Error("alephium object not initialized")
-  }
+export const mintToken = async (amount: string, network: string, group?: number): Promise<web3.DeployContractResult<ShinyTokenInstance>> => {
+  const wallet = await getDefaultAlephiumWallet()
+  if (!wallet?.connectedAccount) throw Error('Wallet not connected')
 
-  return ShinyToken.deploy(alephium, {
+  return ShinyToken.deploy(wallet, {
     initialFields: {
       name: stringToHex("ShinyToken"),
       symbol: stringToHex("SHINY"),
       decimals: 0n,
-      totalSupply: BigInt(mintAmount)
+      totalSupply: BigInt(amount)
     },
     initialAttoAlphAmount: web3.MINIMAL_CONTRACT_DEPOSIT + web3.ONE_ALPH,
-    issueTokenAmount: BigInt(mintAmount),
-  })
+    issueTokenAmount: BigInt(amount),
+  }, group)
 }
 
 export const withdrawMintedToken = async (
@@ -98,28 +93,35 @@ export const withdrawMintedToken = async (
     throw Error("alephium object not initialized")
   }
 
+  let toAddress = alephium.connectedAccount.address
+  if (web3.isGrouplessAddressWithoutGroupIndex(alephium.connectedAccount.address)) {
+    const groupIndex = web3.groupOfAddress(tokenAddress)
+    toAddress = `${toAddress}:${groupIndex}`
+  }
+
   const tokenId = binToHex(contractIdFromAddress(tokenAddress))
   if (!transferTo) {
     return Transfer.execute(
-      alephium,
       {
+        signer: alephium,
         initialFields: {
           shinyToken: tokenId,
-          to: alephium.connectedAccount.address,
+          to: toAddress,
           amount: BigInt(amount)
         }
       }
     )
   } else {
-    const withdrawParams = await Transfer.script.txParamsForExecution(alephium, {
+    const withdrawParams = await Transfer.script.txParamsForExecution({
+      signer: alephium,
       initialFields: {
         shinyToken: tokenId,
-        to: alephium.connectedAccount.address,
+        to: toAddress,
         amount: BigInt(amount)
       }
     })
     const transferParams: SignTransferChainedTxParams = {
-      signerAddress: alephium.connectedAccount.address,
+      signerAddress: toAddress,
       destinations: [
         { address: transferTo, attoAlphAmount: DUST_AMOUNT, tokens: [{ id: tokenId, amount: BigInt(amount) }] }
       ],
@@ -133,6 +135,7 @@ export const withdrawMintedToken = async (
     return withdrawTxResult as web3.SignExecuteScriptChainedTxResult
   }
 }
+
 export const transferToken = async (
   tokenId: string,
   transferTo: string,
@@ -155,7 +158,7 @@ export const transferToken = async (
       }
       ]
     }]
-  })
+  }) as web3.SignTransferTxResult
 }
 
 export const destroyTokenContract = async (
@@ -166,12 +169,18 @@ export const destroyTokenContract = async (
     throw Error("alephium object not initialized")
   }
 
+  let toAddress = alephium.connectedAccount.address
+  if (web3.isGrouplessAddressWithoutGroupIndex(alephium.connectedAccount.address)) {
+    const groupIndex = web3.groupOfAddress(web3.addressFromContractId(tokenId))
+    toAddress = `${toAddress}:${groupIndex}`
+  }
+
   return Destroy.execute(
-    alephium,
     {
+      signer: alephium,
       initialFields: {
-        shinyToken: binToHex(contractIdFromAddress(tokenId)),
-        to: alephium.connectedAccount.address,
+        shinyToken: tokenId,
+        to: toAddress,
       }
     }
   )

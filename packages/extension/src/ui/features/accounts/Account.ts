@@ -1,6 +1,6 @@
 import { KeyType } from "@alephium/web3"
 import {
-  ArgentAccountType,
+  AlephiumAccountType,
   BaseWalletAccount,
   WalletAccount,
   WalletAccountSigner,
@@ -12,7 +12,7 @@ export interface AccountConstructorProps {
   publicKey: string
   networkId: string
   signer: WalletAccountSigner
-  type: ArgentAccountType
+  type: AlephiumAccountType
   deployTransaction?: string
   hidden?: boolean
   needsDeploy?: boolean
@@ -23,7 +23,7 @@ export class Account {
   publicKey: string
   networkId: string
   signer: WalletAccountSigner
-  type: ArgentAccountType
+  type: AlephiumAccountType
   hidden?: boolean
 
   get networkName(): string {
@@ -77,5 +77,9 @@ export class Account {
       networkId,
       address,
     }
+  }
+
+  public isGroupless(): boolean {
+    return this.type === "groupless"
   }
 }

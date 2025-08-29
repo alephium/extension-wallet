@@ -11,6 +11,7 @@ import {
 import { TokenIcon } from "../accountTokens/TokenIcon"
 import { useAccountMetadata } from "./accountMetadata.state"
 import { getNetworkAccountImageUrl } from "./accounts.service"
+import { addressWithoutExplicitGroupIndex } from "@alephium/web3"
 
 export const getAccountNameForAddress = (
   accountAddress: string,
@@ -58,7 +59,7 @@ interface PrettyAccountAddressProps
 }
 
 export const PrettyAccountAddress: FC<PrettyAccountAddressProps> = ({
-  accountAddress,
+  accountAddress: accountAddress0,
   networkId,
   accountNames,
   contacts,
@@ -75,6 +76,9 @@ export const PrettyAccountAddress: FC<PrettyAccountAddressProps> = ({
   if (!contacts) {
     contacts = defaultContacts
   }
+
+  const accountAddress = addressWithoutExplicitGroupIndex(accountAddress0)
+
   const accountName = useMemo(() => {
     const accountName = getAccountNameForAddress(
       accountAddress,
@@ -94,7 +98,7 @@ export const PrettyAccountAddress: FC<PrettyAccountAddressProps> = ({
   const accountImageUrl = getNetworkAccountImageUrl({
     accountName: accountName || accountAddress,
     networkId,
-    accountAddress,
+    accountAddress: accountAddress,
   })
   const accountDisplayName = accountName
     ? accountName

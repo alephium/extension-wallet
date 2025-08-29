@@ -1,4 +1,4 @@
-import { Address, number256ToBigint } from "@alephium/web3"
+import { Address, addressWithoutExplicitGroupIndex, number256ToBigint } from "@alephium/web3"
 import { AlephiumExplorerTransaction, IExplorerTransaction } from "../../../../../shared/explorer/type"
 import { Token } from "../../../../../shared/token/type"
 import { getTransferType } from "../transaction/transformTransaction"
@@ -172,18 +172,20 @@ function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, a
 
   const destinations: Record<Address, DestinationAddress['type']> = {}
   explorerTransaction.inputs?.forEach(input => {
-    if (input.address !== undefined && input.address !== accountAddress) {
-      destinations[input.address] = 'From'
+    const inputAddress = input.address && addressWithoutExplicitGroupIndex(input.address)
+    if (inputAddress !== undefined && inputAddress !== accountAddress) {
+      destinations[inputAddress] = 'From'
     }
   })
   explorerTransaction.outputs?.forEach(output => {
-    if (output.address !== accountAddress) {
-      if (output.address in destinations) {
-        if (destinations[output.address] === 'From') {
-          destinations[output.address] === 'From/To'
+    const outputAddress = output.address && addressWithoutExplicitGroupIndex(output.address)
+    if (outputAddress !== accountAddress) {
+      if (outputAddress in destinations) {
+        if (destinations[outputAddress] === 'From') {
+          destinations[outputAddress] === 'From/To'
         }
       } else {
-        destinations[output.address] = 'To'
+        destinations[outputAddress] = 'To'
       }
     }
   })
@@ -193,7 +195,8 @@ function extractDestinations(explorerTransaction: AlephiumExplorerTransaction, a
 function extractAmountChanges(explorerTransation: AlephiumExplorerTransaction, accountAddress: string): AmountChanges {
   const result: AmountChanges = { attoAlphAmount: BigInt(0), tokens: {} }
   explorerTransation.inputs?.forEach(input => {
-    if (input.address === accountAddress) {
+    const inputAddress = input.address && addressWithoutExplicitGroupIndex(input.address)
+    if (inputAddress === accountAddress) {
       if (input.attoAlphAmount) {
         result.attoAlphAmount -= number256ToBigint(input.attoAlphAmount)
       }
@@ -204,7 +207,8 @@ function extractAmountChanges(explorerTransation: AlephiumExplorerTransaction, a
     }
   })
   explorerTransation.outputs?.forEach(output => {
-    if (output.address === accountAddress) {
+    const outputAddress = output.address && addressWithoutExplicitGroupIndex(output.address)
+    if (outputAddress === accountAddress) {
       if (output.attoAlphAmount) {
         result.attoAlphAmount += number256ToBigint(output.attoAlphAmount)
       }

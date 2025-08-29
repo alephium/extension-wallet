@@ -3,4 +3,5 @@
 /* eslint-disable */
 
 export * from "./ShinyToken";
+export * from "./contracts";
 export * from "./scripts";
