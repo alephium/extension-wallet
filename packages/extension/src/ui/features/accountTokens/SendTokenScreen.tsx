@@ -307,8 +307,8 @@ export const SendTokenScreen: FC = () => {
     return tokenId === ALPH_TOKEN_ID || tokenId === undefined
   }
 
-  const isSweepingAllAsset = (tokenId: string | undefined): boolean => {
-    return maxClicked && allTokensWithBalance.length === 1 && isAlphToken(tokenId)
+  const isSweepingAlph = (tokenId: string | undefined): boolean => {
+    return maxClicked && isAlphToken(tokenId)
   }
 
   const recipientInAddressBook = useMemo(
@@ -327,7 +327,8 @@ export const SendTokenScreen: FC = () => {
         const nodeProvider = new NodeProvider(nodeUrl)
         result = await nodeProvider.transactions.postTransactionsSweepAddressBuild({
           fromPublicKey: account.publicKey,
-          toAddress: inputRecipient
+          toAddress: inputRecipient,
+          sweepAlphOnly: true
         })
         setTxsNumber(result.unsignedTxs.length)
       }
@@ -449,8 +450,7 @@ export const SendTokenScreen: FC = () => {
           <StyledForm
             onSubmit={handleSubmit(async ({ amount, recipient }) => {
               if (account) {
-                // If ALPH only, can still sweep
-                if (isSweepingAllAsset(tokenId)) {
+                if (isSweepingAlph(tokenId)) {
                   const sweepResult = await sweepTransaction
                   if (sweepResult) {
                     sweepResult.unsignedTxs.map((sweepUnsignedTx) => {
@@ -623,7 +623,7 @@ export const SendTokenScreen: FC = () => {
                 )}
               </div>
               {
-                (isSweepingAllAsset(tokenId) && txsNumber > 1) ? (
+                (isSweepingAlph(tokenId) && txsNumber > 1) ? (
                   <WarningContainer>
                     {t("Warning: This will sweep all ALPHs to the recipient. Due to the number of UTXOs, you need to sign {{ txsNumber }} transactions.", { txsNumber })}
                   </WarningContainer>
