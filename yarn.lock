@@ -83,7 +83,7 @@
 
 "@alephium/web3@^2.0.6", "@alephium/web3@^v2.0.6":
   version "2.0.6"
-  resolved "http://localhost:4873/@alephium/web3/-/web3-2.0.6.tgz#0485b93b1d6d59e4cc87ea5242745ae8cef0d2fd"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-2.0.6.tgz#0485b93b1d6d59e4cc87ea5242745ae8cef0d2fd"
   integrity sha512-EW2pDIg27z6keIJFArw8ZW2U9bmI6IPX96OCYqbE14oce/abhvMN1QS/ZAatS/bCTOEtNSrnk7H7QRCkG0TNRw==
   dependencies:
     "@noble/secp256k1" "1.7.1"
