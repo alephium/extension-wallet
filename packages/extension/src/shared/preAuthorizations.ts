@@ -1,4 +1,4 @@
-import { groupOfAddress, KeyType } from "@alephium/web3"
+import { groupOfAddress, isGrouplessAddress, KeyType } from "@alephium/web3"
 import { isArray, pick } from "lodash-es"
 import browser from "webextension-polyfill"
 import { RequestOptions } from "../inpage/inpage.model"
@@ -118,7 +118,7 @@ function matchAuthorizedOptions(account: PreAuthorization, options: RequestOptio
   return account.host === options.host &&
   (options.networkId === undefined || account.account.networkId === options.networkId) &&
   (options.address === undefined || account.account.address === options.address) &&
-  (options.addressGroup === undefined || groupOfAddress(account.account.address) === options.addressGroup)
+  (options.addressGroup === undefined || groupOfAddress(account.account.address) === options.addressGroup || isGrouplessAddress(account.account.address))
 }
 
 export const isPreAuthorized = async (
