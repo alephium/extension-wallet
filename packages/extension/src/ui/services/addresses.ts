@@ -1,6 +1,4 @@
-import {
-  number,
-} from "starknet"
+import * as web3 from "@alephium/web3"
 import * as yup from "yup"
 
 export const normalizeAddress = (address: string) => address
@@ -36,7 +34,6 @@ export const formatFullAddress = (address: string) => {
   return `${hex} ${parts.join(" ")}`
 }
 
-// TODO: improve address validation
 export const addressSchema = yup
   .string()
   .trim()
@@ -46,7 +43,7 @@ export const addressSchema = yup
       return ctx.createError({ message: 'Address is required' })
     }
 
-    if (!/^[1-9A-HJ-NP-Za-km-z:]+$/.test(address)) {
+    if (!web3.isValidAddress(address)) {
       return ctx.createError({ message: 'Invalid Address' })
     }
 
