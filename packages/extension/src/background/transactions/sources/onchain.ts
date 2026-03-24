@@ -1,5 +1,4 @@
-import { ExplorerProvider } from "@alephium/web3"
-import { AlephiumExplorerTransaction } from "../../../shared/explorer/type"
+import { explorer, ExplorerProvider } from "@alephium/web3"
 import { getNetwork } from "../../../shared/network"
 import { compareTransactions, getInFlightTransactions, LatestTransaction, Transaction } from "../../../shared/transactions"
 import { transactionsStore } from "../../../shared/transactions/store"
@@ -11,6 +10,12 @@ interface TransactionUpdates<T = Transaction> {
   toBeRemoved: Transaction[]
   toBeStored: T[]
 }
+
+// See https://github.com/alephium/alephium-frontend/issues/1367
+export const isConfirmedTx = (
+  tx: explorer.TransactionLike,
+): tx is explorer.AcceptedTransaction =>
+  "blockHash" in tx && !tx.inputs?.some((input) => input.txHashRef === undefined)
 
 export async function getTransactionsUpdate(transactionsToCheck: Transaction[]) {
 
@@ -103,8 +108,11 @@ export async function storeTransactionUpdates(transactionUpdates: TransactionUpd
       const network = await getNetwork(transaction.account.networkId)
       const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
       const fullTransaction = await explorerProvider.transactions.getTransactionsTransactionHash(transaction.hash)
+      if (!isConfirmedTx(fullTransaction)) {
+        throw new Error(`Expected confirmed transaction for ${transaction.hash}`)
+      }
       return mapAlephiumTransactionToTransaction(
-        fullTransaction as AlephiumExplorerTransaction,
+        fullTransaction,
         transaction.account,
         transaction.meta,
       )
