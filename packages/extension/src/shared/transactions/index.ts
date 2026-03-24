@@ -2,9 +2,9 @@ import { ALPH_TOKEN_ID, DEFAULT_GAS_PRICE, DUST_AMOUNT, ExplorerProvider, Groupl
 import { lowerCase, upperFirst } from "lodash-es"
 import { Call } from "starknet"
 import { ReviewTransactionResult, TransactionParams } from "../actionQueue/types"
-import { WalletAccount } from "../wallet.model"
 import { AlephiumExplorerTransaction } from "../explorer/type"
-import { grouplessTxResultToReviewTransactionResult, mapAlephiumTransactionToTransaction, signedChainedTxResultToReviewTransactionResult, transactionParamsToSignChainedTxParams } from "./transformers"
+import { WalletAccount } from "../wallet.model"
+import { grouplessTxResultToReviewTransactionResult, signedChainedTxResultToReviewTransactionResult, transactionParamsToSignChainedTxParams } from "./transformers"
 import { getNetwork } from "../network"
 import { BaseTokenWithBalance } from "../token/type"
 import { BigNumber } from "ethers"
@@ -47,6 +47,10 @@ export interface TransactionBase {
 export interface TransactionRequest extends TransactionBase {
   account: WalletAccount
   meta?: TransactionMeta
+}
+
+export interface LatestTransaction extends TransactionRequest {
+  timestamp: number
 }
 
 export interface Transaction extends TransactionRequest {
@@ -94,9 +98,9 @@ export function transactionNamesToTitle(
 export async function getTransactionsPerAccount(
   accountsToPopulate: WalletAccount[],
   metadataTransactions: Transaction[],
-): Promise<Map<WalletAccount, Transaction[]>> {
+): Promise<Map<WalletAccount, LatestTransaction[]>> {
   const getTransactions = buildGetTransactionsFn(metadataTransactions)
-  const transactionsPerAccount = new Map<WalletAccount, Transaction[]>()
+  const transactionsPerAccount = new Map<WalletAccount, LatestTransaction[]>()
   await Promise.all(
     accountsToPopulate.map(async (account) => {
       const transactions = await getTransactions(account)
@@ -109,23 +113,31 @@ export async function getTransactionsPerAccount(
 
 // Fetch 1 tx
 function buildGetTransactionsFn(metadataTransactions: Transaction[]) {
-  return async (account: WalletAccount) => {
-    const limit = 1
+  return async (account: WalletAccount): Promise<LatestTransaction[]> => {
     const network = await getNetwork(account.networkId)
     const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-    const transactions = await explorerProvider.addresses.getAddressesAddressTransactions(account.address, { page: 1, limit })
-    return transactions.map((transaction) =>
-      mapAlephiumTransactionToTransaction(
-        transaction,
+    try {
+      const latestTransaction = await explorerProvider.addresses.getAddressesAddressLatestTransaction(account.address)
+      const meta = metadataTransactions.find((tx) =>
+        compareTransactions(tx, {
+          hash: latestTransaction.hash,
+          account: { networkId: account.networkId },
+        }),
+      )?.meta
+
+      return [{
+        hash: latestTransaction.hash,
         account,
-        metadataTransactions.find((tx) =>
-          compareTransactions(tx, {
-            hash: transaction.hash,
-            account: { networkId: account.networkId },
-          }),
-        )?.meta,
-      ),
-    )
+        meta,
+        timestamp: latestTransaction.timestamp,
+      }]
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("Status code: 404")) {
+        return []
+      }
+
+      throw error
+    }
   }
 }
 
