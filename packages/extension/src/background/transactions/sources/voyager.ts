@@ -1,7 +1,7 @@
 import join from "url-join"
 
 import { Network } from "../../../shared/network"
-import { Transaction, getTransactionsPerAccount } from "../../../shared/transactions"
+import { LatestTransaction, Transaction, getTransactionsPerAccount } from "../../../shared/transactions"
 import { WalletAccount } from "../../../shared/wallet.model"
 import { fetchWithTimeout } from "../../utils/fetchWithTimeout"
 
@@ -35,7 +35,7 @@ export const fetchVoyagerTransactions = async (
 export async function getLatestTransactions(
   accountsToPopulate: WalletAccount[],
   metadataTransactions: Transaction[],
-) {
+): Promise<LatestTransaction[]> {
   const transactionsPerAccount = await getTransactionsPerAccount(accountsToPopulate, metadataTransactions)
   return Array.from(transactionsPerAccount.values()).flat()
 }

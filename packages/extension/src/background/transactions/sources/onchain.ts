@@ -1,14 +1,21 @@
-import { ExplorerProvider } from "@alephium/web3"
+import { explorer, ExplorerProvider } from "@alephium/web3"
 import { getNetwork } from "../../../shared/network"
-import { compareTransactions, getInFlightTransactions, Transaction } from "../../../shared/transactions"
+import { compareTransactions, getInFlightTransactions, LatestTransaction, Transaction } from "../../../shared/transactions"
 import { transactionsStore } from "../../../shared/transactions/store"
+import { mapAlephiumTransactionToTransaction } from "../../../shared/transactions/transformers"
 import { getTransactionsStatusUpdate } from "../determineUpdates"
 import { groupBy, forEach } from "lodash"
 
-interface TransactionUpdates {
+interface TransactionUpdates<T = Transaction> {
   toBeRemoved: Transaction[]
-  toBeStored: Transaction[]
+  toBeStored: T[]
 }
+
+// See https://github.com/alephium/alephium-frontend/issues/1367
+export const isConfirmedTx = (
+  tx: explorer.TransactionLike,
+): tx is explorer.AcceptedTransaction =>
+  "blockHash" in tx && !tx.inputs?.some((input) => input.txHashRef === undefined)
 
 export async function getTransactionsUpdate(transactionsToCheck: Transaction[]) {
 
@@ -51,19 +58,19 @@ export async function getTransactionsUpdate(transactionsToCheck: Transaction[]) 
 
 export function getUpdatesFromLatestTransactions(
   existingTransactions: Transaction[],
-  latestTransactions: Transaction[]
-): TransactionUpdates {
+  latestTransactions: LatestTransaction[]
+): TransactionUpdates<LatestTransaction> {
   const pendingTransactions = getInFlightTransactions(existingTransactions)
 
   // Remove all pending tx that are part of the latest txs
   const toBeRemoved = pendingTransactions.filter((pendingTx) => {
-    !!latestTransactions.find((tx) => compareTransactions(pendingTx, tx))
+    return !!latestTransactions.find((tx) => compareTransactions(pendingTx, tx))
   })
 
   // Store all latest tx that are not part of the existing txs, except that
   // they are part of the pending txs
   const toBeStored = latestTransactions.filter((latestTx) => {
-    !existingTransactions.find((tx) => compareTransactions(latestTx, tx)) ||
+    return !existingTransactions.find((tx) => compareTransactions(latestTx, tx)) ||
       !!pendingTransactions.find((tx) => compareTransactions(latestTx, tx))
   })
 
@@ -86,13 +93,31 @@ export function getPruneTransactions(
   return { toBeRemoved: transactionsToPrune, toBeStored: [] }
 }
 
-export async function storeTransactionUpdates(transactionUpdates: TransactionUpdates) {
+export async function storeTransactionUpdates(transactionUpdates: TransactionUpdates<Transaction | LatestTransaction>) {
   if (transactionUpdates.toBeRemoved.length > 0) {
     await transactionsStore.remove((tx) =>
       transactionUpdates.toBeRemoved.some((toBeRemovedTx) => tx.hash === toBeRemovedTx.hash))
   }
 
   if (transactionUpdates.toBeStored.length > 0) {
-    await transactionsStore.push(transactionUpdates.toBeStored)
+    const transactionsToStore = await Promise.all(transactionUpdates.toBeStored.map(async (transaction) => {
+      if ("status" in transaction) {
+        return transaction
+      }
+
+      const network = await getNetwork(transaction.account.networkId)
+      const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
+      const fullTransaction = await explorerProvider.transactions.getTransactionsTransactionHash(transaction.hash)
+      if (!isConfirmedTx(fullTransaction)) {
+        throw new Error(`Expected confirmed transaction for ${transaction.hash}`)
+      }
+      return mapAlephiumTransactionToTransaction(
+        fullTransaction,
+        transaction.account,
+        transaction.meta,
+      )
+    }))
+
+    await transactionsStore.push(transactionsToStore)
   }
 }
