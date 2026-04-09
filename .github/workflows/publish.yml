@@ -3,8 +3,8 @@ name: Publish
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
-      - 'v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+"
 
 jobs:
   publish:
@@ -16,15 +16,15 @@ jobs:
           version=$(echo ${GITHUB_REF/refs\/tags\//} | cut -c 2-)
           echo ::set-output name=VERSION::$version
         shell: bash
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           fetch-depth: 0
           submodules: true
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
         with:
           node-version: 20
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - name: Build and create the Firefox extension wallet zip file
         run: |
           export MANIFEST_VERSION=v2
@@ -48,7 +48,7 @@ jobs:
           sha256sum "alephium-extension-wallet-chrome-${{ steps.get_version.outputs.VERSION }}.zip" > "alephium-extension-wallet-chrome-${{ steps.get_version.outputs.VERSION }}.zip.checksum"
           popd
       - name: Publish the zipped extension wallet
-        uses: softprops/action-gh-release@v0.1.14
+        uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
           files: |
             packages/extension/alephium-extension-wallet-chrome-${{ steps.get_version.outputs.VERSION }}.zip
