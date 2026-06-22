@@ -6,6 +6,7 @@ import {
   ReviewTransactionResult,
   TransactionResult,
 } from "../shared/actionQueue/types"
+import { isDappMessageHasherAllowed } from "../shared/messageHasher"
 import { MessageType } from "../shared/messages"
 import { addNetwork, getNetworks } from "../shared/network"
 import { preAuthorize } from "../shared/preAuthorizations"
@@ -130,6 +131,12 @@ export const handleActionApproval = async (
 
     case "ALPH_SIGN_MESSAGE": {
       try {
+        if (!isDappMessageHasherAllowed(action.payload.messageHasher)) {
+          throw Error(
+            "Unsupported message hasher. Only the 'alephium' message hasher is accepted.",
+          )
+        }
+
         const account = await wallet.getAccount({
           address: action.payload.signerAddress,
           networkId: action.payload.networkId,
