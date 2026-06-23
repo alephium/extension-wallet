@@ -1,3 +1,4 @@
+import { isDappMessageHasherAllowed } from "../shared/messageHasher"
 import { ActionMessage } from "../shared/messages/ActionMessage"
 import { handleActionApproval, handleActionRejection } from "./actionHandlers"
 import { sendMessageToUi } from "./activeTabs"
@@ -57,6 +58,24 @@ export const handleActionMessage: HandleMessage<ActionMessage> = async ({
     }
 
     case "ALPH_SIGN_MESSAGE": {
+      if (!isDappMessageHasherAllowed(msg.data.messageHasher)) {
+        const rejectedActionHash = "rejected-unsupported-message-hasher"
+        await respond({
+          type: "ALPH_SIGN_MESSAGE_RES",
+          data: {
+            actionHash: rejectedActionHash,
+          },
+        })
+        return await respond({
+          type: "ALPH_SIGN_MESSAGE_FAILURE",
+          data: {
+            actionHash: rejectedActionHash,
+            error:
+              "Unsupported message hasher. Only the 'alephium' message hasher is accepted.",
+          },
+        })
+      }
+
       const { meta } = await actionQueue.push({
         type: "ALPH_SIGN_MESSAGE",
         payload: msg.data,

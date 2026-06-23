@@ -20,7 +20,10 @@ export function waitForMessage<
     predicate: (x: T) => boolean = () => true,
 ): Promise<T extends { data: infer S } ? S : undefined> {
   return new Promise((resolve, reject) => {
-    const pid = setTimeout(() => reject(new Error("Timeout")), timeout)
+    const pid = setTimeout(() => {
+      window.removeEventListener("message", handler)
+      reject(new Error("Timeout"))
+    }, timeout)
     const handler = (event: MessageEvent<WindowMessageType>) => {
       if (event.data.type === type && predicate(event.data as any)) {
         clearTimeout(pid)
