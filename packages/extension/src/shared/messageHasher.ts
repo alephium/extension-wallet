@@ -1,6 +1,6 @@
 import { MessageHasher } from "@alephium/web3"
 
-export const SAFE_DAPP_MESSAGE_HASHER = "alephium"
+export const SAFE_DAPP_MESSAGE_HASHERS: MessageHasher[] = ["alephium", "sha256"]
 
 export const isDappMessageHasherAllowed = (messageHasher: MessageHasher): boolean =>
-  messageHasher === SAFE_DAPP_MESSAGE_HASHER
+  SAFE_DAPP_MESSAGE_HASHERS.includes(messageHasher)
