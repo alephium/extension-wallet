@@ -12,7 +12,6 @@ export const alphTokens: Token[] = defaultNetworkIds.map((networkId) => {
     ...ALPH,
     "networkId": networkId,
     "logoURI": "https://raw.githubusercontent.com/alephium/alephium-brand-guide/a4680dc86d6061a8d08468ebb42d659ab74db64a/logos/light/Logo-Icon.svg",
-    "showAlways": true,
     verified: true
   }
 })
@@ -31,7 +30,7 @@ export function convertTokenList(tokenList: TokenList): Token[] {
   const tokens = tokenList.tokens.flatMap((token) => {
     const networkId = defaultNetworkIds[tokenList.networkId]
     if (networkId) {
-      return [{ networkId, verified: true, showAlways: true, ...token }]
+      return [{ networkId, verified: true, ...token }]
     } else {
       return []
     }
