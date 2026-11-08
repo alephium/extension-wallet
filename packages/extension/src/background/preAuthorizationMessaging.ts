@@ -25,10 +25,18 @@ export const handlePreAuthorizationMessage: HandleMessage<
     case "ALPH_CONNECT_DAPP": {
       const selectedAccount = await wallet.getSelectedAccount()
       if (!selectedAccount) {
+        if (msg.data.silent) {
+          return respond({ type: "ALPH_CONNECT_DAPP_RES", data: null })
+        }
         openUi()
         return
       }
       const authorized = await getPreAuthorized(msg.data)
+      // Recheck here rather than trusting an earlier page-side preflight.
+      // Authorization can expire or be revoked during refresh/hot reload.
+      if (msg.data.silent && !authorized) {
+        return respond({ type: "ALPH_CONNECT_DAPP_RES", data: null })
+      }
 
       if (sender.tab?.id) {
         addTab({
