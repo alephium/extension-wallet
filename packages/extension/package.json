@@ -61,6 +61,7 @@
     "ws": "^8.8.1"
   },
   "scripts": {
+    "test:inpage": "node scripts/test-inpage.cjs",
     "build": "cross-env NODE_ENV=production webpack",
     "build:sourcemaps": "cross-env GEN_SOURCE_MAPS=true yarn build",
     "start": "webpack",

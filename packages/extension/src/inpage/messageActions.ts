@@ -5,8 +5,12 @@ const extensionId = document
   ?.getAttribute("data-extension-id")
 
 export function sendMessage(msg: MessageType): void {
-  // `bigint` can not be serialized by `window.postMessage`
-  const stringified = JSON.stringify(msg)
+  // Chrome extension messaging requires JSON-compatible values. Keep this
+  // conversion local: injected providers must not change the page's BigInt prototype.
+  const stringified = JSON.stringify(msg, function (key, value) {
+    const original = this[key]
+    return typeof original === "bigint" ? original.toString() : value
+  })
   const parsed = JSON.parse(stringified)
   return window.postMessage({ ...parsed, extensionId }, window.location.origin)
 }

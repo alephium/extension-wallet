@@ -31,9 +31,10 @@ module.exports = {
   entry: {
     main: "./src/ui",
     inject: "./src/content",
-    inpage: "./src/inpage",
+    inpage: { import: "./src/inpage", layer: "inpage" },
     background: "./src/background",
   },
+  experiments: { layers: true },
   performance: {
     hints: false,
   },
@@ -41,6 +42,7 @@ module.exports = {
   mode: isProd ? "production" : "development",
   module: {
     rules: [
+      ...require("./build/inpage-web3-rules"),
       {
         test: /\.svg$/,
         use: [
