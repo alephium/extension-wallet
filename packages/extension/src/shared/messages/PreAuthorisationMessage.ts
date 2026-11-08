@@ -3,8 +3,8 @@ import { RequestOptions } from "../../inpage/inpage.model";
 import { WalletAccountWithNetwork } from "../wallet.model"
 
 export type PreAuthorisationMessage =
-  | { type: "ALPH_CONNECT_DAPP"; data: { host: string, networkId?: string, group?: number, keyType?: KeyType } }
-  | { type: "ALPH_CONNECT_DAPP_RES"; data: WalletAccountWithNetwork }
+  | { type: "ALPH_CONNECT_DAPP"; data: { host: string, silent?: boolean, networkId?: string, group?: number, keyType?: KeyType } }
+  | { type: "ALPH_CONNECT_DAPP_RES"; data: WalletAccountWithNetwork | null }
   | { type: "ALPH_IS_PREAUTHORIZED"; data: RequestOptions }
   | { type: "ALPH_IS_PREAUTHORIZED_RES"; data: boolean }
   | {

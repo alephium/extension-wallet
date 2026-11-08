@@ -90,20 +90,28 @@ export const alephiumWindowObject: AlephiumWindowObject =
     }
 
     #unsafeEnable = async (options?: EnableOptions) => {
-      this.#checkTabFocused()
+      // Devtools can own focus while the dApp remains visible. Only resume an
+      // existing authorization in that case; the background must never prompt.
+      const silent = !document.hasFocus()
+      if (silent && document.visibilityState !== "visible") {
+        throw Error("Unsolicited request")
+      }
 
-      const walletAccountP = Promise.race([
-        waitForMessage("ALPH_CONNECT_DAPP_RES", USER_ACTION_TIMEOUT),
-        waitForMessage(
-          "ALPH_REJECT_PREAUTHORIZATION",
-          USER_ACTION_TIMEOUT,
-        ).then(() => "USER_ABORTED" as const),
-      ])
+      const walletAccountP = silent
+        ? waitForMessage("ALPH_CONNECT_DAPP_RES", 1000)
+        : Promise.race([
+            waitForMessage("ALPH_CONNECT_DAPP_RES", USER_ACTION_TIMEOUT),
+            waitForMessage(
+              "ALPH_REJECT_PREAUTHORIZATION",
+              USER_ACTION_TIMEOUT,
+            ).then(() => "USER_ABORTED" as const),
+          ])
 
       sendMessage({
         type: "ALPH_CONNECT_DAPP",
         data: {
           host: window.location.host,
+          silent,
           networkId: options?.networkId,
           group: options?.addressGroup,
           keyType: options?.keyType,
@@ -113,7 +121,7 @@ export const alephiumWindowObject: AlephiumWindowObject =
       const walletAccount = await walletAccountP
 
       if (!walletAccount) {
-        throw Error("No wallet account (should not be possible)")
+        throw Error("No authorized wallet account")
       }
 
       if (walletAccount === "USER_ABORTED") {
