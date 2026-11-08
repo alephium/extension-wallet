@@ -1,7 +1,9 @@
 import { afterEach, expect, it, vi } from "vitest"
 import { sendMessage } from "./messageActions"
 
-afterEach(() => vi.restoreAllMocks())
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 it("serializes nested transaction amounts locally without installing a BigInt JSON hook", () => {
   const descriptor = Object.getOwnPropertyDescriptor(BigInt.prototype, "toJSON")
