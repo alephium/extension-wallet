@@ -100,12 +100,12 @@ export const alephiumWindowObject: AlephiumWindowObject =
       const walletAccountP = silent
         ? waitForMessage("ALPH_CONNECT_DAPP_RES", 1000)
         : Promise.race([
-        waitForMessage("ALPH_CONNECT_DAPP_RES", USER_ACTION_TIMEOUT),
-        waitForMessage(
-          "ALPH_REJECT_PREAUTHORIZATION",
-          USER_ACTION_TIMEOUT,
-        ).then(() => "USER_ABORTED" as const),
-      ])
+            waitForMessage("ALPH_CONNECT_DAPP_RES", USER_ACTION_TIMEOUT),
+            waitForMessage(
+              "ALPH_REJECT_PREAUTHORIZATION",
+              USER_ACTION_TIMEOUT,
+            ).then(() => "USER_ABORTED" as const),
+          ])
 
       sendMessage({
         type: "ALPH_CONNECT_DAPP",

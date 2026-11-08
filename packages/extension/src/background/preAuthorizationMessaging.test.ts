@@ -41,7 +41,9 @@ function request(silent: boolean, selectedAccount: unknown = account) {
 }
 
 describe("silent reconnect", () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it("resumes an existing authorization without prompting", async () => {
     vi.mocked(getPreAuthorized).mockResolvedValue({ account } as any)

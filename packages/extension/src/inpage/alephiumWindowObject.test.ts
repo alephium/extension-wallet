@@ -26,7 +26,9 @@ beforeEach(() => {
       : new Promise(() => {}),
   )
 })
-afterEach(() => vi.restoreAllMocks())
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 describe("connection focus and visibility", () => {
   it("reconnects after refresh/hot reload while devtools has focus and still rejects signing", async () => {
@@ -48,7 +50,9 @@ describe("connection focus and visibility", () => {
       vi.resetModules()
       const wallet = await provider()
       expect(wallet.connectedAccount).toBeUndefined()
-      const connected = await wallet.enableIfConnected({})
+      const connected = await wallet.enableIfConnected({
+        onDisconnected: () => {},
+      })
       expect(connected?.address).toBe(address)
       expect(sendMessage).toHaveBeenLastCalledWith(
         expect.objectContaining({
